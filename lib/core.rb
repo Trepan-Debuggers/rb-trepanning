@@ -6,8 +6,10 @@ class Debugger
       @processor = CmdProcessor.new()
     end
 
-    def event_processor(event, frame)
+    # A trace-hook processor with the interface it should have.
+    def event_processor(event, frame, arg=nil)
       # FIXME: Block all other threads
+      @arg   = arg
       @event = event
       @frame = frame
       @processor.process_commands(@frame)
@@ -20,7 +22,9 @@ class Debugger
     def old_event_processor(event, file, line, id, bind, klass)
       event_processor(event, RubyVM::ThreadFrame.current.prev)
     end
-    
+
+    # Call this from inside the program you want to debug to get a
+    # synchronous call to the debugger.
     def debugger
       frame = RubyVM::ThreadFrame.current.prev
       p frame.source_location, frame.source_container
