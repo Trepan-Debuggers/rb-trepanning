@@ -1,5 +1,5 @@
 require 'thread_frame'
-require_relative '../processor/cmdproc'
+require_relative File.join(%w(.. processor cmdproc))
 class Debugger
   class Core
     def initialize

@@ -5,6 +5,7 @@ class Debugger
       @frame    = nil
       @prompt   = '(rdbgr): '
     end
+
     def debug_eval(str)
       begin
         b = @frame.binding if @frame 
@@ -55,12 +56,23 @@ class Debugger
       require 'readline'
       Readline.readline(@prompt)
     end
+
+    def self.load_commands
+      cmd_dir = File.join(File.dirname(__FILE__), 'command')
+      # FIXME: File.directory?(cmd_dir)  ? 
+      Dir.chdir(cmd_dir) do
+        Dir.glob('*.rb').each do |rb|
+          require_relative rb
+        end
+      end
+    end
+    load_commands
   end
 end
 
 if __FILE__ == $0
   dbg = Debugger::CmdProcessor.new()
-  dbg.msg('hi')
+  dbg.msg('cmdproc main')
   dbg.errmsg('Whoa!')
   if ARGV.size > 0
     dbg.msg('Enter "q" to quit')
