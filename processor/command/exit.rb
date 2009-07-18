@@ -6,7 +6,7 @@ class Debugger::ExitCommand < Debugger::Command
   @help = 
 'exit [exitcode] - hard exit of the debugged program.  
 The program being debugged is exited via sys.exit(). If a return code
-is given that is the return code passed to sys.exit() - presumably the
+is given that is the return code passed to exit() - presumably the
 return code that will be passed back to the OS.'
 
   @name_aliases = %w(exit)
