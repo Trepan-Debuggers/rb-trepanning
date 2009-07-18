@@ -1,12 +1,18 @@
 require 'thread_frame'
 require_relative File.join(%w(.. processor cmdproc))
 class Debugger
+  # This class contains the Debugger core routines, such as an event
+  # processor is responsible of handling what to do when an event is
+  # triggered.
+  # 
+  # See also 'rdbgr' the top-level Debugger class and command-line routine
+  # which ultimately will call this.
   class Core
     def initialize
       @processor = CmdProcessor.new()
     end
 
-    # A trace-hook processor with the interface it should have.
+    # A trace-hook processor with the interface a trace hook should have.
     def event_processor(event, frame, arg=nil)
       # FIXME: Block all other threads
       @arg   = arg
@@ -23,8 +29,8 @@ class Debugger
       event_processor(event, RubyVM::ThreadFrame.current.prev)
     end
 
-    # Call this from inside the program you want to debug to get a
-    # synchronous call to the debugger.
+    # Call this from inside the program you want to get a synchronous
+    # call to the debugger.
     def debugger
       frame = RubyVM::ThreadFrame.current.prev
       p frame.source_location, frame.source_container

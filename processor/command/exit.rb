@@ -12,7 +12,7 @@ class Debugger
     end
   end
 end
-puts "quit loaded"
+p "quit loaded" if $DEBUG
 if __FILE__ == $0
   cmd = Debugger::ExitCommand.new
   p cmd.name_aliases

@@ -1,4 +1,4 @@
-puts 'base_cmd here'
+puts 'base_cmd here' if $DEBUG
 class Debugger
   class Command
   end
