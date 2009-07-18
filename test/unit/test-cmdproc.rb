@@ -1,13 +1,15 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require_relative File.join(%w(.. .. processor cmdproc))
+require_relative File.join(%w(.. .. lib core))
 
 # Test Debugger:CmdProcessor
 class TestCmdProcessor < Test::Unit::TestCase
 
   def test_command_load
-    dbg = Debugger::CmdProcessor.new()
-
+    core = Debugger::Core.new()
+    dbg = Debugger::CmdProcessor.new(core)
+    
     # See that we have commands
     cmds = dbg.instance_variable_get('@commands')
     assert cmds.is_a?(Hash), 'Should have gotten a command hash'

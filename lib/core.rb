@@ -9,7 +9,7 @@ class Debugger
   # which ultimately will call this.
   class Core
     def initialize
-      @processor = CmdProcessor.new()
+      @processor = CmdProcessor.new(self)
     end
 
     # A trace-hook processor with the interface a trace hook should have.

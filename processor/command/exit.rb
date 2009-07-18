@@ -26,7 +26,6 @@ return code that will be passed back to the OS.'
   end
 end
 
-p "quit loaded" if $DEBUG
 if __FILE__ == $0
   cmd = Debugger::ExitCommand.new
   p cmd.class.const_get(:NAME_ALIASES)

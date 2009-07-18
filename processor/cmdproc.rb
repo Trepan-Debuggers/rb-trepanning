@@ -1,9 +1,10 @@
 class Debugger
   class CmdProcessor
-    def initialize()
+    def initialize(core)
       @event    = nil
       @frame    = nil
       @prompt   = '(rdbgr): '
+      @core     = core
       # Load up debugger commands. Sets @commands, @aliases
       load_debugger_commands 
     end
@@ -58,6 +59,7 @@ class Debugger
       leave_loop = false
         while not leave_loop do
           leave_loop = process_command_and_quit?()
+          # Might have other stuff here.
         end
     rescue IOError, Errno::EPIPE
     rescue Exception
@@ -100,7 +102,10 @@ class Debugger
 end
 
 if __FILE__ == $0
-  dbg = Debugger::CmdProcessor.new()
+  # Demo it.
+  require_relative '../lib/core'
+  core = Debugger::Core.new()
+  dbg = Debugger::CmdProcessor.new(core)
   dbg.msg('cmdproc main')
   dbg.errmsg('Whoa!')
   cmds = dbg.instance_variable_get('@commands')
