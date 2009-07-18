@@ -4,7 +4,7 @@ class Debugger
       @event    = nil
       @frame    = nil
       @prompt   = '(rdbgr): '
-      # Load up debugger commands. Sets @commands
+      # Load up debugger commands. Sets @commands, @aliases
       load_debugger_commands 
     end
 
@@ -36,13 +36,19 @@ class Debugger
       puts message
     end
 
-    def process_command()
+    # Run one debugger command. True is returned if we want to quit.
+    def process_command_and_quit?()
       str = read_command()
       args = str.split
       return false if args.size == 0
       cmd_name = args[0]
-      @commands[cmd_name].run(args) if @commands[cmd_name]
+      cmd_name = @aliases[cmd_name] if @aliases.member?(cmd_name)
+      @commands[cmd_name].run(args) if @commands.member?(cmd_name)
+
+      # Warning: the next line is going away...
       return true if !str || 'q' == str.strip
+
+      # Eval anything that's not a command.
       puts debug_eval(str)
       return false
     end
@@ -51,7 +57,7 @@ class Debugger
       @frame = frame
       leave_loop = false
         while not leave_loop do
-          leave_loop = process_command()
+          leave_loop = process_command_and_quit?()
         end
     rescue IOError, Errno::EPIPE
     rescue Exception
@@ -80,7 +86,7 @@ class Debugger
       @aliases = {}
       Debugger.constants.grep(/.Command$/).each do |command|
         # Note: there is probably a non-eval way to instantiate the command, but I don't
-        # now it. And eval works.
+        # know it. And eval works.
         cmd = Debugger.instance_eval("Debugger::#{command}.new")
 
         # Add to list of commands and aliases.
@@ -111,6 +117,6 @@ if __FILE__ == $0
       end
     end
     $input = ['1+2']
-    dbg.process_command
+    dbg.process_command_and_quit?
   end
 end
