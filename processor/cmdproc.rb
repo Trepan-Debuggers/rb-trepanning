@@ -4,6 +4,8 @@ class Debugger
       @event    = nil
       @frame    = nil
       @prompt   = '(rdbgr): '
+      # Load up debugger commands. Sets @commands
+      load_debugger_commands 
     end
 
     def debug_eval(str)
@@ -36,6 +38,10 @@ class Debugger
 
     def process_command()
       str = read_command()
+      args = str.split
+      return false if args.size == 0
+      cmd_name = args[0]
+      @commands[cmd_name].run(args) if @commands[cmd_name]
       return true if !str || 'q' == str.strip
       puts debug_eval(str)
       return false
@@ -57,16 +63,33 @@ class Debugger
       Readline.readline(@prompt)
     end
 
-    def self.load_commands
-      cmd_dir = File.join(File.dirname(__FILE__), 'command')
-      # FIXME: File.directory?(cmd_dir)  ? 
+    # Loads in debugger commands by requiring each file in the
+    # 'command' directory. Then a new instance of each class of the 
+    # form Debugger::xxCommand is added to @commands and that array
+    # is returned.
+    def load_debugger_commands
+      cmd_dir = File.expand_path(File.join(File.dirname(__FILE__),
+                                           'command'))
       Dir.chdir(cmd_dir) do
-        Dir.glob('*.rb').each do |rb|
-          require_relative rb
-        end
+        # Note: require_relative doesn't seem to pick up the above
+        # chdir.
+        Dir.glob('*.rb').each { |rb| require File.join(cmd_dir, rb) }
+      end if File.directory?(cmd_dir)
+      # Instantiate each Command class found by the above require(s).
+      @commands = {}
+      @aliases = {}
+      Debugger.constants.grep(/.Command$/).each do |command|
+        # Note: there is probably a non-eval way to instantiate the command, but I don't
+        # now it. And eval works.
+        cmd = Debugger.instance_eval("Debugger::#{command}.new")
+
+        # Add to list of commands and aliases.
+        cmd_name = cmd.name_aliases[0]
+        aliases= cmd.name_aliases[1..-1]
+        @commands[cmd_name] = cmd
+        aliases.each {|a| @aliases[a] = cmd_name}
       end
     end
-    load_commands
   end
 end
 
@@ -74,6 +97,9 @@ if __FILE__ == $0
   dbg = Debugger::CmdProcessor.new()
   dbg.msg('cmdproc main')
   dbg.errmsg('Whoa!')
+  p dbg.instance_variable_get('@commands')
+  p dbg.instance_variable_get('@aliases')
+
   if ARGV.size > 0
     dbg.msg('Enter "q" to quit')
     dbg.process_commands
