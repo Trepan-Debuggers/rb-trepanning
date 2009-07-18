@@ -90,8 +90,8 @@ class Debugger
         cmd = Debugger.instance_eval("Debugger::#{command}.new")
 
         # Add to list of commands and aliases.
-        cmd_name = cmd.name_aliases[0]
-        aliases= cmd.name_aliases[1..-1]
+        cmd_name = cmd.class.name_aliases[0]
+        aliases= cmd.class.name_aliases[1..-1]
         @commands[cmd_name] = cmd
         aliases.each {|a| @aliases[a] = cmd_name}
       end
@@ -103,8 +103,12 @@ if __FILE__ == $0
   dbg = Debugger::CmdProcessor.new()
   dbg.msg('cmdproc main')
   dbg.errmsg('Whoa!')
-  p dbg.instance_variable_get('@commands')
+  cmds = dbg.instance_variable_get('@commands')
+  p cmds
   p dbg.instance_variable_get('@aliases')
+  cmd_name, cmd_obj = cmds.first
+  puts cmd_obj.class.help
+  puts cmd_obj.class.short_help
 
   if ARGV.size > 0
     dbg.msg('Enter "q" to quit')

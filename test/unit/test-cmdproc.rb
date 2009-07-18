@@ -4,6 +4,7 @@ require_relative File.join(%w(.. .. processor cmdproc))
 
 # Test Debugger:CmdProcessor
 class TestCmdProcessor < Test::Unit::TestCase
+
   def test_command_load
     dbg = Debugger::CmdProcessor.new()
 
