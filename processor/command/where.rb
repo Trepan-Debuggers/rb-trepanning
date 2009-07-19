@@ -1,6 +1,8 @@
 require_relative 'base_cmd'
-require_relative '../../lib/stack'
+require_relative '../../lib/frame'
 class Debugger::WhereCommand < Debugger::Command
+
+  include Debugger::Frame
 
   HELP = 
 "where [count]
@@ -32,14 +34,21 @@ Examples:
   # This method runs the command
   def run(args) # :nodoc
     if args.size > 1
-      # Deal with this later.
-      count = nil
+      # Deal with this better later.
+      count = Integer(args[1]) rescue 0
     end
+    if @core and @core.frame
+      print_stack_entry(@core.frame)
+    elsif @proc
+      @proc.errmsg 'No frame'
+    end
+    return false  # Don't break out of cmd loop
   end
 end
 
 if __FILE__ == $0
   cmd = Debugger::WhereCommand.new
   p cmd.class.const_get(:NAME_ALIASES)
-  cmd.run %w(exit 10)
+  cmd.run %w(where)
+  cmd.run %w(where 1)
 end

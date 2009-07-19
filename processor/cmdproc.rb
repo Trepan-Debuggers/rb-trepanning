@@ -44,12 +44,14 @@ class Debugger
       return false if args.size == 0
       cmd_name = args[0]
       cmd_name = @aliases[cmd_name] if @aliases.member?(cmd_name)
-      @commands[cmd_name].run(args) if @commands.member?(cmd_name)
-
-      # Warning: the next line is going away...
-      return true if !str || 'q' == str.strip
-
-      # Eval anything that's not a command.
+      if @commands.member?(cmd_name)
+        return @commands[cmd_name].run(args) 
+      else
+        # Warning: the next line is going away...
+        return true if !str || 'q' == str.strip
+      end
+        
+        # Eval anything that's not a command.
       puts debug_eval(str)
       return false
     end
@@ -71,7 +73,7 @@ class Debugger
       Readline.readline(@prompt)
     end
 
-    # Loads in debugger commands by requiring each file in the
+    # Loads in debugger commands by require'ing each ruby file in the
     # 'command' directory. Then a new instance of each class of the 
     # form Debugger::xxCommand is added to @commands and that array
     # is returned.
@@ -87,9 +89,13 @@ class Debugger
       @commands = {}
       @aliases = {}
       Debugger.constants.grep(/.Command$/).each do |command|
-        # Note: there is probably a non-eval way to instantiate the command, but I don't
-        # know it. And eval works.
+        # Note: there is probably a non-eval way to instantiate the
+        # command, but I don't know it. And eval works.
         cmd = Debugger.instance_eval("Debugger::#{command}.new")
+
+        # Give the command access to other parts of the debugger
+        cmd.core = @core
+        cmd.proc = self
 
         # Add to list of commands and aliases.
         cmd_name = cmd.class.const_get(:NAME_ALIASES)[0]

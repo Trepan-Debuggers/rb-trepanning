@@ -1,7 +1,10 @@
 require_relative 'lib/core'
 class Debugger
   def initialize
-    core = Core.new
+    @core = Core.new
+  end
+  def debugger
+    @core.debugger
   end
 end
 

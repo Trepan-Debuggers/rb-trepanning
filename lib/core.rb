@@ -8,6 +8,7 @@ class Debugger
   # See also 'rdbgr' the top-level Debugger class and command-line routine
   # which ultimately will call this.
   class Core
+    attr_accessor :frame
     def initialize
       @processor = CmdProcessor.new(self)
     end

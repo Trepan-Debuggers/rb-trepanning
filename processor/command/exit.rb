@@ -21,8 +21,7 @@ return code that will be passed back to the OS.'
   def run(args) # :nodoc
     # A little harsh, but for now let's go with this.
     p 'calling it quits'
-    exitrc = Integer(args[1]) rescue 0 if args.size > 1
-    exit exitrc
+    exitrc = (args.size > 1) ? exitrc = Integer(args[1]) rescue 0 : 0
   end
 end
 
