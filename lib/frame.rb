@@ -13,9 +13,18 @@ class Debugger
     def format_stack_entry(frame)
       return 'invalid frame' if frame.invalid?
       # FIXME: prettify 
-      s = frame.type + ' '
-      s += ' ' + frame.method if frame.method
-      s += " #{frame.proc} #{frame.proc.arity}" if frame.proc
+      s = frame.type
+      if frame.method 
+        iseq = frame.iseq
+        if iseq
+          args = 0.upto(iseq.local_table_size-1).map do |i| 
+            iseq.local_name(i)
+          end.join(', ')
+        else
+          args = '?'
+        end
+        s += " #{frame.method}(#{args})"
+      end
       s += " #{frame.source_container} at line #{frame.source_location}"
     end
 
@@ -48,4 +57,14 @@ if __FILE__ == $0
     print_stack_trace(RubyVM::ThreadFrame.current)
   end
   foo
+
+  puts '=' * 10
+  x  = lambda { |x,y|  print_stack_trace(RubyVM::ThreadFrame::current) }
+  x.call(1,2)
+  puts '=' * 10
+  x  = Proc.new do |a| 
+    print_stack_trace(RubyVM::ThreadFrame::current)
+    puts RubyVM::ThreadFrame::current.iseq.disasm
+  end
+  x.call(1,2)
 end
