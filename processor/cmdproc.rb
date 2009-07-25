@@ -1,5 +1,8 @@
 class Debugger
   class CmdProcessor
+    attr_reader :aliases  # Hash of command names indexed by alias name
+    attr_reader :commands # Hash of command objects indexed by name
+
     def initialize(core)
       @event    = nil
       @frame    = nil
@@ -40,6 +43,7 @@ class Debugger
     # Run one debugger command. True is returned if we want to quit.
     def process_command_and_quit?()
       str = read_command()
+      return false unless str
       args = str.split
       return false if args.size == 0
       cmd_name = args[0]
