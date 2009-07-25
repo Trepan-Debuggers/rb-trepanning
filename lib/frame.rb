@@ -17,13 +17,20 @@ class Debugger
       if frame.method 
         iseq = frame.iseq
         if iseq
-          args = 0.upto(iseq.local_table_size-1).map do |i| 
+          args = 0.upto(iseq.arity-1).map do |i| 
             iseq.local_name(i)
           end.join(', ')
+          
+          last = iseq.local_table_size-1
+          if last > iseq.arity
+            args += '; ' + args = iseq.arity.upto(last).map do |i| 
+              iseq.local_name(i)
+            end.join(', ')
+          end
         else
           args = '?'
         end
-        s += " #{frame.method}(#{args})"
+        s += " ##{frame.arity} #{frame.method}(#{args})"
       end
       s += " #{frame.source_container} at line #{frame.source_location}"
     end
