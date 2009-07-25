@@ -30,7 +30,12 @@ class Debugger
         else
           args = '?'
         end
-        s += " ##{frame.arity} #{frame.method}(#{args})"
+        s += " #{frame.method}"
+        if frame.type == 'METHOD'
+          s += "(#{args})"
+        elsif ['METHOD', 'LAMBDA', 'TOP', 'EVAL'].member?(frame.type)
+          s += " |#{args}|" unless args.empty?
+        end
       end
       s += " #{frame.source_container} at line #{frame.source_location}"
     end
@@ -74,4 +79,10 @@ if __FILE__ == $0
     puts RubyVM::ThreadFrame::current.iseq.disasm
   end
   x.call(1,2)
+  class C
+    def initialize(a)
+      print_stack_trace(RubyVM::ThreadFrame::current)
+    end
+  end
+  C.new('Hi')
 end
