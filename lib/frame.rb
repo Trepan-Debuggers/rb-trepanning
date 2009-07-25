@@ -33,7 +33,7 @@ class Debugger
         s += " #{frame.method}"
         if frame.type == 'METHOD'
           s += "(#{args})"
-        elsif ['METHOD', 'LAMBDA', 'TOP', 'EVAL'].member?(frame.type)
+        elsif ['BLOCK', 'METHOD', 'LAMBDA', 'TOP', 'EVAL'].member?(frame.type)
           s += " |#{args}|" unless args.empty?
         end
       end
@@ -84,5 +84,13 @@ if __FILE__ == $0
       print_stack_trace(RubyVM::ThreadFrame::current)
     end
   end
+  puts '=' * 30
   C.new('Hi')
+  puts '=' * 30
+  eval("print_stack_trace(RubyVM::ThreadFrame.current)")
+  puts '=' * 30
+  [1].each do |a; b|
+    p RubyVM::ThreadFrame::current.arity
+    print_stack_trace(RubyVM::ThreadFrame::current)
+    end      
 end
