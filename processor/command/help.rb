@@ -75,9 +75,11 @@ Type "help" followed by command name for full documentation.
       cmd_name = args[1]
       if cmd_name == '*'
         columnize_all_commands
+      elsif CATEGORIES.member?(cmd_name)
+        show_category(args[1], args[2..-1])
       elsif @proc.commands.member?(cmd_name)
         cmd_obj = @proc.commands[cmd_name]
-        msg(cmd_obj.class.const_get(:HELP))
+        msg(cmd_obj.help)
       else
         errmsg('Undefined command: "%s".  Try "help".' % 
                cmd_name)
@@ -88,16 +90,16 @@ Type "help" followed by command name for full documentation.
     return false  # Don't break out of cmd loop
   end
 
-  # FIXME: The below is a rough port of the Python code.
   # Show short help for all commands in `category'.
-  def show_category(args)
-    category = args[0]
-    n2cmd = @proc.name2cmd
-    names = n2cmd.keys()
-    if len(args) == 2 and args[1] == '*'
+  def show_category(category, args)
+      
+    if args.size == 1 && args[0] == '*'
       msg("Commands in class %s:" % category)
-      cmds = names.select{|cmd| category == n2cmd[cmd].category}
-      cmds.sort()
+      
+      cmds = @proc.commands.keys.select do |cmd_name|
+        category == @proc.commands[cmd_name].category
+      end.sort
+
       ## FIXME
       ## width = self.debugger.settings['width']
       width = (ENV['COLUMNS'] || '80').to_i
@@ -107,9 +109,9 @@ Type "help" followed by command name for full documentation.
         
     msg("%s." % CATEGORIES[category])
     msg("List of commands:\n")
-    names.keys.sort.each do |name|
-      next if category != n2cmd[name].category
-      msg("%-13s -- %s" % [name, n2cmd[name].short_help])
+    @proc.commands.keys.sort.each do |name|
+      next if category != @proc.commands[name].category
+      msg("%-13s -- %s" % [name, @proc.commands[name].short_help])
     end
   end
 end
@@ -129,5 +131,8 @@ if __FILE__ == $0
   help_cmd.run %w(help fdafsasfda)
   puts '=' * 40
   help_cmd.run %w(help)
-  p
+  puts '=' * 40
+  help_cmd.run %w(help support)
+  puts '=' * 40
+  help_cmd.run %w(help support *)
 end
