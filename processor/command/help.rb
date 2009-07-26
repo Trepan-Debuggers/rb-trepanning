@@ -9,11 +9,7 @@ class Debugger::HelpCommand < Debugger::Command
 Without argument, print the list of available debugger commands.
 
 When an argument is given, it is first checked to see if it is command
-name. 'help exec' gives help on the ! command.
-
-With the argument is an expression or object name, you get the same
-help that you would get inside a Python shell running the built-in
-help() command.
+name. 'help where' gives help on the 'where' debugger command.
 
 If the environment variable $PAGER is defined, the file is
 piped through that command.  You'll notice this only for long help
@@ -24,7 +20,7 @@ additional subcommand to give help just about that particular
 subcommand. For example 'help info line' give help about the
 info line command.
 
-See also 'examine' an 'whatis'.
+See also 'examine' and 'whatis'.
 "
 
     CATEGORIES = {
@@ -52,8 +48,25 @@ See also 'examine' an 'whatis'.
   # List all commands arranged in an aligned columns
   def columnize_all_commands
     commands = @proc.commands.keys.sort
-    width = self.debugger.settings['width']
-    self.msg(columnize(commands, width, '    '))
+    ## FIXME
+    ## width = self.debugger.settings['width']
+    width = (ENV['COLUMNS'] || '80').to_i
+    msg(Columnize::columnize(commands, width, '    '))
+  end
+
+  # List the command categories and a short description of each.
+  def list_categories
+    msg("Classes of commands:")
+    CATEGORIES.keys.sort.each do |cat|
+      msg("%-13s -- %s" % [cat, CATEGORIES[cat]])
+    end
+    final_msg = '
+Type "help" followed by a class name for a list of commands in that class.
+Type "help *" for the list of all commands.
+Type "help CLASS *" for the list of all commands in class CLASS.
+Type "help" followed by command name for full documentation.
+'
+    msg(final_msg)  
   end
 
   # This method runs the command
@@ -61,17 +74,44 @@ See also 'examine' an 'whatis'.
     if args.size > 1
       cmd_name = args[1]
       if cmd_name == '*'
+        columnize_all_commands
       elsif @proc.commands.member?(cmd_name)
         cmd_obj = @proc.commands[cmd_name]
-        puts cmd_obj.class.const_get(:HELP)
+        msg(cmd_obj.class.const_get(:HELP))
       else
-        puts('Undefined command: "%s".  Try "help".' % 
-                            cmd_name)
+        errmsg('Undefined command: "%s".  Try "help".' % 
+               cmd_name)
       end
+    else
+      list_categories
     end
     return false  # Don't break out of cmd loop
   end
 
+  # FIXME: The below is a rough port of the Python code.
+  # Show short help for all commands in `category'.
+  def show_category(args)
+    category = args[0]
+    n2cmd = @proc.name2cmd
+    names = n2cmd.keys()
+    if len(args) == 2 and args[1] == '*'
+      msg("Commands in class %s:" % category)
+      cmds = names.select{|cmd| category == n2cmd[cmd].category}
+      cmds.sort()
+      ## FIXME
+      ## width = self.debugger.settings['width']
+      width = (ENV['COLUMNS'] || '80').to_i
+      msg(Columnize::columnize(cmds, width, '    '))
+      return
+    end
+        
+    msg("%s." % CATEGORIES[category])
+    msg("List of commands:\n")
+    names.keys.sort.each do |name|
+      next if category != n2cmd[name].category
+      msg("%-13s -- %s" % [name, n2cmd[name].short_help])
+    end
+  end
 end
 
 if __FILE__ == $0
@@ -84,4 +124,10 @@ if __FILE__ == $0
   help_cmd = cmds['help']
   help_cmd.run %w(help help)
   puts '=' * 40
+  help_cmd.run %w(help *)
+  puts '=' * 40
+  help_cmd.run %w(help fdafsasfda)
+  puts '=' * 40
+  help_cmd.run %w(help)
+  p
 end
