@@ -51,7 +51,8 @@ See also 'examine' and 'whatis'.
     ## FIXME
     ## width = self.debugger.settings['width']
     width = (ENV['COLUMNS'] || '80').to_i
-    msg(Columnize::columnize(commands, width, '    '))
+    msg(Columnize::columnize(commands, width, ' ' * 4, 
+                             true, true, ' ' * 2))
   end
 
   # List the command categories and a short description of each.
@@ -103,7 +104,8 @@ Type "help" followed by command name for full documentation.
       ## FIXME
       ## width = self.debugger.settings['width']
       width = (ENV['COLUMNS'] || '80').to_i
-      msg(Columnize::columnize(cmds, width, '    '))
+      msg(Columnize::columnize(cmds, width, ' ' * 4, 
+                               true, true, ' ' * 2))
       return
     end
         
