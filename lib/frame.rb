@@ -13,31 +13,37 @@ class Debugger
     def format_stack_entry(frame)
       return 'invalid frame' if frame.invalid?
       # FIXME: prettify 
-      s = frame.type
+      # FIXME: frame.method_class is not always correct. Investigate.
+      s = "#{frame.type} "
+      s += "#{frame.method_class}#" if frame.method_class
       if frame.method 
         iseq = frame.iseq
-        if iseq
+        if frame.type != 'CFUNC'
           args = 0.upto(iseq.arity-1).map do |i| 
             iseq.local_name(i)
           end.join(', ')
-          
-          last = iseq.local_table_size-1
-          if last > iseq.arity
-            args += '; ' + args = iseq.arity.upto(last).map do |i| 
-              iseq.local_name(i)
-            end.join(', ')
-          end
         else
-          args = '?'
+          args = "(#{frame.arity} args)"
         end
-        s += " #{frame.method}"
+        s += frame.method
         if frame.type == 'METHOD'
           s += "(#{args})"
         elsif ['BLOCK', 'METHOD', 'LAMBDA', 'TOP', 'EVAL'].member?(frame.type)
           s += " |#{args}|" unless args.empty?
+        else
+          s += "(#{frame.arity} args)" unless frame.arity == 0
         end
       end
-      s += " #{frame.source_container} at line #{frame.source_location}"
+      s += " #{frame.source_container}"
+      if frame.source_location
+        if frame.source_location.size == 1
+          s += " at line #{frame.source_location[0]}" if 
+            frame.source_location[0] != 0
+        else
+          s += " at lines #{frame.source_location}"
+        end
+      end
+      return s
     end
 
     def print_stack_entry(frame)
@@ -76,7 +82,6 @@ if __FILE__ == $0
   puts '=' * 10
   x  = Proc.new do |a| 
     print_stack_trace(RubyVM::ThreadFrame::current)
-    puts RubyVM::ThreadFrame::current.iseq.disasm
   end
   x.call(1,2)
   class C
