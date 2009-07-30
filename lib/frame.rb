@@ -13,9 +13,8 @@ class Debugger
     def format_stack_entry(frame)
       return 'invalid frame' if frame.invalid?
       # FIXME: prettify 
-      # FIXME: frame.method_class is not always correct. Investigate.
       s = "#{frame.type} "
-      s += "#{frame.method_class}#" if frame.method_class
+      s += "#{eval('self.class', frame.binding)}#" 
       if frame.method 
         iseq = frame.iseq
         if frame.type != 'CFUNC'
@@ -46,17 +45,18 @@ class Debugger
       return s
     end
 
-    def print_stack_entry(frame)
+    def print_stack_entry(frame, i, prefix='    ')
       # FIXME: remove puts. 
-      puts format_stack_entry(frame)
+      puts "%s#%d %s" % [prefix, i, format_stack_entry(frame)]
     end
 
     # Print `count' frame entries
-    def print_stack_trace(frame, count=nil)
+    def print_stack_trace(frame, count=nil, current_pos=nil)
       n = count_frames(frame)
       n = [n, count].min if count
-      n.downto(1) do |i|
-        print_stack_entry(frame)
+      0.upto(n-1) do |i|
+        prefix = (i == current_pos) ? '--> ' : '    '
+        print_stack_entry(frame, i, prefix)
         frame = frame.prev
       end
     end
