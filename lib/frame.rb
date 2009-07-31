@@ -1,10 +1,5 @@
 class Debugger
   module Frame
-    # Return a count of the number of frames we've got
-    def count_frames(frame, count_start=0)
-      frame.stack_size - count_start
-    end
-
     def format_stack_entry(frame)
       return 'invalid frame' if frame.invalid?
       # FIXME: prettify 
@@ -47,7 +42,7 @@ class Debugger
 
     # Print `count' frame entries
     def print_stack_trace(frame, count=nil, current_pos=nil)
-      n = count_frames(frame)
+      n = frame.stack_size
       n = [n, count].min if count
       0.upto(n-1) do |i|
         prefix = (i == current_pos) ? '--> ' : '    '
