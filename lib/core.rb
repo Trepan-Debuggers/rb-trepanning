@@ -20,16 +20,9 @@ class Debugger
       @event = event
       @frame = frame
 
-      # Cache of frames we've encountered
-      @threads2frames = {}
-      @threads2frames[Thread.current] = {0 => @frame}
-
       @processor.process_commands(@frame)
 
       # FIXME: unblock other threads
-      # Remove access to @frame. 
-      @frame = nil 
-      @threads2frames = {}
     end
 
     # A Ruby 1.8-style event processor. We don't use file, line, id, bind. 

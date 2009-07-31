@@ -1,13 +1,22 @@
 class Debugger
   class CmdProcessor
-    attr_reader :aliases  # Hash of command names indexed by alias name
-    attr_reader :commands # Hash of command objects indexed by name
+    attr_reader   :aliases   # Hash of command names indexed by alias name
+    attr_reader   :commands  # Hash of command objects indexed by name
+    attr_reader   :current_thread
+    attr_accessor :frame     # ThreadFrame, current frame
+    attr_accessor :top_frame # top frame of current thread. Since
+                             # right now the ThreadFrame method has "prev" 
+                             # but no way to move in the other direction.
+                             # So we store the top frame. 
+    attr_reader   :threads2frames
 
     def initialize(core)
-      @event    = nil
-      @frame    = nil
-      @prompt   = '(rdbgr): '
-      @core     = core
+      @event          = nil
+      @frame          = nil
+      @prompt         = '(rdbgr): '
+      @core           = core
+      @current_thread = nil
+      @thread2frames  = {}
       # Load up debugger commands. Sets @commands, @aliases
       load_debugger_commands 
     end
@@ -40,7 +49,7 @@ class Debugger
     # in evaluation.
     def get_an_int(arg, opts={})
       ret_value = get_int_noerr(arg)
-      if ret_value
+      if !ret_value
         if opts[:msg_on_error]
           errmsg(opts[:msg_on_error])
         else
@@ -137,21 +146,33 @@ class Debugger
         return true if !str || 'q' == str.strip
       end
         
-        # Eval anything that's not a command.
-      puts debug_eval(str)
+      # Eval anything that's not a command.
+      msg debug_eval(str)
       return false
     end
 
     def process_commands(frame=nil)
+
+      # Cache of frames we've encountered
+      @threads2frames = {}
+      @threads2frames[Thread.current] = {0 => @frame}
+      @current_thread = Thread.current
+
       @frame = frame
+      @top_frame = frame
       leave_loop = false
-        while not leave_loop do
+      while not leave_loop do
           leave_loop = process_command_and_quit?()
           # Might have other stuff here.
         end
     rescue IOError, Errno::EPIPE
     rescue Exception
       puts "INTERNAL ERROR!!! #{$!}\n" rescue nil
+
+      # Remove access to @frame. 
+      @top_frame = @frame = nil 
+      @threads2frames = {}
+
     end
 
     def read_command()
