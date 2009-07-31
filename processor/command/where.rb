@@ -36,13 +36,13 @@ Examples:
   # This method runs the command
   def run(args) # :nodoc
     if args.size > 1
-      # Deal with this better later.
-      count = Integer(args[1]) rescue nil
+      # FIXME: set min and max values.
+      count = @proc.get_int(args[1], :cmdname => 'where')
     end
     if @core and @core.frame
       print_stack_trace(@core.frame, count)
-    elsif @proc
-      @proc.errmsg 'No frame'
+    else
+      errmsg 'No frame'
     end
     return false  # Don't break out of cmd loop
   end
@@ -53,8 +53,11 @@ if __FILE__ == $0
   require_relative File.join(%w(.. .. lib core))
   require 'thread_frame'
   core = Debugger::Core.new()
+  proc = Debugger::CmdProcessor.new(core)
   cmd = Debugger::WhereCommand.new
   cmd.core = core
+  cmd.proc = proc
+    
   core.frame = RubyVM::ThreadFrame::current
   p cmd.class.const_get(:NAME_ALIASES)
   cmd.run %w(where)

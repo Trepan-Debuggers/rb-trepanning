@@ -8,7 +8,7 @@ class Debugger
   # See also 'rdbgr' the top-level Debugger class and command-line routine
   # which ultimately will call this.
   class Core
-    attr_accessor :frame
+    attr_accessor :frame, :threads2frames
     def initialize
       @processor = CmdProcessor.new(self)
     end
@@ -19,10 +19,17 @@ class Debugger
       @arg   = arg
       @event = event
       @frame = frame
+
+      # Cache of frames we've encountered
+      @threads2frames = {}
+      @threads2frames[Thread.current] = {0 => @frame}
+
       @processor.process_commands(@frame)
+
       # FIXME: unblock other threads
       # Remove access to @frame. 
       @frame = nil 
+      @threads2frames = {}
     end
 
     # A Ruby 1.8-style event processor. We don't use file, line, id, bind. 
