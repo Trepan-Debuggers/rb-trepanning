@@ -2,12 +2,7 @@ class Debugger
   module Frame
     # Return a count of the number of frames we've got
     def count_frames(frame, count_start=0)
-      count = -count_start
-      while frame do
-        count += 1
-        frame = frame.prev
-      end
-      count
+      frame.stack_size - count_start
     end
 
     def format_stack_entry(frame)

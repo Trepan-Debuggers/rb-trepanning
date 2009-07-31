@@ -25,7 +25,6 @@ class TestLibFrame < Test::Unit::TestCase
       assert_equal(count, count_frames(frame))
       s = format_stack_entry(frame)
       pat = /^METHOD .*#foo\(count\) \["file", ".*test-lib-frame.rb"\] at line \d+/
-      puts s
       assert s =~ pat
     end
     foo(base_count+1)
