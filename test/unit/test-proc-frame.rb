@@ -6,12 +6,6 @@ require_relative File.join(%w(.. .. processor frame))
 $errors = []
 $msgs   = []
 
-class Debugger::CmdProcessor
-  # This is probably cheating. Don't want to do send's or
-  # define explicitly though.
-  attr_accessor :frame_index, :top_frame, :frame
-end
-
 # Test Debugger:CmdProcessor Frame portion
 class TestCmdProcessorFrame < Test::Unit::TestCase
 

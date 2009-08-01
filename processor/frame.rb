@@ -1,5 +1,15 @@
 class Debugger
   class CmdProcessor
+
+    attr_reader   :current_thread
+    attr_accessor :frame        # ThreadFrame, current frame
+    attr_accessor :frame_index  # frame index in a "where" command
+    attr_accessor :top_frame    # top frame of current thread. Since
+                                # right now the ThreadFrame method has "prev" 
+                                # but no way to move in the other direction.
+                                # So we store the top frame. 
+    attr_reader   :threads2frames
+
     def adjust_frame(frame_num, absolute_pos)
       unless absolute_pos
         frame_num += @frame_index
@@ -24,6 +34,23 @@ class Debugger
       end
 
     end
+
+    # Initializes the thread and frame variables: @frame, @top_frame, 
+    # @frame_index, @current_thread, and @threads2frames
+    def frame_setup(frame, current_thread)
+      @frame_index    = 0
+      @current_thread = current_thread
+      @frame = @top_frame = frame
+      @threads2frames ||= {}
+      @threads2frames[@current_thread] = @top_frame
+    end
+
+    # Remove access to thread and frame variables
+    def frame_teardown
+      @top_frame = @frame = @frame_index = @current_thread = nil 
+      @threads2frames = {}
+    end
+
 
   # # The dance we have to do to set debugger frame state to
   # #    `frame', which is in the thread with id `thread_id'. We may
@@ -59,9 +86,8 @@ if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
   class Debugger::CmdProcessor
-    attr_accessor :frame_index, :top_frame, :frame
-    def initialize(dummy)
-      @frame_index = 0
+    def initialize(frame)
+      frame_setup(frame, Thread::current)
     end
     def errmsg(msg)
       puts msg
@@ -71,8 +97,7 @@ if __FILE__ == $0
     end
   end
 
-  proc = Debugger::CmdProcessor.new(nil)
-  proc.top_frame = proc.frame = RubyVM::ThreadFrame.current
+  proc = Debugger::CmdProcessor.new(RubyVM::ThreadFrame.current)
   puts "stack size: #{proc.top_frame.stack_size}"
   0.upto(proc.top_frame.stack_size) { |i| proc.adjust_frame(i, true) }
   puts '*' * 10

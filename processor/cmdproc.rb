@@ -9,24 +9,14 @@ class Debugger
   class CmdProcessor
     attr_reader   :aliases      # Hash of command names indexed by alias name
     attr_reader   :commands     # Hash of command objects indexed by name
-    attr_reader   :current_thread
-    attr_accessor :frame        # ThreadFrame, current frame
-    attr_accessor :frame_index  # frame index in a "where" command
-    attr_accessor :top_frame    # top frame of current thread. Since
-                                # right now the ThreadFrame method has "prev" 
-                                # but no way to move in the other direction.
-                                # So we store the top frame. 
-    attr_reader   :threads2frames
 
     def initialize(core)
       @core           = core
-      @current_thread = nil
       @event          = nil
-      @frame          = nil
-      @frame_index    = nil
       @prompt         = '(rdbgr): '
-      @thread2frames  = {}
-      @top_frame      = nil
+
+      # Start with empty thread and frame info.
+      frame_teardown 
 
       # Load up debugger commands. Sets @commands, @aliases
       cmd_dir = File.expand_path(File.join(File.dirname(__FILE__),
@@ -79,16 +69,9 @@ class Debugger
     end
 
     # This is the main entry point.
-    def process_commands(frame=nil)
+    def process_commands(frame)
 
-      @frame_index    = 0
-      @current_thread = Thread.current
-      @frame = @top_frame = frame
-
-      # Cache of top_frames we've encountered
-      @threads2frames = {}
-      @threads2frames[@current_thread] = @top_frame
-
+      frame_setup(frame, Thread.current)
       print_location
 
       leave_loop = false
@@ -100,10 +83,7 @@ class Debugger
     rescue Exception
       puts "INTERNAL ERROR!!! #{$!}\n" rescue nil
 
-      # Remove access to @frame. 
-      @top_frame = @frame = @frame_index = @current_thread = nil 
-      @threads2frames = {}
-
+      frame_teardown
     end
 
     # Loads in debugger commands by require'ing each ruby file in the
