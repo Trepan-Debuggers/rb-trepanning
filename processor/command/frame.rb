@@ -83,7 +83,7 @@ See also 'up', 'down' 'where' and 'info thread'.
   # invalid.
   def get_from_thread_name_or_id(name_or_id, report_error=true)
     # FIXME: for now this is what we do.
-    return @proc.frame, nil
+    return nil, nil
 
     # FIXME: the below is a slight port of pydbgr
     thread_id = @proc.get_int_noerr(name_or_id)

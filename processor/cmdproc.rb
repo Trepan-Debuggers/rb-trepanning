@@ -54,6 +54,11 @@ class Debugger
       end
     end
 
+    def print_location
+      msg "(#{@frame.source_container[1]}:#{@frame.source_location[0]})"
+    end
+
+    # This is the main entry point.
     # Run one debugger command. True is returned if we want to quit.
     def process_command_and_quit?()
       str = read_command()
@@ -84,6 +89,8 @@ class Debugger
       # Cache of top_frames we've encountered
       @threads2frames = {}
       @threads2frames[@current_thread] = @top_frame
+
+      print_location
 
       leave_loop = false
       while not leave_loop do

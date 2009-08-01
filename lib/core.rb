@@ -34,7 +34,6 @@ class Debugger
     # call to the debugger.
     def debugger
       frame = RubyVM::ThreadFrame.current.prev
-      p frame.source_location, frame.source_container
       event_processor('debugger-call', frame)
     end
     
