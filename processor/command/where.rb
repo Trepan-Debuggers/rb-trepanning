@@ -40,7 +40,7 @@ Examples:
       count = @proc.get_int(args[1], :cmdname => 'where')
     end
     if @core and @core.frame
-      print_stack_trace(@core.frame, count)
+      print_stack_trace(@core.frame, count, @proc.frame_index)
     else
       errmsg 'No frame'
     end
