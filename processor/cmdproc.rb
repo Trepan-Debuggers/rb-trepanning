@@ -1,24 +1,37 @@
+# The main "driver" class for a command processor. Other parts of the 
+# command class and debugger command objects are pulled in from here.
+
+require_relative 'msg'
+require_relative 'frame'
+require_relative 'validate'
+
 class Debugger
   class CmdProcessor
-    attr_reader   :aliases   # Hash of command names indexed by alias name
-    attr_reader   :commands  # Hash of command objects indexed by name
+    attr_reader   :aliases      # Hash of command names indexed by alias name
+    attr_reader   :commands     # Hash of command objects indexed by name
     attr_reader   :current_thread
-    attr_accessor :frame     # ThreadFrame, current frame
-    attr_accessor :top_frame # top frame of current thread. Since
-                             # right now the ThreadFrame method has "prev" 
-                             # but no way to move in the other direction.
-                             # So we store the top frame. 
+    attr_accessor :frame        # ThreadFrame, current frame
+    attr_accessor :frame_index  # frame index in a "where" command
+    attr_accessor :top_frame    # top frame of current thread. Since
+                                # right now the ThreadFrame method has "prev" 
+                                # but no way to move in the other direction.
+                                # So we store the top frame. 
     attr_reader   :threads2frames
 
     def initialize(core)
-      @event          = nil
-      @frame          = nil
-      @prompt         = '(rdbgr): '
       @core           = core
       @current_thread = nil
+      @event          = nil
+      @frame          = nil
+      @frame_index    = nil
+      @prompt         = '(rdbgr): '
       @thread2frames  = {}
+      @top_frame      = nil
+
       # Load up debugger commands. Sets @commands, @aliases
-      load_debugger_commands 
+      cmd_dir = File.expand_path(File.join(File.dirname(__FILE__),
+                                           'command'))
+      load_debugger_commands(cmd_dir)
     end
 
     def debug_eval(str)
@@ -41,96 +54,6 @@ class Debugger
       end
     end
 
-    def errmsg(message)
-      puts "Error: #{message}"
-    end
-
-    # Like cmdfns.get_an_int(), but if there's a stack frame use that
-    # in evaluation.
-    def get_an_int(arg, opts={})
-      ret_value = get_int_noerr(arg)
-      if !ret_value
-        if opts[:msg_on_error]
-          errmsg(opts[:msg_on_error])
-        else
-          errmsg("Expecting an integer, got: #{arg}.")
-        end
-        return nil
-        if opts[:min_value] and ret_value < opts[:min_value]
-          errmsg("Expecting integer value to be at least %d; got %d.",
-                 opts[min_value], ret_value)
-          return nil
-        elsif opts[:max_value] and ret_value > opts[:max_value]
-            errmsg("Expecting integer value to be at most %d; got %d.",
-                   opts[:min_value], ret_value)
-            return nil
-        end
-      end
-      return ret_value
-    end
-
-    unless defined?(DEFAULT_GET_INT_OPTS)
-      DEFAULT_GET_INT_OPTS = {
-        :min_value => 0, :default => 1, :cmdname => nil, :at_most => nil}
-    end
-
-    # If no argument use the default. If arg is a an integer between
-    # least min_value and at_most, use that. Otherwise report an error.
-    # If there's a stack frame use that in evaluation.
-    def get_int(arg, opts={})
-      
-      return default unless arg
-      opts = DEFAULT_GET_INT_OPTS.merge(opts)
-      val = arg ? get_int_noerr(arg) : opts[:default]
-      unless val
-        if opts[:cmdname]
-          errmsg(("Command '%s' expects an integer; " +
-                  "got: %s.") % [opts[:cmdname], arg])
-        else
-          errmsg('Expecting a positive integer, got: %s' % arg)
-        end
-        return nil
-      end
-      
-      if val < opts[:min_value]
-        if cmdname
-          errmsg(("Command '%s' expects an integer at least" +
-                  ' %d; got: %d.') %
-                 [cmdname, opts[:min_value], opts[:default]])
-        else
-          errmsg(("Expecting a positive integer at least" +
-                  ' %d; got: %d') %
-                 [opts[:min_value], opts[:default]])
-        end
-        return nil
-      elsif opts[:at_most] and val > opts[:at_most]
-        if opts[:cmdname]
-          errmsg(("Command '%s' expects an integer at most" +
-                  ' %d; got: %d.') %
-                 [opts[:cmdname], opts[:at_most], val])
-        else
-          errmsg(("Expecting an integer at most %d; got: %d") %
-                 [opts[:at_most], val])
-        end
-      end
-      return val
-    end
-
-    # Eval arg and it is an integer return the value. Otherwise
-    # return nil
-    def get_int_noerr(arg)
-      b = @frame ? @frame.binding : nil
-      begin
-        val = Integer(eval(arg, b))
-      rescue 
-        return nil
-      end
-    end
-
-    def msg(message)
-      puts message
-    end
-
     # Run one debugger command. True is returned if we want to quit.
     def process_command_and_quit?()
       str = read_command()
@@ -151,15 +74,17 @@ class Debugger
       return false
     end
 
+    # This is the main entry point.
     def process_commands(frame=nil)
 
-      # Cache of frames we've encountered
-      @threads2frames = {}
-      @threads2frames[Thread.current] = {0 => @frame}
+      @frame_index    = 0
       @current_thread = Thread.current
+      @frame = @top_frame = frame
 
-      @frame = frame
-      @top_frame = frame
+      # Cache of top_frames we've encountered
+      @threads2frames = {}
+      @threads2frames[@current_thread] = @top_frame
+
       leave_loop = false
       while not leave_loop do
           leave_loop = process_command_and_quit?()
@@ -170,23 +95,16 @@ class Debugger
       puts "INTERNAL ERROR!!! #{$!}\n" rescue nil
 
       # Remove access to @frame. 
-      @top_frame = @frame = nil 
+      @top_frame = @frame = @frame_index = @current_thread = nil 
       @threads2frames = {}
 
-    end
-
-    def read_command()
-      require 'readline'
-      Readline.readline(@prompt)
     end
 
     # Loads in debugger commands by require'ing each ruby file in the
     # 'command' directory. Then a new instance of each class of the 
     # form Debugger::xxCommand is added to @commands and that array
     # is returned.
-    def load_debugger_commands
-      cmd_dir = File.expand_path(File.join(File.dirname(__FILE__),
-                                           'command'))
+    def load_debugger_commands(cmd_dir)
       Dir.chdir(cmd_dir) do
         # Note: require_relative doesn't seem to pick up the above
         # chdir.

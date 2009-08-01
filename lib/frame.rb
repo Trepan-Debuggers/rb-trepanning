@@ -37,7 +37,7 @@ class Debugger
 
     def print_stack_entry(frame, i, prefix='    ')
       # FIXME: remove puts. 
-      puts "%s#%d %s" % [prefix, i, format_stack_entry(frame)]
+      msg "%s#%d %s" % [prefix, i, format_stack_entry(frame)]
     end
 
     # Print `count' frame entries
@@ -58,7 +58,9 @@ if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
   include Debugger::Frame
-  p count_frames(RubyVM::ThreadFrame.current)
+  def msg(msg)
+    puts msg
+  end
   print_stack_trace(RubyVM::ThreadFrame.current)
   def foo
     puts '=' * 10
@@ -85,7 +87,6 @@ if __FILE__ == $0
   eval("print_stack_trace(RubyVM::ThreadFrame.current)")
   puts '=' * 30
   [1].each do |a; b|
-    p RubyVM::ThreadFrame::current.arity
     print_stack_trace(RubyVM::ThreadFrame::current)
     end      
 end

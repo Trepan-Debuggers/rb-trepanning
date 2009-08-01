@@ -73,8 +73,7 @@ See also 'up', 'down' 'where' and 'info thread'.
                                    frame_num, position_str])
       return false
     else
-      ## FIXME:
-      ## @proc.adjust_frame(frame_num, true)
+      @proc.adjust_frame(frame_num, true)
       return true
     end
   end
