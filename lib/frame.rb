@@ -23,11 +23,7 @@ class Debugger
           s += "(#{frame.arity} args)" unless frame.arity == 0
         end
       end
-      s += if 'file' == frame.source_container[0]
-             " in file #{frame.source_container[1]}"
-           else
-             " #{frame.source_container}"
-           end
+      s += " in #{frame.source_container[0]} #{frame.source_container[1]}"
       if frame.source_location
         if frame.source_location.size == 1
           s += " at line #{frame.source_location[0]}" if 
