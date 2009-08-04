@@ -120,11 +120,15 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative File.join(%w(.. .. lib core))
   require_relative File.join(%w(.. cmdproc))
-  core = Debugger::Core.new()
-  dbg = Debugger::CmdProcessor.new(core)
-  cmds = dbg.instance_variable_get('@commands')
+
+  # FIXME: put in common mock stub.
+  require_relative File.join(%w(.. .. lib core))
+  class Debugger ; end
+  core = Debugger::Core.new(Debugger.new)
+  proc = Debugger::CmdProcessor.new(core)
+
+  cmds = proc.instance_variable_get('@commands')
   help_cmd = cmds['help']
   help_cmd.run %w(help help)
   puts '=' * 40
