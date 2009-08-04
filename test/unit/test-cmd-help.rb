@@ -4,14 +4,19 @@ require_relative File.join(%w(.. .. lib core))
 require_relative File.join(%w(.. .. processor cmdproc))
 require_relative File.join(%w(.. .. processor command help))
 
+# Mock debugger stub. FIXME: put in comment helper routine.
+class Debugger
+end
+
 class TestCommandHelp < Test::Unit::TestCase
 
   def setup
-    @errors             = []
-    @msgs               = []
-    @core = Debugger::Core.new()
-    @dbg = Debugger::CmdProcessor.new(@core)
-    @cmds = @dbg.instance_variable_get('@commands')
+    @errors   = []
+    @msgs     = []
+    @dbg      = Debugger.new
+    @core     = Debugger::Core.new(@dbg)
+    @cmdproc  = @core.processor = Debugger::CmdProcessor.new(@core)
+    @cmds     = @cmdproc.instance_variable_get('@commands')
     @help_cmd = @cmds['help']
     def @help_cmd.msg(message)
       @msgs << message

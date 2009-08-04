@@ -9,8 +9,8 @@ class Debugger::DownCommand < Debugger::Command
     HELP = 
 "d(own) [count]
 
-Move the current frame one level down in the stack trace (to a newer
-frame). 0 is the most recent frame. 
+Move the current frame down in the stack trace (to a newer frame). 0
+is the most recent frame. If no count is given, move down 1.
 
 See also 'up' and 'frame'.
 "

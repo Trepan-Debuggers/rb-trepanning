@@ -3,13 +3,18 @@ require 'test/unit'
 require_relative File.join(%w(.. .. processor cmdproc))
 require_relative File.join(%w(.. .. lib core))
 
+# Mock debugger stub. FIXME: put in comment helper routine.
+class Debugger
+end
+
 # Test Debugger:CmdProcessor
 class TestCmdProcessor < Test::Unit::TestCase
 
   def setup
-    @core = Debugger::Core.new()
-    @dbg = Debugger::CmdProcessor.new(@core)
-    @cmds = @dbg.instance_variable_get('@commands')
+    @dbg     = Debugger.new
+    @core    = Debugger::Core.new(@dbg)
+    @cmdproc = @core.processor = Debugger::CmdProcessor.new(@core)
+    @cmds    = @cmdproc.instance_variable_get('@commands')
   end
 
   # See that we have can load up commands

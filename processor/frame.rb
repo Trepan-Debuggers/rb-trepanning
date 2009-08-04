@@ -2,24 +2,26 @@ class Debugger
   class CmdProcessor
 
     attr_reader   :current_thread
-    attr_accessor :frame        # ThreadFrame, current frame
-    attr_accessor :frame_index  # frame index in a "where" command
-    attr_accessor :top_frame    # top frame of current thread. Since
-                                # right now the ThreadFrame method has "prev" 
-                                # but no way to move in the other direction.
-                                # So we store the top frame. 
-    attr_reader   :threads2frames
+    attr_accessor :frame          # ThreadFrame, current frame
+    attr_accessor :frame_index    # frame index in a "where" command
+    attr_accessor :top_frame      # top frame of current thread. Since
+                                  # right now the ThreadFrame method has "prev" 
+                                  # but no way to move in the other direction.
+                                  # So we store the top frame. 
+    attr_reader   :threads2frames # Hash[thread_id] -> top_frame
 
     def adjust_frame(frame_num, absolute_pos)
-      unless absolute_pos
+      if absolute_pos
+        frame_num += @top_frame.stack_size if frame_num < 0
+      else
         frame_num += @frame_index
       end
 
       if frame_num < 0
-        errmsg("Adjusting would put us beyond the newest frame.")
+        errmsg('Adjusting would put us beyond the newest frame.')
         return
       elsif frame_num >= @top_frame.stack_size
-        errmsg("Adjusting would put us beyond the oldest frame.")
+        errmsg('Adjusting would put us beyond the oldest frame.')
         return
       end
 
@@ -41,7 +43,7 @@ class Debugger
       @frame_index    = 0
       @current_thread = current_thread
       @frame = @top_frame = frame
-      @threads2frames ||= {}
+      @threads2frames ||= {}  # or do we want = {} ? 
       @threads2frames[@current_thread] = @top_frame
     end
 

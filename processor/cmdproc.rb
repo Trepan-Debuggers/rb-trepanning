@@ -119,22 +119,21 @@ class Debugger
 end
 
 if __FILE__ == $0
-  # Demo it.
-  require_relative '../lib/core'
-  core = Debugger::Core.new()
-  dbg = Debugger::CmdProcessor.new(core)
-  dbg.msg('cmdproc main')
-  dbg.errmsg('Whoa!')
-  cmds = dbg.instance_variable_get('@commands')
+  $0 = 'foo' # So we don't get here again
+  require_relative File.join(%w(.. rbdbgr))
+  dbg =  Debugger.new
+  dbg.core.processor.msg('cmdproc main')
+  dbg.core.processor.errmsg('Whoa!')
+  cmds = db.core.processor.instance_variable_get('@commands')
   p cmds.keys
-  p dbg.instance_variable_get('@aliases')
+  p db.core.processor.instance_variable_get('@aliases')
   cmd_name, cmd_obj = cmds.first
   puts cmd_obj.class.const_get(:HELP)
   puts cmd_obj.class.const_get(:SHORT_HELP)
 
   if ARGV.size > 0
-    dbg.msg('Enter "q" to quit')
-    dbg.process_commands
+    db.core.processor.msg('Enter "q" to quit')
+    dbg.proc_process_commands
   else
     $input = []
     class << dbg
@@ -143,6 +142,6 @@ if __FILE__ == $0
       end
     end
     $input = ['1+2']
-    dbg.process_command_and_quit?
+    db.core.processor.process_command_and_quit?
   end
 end

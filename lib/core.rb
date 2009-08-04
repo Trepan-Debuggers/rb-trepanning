@@ -7,9 +7,19 @@ class Debugger
   # 
   # See also 'rdbgr' the top-level Debugger class and command-line routine
   # which ultimately will call this.
+
   class Core
-    attr_accessor :frame, :threads2frames
-    def initialize
+    attr_reader   :debugger   # Top-level debugger object
+    attr_accessor :frame      # ThreadFrame object
+    attr_accessor :processor  # Command processor object
+    attr_accessor :settings   # Hash of things you can configure
+
+    DEFAULT_SETTINGS = {
+      # No settings for now.
+    } unless defined?(DEFAULT_SETTINGS)
+    def initialize(debugger, settings={})
+      @debugger  = debugger
+      @settings  = DEFAULT_SETTINGS.merge(settings)
       @processor = CmdProcessor.new(self)
     end
 
@@ -40,11 +50,13 @@ class Debugger
   end
 end
 if __FILE__ == $0
-  dc = Debugger::Core.new()
+  require_relative File.join(%w(.. rbdbgr))
+  dbg = Debugger.new()
   if ARGV.size > 0
-    def foo
+    def foo(dbg)
       p 'foo here'
+      dbg.debugger
     end
-    dc.debugger
+    foo(dbg)
   end
 end
