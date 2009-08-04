@@ -12,6 +12,7 @@ class Debugger
 
     def initialize(core)
       @core           = core
+      # @dbgr           = core.dbgr
       @event          = nil
       @prompt         = '(rdbgr): '
 
@@ -124,15 +125,15 @@ if __FILE__ == $0
   dbg =  Debugger.new
   dbg.core.processor.msg('cmdproc main')
   dbg.core.processor.errmsg('Whoa!')
-  cmds = db.core.processor.instance_variable_get('@commands')
+  cmds = dbg.core.processor.instance_variable_get('@commands')
   p cmds.keys
-  p db.core.processor.instance_variable_get('@aliases')
+  p dbg.core.processor.instance_variable_get('@aliases')
   cmd_name, cmd_obj = cmds.first
   puts cmd_obj.class.const_get(:HELP)
   puts cmd_obj.class.const_get(:SHORT_HELP)
 
   if ARGV.size > 0
-    db.core.processor.msg('Enter "q" to quit')
+    dbg.core.processor.msg('Enter "q" to quit')
     dbg.proc_process_commands
   else
     $input = []

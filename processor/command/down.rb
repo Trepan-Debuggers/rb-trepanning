@@ -62,7 +62,6 @@ if __FILE__ == $0
 
   # FIXME: put in common mock stub.
   require_relative File.join(%w(.. .. lib core))
-  class Debugger ; end
   core = Debugger::Core.new(Debugger.new)
   proc = Debugger::CmdProcessor.new(core)
 

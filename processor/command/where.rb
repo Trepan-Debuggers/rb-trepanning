@@ -50,11 +50,10 @@ end
 
 if __FILE__ == $0
   # Demo it.
+  require 'thread_frame'
 
   # FIXME: put in common mock stub.
   require_relative File.join(%w(.. .. lib core))
-  require 'thread_frame'
-  class Debugger ; end
   core = Debugger::Core.new(Debugger.new)
   proc = Debugger::CmdProcessor.new(core)
 

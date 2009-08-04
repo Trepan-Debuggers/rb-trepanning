@@ -9,7 +9,7 @@ class Debugger
   # which ultimately will call this.
 
   class Core
-    attr_reader   :debugger   # Top-level debugger object
+    attr_reader   :dbgr       # Top-level debugger object
     attr_accessor :frame      # ThreadFrame object
     attr_accessor :processor  # Command processor object
     attr_accessor :settings   # Hash of things you can configure
@@ -18,7 +18,7 @@ class Debugger
       # No settings for now.
     } unless defined?(DEFAULT_SETTINGS)
     def initialize(debugger, settings={})
-      @debugger  = debugger
+      @dbgr      = debugger
       @settings  = DEFAULT_SETTINGS.merge(settings)
       @processor = CmdProcessor.new(self)
     end

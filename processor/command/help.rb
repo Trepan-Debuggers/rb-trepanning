@@ -121,11 +121,11 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative File.join(%w(.. cmdproc))
+  require_relative File.join(%w(.. .. lib core))
 
   # FIXME: put in common mock stub.
-  require_relative File.join(%w(.. .. lib core))
-  class Debugger ; end
-  core = Debugger::Core.new(Debugger.new)
+  dbg  = Debugger.new
+  core = Debugger::Core.new(dbg)
   proc = Debugger::CmdProcessor.new(core)
 
   cmds = proc.instance_variable_get('@commands')
