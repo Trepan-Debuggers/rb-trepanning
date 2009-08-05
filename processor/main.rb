@@ -46,6 +46,25 @@ class Debugger
       end
     end
 
+    # Check that we meed the criteria that cmd specifies it needs
+    def ok_for_running(cmd, name, nargs)
+      # TODO check execution_set against execution status.
+      # Check we have frame is not null
+      min_args = cmd.class.const_get(:MIN_ARGS)
+      if nargs < min_args
+        errmsg(("Command '%s' needs at least %d argument(s); " + 
+                "got %d.") % [name, min_args, nargs])
+        return false
+      end
+      max_args = cmd.class.const_get(:MAX_ARGS)
+      if max_args and nargs > max_args
+        errmsg(("Command '%s' needs at most %d argument(s); " + 
+                "got %d.") % [name, max_args, nargs])
+        return false
+      end
+      return true
+    end
+
     def print_location
       msg "(#{@frame.source_container[1]}:#{@frame.source_location[0]})"
     end
@@ -59,7 +78,12 @@ class Debugger
       cmd_name = args[0]
       cmd_name = @aliases[cmd_name] if @aliases.member?(cmd_name)
       if @commands.member?(cmd_name)
-        return @commands[cmd_name].run(args) 
+        cmd = @commands[cmd_name]
+        if ok_for_running(cmd, cmd_name, args.size-1)
+          return cmd.run(args) 
+        else
+          return false
+        end
       else
         # Warning: the next line is going away...
         return true if !str || 'q' == str.strip
