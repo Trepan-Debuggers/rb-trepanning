@@ -36,11 +36,14 @@ Examples:
   # This method runs the command
   def run(args) # :nodoc
     if args.size > 1
-      # FIXME: set min and max values.
-      count = @proc.get_int(args[1], :cmdname => 'where')
+      stack_size = @proc.top_frame.stack_size
+      count = @proc.get_int(args[1], 
+                            :cmdname   => 'where',
+                            :max_value => stack_size-1)
+      return false unless count
     end
-    if @core and @core.frame
-      print_stack_trace(@core.frame, count, @proc.frame_index)
+    if @proc.frame
+      print_stack_trace(@proc.frame, count, @proc.frame_index)
     else
       errmsg 'No frame'
     end
@@ -51,25 +54,24 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
+  require_relative File.join(%w(.. mock))
+  dbgr = MockDebugger.new
 
-  # FIXME: put in common mock stub.
-  require_relative File.join(%w(.. .. lib core))
-  core = Debugger::Core.new(Debugger.new)
-  proc = Debugger::CmdProcessor.new(core)
+  cmds = dbgr.core.processor.instance_variable_get('@commands')
+  cmd = cmds['where']
+  processor = dbgr.core.processor
+  processor.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
 
-  cmd = Debugger::WhereCommand.new
-  cmd.core = core
-  cmd.proc = proc
-    
-  core.frame = RubyVM::ThreadFrame::current
   p cmd.class.const_get(:NAME_ALIASES)
   cmd.run %w(where)
   puts '=' * 40
   cmd.run %w(where 1)
   puts '=' * 40
+  cmd.run %w(where 100)
+  puts '=' * 40
   def foo(core, cmd)
     core.frame = RubyVM::ThreadFrame::current
     cmd.run(%w(where))
   end
-  foo(core, cmd)
+  foo(dbgr.core, cmd)
 end

@@ -48,9 +48,7 @@ See also 'examine' and 'whatis'.
   # List all commands arranged in an aligned columns
   def columnize_all_commands
     commands = @proc.commands.keys.sort
-    ## FIXME
-    ## width = self.debugger.settings['width']
-    width = (ENV['COLUMNS'] || '80').to_i
+    width = @proc.settings[:width]
     msg(Columnize::columnize(commands, width, ' ' * 4, 
                              true, true, ' ' * 2))
   end
@@ -101,9 +99,7 @@ Type "help" followed by command name for full documentation.
         category == @proc.commands[cmd_name].category
       end.sort
 
-      ## FIXME
-      ## width = self.debugger.settings['width']
-      width = (ENV['COLUMNS'] || '80').to_i
+      width = @proc.settings[:width]
       msg(Columnize::columnize(cmds, width, ' ' * 4, 
                                true, true, ' ' * 2))
       return
@@ -120,15 +116,10 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative File.join(%w(.. cmdproc))
-  require_relative File.join(%w(.. .. lib core))
+  require_relative File.join(%w(.. mock))
+  dbgr = MockDebugger.new
 
-  # FIXME: put in common mock stub.
-  dbg  = Debugger.new
-  core = Debugger::Core.new(dbg)
-  proc = Debugger::CmdProcessor.new(core)
-
-  cmds = proc.instance_variable_get('@commands')
+  cmds = dbgr.core.processor.instance_variable_get('@commands')
   help_cmd = cmds['help']
   help_cmd.run %w(help help)
   puts '=' * 40

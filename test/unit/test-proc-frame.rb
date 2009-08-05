@@ -6,6 +6,10 @@ require_relative File.join(%w(.. .. processor frame))
 $errors = []
 $msgs   = []
 
+class MockDebugger
+  attr_accessor :dbgr
+end unless defined?(MockDebugger)
+
 # Test Debugger:CmdProcessor Frame portion
 class TestCmdProcessorFrame < Test::Unit::TestCase
 
@@ -13,10 +17,10 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
     $errors = []
     $msgs   = []
 
-    begin
+    if Debugger::CmdProcessor.instance_methods.member?(:load_debugger_commands)
       # Rake test does this
-      @proc = Debugger::CmdProcessor.new(nil)
-    rescue
+      @proc = Debugger::CmdProcessor.new(MockDebugger.new())
+    else
       # Ruby run on this file only does this
       @proc = Debugger::CmdProcessor.new
     end

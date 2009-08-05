@@ -2,7 +2,7 @@ require_relative 'lib/core'     # core event-handling mechanism
 require_relative 'lib/default'  # default debugger settings
 class Debugger
   attr_accessor :core
-  attr_accessor :settings   # Hash of things you can configure
+  attr_reader   :settings   # Hash of things you can configure
   def initialize(settings={})
     @settings = DbgSettings::DEFAULT_SETTINGS.merge(settings)
     @core = Core.new(self, @settings[:core_settings] || {})

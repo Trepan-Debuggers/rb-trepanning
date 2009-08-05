@@ -12,7 +12,7 @@ class Debugger
     attr_reader   :dbgr       # Top-level debugger object
     attr_accessor :frame      # ThreadFrame object
     attr_accessor :processor  # Command processor object
-    attr_accessor :settings   # Hash of things you can configure
+    attr_reader   :settings   # Hash of things you can configure
 
     DEFAULT_SETTINGS = {
       # No settings for now.

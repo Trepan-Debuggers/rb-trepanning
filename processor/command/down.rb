@@ -59,27 +59,24 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
+  require_relative File.join(%w(.. mock))
+  dbgr = MockDebugger.new
 
-  # FIXME: put in common mock stub.
-  require_relative File.join(%w(.. .. lib core))
-  core = Debugger::Core.new(Debugger.new)
-  proc = Debugger::CmdProcessor.new(core)
-
-  cmd = Debugger::DownCommand.new
-  cmd.core = core
-  cmd.proc = proc
-
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current,
-                       Thread::current)
+  cmds = dbgr.core.processor.instance_variable_get('@commands')
+  cmd = cmds['down']
+  processor = dbgr.core.processor
+  processor.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
   cmd.run %w(down)
   cmd.run %w(down 0)
   puts '=' * 40
   cmd.run %w(down 1)
+  cmd.run %w(down -2)
   puts '=' * 40
-  def foo(proc, core, cmd)
+  def foo(processor, core, cmd)
     core.frame = RubyVM::ThreadFrame::current
-    proc.frame = proc.top_frame = core.frame
+    processor.frame = processor.top_frame = core.frame
     cmd.run(%w(down))
+    cmd.run(%w(down -1))
   end
-  foo(proc, core, cmd)
+  foo(processor, dbgr.core, cmd)
 end

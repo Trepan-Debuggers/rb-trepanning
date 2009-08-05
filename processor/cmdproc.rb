@@ -8,11 +8,12 @@ require_relative 'validate'
 class Debugger
   class CmdProcessor
     attr_reader   :aliases      # Hash of command names indexed by alias name
+    attr_reader   :dbgr         # access to Debugger object (via core)
     attr_reader   :commands     # Hash of command objects indexed by name
 
     def initialize(core)
       @core           = core
-      # @dbgr           = core.dbgr
+      @dbgr           = core.dbgr
       @event          = nil
       @prompt         = '(rdbgr): '
 
@@ -116,6 +117,10 @@ class Debugger
         aliases.each {|a| @aliases[a] = cmd_name}
       end
     end
+
+    def settings
+      @dbgr.settings
+    end
   end
 end
 
@@ -137,12 +142,12 @@ if __FILE__ == $0
     dbg.proc_process_commands
   else
     $input = []
-    class << dbg
+    class << dbg.core.processor
       def read_command
         $input.shift
       end
     end
     $input = ['1+2']
-    db.core.processor.process_command_and_quit?
+    dbg.core.processor.process_command_and_quit?
   end
 end

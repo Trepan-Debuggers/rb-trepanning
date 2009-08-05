@@ -29,7 +29,7 @@ class Debugger
 
     unless defined?(DEFAULT_GET_INT_OPTS)
       DEFAULT_GET_INT_OPTS = {
-        :min_value => 0, :default => 1, :cmdname => nil, :at_most => nil}
+        :min_value => 0, :default => 1, :cmdname => nil, :max_value => nil}
     end
 
     # If no argument use the default. If arg is a an integer between
@@ -61,15 +61,16 @@ class Debugger
                  [opts[:min_value], opts[:default]])
         end
         return nil
-      elsif opts[:at_most] and val > opts[:at_most]
+      elsif opts[:max_value] and val > opts[:max_value]
         if opts[:cmdname]
           errmsg(("Command '%s' expects an integer at most" +
                   ' %d; got: %d.') %
-                 [opts[:cmdname], opts[:at_most], val])
+                 [opts[:cmdname], opts[:max_value], val])
         else
           errmsg(("Expecting an integer at most %d; got: %d") %
-                 [opts[:at_most], val])
+                 [opts[:max_value], val])
         end
+        return nil
       end
       return val
     end
