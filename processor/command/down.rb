@@ -1,9 +1,6 @@
 require_relative 'base_cmd'
-require_relative File.join(%w(.. .. lib frame))
 
 class Debugger::DownCommand < Debugger::Command
-
-  include Debugger::Frame
 
   unless defined?(HELP)
     HELP = 
@@ -27,6 +24,9 @@ See also 'up' and 'frame'.
     SHORT_HELP  = 'Move frame in the direction of the caller of the last-selected frame'
   end
   
+  require_relative File.join(%w(.. .. lib frame))
+  include Debugger::Frame
+
   # Run 'down' command. 
   def run(args)
 
@@ -72,11 +72,10 @@ if __FILE__ == $0
   cmd.run %w(down 1)
   cmd.run %w(down -2)
   puts '=' * 40
-  def foo(processor, core, cmd)
-    core.frame = RubyVM::ThreadFrame::current
-    processor.frame = processor.top_frame = core.frame
+  def foo(processor, cmd)
+    processor.top_frame = processor.frame = RubyVM::ThreadFrame::current
     cmd.run(%w(down))
     cmd.run(%w(down -1))
   end
-  foo(processor, dbgr.core, cmd)
+  foo(processor, cmd)
 end

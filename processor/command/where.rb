@@ -1,8 +1,5 @@
 require_relative 'base_cmd'
-require_relative File.join(%w(.. .. lib frame))
 class Debugger::WhereCommand < Debugger::Command
-
-  include Debugger::Frame
 
   unless defined?(HELP)
     HELP = 
@@ -32,6 +29,9 @@ Examples:
     
     SHORT_HELP  = 'Print backtrace of stack frames'
   end
+
+  require_relative File.join(%w(.. .. lib frame))
+  include Debugger::Frame
 
   # This method runs the command
   def run(args) # :nodoc
@@ -69,9 +69,9 @@ if __FILE__ == $0
   puts '=' * 40
   cmd.run %w(where 100)
   puts '=' * 40
-  def foo(core, cmd)
-    core.frame = RubyVM::ThreadFrame::current
+  def foo(processor, cmd)
+    processor.frame = RubyVM::ThreadFrame::current
     cmd.run(%w(where))
   end
-  foo(dbgr.core, cmd)
+  foo(processor, cmd)
 end
