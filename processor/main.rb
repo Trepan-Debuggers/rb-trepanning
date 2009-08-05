@@ -17,7 +17,6 @@ class Debugger
       @core           = core
       @dbgr           = core.dbgr
       @event          = nil
-      @prompt         = '(rdbgr): '
       @settings       = settings.merge(DEFAULT_SETTINGS)
 
       # Start with empty thread and frame info.
@@ -67,7 +66,7 @@ class Debugger
       end
         
       # Eval anything that's not a command.
-      msg debug_eval(str)
+      msg debug_eval(str) if settings[:autoeval]
       return false
     end
 
@@ -119,9 +118,12 @@ class Debugger
       end
     end
 
-    def settings
-      @settings.merge(@dbgr.settings) 
-    end
+    # FIXME: Allow access to both Debugger::CmdProcessor and Debugger
+    # for index [] and []=.
+    # If there is a Debugger::CmdProcessor setting that would take precidence.
+    # def settings
+    #   @settings.merge(@dbgr.settings) # wrong because this doesn't allow []=
+    # end
   end
 end
 

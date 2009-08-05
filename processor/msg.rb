@@ -11,7 +11,7 @@ class Debugger
 
     def read_command()
       require 'readline'
-      Readline.readline(@prompt)
+      Readline.readline(@settings[:prompt])
     end
 
   end
