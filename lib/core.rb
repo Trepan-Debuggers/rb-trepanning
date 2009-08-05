@@ -1,5 +1,5 @@
 require 'thread_frame'
-require_relative File.join(%w(.. processor cmdproc))
+require_relative File.join(%w(.. processor main))
 class Debugger
   # This class contains the Debugger core routines, such as an event
   # processor is responsible of handling what to do when an event is
@@ -9,18 +9,19 @@ class Debugger
   # which ultimately will call this.
 
   class Core
-    attr_reader   :dbgr       # Top-level debugger object
-    attr_accessor :frame      # ThreadFrame object
-    attr_accessor :processor  # Command processor object
+    attr_reader   :dbgr       # Debugger instance
+    attr_reader   :frame      # ThreadFrame instance
+    attr_accessor :processor  # Debugger::CmdProc instance
     attr_reader   :settings   # Hash of things you can configure
 
     DEFAULT_SETTINGS = {
-      # No settings for now.
+      :cmdproc_opts => {}
     } unless defined?(DEFAULT_SETTINGS)
+
     def initialize(debugger, settings={})
       @dbgr      = debugger
       @settings  = DEFAULT_SETTINGS.merge(settings)
-      @processor = CmdProcessor.new(self)
+      @processor = CmdProcessor.new(self, @settings[:cmdproc_opts])
     end
 
     # A trace-hook processor with the interface a trace hook should have.

@@ -1,21 +1,24 @@
 # The main "driver" class for a command processor. Other parts of the 
 # command class and debugger command objects are pulled in from here.
 
-require_relative 'msg'
+require_relative 'default'  # Command Processor default settings
 require_relative 'frame'
+require_relative 'msg'
 require_relative 'validate'
 
 class Debugger
   class CmdProcessor
-    attr_reader   :aliases      # Hash of command names indexed by alias name
-    attr_reader   :dbgr         # access to Debugger object (via core)
-    attr_reader   :commands     # Hash of command objects indexed by name
+    attr_reader   :aliases      # Hash[String] of command names indexed by alias name
+    attr_reader   :dbgr         # Debugger instance (via Debugger::Core instance)
+    attr_reader   :commands     # Hash[String] of command objects indexed by name
+    attr_reader   :settings     # Hash[:symbol] of command processor settings
 
-    def initialize(core)
+    def initialize(core, settings={})
       @core           = core
       @dbgr           = core.dbgr
       @event          = nil
       @prompt         = '(rdbgr): '
+      @settings       = settings.merge(DEFAULT_SETTINGS)
 
       # Start with empty thread and frame info.
       frame_teardown 
@@ -32,17 +35,15 @@ class Debugger
         b ||= binding
         eval(str, b)
       rescue StandardError, ScriptError => e
-#         if Command.settings[:stack_trace_on_error]
-#           at = eval("caller(1)", b)
-#           print "%s:%s\n", at.shift, e.to_s.sub(/\(eval\):1:(in `.*?':)?/, '')
-#           for i in at
-#             print "\tfrom %s\n", i
-#           end
-#         else
-#           print "#{e.class} Exception: #{e.message}\n"
-#         end
+        if settings[:stack_trace_on_error]
+          at = eval("caller(1)", b)
+          str = "%s:%s\n" % [at.shift, e.to_s.sub(/\(eval\):1:(in `.*?':)?/, '')]
+          str += at.map{|s| "\tfrom %s" % [s]}.join("\n")
+        else
+          str = "#{e.class} Exception: #{e.message}"
+        end
+        errmsg str
 #         throw :debug_error
-        errmsg "#{e.class} Exception: #{e.message}\n"
       end
     end
 
@@ -119,7 +120,7 @@ class Debugger
     end
 
     def settings
-      @dbgr.settings
+      @settings.merge(@dbgr.settings) 
     end
   end
 end
@@ -128,7 +129,7 @@ if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
   require_relative File.join(%w(.. rbdbgr))
   dbg =  Debugger.new
-  dbg.core.processor.msg('cmdproc main')
+  dbg.core.processor.msg('I am main')
   dbg.core.processor.errmsg('Whoa!')
   cmds = dbg.core.processor.instance_variable_get('@commands')
   p cmds.keys

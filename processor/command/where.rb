@@ -43,7 +43,7 @@ Examples:
       return false unless count
     end
     if @proc.frame
-      print_stack_trace(@proc.frame, count, @proc.frame_index)
+      print_stack_trace(@proc.top_frame, count, @proc.frame_index)
     else
       errmsg 'No frame'
     end

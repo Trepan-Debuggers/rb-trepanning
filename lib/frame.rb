@@ -37,15 +37,16 @@ class Debugger
 
     def print_stack_entry(frame, i, prefix='    ')
       # FIXME: remove puts. 
-      msg "%s#%d %s" % [prefix, i, format_stack_entry(frame)]
+      msg "%s%s" % [prefix, format_stack_entry(frame)]
     end
 
     # Print `count' frame entries
-    def print_stack_trace(frame, count=nil, current_pos=nil)
+    def print_stack_trace(frame, count=nil, current_pos=0)
       n = frame.stack_size
       n = [n, count].min if count
       0.upto(n-1) do |i|
-        prefix = (i == current_pos) ? '--> ' : '    '
+        prefix = (i == current_pos) ? '-->' : '   '
+        prefix += ' #%d ' % [i]
         print_stack_entry(frame, i, prefix)
         frame = frame.prev
       end

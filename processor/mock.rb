@@ -1,5 +1,5 @@
 # Mock setup for commands.
-require_relative 'cmdproc'
+require_relative 'main'
 require_relative File.join(%w(.. lib core))
 
 class MockDebugger

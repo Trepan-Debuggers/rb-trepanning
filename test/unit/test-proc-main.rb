@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative File.join(%w(.. .. processor cmdproc))
+require_relative File.join(%w(.. .. processor main))
 require_relative File.join(%w(.. .. lib core))
 
 # Mock debugger stub. FIXME: put in comment helper routine.

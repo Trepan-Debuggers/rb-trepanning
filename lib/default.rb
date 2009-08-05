@@ -3,7 +3,8 @@
 # get quite large.
 module DbgSettings
   DEFAULT_SETTINGS = {
-    'width'         => (ENV['COLUMNS'] || '80').to_i
+    :cmdproc_opts => {},  # Default Debugger::CmdProcessor settings
+    :core_opts    => {}  #  Default Debugger::Core settings
   }
 
 end
