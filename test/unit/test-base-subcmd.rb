@@ -20,24 +20,31 @@ class TestBaseCommandHelp < Test::Unit::TestCase
     @cmdproc  = @core.processor = Debugger::CmdProcessor.new(@core)
     @cmds     = @cmdproc.instance_variable_get('@commands')
     @exit_cmd = @cmds['exit']
-  end
-  
-  def test_base_subcommand
-    help_subcmd = DebuggerSubcommand.new(@exit_cmd)
-    def help_subcmd.msg(message)
+    @exit_subcmd = DebuggerSubcommand.new(@exit_cmd)
+    def @exit_subcmd.msg(message)
       $msgs << message
     end
-    def help_subcmd.errmsg(message)
+    def @exit_subcmd.errmsg(message)
       $errors << message
     end
-    assert help_subcmd
+  end
+
+  def test_base_subcommand
+    assert @exit_subcmd
     assert_raises RuntimeError do 
-      help_subcmd.run
+      @exit_subcmd.run
     end
     assert_equal([], $errors)
-    help_subcmd.run_set_int('', 'testing 1 2 3')
+    @exit_subcmd.run_set_int('', 'testing 1 2 3')
     assert_equal(1, $errors.size)
-    assert_equal(Fixnum, help_subcmd.settings[:width].class)
+    assert_equal(Fixnum, @exit_subcmd.settings[:width].class)
+  end
+
+  def test_show_on_off
+    assert_equal('on', @exit_subcmd.show_onoff(true))
+    assert_equal('off', @exit_subcmd.show_onoff(false))
+    assert_equal('unset', @exit_subcmd.show_onoff(nil))
+    assert_equal('??', @exit_subcmd.show_onoff(5))
   end
 
 end

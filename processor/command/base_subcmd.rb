@@ -123,6 +123,16 @@ class DebuggerSubcommand
     msg("%s is %d." % [what, val])
   end
 
+  # Return 'on' for true and 'off' for false, and ?? for anything else.
+  def show_onoff(bool)
+    case(bool)
+    when true;  return 'on'
+    when false; return 'off'
+    when nil;   return 'unset'
+    else       return '??'
+    end
+  end
+
   def settings
     @cmd.proc.settings
   end
@@ -159,8 +169,18 @@ class DebuggerShowBoolSubcommand < DebuggerSubcommand
 end
 
 if __FILE__ == $0
+  # Demo it.
   require_relative File.join(%w(.. mock))
   dbgr = MockDebugger.new
   cmds = dbgr.core.processor.instance_variable_get('@commands')
-  dd = DebuggerSubcommand.new(cmds['exit'])
+  subcmd = DebuggerSubcommand.new(cmds['exit'])
+  def subcmd.msg(message)
+    puts message
+  end
+  def subcmd.errmsg(message)
+    puts message
+  end
+  p subcmd.settings
+  p subcmd.show_onoff(subcmd.settings[:autoeval])
+  subcmd.run_set_int('', 'Just a test')
 end
