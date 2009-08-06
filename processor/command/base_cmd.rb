@@ -20,6 +20,11 @@ class Debugger
     def run(args)
       raise RuntimeError, 'You need to define this method elsewhere'
     end
+
+    def settings
+      @proc.settings
+    end
+
     def short_help
       self.class.const_get(:SHORT_HELP)
     end

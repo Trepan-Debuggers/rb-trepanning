@@ -127,12 +127,12 @@ if __FILE__ == $0
     def run(args); puts 'test testing run' end
   end
 
-  # d = Debugger::MockDebugger()
-  # testcmd    = TestCommand()
+  d = MockDebugger.new
+  testcmd    = Debugger::TestCommand.new
   # testcmd.debugger = d
-  # testcmd.proc     = d.core.processor
-  # testcmdMgr = Subcmd('test', testcmd)
-  # testsub = TestTestingSubcommand()
+  testcmd.proc     = d.core.processor
+  # testcmdMgr = Subcmd.new('test', testcmd)
+  # testsub = TestTestingSubcommand.new
   # testcmdMgr.add(testsub)
   
   # %w(tes test testing testing1).each do |prefix|
@@ -144,7 +144,7 @@ if __FILE__ == $0
   # testcmdMgr.short_help(testcmd, 'test', true)
   # testcmdMgr.short_help(testcmd, 'tes')
   # puts testcmdMgr.list()
-  # testsub2 = TestTestingSubcommand()
+  # testsub2 = TestTestingSubcommand.new
   # testsub2.name = 'foobar'
   # testcmdMgr.add(testsub2)
   # puts testcmdMgr.list()

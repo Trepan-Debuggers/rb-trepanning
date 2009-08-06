@@ -48,7 +48,7 @@ See also 'examine' and 'whatis'.
   # List all commands arranged in an aligned columns
   def columnize_all_commands
     commands = @proc.commands.keys.sort
-    width = @proc.settings[:width]
+    width = settings[:width]
     msg(Columnize::columnize(commands, width, ' ' * 4, 
                              true, true, ' ' * 2))
   end
@@ -99,7 +99,7 @@ Type "help" followed by command name for full documentation.
         category == @proc.commands[cmd_name].category
       end.sort
 
-      width = @proc.settings[:width]
+      width = settings[:width]
       msg(Columnize::columnize(cmds, width, ' ' * 4, 
                                true, true, ' ' * 2))
       return

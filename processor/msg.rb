@@ -13,6 +13,5 @@ class Debugger
       require 'readline'
       Readline.readline(@settings[:prompt])
     end
-
   end
 end
