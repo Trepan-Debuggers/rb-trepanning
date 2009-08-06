@@ -81,7 +81,7 @@ class DebuggerSubcommand
   # The method that implements the dbgr command.
   # Help on the command comes from the docstring of this method.
   def run
-    raise RunTimeError, NotImplementedMessage
+    raise RuntimeError, NotImplementedMessage
   end
 
   # set a Boolean-valued debugger setting. 'obj' is a generally a
@@ -111,20 +111,20 @@ class DebuggerSubcommand
   # Generic subcommand showing a boolean-valued debugger setting.
   # 'name' is generally the String key in the settings.
   def run_show_bool(what=nil)
-    val = show_onoff(@settings[@name])
+    val = show_onoff(settings[@name])
     what = @name unless what
     msg("%s is %s." % [what, val])
   end
 
   # Generic subcommand integer value display
   def run_show_int(what=nil)
-    val = @settings[@name]
+    val = settings[@name]
     what = @name unless what
     msg("%s is %d." % [what, val])
   end
 
   def settings
-    cmd.proc.settings
+    @cmd.proc.settings
   end
 
 end
