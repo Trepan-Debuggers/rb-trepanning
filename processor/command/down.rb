@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require_relative 'base_cmd'
 
 class Debugger::DownCommand < Debugger::Command

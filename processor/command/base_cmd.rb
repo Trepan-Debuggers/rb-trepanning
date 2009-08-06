@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Base class of all commands. Code common to all commans is here.
 
 class Debugger

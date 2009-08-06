@@ -20,7 +20,7 @@ class TestBaseCommandHelp < Test::Unit::TestCase
     @cmdproc  = @core.processor = Debugger::CmdProcessor.new(@core)
     @cmds     = @cmdproc.instance_variable_get('@commands')
     @exit_cmd = @cmds['exit']
-    @exit_subcmd = DebuggerSubcommand.new(@exit_cmd)
+    @exit_subcmd = Debugger::Subcommand.new(@exit_cmd)
     def @exit_subcmd.msg(message)
       $msgs << message
     end
@@ -46,5 +46,4 @@ class TestBaseCommandHelp < Test::Unit::TestCase
     assert_equal('unset', @exit_subcmd.show_onoff(nil))
     assert_equal('??', @exit_subcmd.show_onoff(5))
   end
-
 end
