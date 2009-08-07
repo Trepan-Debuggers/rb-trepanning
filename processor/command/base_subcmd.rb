@@ -25,7 +25,7 @@ class Debugger
       # which append current settings to list output.
       MIN_ABBREV = 1
       NEED_STACK = false
-      NAME_ALIASES = %w(your_command_name alias1 alias2..)
+      NAME       = 'your_command_name'
     end
 
     # cmd contains the command object that this
@@ -49,7 +49,7 @@ class Debugger
       # that -- perhaps one may want to put several subcommands into 
       # a single file. So in those cases, one will have to set @name
       # accordingly by other means.
-      @name  = self.class.const_get(:NAME_ALIASES)[0].to_sym
+      @name  = self.class.const_get(:NAME).to_sym
       
     end
 

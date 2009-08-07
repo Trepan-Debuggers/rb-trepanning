@@ -5,20 +5,23 @@ require_relative File.join(%w(.. subcmd))
 
 class Debugger::SubcommandMgr < Debugger::Command
 
-  CATEGORY      = 'status'
-  MIN_ARGS      = 0
-  MAX_ARGS      = nil
-  NAME_ALIASES  = nil # ('???','?')  # Need to define this!
-  NEED_STACK    = false
+  unless defined?(CATEGORY)
+    CATEGORY      = 'status'
+    MIN_ARGS      = 0
+    MAX_ARGS      = nil
+    NAME          = '?' # FIXME: Need to define this, but should 
+                        # pick this up from class/file name.
+    NEED_STACK    = false
+  end
 
   # Initialize show subcommands. Note: instance variable name
   # has to be setcmds ('set' + 'cmds') for subcommand completion
   # to work.
-  def initialize(proc, name)
-    @cmds = Subcmd.new(name, self)
+  def initialize(proc)
+    @name = obj_const(self, :NAME)
+    @cmds = Debugger::Subcmd.new(self)
     @proc = proc
-    load_debugger_subcommands(name, self)
-
+    load_debugger_subcommands(@name, self)
   end
 
   # Create an instance of each of the debugger subcommands. Commands
@@ -32,21 +35,21 @@ class Debugger::SubcommandMgr < Debugger::Command
 
     # Initialization
     cmd_names     = []
-
-    cmd_dir = name + '_subcmd'
-    Dir.glob(File.join(cmd_dir, '*.rb')).each do |rb| 
+    cmd_dir = File.dirname(__FILE__)
+    subcmd_dir = File.join(cmd_dir, name + '_subcmd')
+    files = Dir.glob(File.join(subcmd_dir, '*.rb'))
+    files.each do |rb| 
+      # p rb
       cmd_names << name.capitalize + File.basename(rb, '.rb').capitalize
-      require_relative rb
-    end if File.directory?(cmd_dir)
+      require rb
+    end if File.directory?(subcmd_dir)
 
     @subcommands = {}
-    cmd_names.each do |command_name|
-      subcmd_class = "Debugger::Subcommand::#{command_name}.new(obj)"
-      cmd = Debugger::Subcommand.instance_eval(subcmd_class)
-
-      cmd_name = cmd.class.const_get(:NAME_ALIASES)[0]
-
-      @subcommands[command_name] = cmd
+    cmd_names.each do |name|
+      subcmd_class = "Debugger::Subcommand::#{name}.new(self)"
+      cmd = self.instance_eval(subcmd_class)
+      cmd_name = obj_const(cmd, :NAME)
+      @subcommands[cmd_name] = cmd
     end
   end
 
@@ -63,7 +66,7 @@ class Debugger::SubcommandMgr < Debugger::Command
   def help(args)
     if args.size <= 2
       # "help cmd". Give the general help for the command part.
-      doc = @__doc__ or @run.__doc__
+      doc = self.class.const_get(:HELP)
       if doc
         msg(doc)
       else
@@ -85,7 +88,7 @@ class Debugger::SubcommandMgr < Debugger::Command
     # "help cmd subcmd". Give help specific for that subcommand.
     cmd = @cmds.lookup(subcmd_name)
     if cmd
-      doc = cmd.class.get_const(:HELP)
+      doc = obj_const(cmd, :HELP)
       if doc
         msg(doc)
       else
@@ -100,16 +103,15 @@ class Debugger::SubcommandMgr < Debugger::Command
   end
 
   def run(args)
-    if len(args) < 2
+    if args.size < 2
       # We were given cmd without a subcommand; cmd is something
       # like "show", "info" or "set". Generally this means list
       # all of the subcommands.
       msg("List of %s commands (with minimum abbreviation parenthesis):" % 
-          NAME_ALIASES[0])
-      @cmds.list.each do |subcmd_name|
+          obj_const(self, :NAME))
+      @subcommands.each do |subcmd_name, subcmd|
         # Some commands have lots of output.
         # they are excluded here because 'in_list' is false.
-        subcmd = @cmds.subcmds[subcmd_name]
         summary_help(subcmd_name, subcmd)
       end
       return false
@@ -126,10 +128,14 @@ class Debugger::SubcommandMgr < Debugger::Command
     end
   end
 
+  def obj_const(obj, name); obj.class.const_get(name) end
+
   def summary_help(subcmd_name, subcmd)
-    msg('%s (%d) %-11s -- %s' %
-        [NAME_ALIASES[0], subcmd.min_abbrev,
-         subcmd_name, subcmd.class.get_const(:SHORT_HELP)])
+    
+    msg('%s (%d) -- %s' %
+        [obj_const(subcmd, :NAME), 
+         obj_const(subcmd, :MIN_ABBREV),
+         obj_const(subcmd, :SHORT_HELP)])
   end
 
   # Error message when subcommand asked for but doesn't exist
@@ -141,5 +147,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  Debugger::SubcommandMgr.new(nil, 'set')
+  require_relative File.join(%w(.. mock))
+  dbgr = MockDebugger.new
+  Debugger::SubcommandMgr.new(dbgr.core.processor)
 end

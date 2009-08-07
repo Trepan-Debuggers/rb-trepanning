@@ -35,7 +35,7 @@ problem. Another possibility is to go into a real Python shell via the
 "
   IN_LIST      = true
   MIN_ABBREV   = 'autoe'.size
-  NAME_ALIASES = %w(autoeval)
+  NAME         = 'autoeval'  # FIXME should be able to figure this out.
   SHORT_HELP   = 'Evaluate unrecognized debugger commands'
 
 end
@@ -47,8 +47,8 @@ if __FILE__ == $0
   dbgr = MockDebugger.new
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   cmd = cmds['exit']
-  autoeval_subcmd = Debugger::Subcommand::SetAutoEval.new(cmd)
-  testcmdMgr = Subcmd.new('autoeval', autoeval_subcmd)
+  autoeval_subcmd = Debugger::Subcommand::SetAutoeval.new(cmd)
+  testcmdMgr = Debugger::Subcmd.new(autoeval_subcmd)
 
   def autoeval_subcmd.msg(message)
     puts message

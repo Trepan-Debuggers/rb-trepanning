@@ -126,11 +126,11 @@ class Debugger
       Debugger.constants.grep(/.Command$/).each do |command|
         # Note: there is probably a non-eval way to instantiate the
         # command, but I don't know it. And eval works.
-        cmd = Debugger.instance_eval("Debugger::#{command}.new")
+        new_cmd = "Debugger::#{command}.new(self)"
+        cmd = self.instance_eval(new_cmd)
 
         # Give the command access to other parts of the debugger
         cmd.core = @core
-        cmd.proc = self
 
         # Add to list of commands and aliases.
         cmd_name = cmd.class.const_get(:NAME_ALIASES)[0]

@@ -78,7 +78,7 @@ Type "help" followed by command name for full documentation.
         show_category(args[1], args[2..-1])
       elsif @proc.commands.member?(cmd_name)
         cmd_obj = @proc.commands[cmd_name]
-        msg(cmd_obj.help)
+        msg(cmd_obj.class.const_get(:HELP))
       else
         errmsg('Undefined command: "%s".  Try "help".' % 
                cmd_name)
