@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require_relative File.join(%w(.. base_subcmd))
 
-class Debugger::SetAutoEval < Debugger::SetBoolSubcommand
+class Debugger::Subcommand::SetAutoeval < Debugger::SetBoolSubcommand
   HELP = "
 Evaluate unrecognized commands.
 
@@ -37,6 +37,7 @@ problem. Another possibility is to go into a real Python shell via the
   MIN_ABBREV   = 'autoe'.size
   NAME_ALIASES = %w(autoeval)
   SHORT_HELP   = 'Evaluate unrecognized debugger commands'
+
 end
 
 if __FILE__ == $0
@@ -46,7 +47,7 @@ if __FILE__ == $0
   dbgr = MockDebugger.new
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   cmd = cmds['exit']
-  autoeval_subcmd = Debugger::SetAutoEval.new(cmd)
+  autoeval_subcmd = Debugger::Subcommand::SetAutoEval.new(cmd)
   testcmdMgr = Subcmd.new('autoeval', autoeval_subcmd)
 
   def autoeval_subcmd.msg(message)

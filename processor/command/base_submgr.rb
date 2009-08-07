@@ -1,0 +1,145 @@
+# -*- coding: utf-8 -*-
+require 'columnize'
+require_relative 'base_cmd'
+require_relative File.join(%w(.. subcmd))
+
+class Debugger::SubcommandMgr < Debugger::Command
+
+  CATEGORY      = 'status'
+  MIN_ARGS      = 0
+  MAX_ARGS      = nil
+  NAME_ALIASES  = nil # ('???','?')  # Need to define this!
+  NEED_STACK    = false
+
+  # Initialize show subcommands. Note: instance variable name
+  # has to be setcmds ('set' + 'cmds') for subcommand completion
+  # to work.
+  def initialize(proc, name)
+    @cmds = Subcmd.new(name, self)
+    @proc = proc
+    load_debugger_subcommands(name, self)
+
+  end
+
+  # Create an instance of each of the debugger subcommands. Commands
+  # are found by importing files in the directory 'name' + 'sub'. Some
+  # files are excluded via an array set in initialize.  For each of
+  # the remaining files, we import them and scan for class names
+  # inside those files and for each class name, we will create an
+  # instance of that class. The set of DebuggerCommand class instances
+  # form set of possible debugger commands.
+  def load_debugger_subcommands(name, obj)
+
+    # Initialization
+    cmd_names     = []
+
+    cmd_dir = name + '_subcmd'
+    Dir.glob(File.join(cmd_dir, '*.rb')).each do |rb| 
+      cmd_names << name.capitalize + File.basename(rb, '.rb').capitalize
+      require_relative rb
+    end if File.directory?(cmd_dir)
+
+    @subcommands = {}
+    cmd_names.each do |command_name|
+      subcmd_class = "Debugger::Subcommand::#{command_name}.new(obj)"
+      cmd = Debugger::Subcommand.instance_eval(subcmd_class)
+
+      cmd_name = cmd.class.const_get(:NAME_ALIASES)[0]
+
+      @subcommands[command_name] = cmd
+    end
+  end
+
+  # Give help for a command which has subcommands. This can be
+  # called in several ways:
+  #        help cmd
+  #        help cmd subcmd
+  #        help cmd commands
+  #
+  #  Our shtick is to give help for the overall command only if 
+  #  subcommand or 'commands' is not given. If a subcommand is given and
+  #  found, then specific help for that is given. If 'commands' is given
+  #  we will list the all the subcommands.
+  def help(args)
+    if args.size <= 2
+      # "help cmd". Give the general help for the command part.
+      doc = @__doc__ or @run.__doc__
+      if doc
+        msg(doc)
+      else
+        errmsg('Sorry - author mess up. ' + 
+               'No help registered for command' + 
+               @name)
+      end
+    end
+
+    subcmd_name = args[2]
+
+    if '*' == subcmd_name
+      msg("List of subcommands of command '%s':" % @name)
+      msg(columnize.columnize(@cmds.list(), lineprefix='    '))
+      @cmds.list()
+      return
+    end
+
+    # "help cmd subcmd". Give help specific for that subcommand.
+    cmd = @cmds.lookup(subcmd_name)
+    if cmd
+      doc = cmd.class.get_const(:HELP)
+      if doc
+        msg(doc)
+      else
+        errmsg('Sorry - author mess up. ' + 
+               'No help registered for subcommand: ' + 
+               subcmd_name + ', of command: ' + 
+               @name)
+      end
+    else
+      undefined_subcmd(@name, subcmd_name)
+    end
+  end
+
+  def run(args)
+    if len(args) < 2
+      # We were given cmd without a subcommand; cmd is something
+      # like "show", "info" or "set". Generally this means list
+      # all of the subcommands.
+      msg("List of %s commands (with minimum abbreviation parenthesis):" % 
+          NAME_ALIASES[0])
+      @cmds.list.each do |subcmd_name|
+        # Some commands have lots of output.
+        # they are excluded here because 'in_list' is false.
+        subcmd = @cmds.subcmds[subcmd_name]
+        summary_help(subcmd_name, subcmd)
+      end
+      return false
+    end
+
+    subcmd_prefix = args[1]
+    # We were given: cmd subcmd ...
+    # Run that.
+    subcmd = @cmds.lookup(subcmd_prefix)
+    if subcmd
+      subcmd.run(args[2..-1])
+    else
+      undefined_subcmd(@name, subcmd_prefix)
+    end
+  end
+
+  def summary_help(subcmd_name, subcmd)
+    msg('%s (%d) %-11s -- %s' %
+        [NAME_ALIASES[0], subcmd.min_abbrev,
+         subcmd_name, subcmd.class.get_const(:SHORT_HELP)])
+  end
+
+  # Error message when subcommand asked for but doesn't exist
+  def undefined_subcmd(cmd, subcmd)
+    errmsg(('Undefined "%s" subcommand: "%s". ' + 
+            'Try "help %s *".') % [cmd, subcmd, cmd])
+  end
+end
+
+if __FILE__ == $0
+  # Demo it.
+  Debugger::SubcommandMgr.new(nil, 'set')
+end

@@ -117,10 +117,8 @@ class Debugger
     # form Debugger::xxCommand is added to @commands and that array
     # is returned.
     def load_debugger_commands(cmd_dir)
-      Dir.chdir(cmd_dir) do
-        # Note: require_relative doesn't seem to pick up the above
-        # chdir.
-        Dir.glob('*.rb').each { |rb| require File.join(cmd_dir, rb) }
+      Dir.glob(File.join(cmd_dir, '*.rb')).each do |rb| 
+        require rb
       end if File.directory?(cmd_dir)
       # Instantiate each Command class found by the above require(s).
       @commands = {}
