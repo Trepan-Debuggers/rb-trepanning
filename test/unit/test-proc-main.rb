@@ -44,6 +44,7 @@ class TestCmdProcessor < Test::Unit::TestCase
         assert(value.is_a?(Fixnum) || value.nil?,
                "#{const} in command #{cmd_name} should be a Fixnum or nil; got #{value}.")
       end
+<<<<<<< HEAD:test/unit/test-proc-main.rb
       next unless cmd.class.constants.member?('ALIASES')
       ary = cmd.class.const_get('ALIASES')
       assert(ary.is_a?(Array),
@@ -52,6 +53,19 @@ class TestCmdProcessor < Test::Unit::TestCase
       ary.each do |v| 
         assert(v.is_a?(String),
                "#{ALIASES} in command #{cmd_name} should be Array of Strings; got #{v}.")
+=======
+      %w(ALIASES).each do
+        |const|
+        next unless cmd.class.constants.member?(:ALIASES)
+        ary = cmd.class.const_get(const)
+        assert(ary.is_a?(Array),
+               "#{const} in command #{cmd_name} should be an Array")
+
+        ary.each do |v| 
+          assert(v.is_a?(String),
+                 "#{const} in command #{cmd_name} should be Array of Strings; got #{v}.")
+        end
+>>>>>>> cdcfba71a1e69d3158faa475f4f616287bb2afb3:test/unit/test-proc-main.rb
       end
     end
   end

@@ -24,9 +24,12 @@ Examples:
     MIN_ARGS      = 0  # Need at least this many
     MAX_ARGS      = 1  # Need at most this many
     NAME          = File.basename(__FILE__, '.rb')
+<<<<<<< HEAD:processor/command/where.rb
     
     # First entry is the name of the command. Any aliases for the
     # command follow.
+=======
+>>>>>>> cdcfba71a1e69d3158faa475f4f616287bb2afb3:processor/command/where.rb
     NEED_STACK    = true
     SHORT_HELP    = 'Print backtrace of stack frames'
   end

@@ -41,8 +41,8 @@ class Debugger
       # errmsg(), msg(), and msg_nocr() might. (See the note below
       # on these latter 3 methods.)
       # 
-      @proc     = cmd.proc
       @core     = cmd.core
+      @proc     = cmd.proc
       # @dbgr = cmd.dbgr
 
       # By default the name of the subcommand will be the name of the
@@ -105,6 +105,11 @@ class Debugger
       msg("%s is %d." % [what, val])
     end
 
+    def settings
+      @proc.settings
+    end
+        
+
     # Return 'on' for true and 'off' for false, and ?? for anything else.
     def show_onoff(bool)
       case(bool)
@@ -148,6 +153,7 @@ if __FILE__ == $0
   require_relative File.join(%w(.. mock))
   dbgr = MockDebugger.new
   cmds = dbgr.core.processor.instance_variable_get('@commands')
+  p cmds.keys
   subcmd = Debugger::Subcommand.new(cmds['exit'])
   def subcmd.msg(message)
     puts message
