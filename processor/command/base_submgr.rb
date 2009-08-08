@@ -81,7 +81,8 @@ class Debugger::SubcommandMgr < Debugger::Command
 
     if '*' == subcmd_name
       help_text = "List of subcommands for command '%s':\n" % @name
-      help_text += Columnize::columnize(@subcmds.list, lineprefix='    ')
+      help_text += Columnize::columnize(@subcmds.list, settings[:width], 
+                                        '  ', true, true, lineprefix='  ')
       return help_text
     end
 
@@ -114,7 +115,7 @@ class Debugger::SubcommandMgr < Debugger::Command
       @subcmds.list.each do |subcmd_name|
         # Some commands have lots of output.
         # they are excluded here because 'in_list' is false.
-        summary_help(subcmd_name, @subcmds.subcmds[subcmd_name])
+        summary_help(@subcmds.subcmds[subcmd_name])
       end
       return false
     end
@@ -132,8 +133,7 @@ class Debugger::SubcommandMgr < Debugger::Command
 
   def obj_const(obj, name); obj.class.const_get(name) end
 
-  def summary_help(subcmd_name, subcmd)
-    
+  def summary_help(subcmd)
     msg('%s (%d) -- %s' %
         [obj_const(subcmd, :NAME), 
          obj_const(subcmd, :MIN_ABBREV),

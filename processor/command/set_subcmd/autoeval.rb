@@ -2,7 +2,8 @@
 require_relative File.join(%w(.. base_subcmd))
 
 class Debugger::Subcommand::SetAutoeval < Debugger::SetBoolSubcommand
-  HELP = "Evaluate unrecognized commands.
+  unless defined?(HELP)
+    HELP = "Evaluate unrecognized commands.
 
 Often inside the debugger, one would like to be able to run arbitrary
 Ruby commands without having to preface Python expressions with \"print\" or
@@ -32,10 +33,11 @@ command. It is possible to remove that alias if this causes constant
 problem. Another possibility is to go into a real Ruby shell via the
 'irb' command.
 "
-  IN_LIST      = true
-  MIN_ABBREV   = 'autoe'.size
-  NAME         = 'autoeval'  # FIXME should be able to figure this out.
-  SHORT_HELP   = 'Evaluate unrecognized debugger commands'
+    IN_LIST      = true
+    MIN_ABBREV   = 'autoe'.size
+    NAME          = File.basename(__FILE__, '.rb')
+    SHORT_HELP   = 'Evaluate unrecognized debugger commands'
+  end
 
 end
 
@@ -46,18 +48,18 @@ if __FILE__ == $0
   dbgr = MockDebugger.new
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   cmd = cmds['exit']
-  autoeval_subcmd = Debugger::Subcommand::SetAutoeval.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(autoeval_subcmd)
+  subcommand = Debugger::Subcommand::SetAutoeval.new(cmd)
+  testcmdMgr = Debugger::Subcmd.new(subcommand)
 
-  def autoeval_subcmd.msg(message)
+  def subcommand.msg(message)
     puts message
   end
-  def autoeval_subcmd.msg_nocr(message)
+  def subcommand.msg_nocr(message)
     print message
   end
-  def autoeval_subcmd.errmsg(message)
+  def subcommand.errmsg(message)
     puts message
   end
-  autoeval_subcmd.run_show_bool
-  autoeval_subcmd.summary_help('autoeval', 'set')
+  subcommand.run_show_bool
+  subcommand.summary_help('autoeval')
 end

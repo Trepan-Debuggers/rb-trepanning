@@ -110,11 +110,11 @@ class Debugger
           # Might have other stuff here.
         end
     rescue IOError, Errno::EPIPE
-    rescue Exception => e
-      errmsg("INTERNAL ERROR!!!")
-      b = @frame.binding if @frame 
-      exception_dump(e, false, b)
-      frame_teardown
+    # rescue Exception => e
+    #   errmsg("INTERNAL ERROR!!!")
+    #   b = @frame.binding if @frame 
+    #   exception_dump(e, false, b)
+    #   frame_teardown
     end
 
     # Loads in debugger commands by require'ing each ruby file in the

@@ -54,6 +54,10 @@ class Debugger
       # accordingly by other means.
       @name  = self.class.const_get(:NAME).to_sym
       
+      def summary_help(subcmd_name)
+        msg_nocr("%-12s: %s" % [subcmd_name, self.class.const_get(:SHORT_HELP)])
+      end
+
     end
 
     # Convenience short-hand for @dbgr.intf.confirm
@@ -107,11 +111,15 @@ class Debugger
         errmsg('You need to supply a number.')
         return
       end
-      settings[@name] = @cmd.get_an_int(arg, 
-                                        :max_value => max_value,
-                                        :min_value => min_value, 
-                                        :msg_on_error => msg_on_error
-                                        )
+      val = @proc.get_an_int(arg, 
+                             :max_value => max_value,
+                             :min_value => min_value, 
+                             :msg_on_error => msg_on_error
+                             )
+      if val
+        settings[@name] = val
+        run_show_int
+      end
     end
 
     # Generic subcommand showing a boolean-valued debugger setting.
@@ -149,9 +157,6 @@ class Debugger
       run_set_bool(args)
     end
 
-    def summary_help(subcmd_name, subcmd)
-      msg_nocr("%-12s: %s" % [subcmd_name, self.class.const_get(:SHORT_HELP)])
-    end
   end
 
   class ShowBoolSubcommand < Subcommand
