@@ -19,6 +19,8 @@ class Debugger
       "This method must be overriden in a subclass" unless 
       defined?(NotImplementedMessage)
 
+    attr_reader :name
+
     unless defined?(IN_LIST)
       IN_LIST    = true  # Show item in help list of commands
       RUN_CMD    = true  # Run subcommand for those subcommands like "show"
@@ -27,6 +29,7 @@ class Debugger
       NEED_STACK = false
       NAME       = 'your_command_name'
     end
+
 
     # cmd contains the command object that this
     # command is invoked through.  A debugger field gives access to
@@ -67,37 +70,38 @@ class Debugger
 
     # Convenience short-hand for @dbgr.intf[-1].errmsg
     def errmsg(msg)
-      return(@dbgr.intf[-1].errmsg(msg))
+      @proc.errmsg(msg)
+      # @dbgr.intf[-1].errmsg(msg)
     end
     
     # Convenience short-hand for @dbgr.intf[-1].msg
     def msg(msg)
-      return(@dbgr.intf[-1].msg(msg))
+      @proc.msg(msg)
+      # @dbgr.intf[-1].msg(msg)
     end
     
     # Convenience short-hand for @dbgr.intf[-1].msg_nocr
     def msg_nocr(msg)
-      return(@dbgr.intf[-1].msg_nocr(msg))
+      @proc.msg_nocr(msg)
+      # @dbgr.intf[-1].msg_nocr(msg)
     end
 
     # The method that implements the dbgr command.
-    # Help on the command comes from the docstring of this method.
     def run
       raise RuntimeError, NotImplementedMessage
     end
 
-    # set a Boolean-valued debugger setting. 'obj' is a generally a
-    #  subcommand that has 'name' and 'debugger.settings' attributes
-    def run_set_bool(args)
+    # Set a Boolean-valued debugger setting. 
+    def run_set_bool(args, default=true)
+      args = ['on'] if args.empty?
       begin
-        args = ['on'] if args.empty?
-        settings[@name] = get_onoff(args[0])
-      rescue NameError
+        settings[@name] = @proc.get_onoff(args[0])
+        run_show_bool
+      rescue NameError, TypeError
       end
     end
 
-    # set an Integer-valued debugger setting. 'obj' is a generally a
-    # subcommand that has 'name' and 'debugger.settings' attributes.
+    # set an Integer-valued debugger setting. 
     def run_set_int(arg, msg_on_error, min_value=nil, max_value=nil)
       if arg.strip.empty?
         errmsg('You need to supply a number.')
@@ -111,7 +115,6 @@ class Debugger
     end
 
     # Generic subcommand showing a boolean-valued debugger setting.
-    # 'name' is generally the String key in the settings.
     def run_show_bool(what=nil)
       val = show_onoff(settings[@name])
       what = @name unless what

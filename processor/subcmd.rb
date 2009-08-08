@@ -3,6 +3,7 @@
 class Debugger
   class Subcmd
 
+    attr_reader :subcmds
     def initialize(cmd)
       @cmd     = cmd
       @subcmds = {}
@@ -11,9 +12,10 @@ class Debugger
     
     # Find subcmd in self.subcmds
     def lookup(subcmd_prefix)
+      pat = /^#{subcmd_prefix}/
       @subcmds.each do |subcmd_name, subcmd|
-        if subcmd_name.startswith(subcmd_prefix) &&
-            subcmd_prefix.size >= subcmds.class.get_const(:MIN_ABBREV)
+        if subcmd_name =~ pat &&
+            subcmd_prefix.size >= subcmd.class.const_get(:MIN_ABBREV)
           return subcmd
         end
       end
@@ -50,7 +52,7 @@ class Debugger
       @subcmds[subcmd_name] = subcmd_cb
 
       # We keep a list of subcommands to assist command completion
-      @cmdlist.append(subcmd_name)
+      @cmdlist << subcmd_name
     end
 
     # Run subcmd_name with args using obj for the environent

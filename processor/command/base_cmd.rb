@@ -17,9 +17,6 @@ class Debugger
     def category
       my_const(:CATEGORY)
     end
-    def help
-      my_const(:HELP)
-    end
     def msg(message)
       @proc.msg(message)
     end

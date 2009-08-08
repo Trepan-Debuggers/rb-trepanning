@@ -85,5 +85,25 @@ class Debugger
         return nil
       end
     end
+
+    # Return true if arg is 'on' or 1 and false arg is 'off' or 0.
+    # Any other value is raises TypeError.
+    def get_onoff(arg, default=nil, print_error=true)
+      unless arg
+        if !default
+          if print_error
+            errmsg("Expecting 'on', 1, 'off', or 0. Got nothing.")
+          end
+          raise TypeError
+        end
+        return default
+      end
+      return true  if arg == '1' or arg == 'on'
+      return false if arg == '0' or arg =='off'
+
+      errmsg("Expecting 'on', 1, 'off', or 0. Got: %s." % arg.to_s) if
+        print_error
+      raise TypeError
+    end
   end
 end

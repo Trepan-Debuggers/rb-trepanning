@@ -28,7 +28,7 @@ class TestCommandHelp < Test::Unit::TestCase
     @cmds.each do |cmd_name, cmd|
       @help_cmd.instance_variable_set('@msgs', [])
       @help_cmd.run(['help', cmd_name])
-      assert @help_cmd.instance_variable_get('@msgs')
+      assert_equal(false,  @help_cmd.instance_variable_get('@msgs').empty?)
     end
   end
 

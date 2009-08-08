@@ -34,16 +34,20 @@ class Debugger
         b ||= binding
         eval(str, b)
       rescue StandardError, ScriptError => e
-        if settings[:stack_trace_on_error]
-          at = eval("caller(1)", b)
-          str = "%s:%s\n" % [at.shift, e.to_s.sub(/\(eval\):1:(in `.*?':)?/, '')]
-          str += at.map{|s| "\tfrom %s" % [s]}.join("\n")
-        else
-          str = "#{e.class} Exception: #{e.message}"
-        end
-        errmsg str
-#         throw :debug_error
+        exception_dump(e, settings[:stack_trace_on_error], b)
       end
+    end
+
+    def exception_dump(e, stack_trace, b=nil)
+      if stack_trace
+        at = eval("caller(2)", b)
+        str = "%s:%s\n" % [at.shift, e.to_s.sub(/\(eval\):1:(in `.*?':)?/, '')]
+        str += at.map{|s| "\tfrom %s" % [s]}.join("\n")
+      else
+        str = "#{e.class} Exception: #{e.message}"
+      end
+      errmsg str
+#         throw :debug_error
     end
 
     # Check that we meed the criteria that cmd specifies it needs
@@ -106,9 +110,10 @@ class Debugger
           # Might have other stuff here.
         end
     rescue IOError, Errno::EPIPE
-    rescue Exception
-      puts "INTERNAL ERROR!!! #{$!}\n" rescue nil
-
+    rescue Exception => e
+      errmsg("INTERNAL ERROR!!!")
+      b = @frame.binding if @frame 
+      exception_dump(e, false, b)
       frame_teardown
     end
 

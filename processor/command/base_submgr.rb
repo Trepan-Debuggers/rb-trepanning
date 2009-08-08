@@ -18,9 +18,9 @@ class Debugger::SubcommandMgr < Debugger::Command
   # has to be setcmds ('set' + 'cmds') for subcommand completion
   # to work.
   def initialize(proc)
-    @name = obj_const(self, :NAME)
-    @cmds = Debugger::Subcmd.new(self)
-    @proc = proc
+    @name    = obj_const(self, :NAME)
+    @subcmds = Debugger::Subcmd.new(self)
+    @proc    = proc
     load_debugger_subcommands(@name, self)
   end
 
@@ -44,12 +44,12 @@ class Debugger::SubcommandMgr < Debugger::Command
       require rb
     end if File.directory?(subcmd_dir)
 
-    @subcommands = {}
+    subcommands = {}
     cmd_names.each do |name|
       subcmd_class = "Debugger::Subcommand::#{name}.new(self)"
       cmd = self.instance_eval(subcmd_class)
-      cmd_name = obj_const(cmd, :NAME)
-      @subcommands[cmd_name] = cmd
+      cmd_name = cmd.name
+      @subcmds.add(cmd)
     end
   end
 
@@ -68,37 +68,39 @@ class Debugger::SubcommandMgr < Debugger::Command
       # "help cmd". Give the general help for the command part.
       doc = self.class.const_get(:HELP)
       if doc
-        msg(doc)
+       return doc
       else
         errmsg('Sorry - author mess up. ' + 
                'No help registered for command' + 
                @name)
+        return nil
       end
     end
 
     subcmd_name = args[2]
 
     if '*' == subcmd_name
-      msg("List of subcommands of command '%s':" % @name)
-      msg(columnize.columnize(@cmds.list(), lineprefix='    '))
-      @cmds.list()
-      return
+      help_text = "List of subcommands for command '%s':\n" % @name
+      help_text += Columnize::columnize(@subcmds.list, lineprefix='    ')
+      return help_text
     end
 
     # "help cmd subcmd". Give help specific for that subcommand.
-    cmd = @cmds.lookup(subcmd_name)
+    cmd = @subcmds.lookup(subcmd_name)
     if cmd
       doc = obj_const(cmd, :HELP)
       if doc
-        msg(doc)
+        return doc
       else
         errmsg('Sorry - author mess up. ' + 
                'No help registered for subcommand: ' + 
                subcmd_name + ', of command: ' + 
                @name)
+        return nil
       end
     else
       undefined_subcmd(@name, subcmd_name)
+      return nil
     end
   end
 
@@ -109,10 +111,10 @@ class Debugger::SubcommandMgr < Debugger::Command
       # all of the subcommands.
       msg("List of %s commands (with minimum abbreviation parenthesis):" % 
           obj_const(self, :NAME))
-      @subcommands.each do |subcmd_name, subcmd|
+      @subcmds.list.each do |subcmd_name|
         # Some commands have lots of output.
         # they are excluded here because 'in_list' is false.
-        summary_help(subcmd_name, subcmd)
+        summary_help(subcmd_name, @subcmds.subcmds[subcmd_name])
       end
       return false
     end
@@ -120,7 +122,7 @@ class Debugger::SubcommandMgr < Debugger::Command
     subcmd_prefix = args[1]
     # We were given: cmd subcmd ...
     # Run that.
-    subcmd = @cmds.lookup(subcmd_prefix)
+    subcmd = @subcmds.lookup(subcmd_prefix)
     if subcmd
       subcmd.run(args[2..-1])
     else

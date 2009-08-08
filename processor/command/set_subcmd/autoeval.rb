@@ -2,8 +2,7 @@
 require_relative File.join(%w(.. base_subcmd))
 
 class Debugger::Subcommand::SetAutoeval < Debugger::SetBoolSubcommand
-  HELP = "
-Evaluate unrecognized commands.
+  HELP = "Evaluate unrecognized commands.
 
 Often inside the debugger, one would like to be able to run arbitrary
 Ruby commands without having to preface Python expressions with \"print\" or
@@ -30,8 +29,8 @@ which produce when 'autoeval' is on:
 
 because by default, 's' is an alias for the debugger 'step'
 command. It is possible to remove that alias if this causes constant
-problem. Another possibility is to go into a real Python shell via the
-'python' or 'ipython' commands.
+problem. Another possibility is to go into a real Ruby shell via the
+'irb' command.
 "
   IN_LIST      = true
   MIN_ABBREV   = 'autoe'.size
