@@ -1,25 +1,23 @@
 # -*- coding: utf-8 -*-
 require_relative('base_submgr')
 
-class Debugger::SetCommand < Debugger::SubcommandMgr
+class Debugger::ShowCommand < Debugger::SubcommandMgr
   unless defined?(HELP)
     HELP =
-'Modifies parts of the debugger environment.
+'Generic command for showing things about the debugger.  You can
+give unique prefix of the name of a subcommand to get information
+about just that subcommand.
 
-You can give unique prefix of the name of a subcommand to get
-information about just that subcommand.
+Type "show" for a list of "show" subcommands and what they do.
+Type "help show *" for just a list of "show" subcommands.'
 
-Type "set" for a list of "set" subcommands and what they do.
-Type "help set *" for just the list of "set" subcommands.
-'
-
-    CATEGORY      = 'data'
+    CATEGORY      = 'status'
     MIN_ARGS      = 0
     MAX_ARG       = nil
     NAME          = File.basename(__FILE__, '.rb')
     NAME_ALIASES  = [NAME]
     NEED_STACK    = false
-    SHORT_HELP    = 'Modify parts of the debugger environment'
+    SHORT_HELP    = 'Show parts of the debugger environment'
   end
 end
 
@@ -29,6 +27,6 @@ if __FILE__ == $0
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   name = File.basename(__FILE__, '.rb')
   cmd = cmds[name]
-  command = Debugger::SetCommand.new(dbgr.core.processor)
+  command = Debugger::ShowCommand.new(dbgr.core.processor)
   command.run([name])
 end

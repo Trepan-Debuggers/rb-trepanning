@@ -64,7 +64,8 @@ if __FILE__ == $0
   dbgr = MockDebugger.new
 
   cmds = dbgr.core.processor.instance_variable_get('@commands')
-  cmd = cmds['down']
+  name = File.basename(__FILE__, '.rb')
+  cmd = cmds[name]
   processor = dbgr.core.processor
   processor.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
   cmd.run %w(down)
