@@ -142,9 +142,7 @@ class Debugger
         cc = cmd.class
         cmd_name = cc.const_get(:NAME)
         if cc.constants.member?(:ALIASES)
-          aliases= cc.const_get(:ALIASES) 
-        if cmd.class.constants.member?(:ALIASES)
-          aliases= cmd.class.const_get(:ALIASES)
+          aliases= cc.const_get(:ALIASES)  
           aliases.each {|a| @aliases[a] = cmd_name}
         end
         @commands[cmd_name] = cmd

@@ -34,22 +34,12 @@ See also 'examine' and 'whatis'.
     'support'     => 'Support facilities',
     'stack'       => 'Examining the call stack'
     }
-<<<<<<< HEAD:processor/command/help.rb
-=======
-
-    ALIASES       = %w(?)
->>>>>>> cdcfba71a1e69d3158faa475f4f616287bb2afb3:processor/command/help.rb
     CATEGORY      = 'support'
     MIN_ARGS      = 0    # Need at least this many
     MAX_ARGS      = nil  # Need at most this many
     NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
-<<<<<<< HEAD:processor/command/help.rb
-    
-    SHORT_HELP  = 'Print commands or give help for command(s)'
-=======
     SHORT_HELP    = 'Print commands or give help for command(s)'
->>>>>>> cdcfba71a1e69d3158faa475f4f616287bb2afb3:processor/command/help.rb
   end
 
   # List all commands arranged in an aligned columns
