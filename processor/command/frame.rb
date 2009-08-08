@@ -1,7 +1,7 @@
 require_relative 'base_cmd'
 require_relative File.join(%w(.. .. lib frame))
 
-class Debugger::FrameCommand < Debugger::Command
+class Debugger::Command::FrameCommand < Debugger::Command
 
   include Debugger::Frame
 
@@ -39,16 +39,16 @@ Examples:
 See also 'up', 'down' 'where' and 'info thread'.
 "
 
-    CATEGORY     = 'stack'
-    MIN_ARGS     = 0  # Need at least this many
-    MAX_ARGS     = 2  # Need at most this many
+    CATEGORY      = 'stack'
+    MIN_ARGS      = 0  # Need at least this many
+    MAX_ARGS      = 2  # Need at most this many
+    NAME          = File.basename(__FILE__, '.rb')
     
     # First entry is the name of the command. Any aliases for the
     # command follow.
-    NAME_ALIASES = %w(frame)
-    NEED_STACK   = true
-    
-    SHORT_HELP  = 'Select and print a stack frame'
+    NAME_ALIASES  = [NAME]
+    NEED_STACK    = true
+    SHORT_HELP    = 'Select and print a stack frame'
   end
   
   # The simple case: thread frame switching has been done or is
@@ -154,26 +154,27 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
+  # FIXME: do more of the below setup in mock
+  require_relative File.join(%w(.. mock))
+  dbgr = MockDebugger.new
 
-  # FIXME: put in common mock stub.
-  require_relative File.join(%w(.. .. lib core))
-  core = Debugger::Core.new(Debugger.new)
-  proc = Debugger::CmdProcessor.new(core)
-
-  cmd = Debugger::FrameCommand.new
-  cmd.core = core
-  cmd.proc = proc
-
-  core.frame = RubyVM::ThreadFrame::current
-  proc.frame = proc.top_frame = core.frame
-  cmd.run %w(frame)
+  cmds = dbgr.core.processor.instance_variable_get('@commands')
+  name = File.basename(__FILE__, '.rb')
+  cmd = cmds[name]
+  cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
+  cmd.run [name]
   puts '=' * 40
-  cmd.run %w(frame 1)
+  cmd.run [name, '0']
   puts '=' * 40
-  def foo(proc, core, cmd)
-    core.frame = RubyVM::ThreadFrame::current
-    proc.frame = proc.top_frame = core.frame
-    cmd.run(%w(frame))
+  cmd.run [name, '1']
+  puts '=' * 40
+  cmd.run [name, '-2']
+  puts '=' * 40
+  def foo(cmd, name)
+    cmd.proc.top_frame = cmd.proc.frame = RubyVM::ThreadFrame::current
+    cmd.run([name, '0'])
+    puts '=' * 40
+    cmd.run([name, '-1'])
   end
-  foo(proc, core, cmd)
+  foo(cmd, name)
 end

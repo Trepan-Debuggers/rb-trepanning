@@ -1,6 +1,6 @@
 require_relative 'base_cmd'
 
-class Debugger::UpCommand < Debugger::Command
+class Debugger::Command::UpCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
@@ -12,16 +12,17 @@ the most recent frame. If no count is given, move up 1.
 See also 'down' and 'frame'.
 "
 
-    CATEGORY     = 'stack'
-    MIN_ARGS     = 0  # Need at least this many
-    MAX_ARGS     = 1  # Need at most this many
+    CATEGORY      = 'stack'
+    MIN_ARGS      = 0  # Need at least this many
+    MAX_ARGS      = 1  # Need at most this many
+    NAME          = File.basename(__FILE__, '.rb')
     
     # First entry is the name of the command. Any aliases for the
     # command follow.
-    NAME_ALIASES = %w(up u)
-    NEED_STACK   = true
+    NAME_ALIASES  = [NAME, 'u']
+    NEED_STACK    = true
     
-    SHORT_HELP  = 'Move frame in the direction of the caller of the last-selected frame'
+    SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
   end
   
   require_relative File.join(%w(.. .. lib frame))
@@ -63,21 +64,18 @@ if __FILE__ == $0
   dbgr = MockDebugger.new
 
   cmds = dbgr.core.processor.instance_variable_get('@commands')
-  cmd = cmds['up']
-  processor = dbgr.core.processor
-  processor.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current,
-                       Thread::current)
-  cmd.run %w(up)
-  cmd.run %w(up 0)
-  puts '=' * 40
-  cmd.run %w(up 1)
-  cmd.run %w(up -2)
-  puts '=' * 40
-  def foo(processor, cmd)
-    processor.top_frame = processor.frame = RubyVM::ThreadFrame::current
-    cmd.run(%w(down))
-    cmd.run(%w(down -1))
+  name = File.basename(__FILE__, '.rb')
+  cmd = cmds[name]
+  cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
+  cmd.run [name]
+  cmd.run [name, '0']
+  cmd.run [name, '-1']
+  cmd.run [name, '1']
+  def foo(cmd, name)
+    cmd.proc.top_frame = cmd.proc.frame = RubyVM::ThreadFrame::current
+    cmd.run([name])
+    cmd.run([name, '-2'])
+    cmd.run([name, '-1'])
   end
-  foo(processor, cmd)
+  foo(cmd, name)
 end

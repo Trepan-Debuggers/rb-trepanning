@@ -1,5 +1,5 @@
 require_relative 'base_cmd'
-class Debugger::ExitCommand < Debugger::Command
+class Debugger::Command::ExitCommand < Debugger::Command
 
   HELP = 
 'exit [exitcode] - hard exit of the debugged program.  
@@ -26,7 +26,7 @@ return code that will be passed back to the OS.'
 end
 
 if __FILE__ == $0
-  cmd = Debugger::ExitCommand.new
+  cmd = Debugger::Command::ExitCommand.new(nil)
   p cmd.class.const_get(:NAME_ALIASES)
   cmd.run %w(exit 10)
 end

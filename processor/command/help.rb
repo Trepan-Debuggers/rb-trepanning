@@ -1,6 +1,6 @@
 require 'columnize'
 require_relative 'base_cmd'
-class Debugger::HelpCommand < Debugger::Command
+class Debugger::Command::HelpCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
@@ -123,16 +123,17 @@ if __FILE__ == $0
   dbgr = MockDebugger.new
 
   cmds = dbgr.core.processor.instance_variable_get('@commands')
-  help_cmd = cmds['help']
-  help_cmd.run %w(help help)
+  name = File.basename(__FILE__, '.rb')
+  cmd = cmds[name]
+  cmd.run %w(help help)
   puts '=' * 40
-  help_cmd.run %w(help *)
+  cmd.run %w(help *)
   puts '=' * 40
-  help_cmd.run %w(help fdafsasfda)
+  cmd.run %w(help fdafsasfda)
   puts '=' * 40
-  help_cmd.run %w(help)
+  cmd.run %w(help)
   puts '=' * 40
-  help_cmd.run %w(help support)
+  cmd.run %w(help support)
   puts '=' * 40
-  help_cmd.run %w(help support *)
+  cmd.run %w(help support *)
 end

@@ -132,10 +132,10 @@ class Debugger
       # Instantiate each Command class found by the above require(s).
       @commands = {}
       @aliases = {}
-      Debugger.constants.grep(/.Command$/).each do |command|
+      Debugger::Command.constants.grep(/.Command$/).each do |command|
         # Note: there is probably a non-eval way to instantiate the
         # command, but I don't know it. And eval works.
-        new_cmd = "Debugger::#{command}.new(self)"
+        new_cmd = "Debugger::Command::#{command}.new(self)"
         cmd = self.instance_eval(new_cmd)
 
         # Give the command access to other parts of the debugger

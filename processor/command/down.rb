@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require_relative 'base_cmd'
 
-class Debugger::DownCommand < Debugger::Command
+class Debugger::Command::DownCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
@@ -13,16 +13,16 @@ is the most recent frame. If no count is given, move down 1.
 See also 'up' and 'frame'.
 "
 
-    CATEGORY     = 'stack'
-    MIN_ARGS     = 0  # Need at least this many
-    MAX_ARGS     = 1  # Need at most this many
+    CATEGORY      = 'stack'
+    MIN_ARGS      = 0  # Need at least this many
+    MAX_ARGS      = 1  # Need at most this many
+    NAME          = File.basename(__FILE__, '.rb')
     
     # First entry is the name of the command. Any aliases for the
     # command follow.
-    NAME_ALIASES = %w(down d)
-    NEED_STACK   = true
-    
-    SHORT_HELP  = 'Move frame in the direction of the caller of the last-selected frame'
+    NAME_ALIASES  = [NAME, 'd']
+    NEED_STACK    = true
+    SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
   end
   
   require_relative File.join(%w(.. .. lib frame))
@@ -60,24 +60,24 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
+  # FIXME: do more of the below setup in mock
   require_relative File.join(%w(.. mock))
   dbgr = MockDebugger.new
 
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   name = File.basename(__FILE__, '.rb')
   cmd = cmds[name]
-  processor = dbgr.core.processor
-  processor.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
-  cmd.run %w(down)
-  cmd.run %w(down 0)
+  cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
+  cmd.run [name]
+  cmd.run [name, '0']
   puts '=' * 40
-  cmd.run %w(down 1)
-  cmd.run %w(down -2)
+  cmd.run [name, '1']
+  cmd.run [name, '-2']
   puts '=' * 40
-  def foo(processor, cmd)
-    processor.top_frame = processor.frame = RubyVM::ThreadFrame::current
-    cmd.run(%w(down))
-    cmd.run(%w(down -1))
+  def foo(cmd, name)
+    cmd.proc.top_frame = cmd.proc.frame = RubyVM::ThreadFrame::current
+    cmd.run([name])
+    cmd.run([name, '-1'])
   end
-  foo(processor, cmd)
+  foo(cmd, name)
 end

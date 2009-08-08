@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require_relative('base_submgr')
 
-class Debugger::ShowCommand < Debugger::SubcommandMgr
+class Debugger::Command::ShowCommand < Debugger::SubcommandMgr
   unless defined?(HELP)
     HELP =
 'Generic command for showing things about the debugger.  You can
@@ -27,6 +27,6 @@ if __FILE__ == $0
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   name = File.basename(__FILE__, '.rb')
   cmd = cmds[name]
-  command = Debugger::ShowCommand.new(dbgr.core.processor)
+  command = Debugger::Command::ShowCommand.new(dbgr.core.processor)
   command.run([name])
 end

@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 require_relative 'base_cmd'
-class Debugger::WhereCommand < Debugger::Command
+class Debugger::Command::WhereCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
@@ -18,16 +19,16 @@ Examples:
    where 2  # Print only the top two entries
    where -1 # Print a stack trace except the initial (least recent) call."
 
-    CATEGORY     = 'stack'
-    MIN_ARGS     = 0  # Need at least this many
-    MAX_ARGS     = 1  # Need at most this many
+    CATEGORY      = 'stack'
+    MIN_ARGS      = 0  # Need at least this many
+    MAX_ARGS      = 1  # Need at most this many
+    NAME          = File.basename(__FILE__, '.rb')
     
     # First entry is the name of the command. Any aliases for the
     # command follow.
-    NAME_ALIASES = %w(where bt backtrace)
-    NEED_STACK   = true
-    
-    SHORT_HELP  = 'Print backtrace of stack frames'
+    NAME_ALIASES  = [NAME, 'bt', 'backtrace']
+    NEED_STACK    = true
+    SHORT_HELP    = 'Print backtrace of stack frames'
   end
 
   require_relative File.join(%w(.. .. lib frame))
@@ -58,20 +59,19 @@ if __FILE__ == $0
   dbgr = MockDebugger.new
 
   cmds = dbgr.core.processor.instance_variable_get('@commands')
-  cmd = cmds['where']
-  processor = dbgr.core.processor
-  processor.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
+  name = File.basename(__FILE__, '.rb')
+  cmd = cmds[name]
+  cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
 
-  p cmd.class.const_get(:NAME_ALIASES)
-  cmd.run %w(where)
+  cmd.run [name]
   puts '=' * 40
-  cmd.run %w(where 1)
+  cmd.run [name, '1']
   puts '=' * 40
-  cmd.run %w(where 100)
+  cmd.run [name, '100']
   puts '=' * 40
-  def foo(processor, cmd)
-    processor.frame = RubyVM::ThreadFrame::current
-    cmd.run(%w(where))
+  def foo(cmd, name)
+    cmd.proc.top_frame = cmd.proc.frame = RubyVM::ThreadFrame::current
+    cmd.run([name])
   end
-  foo(processor, cmd)
+  foo(cmd, name)
 end

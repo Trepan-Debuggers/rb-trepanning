@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require_relative('base_submgr')
 
-class Debugger::SetCommand < Debugger::SubcommandMgr
+class Debugger::Command::SetCommand < Debugger::SubcommandMgr
   unless defined?(HELP)
     HELP =
 'Modifies parts of the debugger environment.
@@ -29,6 +29,6 @@ if __FILE__ == $0
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   name = File.basename(__FILE__, '.rb')
   cmd = cmds[name]
-  command = Debugger::SetCommand.new(dbgr.core.processor)
+  command = Debugger::Command::SetCommand.new(dbgr.core.processor)
   command.run([name])
 end
