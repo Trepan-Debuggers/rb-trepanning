@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # Base class of all commands. Code common to all commands is here.
+# Note: don't end classname with Command (capital C) since main
+# will think this a command name like QuitCommand 
 
 class Debugger
   class Command
@@ -17,15 +19,24 @@ class Debugger
     def category
       my_const(:CATEGORY)
     end
+
     def msg(message)
       @proc.msg(message)
     end
-    def run(args)
-      raise RuntimeError, 'You need to define this method elsewhere'
+
+    # Convenience short-hand for @dbgr.intf[-1].msg_nocr
+    def msg_nocr(msg)
+      @proc.msg_nocr(msg)
+      # @dbgr.intf[-1].msg_nocr(msg)
     end
 
     def my_const(name)
       self.class.const_get(name)
+    end
+
+    # The method that implements the debugger command.
+    def run(*args)
+      raise RuntimeError, 'You need to define this method elsewhere'
     end
 
     def settings

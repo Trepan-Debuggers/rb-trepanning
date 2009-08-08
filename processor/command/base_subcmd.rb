@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
-# A base class for debugger commands.
+# A base class for debugger subcommands.
 #
-# This file is a module in this directory that isn't a real command
-# and commands.py needs to take care to avoid instantiating this class
-# and storing it as a list of known debugger commands.
-
 # Note: don't end classname with Command (capital C) since main
 # will think this a command name like QuitCommand 
 #                                         ^
 
 # Base Class for Debugger subcommands. We pull in some helper
 # functions for command from module cmdfns.
+
+require_relative 'base_cmd'
+
 class Debugger
 
-  class Subcommand
+  class Subcommand  < Command
 
     NotImplementedMessage = 
       "This method must be overriden in a subclass" unless 
@@ -63,36 +62,6 @@ class Debugger
     # Convenience short-hand for @dbgr.intf.confirm
     def confirm(msg, default=false)
       return(@dbgr.intf[-1].confirm(msg, default))
-    end
-
-    # Note for errmsg, msg, and msg_nocr we don't want to simply make
-    # an assignment of method names like @msg = @dbgr.intf.msg,
-    # because we want to allow the interface (intf) to change 
-    # dynamically. That is, the value of @dbgr may change
-    # in the course of the program and if we made such an method assignemnt
-    # we wouldn't pick up that change in our @msg
-
-    # Convenience short-hand for @dbgr.intf[-1].errmsg
-    def errmsg(msg)
-      @proc.errmsg(msg)
-      # @dbgr.intf[-1].errmsg(msg)
-    end
-    
-    # Convenience short-hand for @dbgr.intf[-1].msg
-    def msg(msg)
-      @proc.msg(msg)
-      # @dbgr.intf[-1].msg(msg)
-    end
-    
-    # Convenience short-hand for @dbgr.intf[-1].msg_nocr
-    def msg_nocr(msg)
-      @proc.msg_nocr(msg)
-      # @dbgr.intf[-1].msg_nocr(msg)
-    end
-
-    # The method that implements the dbgr command.
-    def run
-      raise RuntimeError, NotImplementedMessage
     end
 
     # Set a Boolean-valued debugger setting. 
@@ -146,10 +115,6 @@ class Debugger
       end
     end
 
-    def settings
-      @cmd.proc.settings
-    end
-
   end
 
   class SetBoolSubcommand < Subcommand
@@ -161,7 +126,7 @@ class Debugger
 
   class ShowBoolSubcommand < Subcommand
     def run(args)
-      doc = self.class.const_get(:HELP)[5..-1].capitalize.split('\n')[0].chomp('.')
+      doc = my_const(:HELP)[5..-1].capitalize.split('\n')[0].chomp('.')
       run_show_bool(doc)
     end
   end
@@ -171,7 +136,7 @@ class Debugger
       if self.respond_to?(:short_help)
         doc = short_help
       else
-        doc = self.class.get_const(:HELP)[5..-1].capitalize
+        doc = my_const(:HELP)[5..-1].capitalize
       end
       run_show_int(doc)
     end

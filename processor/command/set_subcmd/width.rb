@@ -3,7 +3,7 @@ require_relative File.join(%w(.. base_subcmd))
 
 class Debugger::Subcommand::SetWidth < Debugger::Subcommand
   unless defined?(HELP)
-    HELP         = "Set number of characters the debugger thinks are in a line"
+    HELP         = 'Set number of characters the debugger thinks are in a line'
     IN_LIST      = true
     MIN_ABBREV   = 'wid'.size
     NAME         = File.basename(__FILE__, '.rb')
@@ -38,5 +38,6 @@ if __FILE__ == $0
     puts message
   end
   subcommand.run_show_int
-  subcommand.summary_help('width')
+  name = File.basename(__FILE__, '.rb')
+  subcommand.summary_help(name)
 end

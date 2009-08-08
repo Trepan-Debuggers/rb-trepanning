@@ -94,7 +94,11 @@ class Debugger
       end
         
       # Eval anything that's not a command.
-      msg debug_eval(str) if settings[:autoeval]
+      if settings[:autoeval]
+        msg debug_eval(str) 
+      else
+        undefined_command(cmd_name)
+      end
       return false
     end
 
@@ -143,6 +147,11 @@ class Debugger
         @commands[cmd_name] = cmd
         aliases.each {|a| @aliases[a] = cmd_name}
       end
+    end
+
+    # Error message when a command doesn't exist
+    def undefined_command(cmd_name)
+      errmsg('Undefined command: "%s". Try "help".' % cmd_name)
     end
 
     # FIXME: Allow access to both Debugger::CmdProcessor and Debugger

@@ -61,5 +61,6 @@ if __FILE__ == $0
     puts message
   end
   subcommand.run_show_bool
-  subcommand.summary_help('autoeval')
+  name = File.basename(__FILE__, '.rb')
+  subcommand.summary_help(name)
 end
