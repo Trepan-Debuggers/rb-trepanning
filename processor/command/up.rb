@@ -12,16 +12,12 @@ the most recent frame. If no count is given, move up 1.
 See also 'down' and 'frame'.
 "
 
+    ALIASES       = %w(u)
     CATEGORY      = 'stack'
     MIN_ARGS      = 0  # Need at least this many
     MAX_ARGS      = 1  # Need at most this many
     NAME          = File.basename(__FILE__, '.rb')
-    
-    # First entry is the name of the command. Any aliases for the
-    # command follow.
-    NAME_ALIASES  = [NAME, 'u']
     NEED_STACK    = true
-    
     SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
   end
   

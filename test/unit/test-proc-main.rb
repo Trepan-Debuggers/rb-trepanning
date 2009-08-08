@@ -32,7 +32,7 @@ class TestCmdProcessor < Test::Unit::TestCase
   # a strongly-typed language we wouldn't need to do much of this.
   def test_command_class_vars
     @cmds.each do |cmd_name, cmd|
-      %w(HELP CATEGORY SHORT_HELP).each do
+      %w(HELP CATEGORY NAME SHORT_HELP).each do
         |const|
         value = cmd.class.const_get(const)
         assert(value.is_a?(String),
@@ -44,16 +44,14 @@ class TestCmdProcessor < Test::Unit::TestCase
         assert(value.is_a?(Fixnum) || value.nil?,
                "#{const} in command #{cmd_name} should be a Fixnum or nil; got #{value}.")
       end
-      %w(NAME_ALIASES).each do
-        |const|
-        ary = cmd.class.const_get(const)
-        assert(ary.is_a?(Array),
-               "#{const} in command #{cmd_name} should be an Array")
-
-        ary.each do |v| 
-          assert(v.is_a?(String),
-                 "#{const} in command #{cmd_name} should be Array of Strings; got #{v}.")
-        end
+      next unless cmd.class.constants.member?('ALIASES')
+      ary = cmd.class.const_get('ALIASES')
+      assert(ary.is_a?(Array),
+             "#{ALIASES} in command #{cmd_name} should be an Array")
+      
+      ary.each do |v| 
+        assert(v.is_a?(String),
+               "#{ALIASES} in command #{cmd_name} should be Array of Strings; got #{v}.")
       end
     end
   end

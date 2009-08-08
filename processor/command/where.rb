@@ -19,6 +19,7 @@ Examples:
    where 2  # Print only the top two entries
    where -1 # Print a stack trace except the initial (least recent) call."
 
+    ALIASES       = %w(bt backtrace)
     CATEGORY      = 'stack'
     MIN_ARGS      = 0  # Need at least this many
     MAX_ARGS      = 1  # Need at most this many
@@ -26,7 +27,6 @@ Examples:
     
     # First entry is the name of the command. Any aliases for the
     # command follow.
-    NAME_ALIASES  = [NAME, 'bt', 'backtrace']
     NEED_STACK    = true
     SHORT_HELP    = 'Print backtrace of stack frames'
   end

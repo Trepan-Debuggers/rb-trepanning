@@ -142,10 +142,13 @@ class Debugger
         cmd.core = @core
 
         # Add to list of commands and aliases.
-        cmd_name = cmd.class.const_get(:NAME_ALIASES)[0]
-        aliases= cmd.class.const_get(:NAME_ALIASES)[1..-1]
+        cc = cmd.class
+        cmd_name = cc.const_get(:NAME)
+        if cc.constants.member?(:ALIASES)
+          aliases= cc.const_get(:ALIASES) 
+          aliases.each {|a| @aliases[a] = cmd_name}
+        end
         @commands[cmd_name] = cmd
-        aliases.each {|a| @aliases[a] = cmd_name}
       end
     end
 

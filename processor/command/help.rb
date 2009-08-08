@@ -23,7 +23,9 @@ info line command.
 See also 'examine' and 'whatis'.
 "
 
-    CATEGORIES = {
+
+    ALIASES       = %w(?)
+    CATEGORIES    = {
     'breakpoints' => 'Making the program stop at certain points',
     'data'        => 'Examining data',
     'files'       => 'Specifying and examining files',
@@ -32,15 +34,11 @@ See also 'examine' and 'whatis'.
     'support'     => 'Support facilities',
     'stack'       => 'Examining the call stack'
     }
-
-    CATEGORY     = 'support'
-    MIN_ARGS     = 0    # Need at least this many
-    MAX_ARGS     = nil  # Need at most this many
-    
-    # First entry is the name of the command. Any aliases for the
-    # command follow.
-    NAME_ALIASES = %w(help ?)
-    NEED_STACK   = false
+    CATEGORY      = 'support'
+    MIN_ARGS      = 0    # Need at least this many
+    MAX_ARGS      = nil  # Need at most this many
+    NAME          = File.basename(__FILE__, '.rb')
+    NEED_STACK    = false
     
     SHORT_HELP  = 'Print commands or give help for command(s)'
   end
