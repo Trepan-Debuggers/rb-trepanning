@@ -42,6 +42,7 @@ class Debugger
       # on these latter 3 methods.)
       # 
       @core     = cmd.core
+      @proc     = cmd.proc
       # @dbgr = cmd.dbgr
 
       # By default the name of the subcommand will be the name of the
@@ -67,7 +68,7 @@ class Debugger
     def run_set_bool(args, default=true)
       args = ['on'] if args.empty?
       begin
-        settings[@name] = @cmd.get_onoff(args[0])
+        settings[@name] = @proc.get_onoff(args[0])
         run_show_bool
       rescue NameError, TypeError
       end
@@ -79,11 +80,11 @@ class Debugger
         errmsg('You need to supply a number.')
         return
       end
-      val = @cmd.get_an_int(arg, 
-                            :max_value => max_value,
-                            :min_value => min_value, 
-                            :msg_on_error => msg_on_error
-                            )
+      val = @proc.get_an_int(arg, 
+                             :max_value => max_value,
+                             :min_value => min_value, 
+                             :msg_on_error => msg_on_error
+                             )
       if val
         settings[@name] = val
         run_show_int
@@ -105,7 +106,7 @@ class Debugger
     end
 
     def settings
-      @cmd.settings
+      @proc.settings
     end
         
 
