@@ -43,10 +43,6 @@ See also 'up', 'down' 'where' and 'info thread'.
     MIN_ARGS      = 0  # Need at least this many
     MAX_ARGS      = 2  # Need at most this many
     NAME          = File.basename(__FILE__, '.rb')
-    
-    # First entry is the name of the command. Any aliases for the
-    # command follow.
-    NAME_ALIASES  = [NAME]
     NEED_STACK    = true
     SHORT_HELP    = 'Select and print a stack frame'
   end

@@ -33,16 +33,13 @@ See also 'examine' and 'whatis'.
     'stack'       => 'Examining the call stack'
     }
 
-    CATEGORY     = 'support'
-    MIN_ARGS     = 0    # Need at least this many
-    MAX_ARGS     = nil  # Need at most this many
-    
-    # First entry is the name of the command. Any aliases for the
-    # command follow.
-    NAME_ALIASES = %w(help ?)
-    NEED_STACK   = false
-    
-    SHORT_HELP  = 'Print commands or give help for command(s)'
+    ALIASES       = %w(?)
+    CATEGORY      = 'support'
+    MIN_ARGS      = 0    # Need at least this many
+    MAX_ARGS      = nil  # Need at most this many
+    NAME          = File.basename(__FILE__, '.rb')
+    NEED_STACK    = false
+    SHORT_HELP    = 'Print commands or give help for command(s)'
   end
 
   # List all commands arranged in an aligned columns

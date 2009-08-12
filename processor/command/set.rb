@@ -17,7 +17,6 @@ Type "help set *" for just the list of "set" subcommands.
     MIN_ARGS      = 0
     MAX_ARG       = nil
     NAME          = File.basename(__FILE__, '.rb')
-    NAME_ALIASES  = [NAME]
     NEED_STACK    = false
     SHORT_HELP    = 'Modify parts of the debugger environment'
   end

@@ -8,6 +8,7 @@ class Debugger
     attr_accessor :core, :proc
 
     def initialize(proc)
+      @name = my_const(:NAME)
       @proc = proc
     end
 

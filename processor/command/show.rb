@@ -15,7 +15,6 @@ Type "help show *" for just a list of "show" subcommands.'
     MIN_ARGS      = 0
     MAX_ARG       = nil
     NAME          = File.basename(__FILE__, '.rb')
-    NAME_ALIASES  = [NAME]
     NEED_STACK    = false
     SHORT_HELP    = 'Show parts of the debugger environment'
   end

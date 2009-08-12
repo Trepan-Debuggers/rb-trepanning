@@ -41,7 +41,6 @@ class Debugger
       # errmsg(), msg(), and msg_nocr() might. (See the note below
       # on these latter 3 methods.)
       # 
-      @proc     = cmd.proc
       @core     = cmd.core
       # @dbgr = cmd.dbgr
 
@@ -68,7 +67,7 @@ class Debugger
     def run_set_bool(args, default=true)
       args = ['on'] if args.empty?
       begin
-        settings[@name] = @proc.get_onoff(args[0])
+        settings[@name] = @cmd.get_onoff(args[0])
         run_show_bool
       rescue NameError, TypeError
       end
@@ -80,11 +79,11 @@ class Debugger
         errmsg('You need to supply a number.')
         return
       end
-      val = @proc.get_an_int(arg, 
-                             :max_value => max_value,
-                             :min_value => min_value, 
-                             :msg_on_error => msg_on_error
-                             )
+      val = @cmd.get_an_int(arg, 
+                            :max_value => max_value,
+                            :min_value => min_value, 
+                            :msg_on_error => msg_on_error
+                            )
       if val
         settings[@name] = val
         run_show_int
@@ -104,6 +103,11 @@ class Debugger
       what = @name unless what
       msg("%s is %d." % [what, val])
     end
+
+    def settings
+      @cmd.settings
+    end
+        
 
     # Return 'on' for true and 'off' for false, and ?? for anything else.
     def show_onoff(bool)
@@ -148,6 +152,7 @@ if __FILE__ == $0
   require_relative File.join(%w(.. mock))
   dbgr = MockDebugger.new
   cmds = dbgr.core.processor.instance_variable_get('@commands')
+  p cmds.keys
   subcmd = Debugger::Subcommand.new(cmds['exit'])
   def subcmd.msg(message)
     puts message

@@ -138,14 +138,13 @@ class Debugger
         new_cmd = "Debugger::Command::#{command}.new(self)"
         cmd = self.instance_eval(new_cmd)
 
-        # Give the command access to other parts of the debugger
-        cmd.core = @core
-
         # Add to list of commands and aliases.
-        cmd_name = cmd.class.const_get(:NAME_ALIASES)[0]
-        aliases= cmd.class.const_get(:NAME_ALIASES)[1..-1]
+        cmd_name = cmd.class.const_get(:NAME)
+        if cmd.class.constants.member?(:ALIASES)
+          aliases= cmd.class.const_get(:ALIASES)
+          aliases.each {|a| @aliases[a] = cmd_name}
+        end
         @commands[cmd_name] = cmd
-        aliases.each {|a| @aliases[a] = cmd_name}
       end
     end
 
@@ -170,7 +169,6 @@ if __FILE__ == $0
   dbg.core.processor.msg('I am main')
   dbg.core.processor.errmsg('Whoa!')
   cmds = dbg.core.processor.instance_variable_get('@commands')
-  p cmds.keys
   p dbg.core.processor.instance_variable_get('@aliases')
   cmd_name, cmd_obj = cmds.first
   puts cmd_obj.class.const_get(:HELP)

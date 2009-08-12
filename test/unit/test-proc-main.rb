@@ -44,8 +44,9 @@ class TestCmdProcessor < Test::Unit::TestCase
         assert(value.is_a?(Fixnum) || value.nil?,
                "#{const} in command #{cmd_name} should be a Fixnum or nil; got #{value}.")
       end
-      %w(NAME_ALIASES).each do
+      %w(ALIASES).each do
         |const|
+        next unless cmd.class.constants.member?(:ALIASES)
         ary = cmd.class.const_get(const)
         assert(ary.is_a?(Array),
                "#{const} in command #{cmd_name} should be an Array")
