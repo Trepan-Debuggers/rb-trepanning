@@ -11,10 +11,6 @@ return code that will be passed back to the OS.'
   MIN_ARGS     = 0  # Need at least this many
   MAX_ARGS     = 1  # Need at most this many
   NAME         = File.basename(__FILE__, '.rb')
-<<<<<<< HEAD:processor/command/exit.rb
-
-=======
->>>>>>> cdcfba71a1e69d3158faa475f4f616287bb2afb3:processor/command/exit.rb
   SHORT_HELP  = 'Exit program via exit()'
 
   # This method runs the command
@@ -27,9 +23,5 @@ end
 
 if __FILE__ == $0
   cmd = Debugger::Command::ExitCommand.new(nil)
-<<<<<<< HEAD:processor/command/exit.rb
-=======
-  p cmd.class.const_get(:NAME)
->>>>>>> cdcfba71a1e69d3158faa475f4f616287bb2afb3:processor/command/exit.rb
   cmd.run %w(exit 10)
 end

@@ -8,10 +8,14 @@ require_relative 'validate'
 
 class Debugger
   class CmdProcessor
-    attr_reader   :aliases      # Hash[String] of command names indexed by alias name
-    attr_reader   :dbgr         # Debugger instance (via Debugger::Core instance)
-    attr_reader   :commands     # Hash[String] of command objects indexed by name
-    attr_reader   :settings     # Hash[:symbol] of command processor settings
+    attr_reader   :aliases      # Hash[String] of command names
+                                # indexed by alias name
+    attr_reader   :dbgr         # Debugger instance (via
+                                # Debugger::Core instance)
+    attr_reader   :commands     # Hash[String] of command objects
+                                # indexed by name
+    attr_reader   :settings     # Hash[:symbol] of command processor
+                                # settings
 
     def initialize(core, settings={})
       @core           = core
@@ -143,8 +147,6 @@ class Debugger
         cmd_name = cc.const_get(:NAME)
         if cc.constants.member?(:ALIASES)
           aliases= cc.const_get(:ALIASES) 
-        if cmd.class.constants.member?(:ALIASES)
-          aliases= cmd.class.const_get(:ALIASES)
           aliases.each {|a| @aliases[a] = cmd_name}
         end
         @commands[cmd_name] = cmd
