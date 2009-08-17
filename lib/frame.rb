@@ -5,14 +5,14 @@ class Debugger
       # FIXME: prettify 
       s = "#{frame.type} "
       s += "#{eval('self.class', frame.binding)}#" 
-      if frame.method 
+      if frame.method and frame.type != 'IFUNC'
         iseq = frame.iseq
-        if frame.type != 'CFUNC'
+        if 'CFUNC' == frame.type
+          args = "(#{frame.arity} args)"
+        else
           args = 0.upto(iseq.arity-1).map do |i| 
             iseq.local_name(i)
           end.join(', ')
-        else
-          args = "(#{frame.arity} args)"
         end
         s += frame.method
         if frame.type == 'METHOD'

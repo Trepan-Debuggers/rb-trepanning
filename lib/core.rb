@@ -26,6 +26,7 @@ class Debugger
 
     # A trace-hook processor with the interface a trace hook should have.
     def event_processor(event, frame, arg=nil)
+      p [event, frame, arg]
       # FIXME: Block all other threads
       @arg   = arg
       @event = event
