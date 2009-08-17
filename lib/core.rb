@@ -31,7 +31,9 @@ class Debugger
       @arg   = arg
       @event = event
       @frame = frame
-
+      while @frame.type == 'IFUNC'
+        @frame = @frame.prev
+      end
       @processor.process_commands(@frame)
 
       # FIXME: unblock other threads

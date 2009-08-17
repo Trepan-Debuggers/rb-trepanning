@@ -12,6 +12,7 @@ class Debugger
     @core         = Core.new(self, @settings[:core_opts])
     @trace_filter = TraceFilter.new
     @trace_filter.excluded << method(:debugger).to_proc.iseq
+    @trace_filter.excluded << @trace_filter.method(:set_trace_func).to_proc.iseq
   end
 
   # If you want an synchronous stop in your program call this to
@@ -33,7 +34,6 @@ class Debugger
   def debugger(opts={}, &block)
     # FIXME: one option we may want to pass is the initial trace filter.
     if block
-      p @core.method(:event_processor)
       @trace_filter.set_trace_func(@core.method(:event_processor).to_proc)
       block.call(self)
       @trace_filter.set_trace_func(nil)
