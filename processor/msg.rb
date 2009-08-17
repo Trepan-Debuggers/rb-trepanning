@@ -1,5 +1,6 @@
 # I/O related command processor methods
 class Debugger
+  # FIXME: All of this should go use an interface.
   class CmdProcessor
     def errmsg(message)
       puts "Error: #{message}"

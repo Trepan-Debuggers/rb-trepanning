@@ -22,6 +22,7 @@ return code that will be passed back to the OS.'
 end
 
 if __FILE__ == $0
+  name = File.basename(__FILE__, '.rb')
   cmd = Debugger::Command::ExitCommand.new(nil)
-  cmd.run %w(exit 10)
+  cmd.run([name, '10'])
 end

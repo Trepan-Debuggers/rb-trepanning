@@ -3,6 +3,31 @@
 class Debugger
   class CmdProcessor
 
+    # FIXME: move to interface.
+    unless defined?(YES)
+      YES = %w(y yes oui si yep ja)
+      NO  = %w(n no non nope nein)
+      YES_OR_NO = YES + NO
+    end
+
+    # FIXME: move to interface.
+    def confirm(msg, default)
+      default_str = default ? 'Y/n' : 'N/y'
+      while true do
+        response = Readline.readline("%s (%s) " % 
+                                     [msg, default_str]).strip.downcase
+        if response.empty?
+          response = default
+          break
+        end
+        # We don't catch "Yes, I'm sure" or "NO!", but I leave that 
+        # as an excercise for the reader.
+        break if YES_OR_NO.member?(response)
+        puts "Please answer 'yes' or 'no'. Try again."
+      end
+      return YES.member?(response)
+    end
+
     # Like cmdfns.get_an_int(), but if there's a stack frame use that
     # in evaluation.
     def get_an_int(arg, opts={})
@@ -81,6 +106,8 @@ class Debugger
       b = @frame ? @frame.binding : nil
       begin
         val = Integer(eval(arg, b))
+      rescue SyntaxError
+        return nil
       rescue 
         return nil
       end
@@ -105,5 +132,20 @@ class Debugger
         print_error
       raise TypeError
     end
+  end
+end
+
+if __FILE__ == $0
+  # Demo it.
+  class Debugger::CmdProcessor
+    def errmsg(msg)
+      puts msg
+    end
+  end
+  cp = Debugger::CmdProcessor.new
+  onoff = %w(1 0 on off)
+  onoff.each { |val| puts "onoff(#{val}) = #{cp.get_onoff(val)}" }
+  %w(1 1E bad 1+1 -5).each do |val| 
+    puts "get_int_noerr(#{val}) = #{cp.get_int_noerr(val).inspect}" 
   end
 end

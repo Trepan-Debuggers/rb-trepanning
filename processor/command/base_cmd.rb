@@ -12,6 +12,10 @@ class Debugger
       @proc = proc
     end
 
+    def confirm(message, default)
+      @proc.confirm(message, default)
+    end
+
     def errmsg(message)
       @proc.errmsg(message)
     end

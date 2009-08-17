@@ -59,9 +59,9 @@ class Debugger
 
     end
 
-    # Convenience short-hand for @dbgr.intf.confirm
+    # Convenience short-hand for @proc.confirm
     def confirm(msg, default=false)
-      return(@dbgr.intf[-1].confirm(msg, default))
+      return(@proc.confirm(msg, default))
     end
 
     # Set a Boolean-valued debugger setting. 

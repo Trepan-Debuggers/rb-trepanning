@@ -43,7 +43,7 @@ Examples:
     if @proc.frame
       print_stack_trace(@proc.top_frame, count, @proc.frame_index)
     else
-      errmsg 'No frame'
+      errmsg 'No frame.'
     end
     return false  # Don't break out of cmd loop
   end

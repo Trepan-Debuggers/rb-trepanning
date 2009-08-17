@@ -10,9 +10,9 @@ class Debugger
   def initialize(settings={})
     @settings     = DbgSettings::DEFAULT_SETTINGS.merge(settings)
     @core         = Core.new(self, @settings[:core_opts])
-    @trace_filter = TraceFilter.new
-    @trace_filter.excluded << method(:debugger).to_proc.iseq
-    @trace_filter.excluded << @trace_filter.method(:set_trace_func).to_proc.iseq
+    # @trace_filter = TraceFilter.new
+    # @trace_filter.excluded << method(:debugger).to_proc.iseq
+    # @trace_filter.excluded << @trace_filter.method(:set_trace_func).to_proc.iseq
   end
 
   # If you want an synchronous stop in your program call this to
@@ -51,11 +51,11 @@ if __FILE__ == $0
   # (I have a good imagination.)
   dc = Debugger.new()
   puts 'block debugging...'
-  dc.debugger {
-    a = 2
-    b = square(a)
-    p "square of #{a} is #{b}"
-  }
-  # puts 'immediate debugging...'
-  # dc.debugger(:immediate => true)
+#   dc.debugger {
+#     a = 2
+#     b = square(a)
+#     p "square of #{a} is #{b}"
+#   }
+  puts 'immediate debugging...'
+  dc.debugger(:immediate => true)
 end

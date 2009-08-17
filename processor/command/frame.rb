@@ -59,7 +59,7 @@ See also 'up', 'down' 'where' and 'info thread'.
       
     stack_size = @proc.top_frame.stack_size
     if stack_size == 0
-      errmsg('No frames recorded')
+      errmsg('No frames recorded.')
       return false
     end
         
