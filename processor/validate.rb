@@ -57,9 +57,11 @@ class Debugger
         :min_value => 0, :default => 1, :cmdname => nil, :max_value => nil}
     end
 
-    # If no argument use the default. If arg is a an integer between
-    # least min_value and at_most, use that. Otherwise report an error.
-    # If there's a stack frame use that in evaluation.
+    # If argument parameter 'arg' is not given, then use what is in
+    # opts[:default]. If String 'arg' evaluates to an integer between
+    # least min_value and at_most, use that. Otherwise report an
+    # error.  If there's a stack frame use that for bindings in
+    # evaluation.
     def get_int(arg, opts={})
       
       return default unless arg
