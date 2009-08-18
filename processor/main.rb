@@ -8,15 +8,25 @@ require_relative 'validate'
 
 class Debugger
   class CmdProcessor
-    attr_reader   :aliases      # Hash[String] of command names indexed by alias name
-    attr_reader   :dbgr         # Debugger instance (via Debugger::Core instance)
-    attr_reader   :commands     # Hash[String] of command objects indexed by name
-    attr_reader   :settings     # Hash[:symbol] of command processor settings
+    attr_reader   :aliases  # Hash[String] of command names indexed by
+                            # alias name
+    attr_reader   :dbgr     # Debugger instance (via Debugger::Core instance)
+    attr_reader   :commands # Hash[String] of command objects indexed by name
+    attr_reader   :settings # Hash[:symbol] of command processor settings
+
+    EVENT2ICON = {
+      'c-call'         => 'C>',
+      'c-return'       => '<C',
+      'call'           => '->',
+      'debugger-call'  => ':o',
+      'exception'      => '!!',
+      'line'           => '--',
+      'return'         => '<-',
+    } unless defined?(EVENT2ICON)
 
     def initialize(core, settings={})
       @core           = core
       @dbgr           = core.dbgr
-      @event          = nil
       @settings       = settings.merge(DEFAULT_SETTINGS)
 
       # Start with empty thread and frame info.
@@ -70,7 +80,10 @@ class Debugger
     end
 
     def print_location
-      msg "(#{@frame.source_container[1]}:#{@frame.source_location[0]})"
+      container = @frame.source_container[1]
+      ev        = @core.event.nil? ? '  ' : (EVENT2ICON[@core.event] || '??')
+      line_no   = @frame.source_location[0]
+      msg "#{ev} (#{container}:#{line_no})"
     end
 
     # Run one debugger command. True is returned if we want to quit.

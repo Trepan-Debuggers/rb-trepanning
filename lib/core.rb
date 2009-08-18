@@ -10,6 +10,8 @@ class Debugger
 
   class Core
     attr_reader   :dbgr       # Debugger instance
+    attr_reader   :event      # String - event which triggering event
+                              # processor
     attr_reader   :frame      # ThreadFrame instance
     attr_accessor :processor  # Debugger::CmdProc instance
     attr_reader   :settings   # Hash of things you can configure
@@ -26,7 +28,6 @@ class Debugger
 
     # A trace-hook processor with the interface a trace hook should have.
     def event_processor(event, frame, arg=nil)
-      p [event, frame, arg]
       # FIXME: Block all other threads
       @arg   = arg
       @event = event
