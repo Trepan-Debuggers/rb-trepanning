@@ -12,13 +12,14 @@ class Debugger::Subcommand::ShowTraceset < Debugger::Subcommand
 
   # FIXME: this really should be a subcommand of "set trace"
   def run(args)
-    # FIXME: this show events for all hooks, we want just ours.
-    masks = Trace.event_masks
-    if masks.empty?
+    # FIXME:? this show events for all hooks while we want just ours?
+    event_bitmasks = Trace.event_masks
+    if event_bitmasks.empty?
       msg('No events trapped.')
     else
-      masks.each do |mask| 
-        msg(Trace.bitmask2events(mask))
+      msg('Trace events we may stop on:')
+      event_bitmasks.each do |event_bitmask|
+        msg("\t" + Trace.bitmask2events(event_bitmask).join(', '))
       end
     end
   end
