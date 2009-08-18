@@ -51,10 +51,14 @@ class Debugger
       # that -- perhaps one may want to put several subcommands into 
       # a single file. So in those cases, one will have to set @name
       # accordingly by other means.
-      @name  = self.class.const_get(:NAME).to_sym
+      @name  = my_const(:NAME).to_sym
       
       def summary_help(subcmd_name)
-        msg_nocr("%-12s: %s" % [subcmd_name, self.class.const_get(:SHORT_HELP)])
+        msg_nocr("%-12s: %s" % [subcmd_name, my_const(:SHORT_HELP)])
+      end
+
+      def string_in_show
+        my_const(:SHORT_HELP)['Show '.size .. -1].capitalize
       end
 
     end
@@ -105,6 +109,26 @@ class Debugger
       msg("%s is %d." % [what, val])
     end
 
+    # Generic subcommand value display. Pass in a hash which may
+    # which optionally contain:
+    #
+    #   :name - the String name of key in settings to use. If :value
+    #           (described below) is set, then setting :name does
+    #           nothing.
+    #
+    #   :what - the String name of what we are showing. If none is
+    #           given, then we use the part of the SHORT_HELP string.
+    # 
+    #   :value - a String value associated with "what" above. If none
+    #            is given, then we pick up the value from settings.
+    # 
+    def run_show_val(opts={})
+      what = opts.member?(:what)  ? opts[:what]  : string_in_show
+      name = opts.member?(:name)  ? opts[:name]  : @name
+      val  = opts.member?(:value) ? opts[:value] : settings[name] 
+      msg("%s is %s." % [what, val])
+    end
+
     def settings
       @proc.settings
     end
@@ -131,8 +155,7 @@ class Debugger
 
   class ShowBoolSubcommand < Subcommand
     def run(args)
-      doc = my_const(:HELP)[5..-1].capitalize.split('\n')[0].chomp('.')
-      run_show_bool(doc)
+      run_show_bool(string_in_show)
     end
   end
 
@@ -141,7 +164,7 @@ class Debugger
       if self.respond_to?(:short_help)
         doc = short_help
       else
-        doc = my_const(:HELP)[5..-1].capitalize
+        doc = my_const(:HELP)[5..-2].capitalize
       end
       run_show_int(doc)
     end

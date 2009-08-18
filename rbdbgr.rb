@@ -6,6 +6,7 @@ class Debugger
 
   attr_accessor :core       # access to Debugger::Core instance
   attr_reader   :settings   # Hash[:symbol] of things you can configure
+  attr_accessor :trace_filter
 
   def initialize(settings={})
     @settings     = DbgSettings::DEFAULT_SETTINGS.merge(settings)

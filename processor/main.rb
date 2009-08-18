@@ -10,8 +10,9 @@ class Debugger
   class CmdProcessor
     attr_reader   :aliases  # Hash[String] of command names indexed by
                             # alias name
-    attr_reader   :dbgr     # Debugger instance (via Debugger::Core instance)
+    attr_reader   :core     # Debugger core object
     attr_reader   :commands # Hash[String] of command objects indexed by name
+    attr_reader   :dbgr     # Debugger instance (via Debugger::Core instance)
     attr_reader   :settings # Hash[:symbol] of command processor settings
 
     EVENT2ICON = {

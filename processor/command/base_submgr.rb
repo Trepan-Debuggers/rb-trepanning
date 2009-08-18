@@ -14,6 +14,8 @@ class Debugger::SubcommandMgr < Debugger::Command
     NEED_STACK    = false
   end
 
+  attr_accessor :subcmds  # Array of instaniated Debugger::Subcommand objects
+
   # Initialize show subcommands. Note: instance variable name
   # has to be setcmds ('set' + 'cmds') for subcommand completion
   # to work.
