@@ -11,18 +11,23 @@ return code that will be passed back to the OS.'
   MIN_ARGS     = 0  # Need at least this many
   MAX_ARGS     = 1  # Need at most this many
   NAME         = File.basename(__FILE__, '.rb')
-  SHORT_HELP  = 'Exit program via exit()'
+  SHORT_HELP  = 'Exit program via "exit!"'
 
   # This method runs the command
   def run(args) # :nodoc
     # A little harsh, but for now let's go with this.
-    p 'calling it quits'
+    msg 'calling it quits'
     exitrc = (args.size > 1) ? exitrc = Integer(args[1]) rescue 0 : 0
+    # No graceful way to stop threads...
+    exit! exitrc
   end
 end
 
 if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   cmd = Debugger::Command::ExitCommand.new(nil)
+  def cmd.msg(message)
+    puts message
+  end
   cmd.run([name, '10'])
 end

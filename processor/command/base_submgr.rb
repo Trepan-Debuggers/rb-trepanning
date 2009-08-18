@@ -68,7 +68,7 @@ class Debugger::SubcommandMgr < Debugger::Command
   def help(args)
     if args.size <= 2
       # "help cmd". Give the general help for the command part.
-      doc = self.class.const_get(:HELP)
+      doc = my_const(:HELP)
       if doc
        return doc
       else

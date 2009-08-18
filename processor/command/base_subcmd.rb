@@ -169,6 +169,9 @@ class Debugger
       run_show_int(doc)
     end
   end
+
+  class Subsubcommand  < Subcommand
+  end
 end
 
 if __FILE__ == $0
