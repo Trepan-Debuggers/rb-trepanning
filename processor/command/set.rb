@@ -23,7 +23,7 @@ Type "help set *" for just the list of "set" subcommands.
 end
 
 if __FILE__ == $0
-  require_relative File.join(%w(.. mock))
+  require_relative %w(.. mock)
   dbgr = MockDebugger.new
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   name = File.basename(__FILE__, '.rb')

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative File.join(%w(.. .. processor validate))
+require_relative %w(.. .. processor validate)
 
 $errors = []
 $msgs   = []

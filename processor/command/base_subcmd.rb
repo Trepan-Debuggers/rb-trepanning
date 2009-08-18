@@ -173,7 +173,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative File.join(%w(.. mock))
+  require_relative %w(.. mock)
   dbgr = MockDebugger.new
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   p cmds.keys

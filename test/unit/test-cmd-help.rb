@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative File.join(%w(.. .. lib core))
-require_relative File.join(%w(.. .. processor main))
-require_relative File.join(%w(.. .. processor command help))
+require_relative %w(.. .. lib core)
+require_relative %w(.. .. processor main)
+require_relative %w(.. .. processor command help)
 
 # Mock debugger stub. FIXME: put in comment helper routine.
 class Debugger

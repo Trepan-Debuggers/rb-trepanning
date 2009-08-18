@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'thread_frame'
-require_relative File.join(%w(.. .. processor frame))
+require_relative %w(.. .. processor frame)
 
 $errors = []
 $msgs   = []

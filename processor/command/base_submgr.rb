@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'columnize'
 require_relative 'base_cmd'
-require_relative File.join(%w(.. subcmd))
+require_relative %w(.. subcmd)
 
 class Debugger::SubcommandMgr < Debugger::Command
 
@@ -151,7 +151,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative File.join(%w(.. mock))
+  require_relative %w(.. mock)
   dbgr = MockDebugger.new
   Debugger::SubcommandMgr.new(dbgr.core.processor)
 end

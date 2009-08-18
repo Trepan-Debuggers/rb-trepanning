@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative File.join(%w(.. base_subcmd))
+require_relative %w(.. base_subcmd)
 
 class Debugger::Subcommand::ShowAutoeval < Debugger::ShowBoolSubcommand
   unless defined?(HELP)
@@ -13,8 +13,8 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative File.join(%w(.. .. mock))
-  require_relative File.join(%w(.. .. subcmd))
+  require_relative %w(.. .. mock)
+  require_relative %w(.. .. subcmd)
   dbgr = MockDebugger.new
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   cmd = cmds['exit']

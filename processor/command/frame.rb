@@ -1,5 +1,5 @@
 require_relative 'base_cmd'
-require_relative File.join(%w(.. .. lib frame))
+require_relative %w(.. .. lib frame)
 
 class Debugger::Command::FrameCommand < Debugger::Command
 
@@ -151,7 +151,7 @@ if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
   # FIXME: do more of the below setup in mock
-  require_relative File.join(%w(.. mock))
+  require_relative %w(.. mock)
   dbgr = MockDebugger.new
 
   cmds = dbgr.core.processor.instance_variable_get('@commands')

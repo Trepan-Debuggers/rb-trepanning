@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative File.join(%w(.. .. lib frame))
+require_relative %w(.. .. lib frame)
 require 'thread_frame'
 
 # Test Debugger:CmdProcessor

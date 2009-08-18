@@ -1,7 +1,7 @@
-require 'trace'                 # Trace filtering
+require 'trace'                   # Trace filtering
 require 'thread_frame'
-require_relative 'lib/core'     # core event-handling mechanism
-require_relative 'lib/default'  # default debugger settings
+require_relative %w(lib core)     # core event-handling mechanism
+require_relative %w(lib default)  # default debugger settings
 class Debugger
 
   attr_accessor :core       # access to Debugger::Core instance

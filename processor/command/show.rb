@@ -21,7 +21,7 @@ Type "help show *" for just a list of "show" subcommands.'
 end
 
 if __FILE__ == $0
-  require_relative File.join(%w(.. mock))
+  require_relative %w(.. mock)
   dbgr = MockDebugger.new
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   name = File.basename(__FILE__, '.rb')
