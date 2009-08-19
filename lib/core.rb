@@ -69,7 +69,7 @@ class Debugger
 
       @processor.process_commands(@frame)
 
-      # FIXME: There should be a Trace.event_mask should return the first
+      # FIXME: There should be a Trace.event_mask which should return the first
       # mask that matches the given trace hook.
       if step_count < 0
         # If we are continuing, no need to stop at stepping events.

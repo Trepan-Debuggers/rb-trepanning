@@ -24,9 +24,10 @@ See also 'down' and 'frame'.
   require_relative %w(.. .. lib frame)
   include Debugger::Frame
 
-  # Run 'down' command. 
+  # Run 'up' command. 
   def run(args)
 
+    # FIXME: move into @proc and test based on NEED_STACK.
     if not @proc.top_frame
       errmsg("Program has no stack frame set.")
       return false

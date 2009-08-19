@@ -36,7 +36,6 @@ class Debugger
     end
 
     def print_stack_entry(frame, i, prefix='    ')
-      # FIXME: remove puts. 
       msg "%s%s" % [prefix, format_stack_entry(frame)]
     end
 

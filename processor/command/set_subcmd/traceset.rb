@@ -18,8 +18,6 @@ class Debugger::Subcommand::SetTraceset < Debugger::Subcommand
     end
     @proc.core.step_events = bitmask
   end
-
-
 end
 
 if __FILE__ == $0
