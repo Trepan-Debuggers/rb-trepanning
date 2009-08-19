@@ -13,6 +13,7 @@ class Debugger
     attr_reader   :dbgr        # Debugger instance
     attr_reader   :event       # String - event which triggering event
                                # processor
+    attr_reader   :event_proc  # Proc of method event_processor
     attr_reader   :frame       # ThreadFrame instance
     attr_accessor :processor   # Debugger::CmdProc instance
     attr_reader   :settings    # Hash of things you can configure
@@ -42,6 +43,7 @@ class Debugger
 
     def initialize(debugger, settings={})
       @dbgr        = debugger
+      @event_proc  = self.method(:event_processor).to_proc
       @settings    = DEFAULT_SETTINGS.merge(settings)
       @step_count  = @settings[:step_count]
       @step_events = @settings[:step_events]
@@ -71,12 +73,21 @@ class Debugger
 
       # FIXME: There should be a Trace.event_mask which should return the first
       # mask that matches the given trace hook.
-      if step_count < 0
+      if @step_count < 0
         # If we are continuing, no need to stop at stepping events.
         Trace.event_masks[0] &= ~STEPPING_EVENT_MASK 
       else
         # Set to trace only those event we are interested in 
+        p RubyVM::TraceHook::trace_hooks.member?(@event_proc)
+
+        # Don't step into calls of remaining portion
+        step_count_save = step_count
+        @step_count     = -1 
+        dbgr.trace_filter.set_trace_func(@event_proc) unless
+          RubyVM::TraceHook::trace_hooks.member?(@event_proc)
+          
         Trace.event_masks[0] |= @step_events
+        @step_count = step_count_save
       end
 
       # FIXME: unblock other threads
@@ -89,9 +100,13 @@ class Debugger
     end
 
     # Call this from inside the program you want to get a synchronous
-    # call to the debugger.
-    def debugger
-      frame = RubyVM::ThreadFrame.current.prev
+    # call to the debugger. set prev_count to the number of levels 
+    # *before* the caller you want to skip.
+    def debugger(prev_count=0)
+      while @frame.type == 'IFUNC'
+        @frame = @frame.prev
+      end
+      frame = RubyVM::ThreadFrame.current.prev(prev_count+1)
       @step_count = 0
       event_processor('debugger-call', frame)
     end
