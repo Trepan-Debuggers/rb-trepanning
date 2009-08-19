@@ -12,12 +12,11 @@ class Debugger::Subcommand::SetTraceset < Debugger::Subcommand
 
   # FIXME: this really should be a subcommand of "set trace"
   def run(events)
-    # FIXME:? this sets events for all hooks while we want just ours?
     bitmask, bad_events = Trace.events2bitmask(events)
     unless bad_events.empty?
       errmsg("Event names unrecognized/ignored: %s" % bad_events.join(', '))
     end
-    Trace.event_masks = bitmask
+    @proc.core.step_events = bitmask
   end
 
 

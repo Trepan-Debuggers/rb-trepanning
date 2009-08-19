@@ -8,12 +8,18 @@ require_relative 'validate'
 
 class Debugger
   class CmdProcessor
-    attr_reader   :aliases  # Hash[String] of command names indexed by
-                            # alias name
-    attr_reader   :core     # Debugger core object
-    attr_reader   :commands # Hash[String] of command objects indexed by name
-    attr_reader   :dbgr     # Debugger instance (via Debugger::Core instance)
-    attr_reader   :settings # Hash[:symbol] of command processor settings
+    attr_reader   :aliases        # Hash[String] of command names
+                                  # indexed by alias name
+    attr_reader   :core           # Debugger core object
+    attr_reader   :commands       # Hash[String] of command objects
+                                  # indexed by name
+    attr_reader   :dbgr           # Debugger instance (via
+                                  # Debugger::Core instance)
+    attr_accessor :leave_cmd_loop # Commands set this to signal to leave
+                                  # the command loop (which often continues to 
+                                  # run the debugged program). 
+    attr_reader   :settings       # Hash[:symbol] of command processor
+                                  # settings
 
     EVENT2ICON = {
       'c-call'         => 'C>',
@@ -122,11 +128,11 @@ class Debugger
       frame_setup(frame, Thread.current)
       print_location
 
-      leave_loop = false
-      while not leave_loop do
-          leave_loop = process_command_and_quit?()
-          # Might have other stuff here.
-        end
+      @leave_cmd_loop = false
+      while not @leave_cmd_loop do
+        process_command_and_quit?()
+        # Might have other stuff here.
+      end
     rescue IOError, Errno::EPIPE
     # rescue Exception => e
     #   errmsg("INTERNAL ERROR!!!")
