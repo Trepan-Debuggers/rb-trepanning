@@ -53,14 +53,6 @@ class Debugger
       # accordingly by other means.
       @name  = my_const(:NAME).to_sym
       
-      def summary_help(subcmd_name)
-        msg_nocr("%-12s: %s" % [subcmd_name, my_const(:SHORT_HELP)])
-      end
-
-      def string_in_show
-        my_const(:SHORT_HELP)['Show '.size .. -1].capitalize
-      end
-
     end
 
     # Convenience short-hand for @proc.confirm
@@ -140,10 +132,18 @@ class Debugger
       when true;  return 'on'
       when false; return 'off'
       when nil;   return 'unset'
-      else       return '??'
+      else        return '??'
       end
     end
 
+    def string_in_show
+      my_const(:SHORT_HELP)['Show '.size .. -1].capitalize
+    end
+
+    def summary_help(subcmd_name)
+      msg_nocr("%-12s: %s" % [subcmd_name, my_const(:SHORT_HELP)])
+    end
+    
   end
 
   class SetBoolSubcommand < Subcommand
