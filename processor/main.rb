@@ -25,8 +25,9 @@ class Debugger
       'c-call'         => 'C>',
       'c-return'       => '<C',
       'call'           => '->',
+      'class'          => '::',
       'debugger-call'  => ':o',
-      'exception'      => '!!',
+      'raise'          => '!!',
       'line'           => '--',
       'return'         => '<-',
     } unless defined?(EVENT2ICON)

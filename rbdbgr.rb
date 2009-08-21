@@ -68,18 +68,26 @@ if __FILE__ == $0
   # It is imagined that there are all sorts of command-line options here.
   # (I have a good imagination.)
   dc = Debugger.new()
+
   puts 'block debugging...'
   dc.debugger {
     a = 2
     b = square(a)
     p "square of #{a} is #{b}"
   }
+
   puts 'immediate debugging...'
   dc.debugger(:immediate => true)
   puts 'line after immediate'
   a = 3
   square(a)
+
+  class MyClass
+    def initialize(x)
+      @x = x
+    end
+  end
   dc.debugger
-  a = 4
-  square(a)
+  m = MyClass.new(5)
+  raise RuntimeError
 end

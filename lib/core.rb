@@ -78,8 +78,6 @@ class Debugger
         Trace.event_masks[0] &= ~STEPPING_EVENT_MASK 
       else
         # Set to trace only those event we are interested in 
-        p RubyVM::TraceHook::trace_hooks.member?(@event_proc)
-
         # Don't step into calls of remaining portion
         step_count_save = step_count
         @step_count     = -1 
