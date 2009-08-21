@@ -21,8 +21,9 @@ class Debugger
   #    require 'rbdbgr'
   #    mydbg = Debugger.new()
   #
-  # If you want a synchronous stop in your program call to the debugger to
-  # at the point of the call, pass opts[:immediate] = true. Example:
+  # If you want a synchronous stop in your program call to the
+  # debugger at the point of the call, set opts[:immediate]
+  # true. Example:
   #
   #    ... work, work, work
   #    mydbg.debugger(:immediate=>true)   # enter debugger here
@@ -53,10 +54,11 @@ class Debugger
       @core.debugger(1) 
     else
       # Set to stop on the next event after this returns.
+      step_count_save    = @core.step_count
+      @core.step_count  = -1 
       @trace_filter.set_trace_func(@core.event_proc)
       Trace.event_masks[0] |= @core.step_events
-      p @core.step_events
-      @core.step_count = 0
+      @core.step_count = step_count_save
     end
   end
 end
