@@ -1,7 +1,8 @@
 require_relative 'base_cmd'
 class Debugger::Command::KillCommand < Debugger::Command
 
-  HELP = 
+  unless defined?(HELP)
+    HELP = 
 "Kill execution of program being debugged.
 
 Equivalent of Process.kill( -KILL <pid> where <pid> is os.getpid(), the current
@@ -11,12 +12,13 @@ thread code, use this.
 If 'unconditionally' is given, no questions are asked. Otherwise, if
 we are in interactive mode, we'll prompt to make sure."
 
-  CATEGORY     = 'running'
-  MIN_ARGS     = 0  # Need at least this many
-  MAX_ARGS     = 1  # Need at most this many
-  NAME         = File.basename(__FILE__, '.rb')
-  SHORT_HELP  = 'Send this process a POSIX signal ("9" for "kill -9")'
-
+    CATEGORY     = 'running'
+    MIN_ARGS     = 0  # Need at least this many
+    MAX_ARGS     = 1  # Need at most this many
+    NAME         = File.basename(__FILE__, '.rb')
+    SHORT_HELP  = 'Send this process a POSIX signal ("9" for "kill -9")'
+  end
+    
   # This method runs the command
   def run(args) # :nodoc
     if args.size > 1
@@ -42,11 +44,12 @@ we are in interactive mode, we'll prompt to make sure."
 end
 
 if __FILE__ == $0
+  require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
-  cmd = Debugger::Command::KillCommand.new(nil)
-  def cmd.errmsg(msg)
-    puts msg
+  dbgr, cmd = MockDebugger::setup(name)
+  %w(fooo 1 -1 HUP -9).each do |arg| 
+    puts "#{name} #{arg}"
+    cmd.run([name, arg])
+    puts '=' * 40
   end
-  cmd.run([name, 'fooo'])
-  cmd.run([name, '-9'])
 end

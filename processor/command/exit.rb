@@ -1,17 +1,19 @@
 require_relative 'base_cmd'
 class Debugger::Command::ExitCommand < Debugger::Command
 
-  HELP = 
-'exit [exitcode] - hard exit of the debugged program.  
+  unless defined?(HELP)
+    HELP = 
+      'exit [exitcode] - hard exit of the debugged program.  
 The program being debugged is exited via exit(). If a return code
 is given that is the return code passed to exit() - presumably the
 return code that will be passed back to the OS.'
-
-  CATEGORY     = 'support'
-  MIN_ARGS     = 0  # Need at least this many
-  MAX_ARGS     = 1  # Need at most this many
-  NAME         = File.basename(__FILE__, '.rb')
-  SHORT_HELP  = 'Exit program via "exit!"'
+    
+    CATEGORY     = 'support'
+    MIN_ARGS     = 0  # Need at least this many
+    MAX_ARGS     = 1  # Need at most this many
+    NAME         = File.basename(__FILE__, '.rb')
+    SHORT_HELP  = 'Exit program via "exit!"'
+  end
 
   # This method runs the command
   def run(args) # :nodoc
@@ -24,10 +26,9 @@ return code that will be passed back to the OS.'
 end
 
 if __FILE__ == $0
+  require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
-  cmd = Debugger::Command::ExitCommand.new(nil)
-  def cmd.msg(message)
-    puts message
-  end
+  dbgr, cmd = MockDebugger::setup(name)
+  name = File.basename(__FILE__, '.rb')
   cmd.run([name, '10'])
 end

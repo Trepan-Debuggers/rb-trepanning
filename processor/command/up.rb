@@ -58,21 +58,27 @@ if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
   require_relative %w(.. mock)
-  dbgr = MockDebugger.new
-
-  cmds = dbgr.core.processor.instance_variable_get('@commands')
   name = File.basename(__FILE__, '.rb')
-  cmd = cmds[name]
+  dbgr, cmd = MockDebugger::setup(name)
+
+  def sep ; puts '=' * 40 end
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
   cmd.run [name]
-  cmd.run [name, '0']
-  cmd.run [name, '-1']
-  cmd.run [name, '1']
+  %w(0 -1 1).each do |count| 
+    puts "#{name} #{count}"
+    cmd.run([name, count])
+    sep 
+  end
   def foo(cmd, name)
     cmd.proc.top_frame = cmd.proc.frame = RubyVM::ThreadFrame::current
+    puts "#{name}"
     cmd.run([name])
-    cmd.run([name, '-2'])
-    cmd.run([name, '-1'])
+    sep
+    %w(-2 -1).each do |count| 
+      puts "#{name} #{count}"
+      cmd.run([name, count])
+      sep 
+    end
   end
   foo(cmd, name)
 end

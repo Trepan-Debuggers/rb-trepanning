@@ -1,16 +1,20 @@
+#!/usr/bin/env ruby
 require 'trace'                   # Trace filtering
 require 'thread_frame'
 require_relative %w(lib core)     # core event-handling mechanism
 require_relative %w(lib default)  # default debugger settings
 class Debugger
 
-  attr_accessor :core       # access to Debugger::Core instance
-  attr_reader   :settings   # Hash[:symbol] of things you can configure
+  attr_accessor :core         # access to Debugger::Core instance
+  attr_accessor :restart_argv # How to restart us, empty or nil. 
+                              # Note restart[0] is typically $0.
+  attr_reader   :settings     # Hash[:symbol] of things you can configure
   attr_accessor :trace_filter
 
   def initialize(settings={})
     @settings     = DbgSettings::DEFAULT_SETTINGS.merge(settings)
     @core         = Core.new(self, @settings[:core_opts])
+    @restart_argv = @settings[:restart_argv]
     @trace_filter = TraceFilter.new
     @trace_filter.excluded << self.method(:debugger)
     @trace_filter.excluded << @core.method(:debugger)
@@ -70,7 +74,7 @@ if __FILE__ == $0
   end
   # It is imagined that there are all sorts of command-line options here.
   # (I have a good imagination.)
-  dc = Debugger.new()
+  dc = Debugger.new(:restart_argv => [File.expand_path($0)])
 
   puts 'block debugging...'
   dc.debugger {

@@ -47,13 +47,13 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
-  # FIXME: do more of the below setup in mock
-  require_relative %w(.. mock)
-  dbgr = MockDebugger.new
 
-  cmds = dbgr.core.processor.instance_variable_get('@commands')
+  require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
-  cmd = cmds[name]
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
-  cmd.run [name]
+  dbgr, cmd = MockDebugger::setup(name)
+  def small_fn(cmd, name)
+    cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
+    cmd.run [name]
+  end
+  small_fn(cmd, name)
 end

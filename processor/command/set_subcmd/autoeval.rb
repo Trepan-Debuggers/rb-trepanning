@@ -45,9 +45,10 @@ if __FILE__ == $0
   # Demo it.
   require_relative %w(.. .. mock)
   require_relative %w(.. .. subcmd)
-  dbgr = MockDebugger.new
-  cmds = dbgr.core.processor.instance_variable_get('@commands')
-  cmd = cmds['exit']
+  name = File.basename(__FILE__, '.rb')
+
+  # FIXME: DRY the below code
+  dbgr, cmd = MockDebugger::setup('exit')
   subcommand = Debugger::Subcommand::SetAutoeval.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
@@ -61,6 +62,5 @@ if __FILE__ == $0
     puts message
   end
   subcommand.run_show_bool
-  name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
 end

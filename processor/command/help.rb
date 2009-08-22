@@ -117,11 +117,8 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative %w(.. mock)
-  dbgr = MockDebugger.new
-
-  cmds = dbgr.core.processor.instance_variable_get('@commands')
   name = File.basename(__FILE__, '.rb')
-  cmd = cmds[name]
+  dbgr, cmd = MockDebugger::setup(name)
   cmd.run %w(help help)
   puts '=' * 40
   cmd.run %w(help *)

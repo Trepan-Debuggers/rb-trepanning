@@ -24,10 +24,7 @@ end
 
 if __FILE__ == $0
   require_relative %w(.. mock)
-  dbgr = MockDebugger.new
-  cmds = dbgr.core.processor.instance_variable_get('@commands')
   name = File.basename(__FILE__, '.rb')
-  cmd = cmds[name]
-  command = Debugger::Command::SetCommand.new(dbgr.core.processor)
-  command.run([name])
+  dbgr, cmd = MockDebugger::setup(name)
+  cmd.run([name])
 end
