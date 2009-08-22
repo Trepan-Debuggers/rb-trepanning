@@ -14,6 +14,7 @@ class Debugger
     @trace_filter = TraceFilter.new
     @trace_filter.excluded << self.method(:debugger)
     @trace_filter.excluded << @core.method(:debugger)
+    @trace_filter.excluded << @core.method(:event_processor)
     @trace_filter.excluded << @trace_filter.method(:set_trace_func)
   end
 
