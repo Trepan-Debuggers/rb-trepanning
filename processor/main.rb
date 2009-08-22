@@ -92,8 +92,8 @@ class Debugger
 
     def print_location
       container = @frame.source_container[1]
-      ev        = @core.event.nil? ? '  ' : (EVENT2ICON[@core.event] 
-                                             || @core.event)
+      ev        = @core.event.nil? ? '  ' : 
+        (EVENT2ICON[@core.event] || @core.event)
       line_no   = @frame.source_location[0]
       msg "#{ev} (#{container}:#{line_no})"
     end
