@@ -31,8 +31,9 @@ class Debugger
     unless defined?(DEFAULT_SETTINGS)
       # Synchronous events
       STEPPING_EVENT_MASK = 
-        LINE_EVENT_MASK     | CLASS_EVENT_MASK    | CALL_EVENT_MASK  |
-        RETURN_EVENT_MASK   | C_CALL_EVENT_MASK   | C_RETURN_EVENT_MASK
+        LINE_EVENT_MASK     | CLASS_EVENT_MASK    | CALL_EVENT_MASK     |
+        RETURN_EVENT_MASK   | C_CALL_EVENT_MASK   | C_RETURN_EVENT_MASK |
+        INSN_EVENT_MASK
 
       ASYNC_EVENT_MASK = 
         RAISE_EVENT_MASK    | VM_EVENT_MASK       | SWITCH_EVENT_MASK
@@ -40,7 +41,7 @@ class Debugger
       DEFAULT_SETTINGS = {
         :cmdproc_opts => {},
         :step_count   => 0,  # Stop at next event
-        :step_events  => DEFAULT_EVENT_MASK,
+        :step_events  => DEFAULT_EVENT_MASK | INSN_EVENT_MASK,
         :async_events => ASYNC_EVENT_MASK
       } 
 

@@ -26,8 +26,17 @@ that method.
     obj = nil
     if args.size == 1
       # Form is: "disassemble" 
-      if @proc.frame.iseq
+      if @proc.frame.type == 'CFUNC'
+        errmsg "Can't handle C functions yet."
+        return
+      elsif @proc.frame.iseq
         msg(@proc.frame.iseq.disasm)
+        return
+      end
+    else
+      thingy = args[1]
+      if @proc.debug_eval("#{thingy}.respond_to?(:disasm)")
+        msg @proc.debug_eval("#{thingy}.disasm")
         return
       end
     end

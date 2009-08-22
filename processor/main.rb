@@ -27,9 +27,12 @@ class Debugger
       'call'           => '->',
       'class'          => '::',
       'debugger-call'  => ':o',
+      'end'            => '-|',
       'raise'          => '!!',
       'line'           => '--',
       'return'         => '<-',
+      'vm-insn'        => '..',
+      'unknown'        => '?!',
     } unless defined?(EVENT2ICON)
 
     def initialize(core, settings={})
@@ -89,7 +92,8 @@ class Debugger
 
     def print_location
       container = @frame.source_container[1]
-      ev        = @core.event.nil? ? '  ' : (EVENT2ICON[@core.event] || '??')
+      ev        = @core.event.nil? ? '  ' : (EVENT2ICON[@core.event] 
+                                             || @core.event)
       line_no   = @frame.source_location[0]
       msg "#{ev} (#{container}:#{line_no})"
     end
