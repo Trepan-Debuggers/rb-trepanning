@@ -56,7 +56,6 @@ component in LOC-HIST"
 
 (defun rbdbg-loc-hist-clear(loc-hist)
   "Clear out all source locations in LOC-HIST"
-  (interactive)
   (let ((ring (ring-ref (rbdbg-loc-hist-ring loc-hist)
 			(rbdbg-loc-hist-position loc-hist))))
     (set (rbdbg-loc-hist-position loc-hist) -1)

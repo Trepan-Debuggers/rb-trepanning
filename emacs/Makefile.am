@@ -1,20 +1,20 @@
 lisp_files = rbdbg-loc.el \
-	     rbdbg-locring.el
+	     rbdbg-lochist.el
 
 check_DATA = test/behave.el	\
 	test/test-loc.el  	\
-	test/test-locring.el
+	test/test-lochist.el
 
 EXTRA_DIST = $(lisp_files) $(check_DATA)
 ELCFILES   = rbdbg-loc.elc \
-	     rbdbg-locring.elc
+	     rbdbg-lochist.elc
 
 
 if INSTALL_EMACS_LISP
 lisp_LISP = $(lisp_files)
 CHECK_FILES = \
 	check-loc \
-	check-locring
+	check-lochist
 
 check: $(CHECK_FILES)
 
@@ -22,13 +22,23 @@ check-loc: rbdbg-loc.el
 	(cd $(srcdir)/test && \
 	$(EMACS) -batch -Q -l test-loc.el )
 
-check-locring: rbdbg-locring.el
+check-lochist: rbdbg-lochist.el
 	(cd $(srcdir)/test && \
-	$(EMACS) -batch -Q -l test-locring.el )
+	$(EMACS) -batch -Q -l test-lochist.el )
 
 endif
 
-PHONY = $(CHECK_FILES)
+if MAINTAINER_MODE
+
+CL = ChangeLog
+ChangeLog:
+	git log --pretty --numstat --summary | $(GIT2CL) > $@
+
+ACLOCAL_AMFLAGS=-I .
+
+endif
+
+PHONY = $(CHECK_FILES) $(CL)
 
 test: check
 

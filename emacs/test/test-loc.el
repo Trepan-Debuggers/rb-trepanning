@@ -11,14 +11,15 @@
   (context "location creation: "
 	   (tag loc)
 	   (lexical-let* ((filename (buffer-file-name (current-buffer)))
-			  (good-loc (rbdbg-loc-new filename 5 (point-marker))))
+			  (good-loc (rbdbg-loc-new filename 5 (point-marker)))
+			  (good-loc2 (rbdbg-loc-current)))
 	     
 	     (specify "invalid location (two numbers)"
 		      (expect (rbdbg-loc? (rbdbg-loc-new 5 5)) equal nil))
 	     (specify "invalid location (bad marker)"
 		      (expect (rbdbg-loc? (rbdbg-loc-new "f" 5 "f")) equal nil))
 	     (specify "good location (via rbdbg-loc-current)"
-		      (expect (rbdbg-loc? (rbdbg-loc-current)) equal t))
+	      	      (expect (rbdbg-loc? good-loc2) t))
 	     (specify "good location (two args)"
 		      (expect (rbdbg-loc? (rbdbg-loc-new filename 5)) equal t))
 	     (specify "good location (three args)"
@@ -46,5 +47,5 @@
 		      (expect (rbdbg-loc-marker nil) equal nil))
 	     ))
   (switch-to-buffer saved-buffer))
-
 (behave "loc")
+

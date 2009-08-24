@@ -165,7 +165,12 @@
       (princ (concat "Running specs tagged \"" tags-string "\":\n\n"))
       (dolist (context (context-find-by-tags (mapcar 'intern (split-string tags-string " "))))
 	    (execute-context context))
-      (behave-describe-failures failures start-time))))
+      (behave-describe-failures failures start-time))
+    (if noninteractive 
+	(progn 
+	  (switch-to-buffer "*behave*")
+	  (message "%s" (buffer-substring (point-min) (point-max)))))
+    (length failures)))
 
 (defun execute-context (context)
   (condition-case failure

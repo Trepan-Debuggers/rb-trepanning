@@ -1,3 +1,5 @@
+(eval-when-compile (require 'cl))
+
 (defun rbdbg-loc?(object)
   "Return t if OBJECT is a rbdbg position"
   (and (listp object) 
