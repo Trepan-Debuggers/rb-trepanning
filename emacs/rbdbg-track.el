@@ -45,7 +45,7 @@ as gud-mode does for debugging C programs with gdb."
 ;; Variables.
 ;;
 
-(defconst rbdbg-track-track-range 10000
+(defconst rbdbg-track-char-range 10000
   "Max number of characters from end of buffer to search for stack entry.")
 
 
@@ -58,8 +58,7 @@ as gud-mode does for debugging C programs with gdb."
 (require 'cl)
 
 (load-file "./rbdbg-loc.el")
-(load-file "./rbdbgr-regexp.el")
-
+(eval-when-compile (load-file "./rbdbgr-regexp.el"))
 
 ;; -------------------------------------------------------------------
 ;; rbdbg track -- support for attaching the `rbdbg' ruby debugger to
@@ -81,7 +80,7 @@ set in buffer-local variables to extract text"
     (if (and curr-proc rbdbg-track-tracking?)
 	(let* ((proc-mark (process-mark curr-proc))
                (block-start (max comint-last-input-end
-                                 (- proc-mark rbdbg-track-track-range)))
+                                 (- proc-mark rbdbg-track-char-range)))
                (block-str (buffer-substring block-start proc-mark)))
 	  (rbdbg-track-find-loc block-str)))))
 
@@ -94,10 +93,10 @@ We depend on the rbdbg input prompt matching `rbdbg-input-prompt-regexp'
 at the beginning of the line."
   ; FIXME rbdbgr-position-regexp is for rbdbgr. rbdbg-position-regexp
   ; will be generic and picked up in a buffer-local variable.
-  (if (string-match rbdbgr-position-regexp text)
-      (lexical-let* ((filename (match-string rbdbgr-marker-regexp-file-group text))
+  (if (string-match rbdbgr-loc-regexp text)
+      (lexical-let* ((filename (match-string rbdbgr-loc-regexp-file-group text))
 		     (lineno (string-to-number
-			      (match-string rbdbgr-marker-regexp-line-group text)))
+			      (match-string rbdbgr-loc-regexp-line-group text)))
 		     (loc (rbdbg-track-find-loc-from-match filename lineno)))
 	(if (rbdbg-loc? loc)
 	  (progn (message "do stuff"))
@@ -114,8 +113,10 @@ with the same name or having having the named function.
 If we're unable find the source code we return a string describing the
 problem as best as we can determine."
 
-  (if (file-exists-p filename)
-      (rbdbg-loc-new filename line-number)
+  (if (and (file-exists-p filename) (numberp line-number))
+      (progn 
+	(rbdbg-loc-new filename line-number)
+	)
     (format "Not found: %s" filename)))
 
 

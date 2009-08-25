@@ -3,7 +3,7 @@
 
 (behave-clear-contexts)
 
-(lexical-let* ((saved-buffer (current-buffer)))
+(lexical-let ((saved-buffer (current-buffer)))
   ; Below, we need to make sure current-buffer has an associated
   ; file with it.
   (find-file (symbol-file 'behave))
