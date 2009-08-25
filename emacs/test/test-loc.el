@@ -36,8 +36,6 @@
 						   (current-buffer) marker)))
 	     
 	     (specify "filename extraction"
-		      (message "%s" good-loc)
-		      (message "%s" (rbdbg-loc-filename good-loc))
 		      (expect (rbdbg-loc-filename good-loc) equal filename))
 	     (specify "line-number extraction"
 		      (expect (rbdbg-loc-line-number good-loc) equal 5))
