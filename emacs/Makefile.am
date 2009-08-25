@@ -1,23 +1,29 @@
-lisp_files = rbdbg-loc.el \
-	     rbdbg-lochist.el \
-	     rbdbg-track.el \
-	     rbdbgr-regexp.el
+lisp_files = \
+	rbdbg-file.el \
+	rbdbg-loc.el \
+	rbdbg-lochist.el \
+	rbdbg-track.el \
+	rbdbgr-regexp.el
 
-check_DATA = test/behave.el	\
+check_DATA = \
+	test/behave.el	\
 	test/test-loc.el  	\
 	test/test-lochist.el    \
 	test/test-regexp.el
 
 EXTRA_DIST = $(lisp_files) $(check_DATA)
-ELCFILES   = rbdbg-loc.elc     \
-	     rbdbg-track.elc   \
-	     rbdbg-lochist.elc \
-	     rbdbgr-regexp.elc
+ELCFILES   = \
+	rbdbg-file.elc     \
+	rbdbg-loc.elc     \
+	rbdbg-track.elc   \
+	rbdbg-lochist.elc \
+	rbdbgr-regexp.elc
 
 
 if INSTALL_EMACS_LISP
 lisp_LISP = $(lisp_files)
 CHECK_FILES = \
+	check-file \
 	check-loc \
 	check-lochist \
 	check-regexp
@@ -27,6 +33,10 @@ check: $(CHECK_FILES)
 check-loc: rbdbg-loc.el
 	(cd $(srcdir)/test && \
 	$(EMACS) -batch -Q -l test-loc.el )
+
+check-file: rbdbg-file.el
+	(cd $(srcdir)/test && \
+	$(EMACS) -batch -Q -l test-file.el )
 
 check-lochist: rbdbg-lochist.el
 	(cd $(srcdir)/test && \

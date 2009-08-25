@@ -21,7 +21,7 @@
 	     (specify "good location (via rbdbg-loc-current)"
 	      	      (expect (rbdbg-loc? good-loc2) t))
 	     (specify "good location (two args)"
-		      (expect (rbdbg-loc? (rbdbg-loc-new filename 5)) equal t))
+		      (expect (rbdbg-loc? (rbdbg-loc-new filename 5)) t))
 	     (specify "good location (three args)"
 		      (expect (rbdbg-loc? good-loc) equal t))
 	     ))

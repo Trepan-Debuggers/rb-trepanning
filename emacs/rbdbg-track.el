@@ -45,8 +45,9 @@ as gud-mode does for debugging C programs with gdb."
 ;; Variables.
 ;;
 
-(defconst rbdbg-track-char-range 10000
-  "Max number of characters from end of buffer to search for stack entry.")
+(eval-when-compile
+  (defconst rbdbg-track-char-range 10000
+    "Max number of characters from end of buffer to search for stack entry."))
 
 
 ;; -------------------------------------------------------------------
@@ -57,8 +58,12 @@ as gud-mode does for debugging C programs with gdb."
 (require 'custom)
 (require 'cl)
 
-(load-file "./rbdbg-loc.el")
-(eval-when-compile (load-file "./rbdbgr-regexp.el"))
+(eval-when-compile
+  (setq load-path (cons nil load-path))
+  (load "rbdbg-loc")
+  (load "rbdbg-file")
+  (load "rbdbgr-regexp")
+  (setq load-path (cdr load-path)))
 
 ;; -------------------------------------------------------------------
 ;; rbdbg track -- support for attaching the `rbdbg' ruby debugger to
@@ -97,27 +102,12 @@ at the beginning of the line."
       (lexical-let* ((filename (match-string rbdbgr-loc-regexp-file-group text))
 		     (lineno (string-to-number
 			      (match-string rbdbgr-loc-regexp-line-group text)))
-		     (loc (rbdbg-track-find-loc-from-match filename lineno)))
+		     (loc (rbdbg-file-loc-from-line filename lineno)))
 	(if (rbdbg-loc? loc)
 	  (progn (message "do stuff"))
 	  (progn (message "%s" loc))))))
 
-(defun rbdbg-track-find-loc-from-match(filename line-number)
-  "Return a rbdbg-loc for FILENAME nd LINE-NUMBER
-
-We look first to visit the file indicated in the trace.
-
-Failing that, we look for the most recently visited ruby-mode buffer
-with the same name or having having the named function.
-
-If we're unable find the source code we return a string describing the
-problem as best as we can determine."
-
-  (if (and (file-exists-p filename) (numberp line-number))
-      (progn 
-	(rbdbg-loc-new filename line-number)
-	)
-    (format "Not found: %s" filename)))
+; FIXME: move somewhere else. This is not a "track" thing per se.
 
 
 
