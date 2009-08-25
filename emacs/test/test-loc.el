@@ -11,7 +11,9 @@
   (context "location creation: "
 	   (tag loc)
 	   (lexical-let* ((filename (buffer-file-name (current-buffer)))
-			  (good-loc (rbdbg-loc-new filename 5 (point-marker)))
+			  (good-loc (rbdbg-loc-new filename 5 
+						   (current-buffer)
+						   (point-marker)))
 			  (good-loc2 (rbdbg-loc-current)))
 	     
 	     (specify "invalid location (two numbers)"
@@ -30,9 +32,12 @@
 	   (tag loc)
 	   (lexical-let* ((filename (buffer-file-name (current-buffer)))
 			  (marker (point-marker))
-			  (good-loc (rbdbg-loc-new filename 5 marker)))
+			  (good-loc (rbdbg-loc-new filename 5
+						   (current-buffer) marker)))
 	     
 	     (specify "filename extraction"
+		      (message "%s" good-loc)
+		      (message "%s" (rbdbg-loc-filename good-loc))
 		      (expect (rbdbg-loc-filename good-loc) equal filename))
 	     (specify "line-number extraction"
 		      (expect (rbdbg-loc-line-number good-loc) equal 5))
@@ -48,4 +53,3 @@
 	     ))
   (switch-to-buffer saved-buffer))
 (behave "loc")
-

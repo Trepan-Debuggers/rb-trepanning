@@ -12,7 +12,11 @@ found"
     result))
 
 ; Should rbdbg-file-loc-from-line be here or elsewhere?
-(require 'rbdbg-loc)
+(eval-when-compile 
+  (or (and (file-exists-p "./rbdbg-loc.el")
+	   (load-file "./rbdbg-loc.el"))
+      (require 'rbdbg-loc)))
+
 (defun rbdbg-file-loc-from-line(filename line-number)
   "Return a rbdbg-loc for FILENAME and LINE-NUMBER
 
@@ -36,4 +40,3 @@ problem as best as we can determine."
     (format "File named `%s' not found" filename)))
 
 (provide 'rbdbg-file)
-
