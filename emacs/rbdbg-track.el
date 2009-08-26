@@ -107,6 +107,7 @@ buffer-local variables to extract text"
     ; comint-output-filter hooks may assume they are in a
     ; comint-buffer.
     (select-window curr-window) 
+    (set-buffer curr-buff)
     ))
 
 (defun rbdbg-track-from-region(from to)
