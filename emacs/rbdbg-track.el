@@ -62,18 +62,15 @@
   "Split the window if there is only one in the current
   frame. However if there is more than one window move to that"
   (interactive)
-  (if (one-window-p)
-      (split-window)
-    (other-window 1)))
-
-;; -------------------------------------------------------------------
-;; rbdbg track -- support for attaching the `rbdbg' ruby debugger to
-;; a process running in a shell buffer.
-;;
+  ;; Anders code has more complicated logic for figuring out
+  ;; which of serverl "other" windows is the one you want to switch
+  ;; to.
+  (if (one-window-p) (split-window) (other-window 1)))
 
 (defun rbdbg-track-comint-output-filter-hook(text)
-  "Find the file indicated by the rbdbg location printed before a prompt.
-The parameter TEXT appears because it is part of the
+  "An output-filter hook custom for comint shells.  Find the file
+indicated by the rbdbg location printed before a prompt.  The
+parameter TEXT appears because it is part of the
 comint-output-filter-functions API. Instead we use marks set in
 buffer-local variables to extract text"
 
@@ -93,14 +90,15 @@ buffer-local variables to extract text"
       (let ((tem to)) (setq to from from tem)))
   (rbdbg-track-loc (buffer-substring from to)))
 
-; FIXME: move somewhere else? Is this is not a "track" thing per se.
-; Or maybe the top-level tracking UI will be in another file
+; FIXME: move somewhere else? Or maybe a top-level tracking UI will
+; be created in another file
 (defun rbdbg-track-loc(text)
   "Select position a buffer in the file indicated by scanning TEXT for a location.
 We use `rbdbg-input-prompt-regexp' to find and parse the
 location"
-  ; FIXME rbdbgr-position-regexp is for rbdbgr. rbdbg-position-regexp
-  ; will be generic and picked up in a buffer-local variable.
+  ; FIXME rbdbgr-loc-regexp is for rbdbgr. Change to rbdbg-loc-regexp
+  ; which will be generic and picked up from a buffer-local variable
+  ; containing the "debugger" object.
   (if (string-match rbdbgr-loc-regexp text)
       (lexical-let* ((filename (match-string rbdbgr-loc-regexp-file-group text))
 		     (lineno (string-to-number
