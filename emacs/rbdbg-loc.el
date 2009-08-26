@@ -40,7 +40,7 @@ MARKER can be used to record where this position is"
   "Return the filename stored in LOC or nil if LOC is not a rbdbg-loc."
   (if (rbdbg-loc? loc) (setf (third loc) marker)))
 
-(defun rbdbg-loc-goto(loc &optional window-fn args)
+(defun rbdbg-loc-goto(loc &optional window-fn &rest args)
   "Goto the LOC which may involve switching buffers and moving
 the point to the places indicated by LOC. In the process, the buffer
 and marker inside loc may be updated. If WINDOW-FN and ARGS are given,
@@ -54,7 +54,7 @@ WINDOW-FN is called before switching bufffers"
 	    (setq buffer (find-file-noselect filename)))
 	(if buffer
 	    (progn 
-	      (if window-fn (funcall window-fn args))
+	      (if window-fn (apply window-fn args))
 	      (switch-to-buffer buffer)
 	      (if (not (and marker (marker-position marker)))
 		  (progn 
