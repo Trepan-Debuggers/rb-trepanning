@@ -54,12 +54,24 @@
   (load "rbdbgr-regexp")
   (setq load-path (cdr load-path)))
 
+;; FIXME: add buffer local variables (in the process buffer) for:
+;; rbdbg-last-output-start
+
+; FIXME: Move this windowing routine into a file handling windowing.
+(defun rbdbg-split-or-other-window()
+  "Split the window if there is only one in the current
+  frame. However if there is more than one window move to that"
+  (interactive)
+  (if (one-window-p)
+      (split-window)
+    (other-window 1)))
+
 ;; -------------------------------------------------------------------
 ;; rbdbg track -- support for attaching the `rbdbg' ruby debugger to
 ;; a process running in a shell buffer.
 ;;
 
-(defun rbdbg-track-comint-hook(text)
+(defun rbdbg-track-comint-output-filter-hook(text)
   "Find the file indicated by the rbdbg location printed before a prompt.
 The parameter TEXT appears because it is part of the
 comint-output-filter-functions API. Instead we use marks set in
@@ -95,7 +107,7 @@ location"
 			      (match-string rbdbgr-loc-regexp-line-group text)))
 		     (loc (rbdbg-file-loc-from-line filename lineno)))
 	(if (rbdbg-loc? loc)
-	    (rbdbg-loc-goto loc 'other-window 1)
+	    (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
 	  (message "%s" loc)))))
 
 ;; -------------------------------------------------------------------
