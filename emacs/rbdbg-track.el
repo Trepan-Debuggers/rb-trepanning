@@ -85,9 +85,9 @@
   (if (one-window-p) (split-window) (other-window 1)))
 
 (defun rbdbg-track-comint-output-filter-hook(text)
-  "An output-filter hook custom for comint shells.  Find the file
-indicated by the rbdbg location printed before a prompt.  The
-parameter TEXT appears because it is part of the
+  "An output-filter hook custom for comint shells.  Find and show
+in a buffer the indicated rbdbg location printed before a prompt.
+The parameter TEXT appears because it is part of the
 comint-output-filter-functions API. Instead we use marks set in
 buffer-local variables to extract text"
 
@@ -102,12 +102,16 @@ buffer-local variables to extract text"
 	 (block-start (max comint-last-input-end 
 			   (- proc-mark rbdbg-track-char-range))))
     (rbdbg-track-from-region block-start proc-mark)
-    ; Go back to the selected window and buffer.  At a minimum it is
-    ; we need to go back to the comint buffer because other
-    ; comint-output-filter hooks may assume they are in a
-    ; comint-buffer.
-    (select-window curr-window) 
+
+    ; We need to go back to the comint buffer because other
+    ; comint-output-filter hooks run after this may assume they are in
+    ; a comint-buffer.
     (set-buffer curr-buff)
+
+    ; I like to stay on the debugger prompt rather than the found
+    ; source location. Folks like Anders (who would like to totally
+    ; get rid of the command line) no doubt feel differently about this.
+    (select-window curr-window) 
     ))
 
 (defun rbdbg-track-from-region(from to)
