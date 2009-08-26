@@ -54,8 +54,25 @@
   (load "rbdbgr-regexp")
   (setq load-path (cdr load-path)))
 
+(define-minor-mode rbdbg-track-mode
+  "Minor mode for tracking ruby debugging inside a process shell."
+  :init-value nil
+  ;; The indicator for the mode line.
+  :lighter rdebug-track-mode-text
+  ;; The minor mode bindings.
+  :global nil
+  :group 'rbdbg
+  ;; (rbdbg-track-toggle-stack-tracking 1)
+  ;; (setq rbdbg-track-is-tracking-p t)
+  ;; (local-set-key "\C-cg" 'rdebug-goto-traceback-line)
+  ;; (local-set-key "\C-cG" 'rdebug-goto-dollarbang-traceback-line)
+
+  (add-hook 'comint-output-filter-functions 
+	    'rbdbg-track-comint-output-filter-hook)
+  ;; (run-mode-hooks 'rdebug-track-mode-hook)
 ;; FIXME: add buffer local variables (in the process buffer) for:
 ;; rbdbg-last-output-start
+)
 
 ; FIXME: Move this windowing routine into a file handling windowing.
 (defun rbdbg-split-or-other-window()
@@ -63,7 +80,7 @@
   frame. However if there is more than one window move to that"
   (interactive)
   ;; Anders code has more complicated logic for figuring out
-  ;; which of serverl "other" windows is the one you want to switch
+  ;; which of serveral "other" windows is the one you want to switch
   ;; to.
   (if (one-window-p) (split-window) (other-window 1)))
 
@@ -78,11 +95,19 @@ buffer-local variables to extract text"
   ;; (which can be almost useless depending on Emacs version), we
   ;; monitor to the point where we have the next rbdbg prompt, and then
   ;; check all text from comint-last-input-end to process-mark.
-  (let* ((curr-proc (get-buffer-process (current-buffer)))
+  (let* ((curr-buff (current-buffer))
+	 (curr-window (selected-window))
+	 (curr-proc (get-buffer-process curr-buff))
 	 (proc-mark (process-mark curr-proc))
 	 (block-start (max comint-last-input-end 
 			   (- proc-mark rbdbg-track-char-range))))
-    (rbdbg-track-from-region block-start proc-mark)))
+    (rbdbg-track-from-region block-start proc-mark)
+    ; Go back to the selected window and buffer.  At a minimum it is
+    ; we need to go back to the comint buffer because other
+    ; comint-output-filter hooks may assume they are in a
+    ; comint-buffer.
+    (select-window curr-window) 
+    ))
 
 (defun rbdbg-track-from-region(from to)
   (interactive "r")
