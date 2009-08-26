@@ -10,9 +10,13 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl))
-(require 'rbdbg-loc)
-(require 'ring)
+(eval-when-compile 
+  (require 'cl)
+  (require 'ring)
+  (setq load-path (cons nil (cons ".." load-path)))
+  (load "rbdbg-loc")
+  (setq load-path (cddr load-path)))
+
 
 (defcustom rbdbg-loc-hist-size 3  ; For testing. Should really be larger.
   "Size of rbdbg position history ring"

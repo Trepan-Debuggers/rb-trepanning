@@ -11,9 +11,7 @@
   (context "location creation: "
 	   (tag loc)
 	   (lexical-let* ((filename (buffer-file-name (current-buffer)))
-			  (good-loc (rbdbg-loc-new filename 5 
-						   (current-buffer)
-						   (point-marker)))
+			  (good-loc (rbdbg-loc-new filename 5 (make-marker)))
 			  (good-loc2 (rbdbg-loc-current)))
 	     
 	     (specify "invalid location (two numbers)"
@@ -32,8 +30,8 @@
 	   (tag loc)
 	   (lexical-let* ((filename (buffer-file-name (current-buffer)))
 			  (marker (point-marker))
-			  (good-loc (rbdbg-loc-new filename 5
-						   (current-buffer) marker)))
+			  (good-loc (rbdbg-loc-new filename 5 marker))
+			  (good-loc2 (rbdbg-loc-new filename 6)))
 	     
 	     (specify "filename extraction"
 		      (expect (rbdbg-loc-filename good-loc) equal filename))
@@ -41,6 +39,10 @@
 		      (expect (rbdbg-loc-line-number good-loc) equal 5))
 	     (specify "marker extraction"
 		      (expect (rbdbg-loc-marker good-loc) equal marker))
+
+	     (specify "marker set"
+		      (rbdbg-loc-marker= good-loc2 marker)
+		      (expect (rbdbg-loc-marker good-loc2) equal marker))
 	     
 	     (specify "filename extraction - invalid location"
 		      (expect (rbdbg-loc-filename nil) equal nil))
@@ -48,6 +50,11 @@
 		      (expect (rbdbg-loc-line-number nil) equal nil))
 	     (specify "marker extraction - invalid location"
 		      (expect (rbdbg-loc-marker nil) equal nil))
+
 	     ))
   (switch-to-buffer saved-buffer))
 (behave "loc")
+
+; TODO: add test for debug-loc-goto, e.g.
+;(rbdbg-loc-goto (rbdbg-loc-new "/tmp/bashdb.diff" 8))
+;(rbdbg-loc-goto (rbdbg-loc-new "/tmp/bashdb.diff" 8) 'other-window 1)

@@ -1,4 +1,10 @@
-(require 'cl)
+; Should rbdbg-file-loc-from-line be here or elsewhere?
+(eval-when-compile
+  (require 'cl)
+  (setq load-path (cons nil (cons ".." load-path)))
+  (load "rbdbg-loc")
+  (setq load-path (cddr load-path)))
+
 
 (defun rbdbg-file-line-count(filename)
   "Return the number of lines in file FILENAME, or nil FILENAME can't be
@@ -10,12 +16,6 @@ found"
 	       (setq result (line-number-at-pos (point-max)))))
     (switch-to-buffer saved-buffer)
     result))
-
-; Should rbdbg-file-loc-from-line be here or elsewhere?
-(eval-when-compile 
-  (or (and (file-exists-p "./rbdbg-loc.el")
-	   (load-file "./rbdbg-loc.el"))
-      (require 'rbdbg-loc)))
 
 (defun rbdbg-file-loc-from-line(filename line-number)
   "Return a rbdbg-loc for FILENAME and LINE-NUMBER

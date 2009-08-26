@@ -24,17 +24,6 @@
   :prefix "rbdbg-track"
   :group 'shell)
 
-(defcustom rbdbg-track-tracking? t
-  "*Controls whether the rbdbg-track feature is enabled or not.
-When non-nil, rbdbg-track is enabled in all comint-based buffers,
-e.g. shell buffers and the *Ruby* buffer.  When using rbdbg to debug a
-Ruby program, rbdbg-track notices the rbdbg prompt and displays the
-source file and line that the program is stopped at, much the same way
-as gud-mode does for debugging C programs with gdb."
-  :type 'boolean
-  :group 'rbdbg)
-(make-variable-buffer-local 'rbdbg-track-tracking?)
-
 (defcustom rbdbg-track-minor-mode-string " rbdbg"
   "*String to use in the minor mode list when rbdbg-track is enabled."
   :type 'string
@@ -56,9 +45,9 @@ as gud-mode does for debugging C programs with gdb."
 
 (require 'comint)
 (require 'custom)
-(require 'cl)
 
 (eval-when-compile
+  (require 'cl)
   (setq load-path (cons nil load-path))
   (load "rbdbg-loc")
   (load "rbdbg-file")
@@ -72,30 +61,32 @@ as gud-mode does for debugging C programs with gdb."
 
 (defun rbdbg-track-comint-hook(text)
   "Find the file indicated by the rbdbg location printed before a prompt.
-Activity is disabled if the buffer-local variable
-`rbdbg-track-tracking?' is nil. The parameter TEXT appears because 
-it is part of the comint-output-filter-functions API. Instead we use marks
-set in buffer-local variables to extract text"  
+The parameter TEXT appears because it is part of the
+comint-output-filter-functions API. Instead we use marks set in
+buffer-local variables to extract text"
 
   ;; Instead of trying to piece things together from partial text
   ;; (which can be almost useless depending on Emacs version), we
   ;; monitor to the point where we have the next rbdbg prompt, and then
   ;; check all text from comint-last-input-end to process-mark.
-  (let ((curr-proc (get-buffer-process (current-buffer))))
-    (if (and curr-proc rbdbg-track-tracking?)
-	(let* ((proc-mark (process-mark curr-proc))
-               (block-start (max comint-last-input-end
-                                 (- proc-mark rbdbg-track-char-range)))
-               (block-str (buffer-substring block-start proc-mark)))
-	  (rbdbg-track-find-loc block-str)))))
+  (let* ((curr-proc (get-buffer-process (current-buffer)))
+	 (proc-mark (process-mark curr-proc))
+	 (block-start (max comint-last-input-end 
+			   (- proc-mark rbdbg-track-char-range))))
+    (rbdbg-track-from-region block-start proc-mark)))
 
-(defun rbdbg-track-find-loc(text)
-  "Show the file indicated by the rbdbg stack entry line, in a separate window.
-Activity is disabled if the buffer-local variable
-`rbdbg-track-tracking?' is nil.
+(defun rbdbg-track-from-region(from to)
+  (interactive "r")
+  (if (> from to)
+      (let ((tem to)) (setq to from from tem)))
+  (rbdbg-track-loc (buffer-substring from to)))
 
-We depend on the rbdbg input prompt matching `rbdbg-input-prompt-regexp'
-at the beginning of the line."
+; FIXME: move somewhere else? Is this is not a "track" thing per se.
+; Or maybe the top-level tracking UI will be in another file
+(defun rbdbg-track-loc(text)
+  "Select position a buffer in the file indicated by scanning TEXT for a location.
+We use `rbdbg-input-prompt-regexp' to find and parse the
+location"
   ; FIXME rbdbgr-position-regexp is for rbdbgr. rbdbg-position-regexp
   ; will be generic and picked up in a buffer-local variable.
   (if (string-match rbdbgr-loc-regexp text)
@@ -104,12 +95,8 @@ at the beginning of the line."
 			      (match-string rbdbgr-loc-regexp-line-group text)))
 		     (loc (rbdbg-file-loc-from-line filename lineno)))
 	(if (rbdbg-loc? loc)
-	  (progn (message "do stuff"))
-	  (progn (message "%s" loc))))))
-
-; FIXME: move somewhere else. This is not a "track" thing per se.
-
-
+	    (rbdbg-loc-goto loc 'other-window 1)
+	  (message "%s" loc)))))
 
 ;; -------------------------------------------------------------------
 ;; The end.
