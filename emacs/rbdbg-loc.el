@@ -1,25 +1,25 @@
 (eval-when-compile (require 'cl))
 
+; Our own location type. Even though a mark contains a file-name (via
+; a buffer) and a line number (via an offset), we want to save the
+; values that were seen/requested originally.
+
 (defstruct rbdbg-loc filename line-number mark)
 
 (defun rbdbg-loc-current()
-  "Create a location object for the current buffer position."
+  "Create a location object for the point in the current buffer."
   (make-rbdbg-loc :filename (buffer-file-name (current-buffer))
 		  :line-number (line-number-at-pos) 
 		  :mark (point-marker)))
 
-; FIXME: could probably use a macro to define file-name, line-number
-; and marker.
-
 (defun rbdbg-loc-mark=(loc mark)
-  "Return the filename stored in LOC or nil if LOC is not a rbdbg-loc."
   (setf (rbdbg-loc-mark loc) mark))
 
 (defun rbdbg-loc-goto(loc &optional window-fn &rest args)
   "Goto the LOC which may involve switching buffers and moving
 the point to the places indicated by LOC. In the process, the buffer
 and marker inside loc may be updated. If WINDOW-FN and ARGS are given,
-WINDOW-FN is called before switching bufffers"
+WINDOW-FN is called before switching buffers"
   (if (rbdbg-loc-p loc) 
       (lexical-let* ((filename    (rbdbg-loc-filename loc))
 		     (line-number (rbdbg-loc-line-number loc))
@@ -31,10 +31,9 @@ WINDOW-FN is called before switching bufffers"
 	    (progn 
 	      (if window-fn (apply window-fn args))
 	      (switch-to-buffer buffer)
-	      (if (not (and marker (marker-position marker)))
-		  (progn 
-		    (goto-line line-number)
-		    (setq marker (rbdbg-loc-mark= loc (point-marker)))))
-	      (if (and marker (marker-position marker)) 
-		  (goto-char (marker-position marker)))))
+	      (if (and marker (marker-position marker))
+		  (goto-char (marker-position marker))
+		(progn 
+		  (goto-line line-number)
+		  (rbdbg-loc-mark= loc (point-marker))))))
 	)))
