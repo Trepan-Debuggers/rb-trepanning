@@ -116,8 +116,7 @@ buffer-local variables to extract text"
 
 (defun rbdbg-track-from-region(from to)
   (interactive "r")
-  (if (> from to)
-      (let ((tem to)) (setq to from from tem)))
+  (if (> from to) (psetq to from from to))
   (rbdbg-track-loc (buffer-substring from to)))
 
 ; FIXME: move somewhere else? Or maybe a top-level tracking UI will
@@ -134,7 +133,7 @@ location"
 		     (lineno (string-to-number
 			      (match-string rbdbgr-loc-regexp-line-group text)))
 		     (loc (rbdbg-file-loc-from-line filename lineno)))
-	(if (rbdbg-loc? loc)
+	(if (rbdbg-loc-p loc)
 	    (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
 	  (message "%s" loc)))))
 

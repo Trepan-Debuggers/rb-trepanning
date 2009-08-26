@@ -25,7 +25,7 @@
 	   (specify "Line number too large for file"
 		    (expect (stringp (rbdbg-file-loc-from-line filename 10001)) t))
 	   (specify "Line number too large for file"
-		    (expect (rbdbg-loc? (rbdbg-file-loc-from-line filename 30)) t))
+		    (expect (rbdbg-loc-p (rbdbg-file-loc-from-line filename 30)) t))
   ))
 (behave "file")
 

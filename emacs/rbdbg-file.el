@@ -31,7 +31,8 @@ problem as best as we can determine."
 		    (if (> line-count line-number)
 			; And you thought we'd never get around to
 			; doing something other than validation? 
-			(rbdbg-loc-new filename line-number)
+			(make-rbdbg-loc :filename    filename 
+					:line-number line-number)
 		      (format "File %s has only %d lines. (Line %d requested.)"
 			      filename line-count line-number))
 		  (format "Problem getting line count for file `%s'" filename)))
