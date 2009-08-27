@@ -4,9 +4,8 @@
 ;; Variables.
 ;;
 
-(eval-when-compile
-  (defconst rbdbg-track-char-range 10000
-    "Max number of characters from end of buffer to search for stack entry."))
+(defconst rbdbg-track-char-range 10000
+  "Max number of characters from end of buffer to search for stack entry.")
 
 
 ;; -------------------------------------------------------------------

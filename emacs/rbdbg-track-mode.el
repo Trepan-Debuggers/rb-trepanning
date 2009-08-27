@@ -4,8 +4,10 @@
   (require 'cl)
   (setq load-path (cons nil (cons ".." load-path)))
   (load "rbdbg-track")
+  (load "rbdbg-lochist")
   (load "rbdbg-var")
   (setq load-path (cddr load-path)))
+(require 'rbdbg-track)
 
 (defvar rbdbg-track-minor-mode nil
   "Non-nil if using rbdbgr-track mode as a minor mode of some other mode.

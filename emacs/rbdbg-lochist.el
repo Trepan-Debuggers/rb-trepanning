@@ -18,7 +18,7 @@
   (setq load-path (cddr load-path)))
 
 
-(defcustom rbdbg-loc-hist-size 3  ; For testing. Should really be larger.
+(defcustom rbdbg-loc-hist-size 10  ; For testing. Should really be larger.
   "Size of rbdbg position history ring"
   :type 'integer
   :group 'rbdbg)
