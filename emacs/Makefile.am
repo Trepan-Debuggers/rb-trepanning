@@ -1,11 +1,11 @@
 lisp_files = \
-	rbdbg-file.el \
-	rbdbg-loc.el \
-	rbdbg-lochist.el \
-	rbdbg-track.el \
-	rbdbg-window.el \
-	rbdbgr-regexp.el \
-	rbdbgt-mode.el 
+	rbdbg-file.el       \
+	rbdbg-loc.el        \
+	rbdbg-lochist.el    \
+	rbdbg-track.el      \
+	rbdbg-track-mode.el \
+	rbdbg-window.el     \
+	rbdbgr-regexp.el    
 
 check_DATA = \
 	test/behave.el	\
@@ -15,13 +15,13 @@ check_DATA = \
 
 EXTRA_DIST = $(lisp_files) $(check_DATA)
 ELCFILES   = \
-	rbdbg-file.elc     \
-	rbdbg-loc.elc     \
-	rbdbg-track.elc   \
-	rbdbg-lochist.elc \
-	rbdbg-window.elc \
-	rbdbgr-regexp.elc \
-	rbdbgt-mode.elc 
+	rbdbg-file.elc       \
+	rbdbg-loc.elc        \
+	rbdbg-track.elc      \
+	rbdbg-track-mode.elc \
+	rbdbg-lochist.elc    \
+	rbdbg-window.elc     \
+	rbdbgr-regexp.elc
 
 if INSTALL_EMACS_LISP
 lisp_LISP = $(lisp_files)

@@ -22,9 +22,64 @@
   (load "rbdbg-loc")
   (load "rbdbg-lochist")
   (load "rbdbg-file")
+  (load "rbdbg-var")
   (load "rbdbg-window")
   (load "rbdbgr-regexp")
   (setq load-path (cddr load-path)))
+(require 'rbdbgr-regexp)
+
+; FIXME: DRY CODE below!
+(defun rbdbg-track-hist-newer()
+  (interactive)
+  (let* ((loc-hist (rbdbg-dbgr-loc-hist rbdbg-dbgr))
+	 (cmd-window (selected-window))
+	 (cmd-buff (current-buffer))
+	 (position (rbdbg-loc-hist-newer loc-hist))
+	 (loc (rbdbg-loc-hist-item loc-hist)))
+    (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
+    ; FIXME: DRY below code. See also comments elsewhere
+    (set-buffer cmd-buff)
+    (select-window cmd-window))
+  )
+
+(defun rbdbg-track-hist-newest()
+  (interactive)
+  (let* ((loc-hist (rbdbg-dbgr-loc-hist rbdbg-dbgr))
+	 (cmd-window (selected-window))
+	 (cmd-buff (current-buffer))
+	 (position (rbdbg-loc-hist-newest loc-hist))
+	 (loc (rbdbg-loc-hist-item loc-hist)))
+    (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
+    ; FIXME: DRY below code. See also comments elsewhere
+    (set-buffer cmd-buff)
+    (select-window cmd-window))
+  )
+
+(defun rbdbg-track-hist-older()
+  (interactive)
+  (let* ((loc-hist (rbdbg-dbgr-loc-hist rbdbg-dbgr))
+	 (cmd-window (selected-window))
+	 (cmd-buff (current-buffer))
+	 (position (rbdbg-loc-hist-older loc-hist))
+	 (loc (rbdbg-loc-hist-item loc-hist)))
+    (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
+    ; FIXME: DRY below code. See also comments elsewhere
+    (set-buffer cmd-buff)
+    (select-window cmd-window))
+  )
+
+(defun rbdbg-track-hist-oldest()
+  (interactive)
+  (let* ((loc-hist (rbdbg-dbgr-loc-hist rbdbg-dbgr))
+	 (cmd-window (selected-window))
+	 (cmd-buff (current-buffer))
+	 (position (rbdbg-loc-hist-oldest loc-hist))
+	 (loc (rbdbg-loc-hist-item loc-hist)))
+    (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
+    ; FIXME: DRY below code. See also comments elsewhere
+    (set-buffer cmd-buff)
+    (select-window cmd-window))
+  )
 
 (defun rbdbg-track-loc-action(loc cmd-buff cmd-window)
   "If loc is valid, show loc and do whatever actions we do for
@@ -32,7 +87,7 @@ encountering a new loc."
   (if (rbdbg-loc-p loc)
       (progn 
 	(rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
-	; (rbdbg-loc-hist-add loc)
+	; (rbdbg-loc-hist-add (rbdbg-dbgr-loc-hist rbdbg-dbgr) loc)
       )
     (message "%s" loc))
 

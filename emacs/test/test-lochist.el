@@ -39,7 +39,11 @@
 		      (expect (ring-length 
 			       (rbdbg-loc-hist-ring loc-hist)) 
 			      equal 1))
+
+	     (specify "Set to newest position"
+		      (expect (rbdbg-loc-hist-newest loc-hist) equal -1))
 	     
 	     ))
   (behave "lochist")
   (switch-to-buffer saved-buffer))
+

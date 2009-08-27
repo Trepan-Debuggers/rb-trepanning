@@ -18,6 +18,8 @@
   (setq load-path (cddr load-path)))
 
 
+; FIXME: Use defstruct? 
+
 (defcustom rbdbg-loc-hist-size 3  ; For testing. Should really be larger.
   "Size of rbdbg position history ring"
   :type 'integer
@@ -69,25 +71,35 @@ component in LOC-HIST"
 
 (defun rbdbg-loc-hist-set (loc-hist position)
   "Set LOC-HIST to POSITION in the stopping history"
-  (set (rbdbg-loc-hist-position loc-hist) position))
+  (setf (second loc-hist) position))
+
+; FIXME: add numeric arg? 
+(defun rbdbg-loc-hist-newer (loc-hist)
+  "Set LOC-HIST position to an newer position."
+    (if (equal (rbdbg-loc-hist-position loc-hist) -1)
+	(message "At newest - Will set to wrap to oldest."))
+    (setf (second loc-hist) 
+	 (ring-plus1 (rbdbg-loc-hist-position loc-hist)
+		      (ring-length (rbdbg-loc-hist-ring loc-hist)))))
 
 (defun rbdbg-loc-hist-newest (loc-hist)
   "Set LOC-HIST position to the newest position."
-  (set (rbdbg-loc-hist-position loc-hist) -1))
+  (setf (second loc-hist) -1))
   
-(defun rbdbg-locring-older (loc-hist)
-  "Set LOC-HIST pisition to an older position."
+; FIXME: add numeric arg? 
+(defun rbdbg-loc-hist-older (loc-hist)
+  "Set LOC-HIST position to an older position."
     (if (equal (rbdbg-loc-hist-position loc-hist) 0)
 	(message "At oldest - Will set to wrap to newest."))
-    (set (rbdbg-loc-hist-position loc-hist) 
+    (setf (second loc-hist) 
 	 (ring-minus1 (rbdbg-loc-hist-position loc-hist)
 		      (ring-length (rbdbg-loc-hist-ring loc-hist)))))
 
-(defun rbdbg-locring-oldest (loc-hist)
+(defun rbdbg-loc-hist-oldest (loc-hist)
   "Set LOC-HIST to the oldest stopping point."
-  (set (rbdbg-loc-hist-position loc-hist) 0))
+  (setf (second loc-hist) 0))
 
-(provide 'rbdbg-locring)
+(provide 'rbdbg-loc-hist)
 
 ;;; Local variables:
 ;;; eval:(put 'rbdbg-debug-enter 'lisp-indent-hook 1)
