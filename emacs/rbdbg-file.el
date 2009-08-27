@@ -32,7 +32,8 @@ problem as best as we can determine."
 			; And you thought we'd never get around to
 			; doing something other than validation? 
 			(make-rbdbg-loc :filename    filename 
-					:line-number line-number)
+					:line-number line-number
+					:marker      (make-marker))
 		      (format "File %s has only %d lines. (Line %d requested.)"
 			      filename line-count line-number))
 		  (format "Problem getting line count for file `%s'" filename)))
@@ -41,3 +42,4 @@ problem as best as we can determine."
     (format "File named `%s' not found" filename)))
 
 (provide 'rbdbg-file)
+

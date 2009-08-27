@@ -1,19 +1,22 @@
 (eval-when-compile (require 'cl))
 
-; Our own location type. Even though a mark contains a file-name (via
-; a buffer) and a line number (via an offset), we want to save the
-; values that were seen/requested originally.
 
-(defstruct rbdbg-loc filename line-number mark)
+(defstruct rbdbg-loc 
+"Our own location type. Even though a mark contains a
+file-name (via a buffer) and a line number (via an offset), we
+want to save the values that were seen/requested originally."
+   (filename    :type string)
+   (line-number :type integer)
+   (marker      :type marker))
 
 (defun rbdbg-loc-current()
   "Create a location object for the point in the current buffer."
   (make-rbdbg-loc :filename (buffer-file-name (current-buffer))
 		  :line-number (line-number-at-pos) 
-		  :mark (point-marker)))
+		  :marker (point-marker)))
 
-(defun rbdbg-loc-mark=(loc mark)
-  (setf (rbdbg-loc-mark loc) mark))
+(defun rbdbg-loc-marker=(loc marker)
+  (setf (rbdbg-loc-marker loc) marker))
 
 (defun rbdbg-loc-goto(loc &optional window-fn &rest args)
   "Goto the LOC which may involve switching buffers and moving
@@ -23,7 +26,7 @@ WINDOW-FN is called before switching buffers"
   (if (rbdbg-loc-p loc) 
       (lexical-let* ((filename    (rbdbg-loc-filename loc))
 		     (line-number (rbdbg-loc-line-number loc))
-		     (marker      (rbdbg-loc-mark loc))
+		     (marker      (rbdbg-loc-marker loc))
 		     (buffer      (marker-buffer (or marker (make-marker)))))
 	(if (not buffer)
 	    (setq buffer (find-file-noselect filename)))
@@ -35,5 +38,5 @@ WINDOW-FN is called before switching buffers"
 		  (goto-char (marker-position marker))
 		(progn 
 		  (goto-line line-number)
-		  (rbdbg-loc-mark= loc (point-marker))))))
+		  (rbdbg-loc-marker= loc (point-marker))))))
 	)))

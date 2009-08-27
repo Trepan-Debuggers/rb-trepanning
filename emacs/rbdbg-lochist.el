@@ -18,24 +18,16 @@
   (setq load-path (cddr load-path)))
 
 
-; FIXME: Use defstruct? 
-
 (defcustom rbdbg-loc-hist-size 3  ; For testing. Should really be larger.
   "Size of rbdbg position history ring"
   :type 'integer
   :group 'rbdbg)
 
-(defun make-rbdbg-loc-hist()
-  (list (make-ring rbdbg-loc-hist-size) -1))
-
-(defun rbdbg-loc-hist-ring(loc-hist)
-  "The ring component of LOC-HIST"
-  (first loc-hist))
-
-(defun rbdbg-loc-hist-position(loc-hist)
-  "The ring-position component of LOC-HIST"
-  (second loc-hist))
-
+(defstruct rbdbg-loc-hist
+  "A list of source-code positions recently encountered"
+  (position -1 :type integer) 
+  (ring (make-ring rbdbg-loc-hist-size) :type (type-of make-ring 0)))
+  
 (defun rbdbg-loc-hist-item-at(loc-hist position)
   "Get the current item stored at POSITION of the ring
 component in LOC-HIST"
@@ -64,40 +56,40 @@ component in LOC-HIST"
   "Clear out all source locations in LOC-HIST"
   (let ((ring (ring-ref (rbdbg-loc-hist-ring loc-hist)
 			(rbdbg-loc-hist-position loc-hist))))
-    (set (rbdbg-loc-hist-position loc-hist) -1)
+    (setf (rbdbg-loc-hist-position loc-hist) -1)
     (while (not (ring-empty-p ring))
       (ring-remove ring))))
 
 
 (defun rbdbg-loc-hist-set (loc-hist position)
   "Set LOC-HIST to POSITION in the stopping history"
-  (setf (second loc-hist) position))
+  (setf (rbdbg-loc-hist-position loc-hist) position))
 
 ; FIXME: add numeric arg? 
 (defun rbdbg-loc-hist-newer (loc-hist)
   "Set LOC-HIST position to an newer position."
     (if (equal (rbdbg-loc-hist-position loc-hist) -1)
 	(message "At newest - Will set to wrap to oldest."))
-    (setf (second loc-hist) 
+    (setf (rbdbg-loc-hist-position loc-hist) 
 	 (ring-plus1 (rbdbg-loc-hist-position loc-hist)
 		      (ring-length (rbdbg-loc-hist-ring loc-hist)))))
 
 (defun rbdbg-loc-hist-newest (loc-hist)
   "Set LOC-HIST position to the newest position."
-  (setf (second loc-hist) -1))
+  (setf (rbdbg-loc-hist-position loc-hist) -1))
   
 ; FIXME: add numeric arg? 
 (defun rbdbg-loc-hist-older (loc-hist)
   "Set LOC-HIST position to an older position."
     (if (equal (rbdbg-loc-hist-position loc-hist) 0)
 	(message "At oldest - Will set to wrap to newest."))
-    (setf (second loc-hist) 
+    (setf (rbdbg-loc-hist-position loc-hist) 
 	 (ring-minus1 (rbdbg-loc-hist-position loc-hist)
 		      (ring-length (rbdbg-loc-hist-ring loc-hist)))))
 
 (defun rbdbg-loc-hist-oldest (loc-hist)
   "Set LOC-HIST to the oldest stopping point."
-  (setf (second loc-hist) 0))
+  (setf (rbdbg-loc-hist-position loc-hist) 0))
 
 (provide 'rbdbg-loc-hist)
 

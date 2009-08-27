@@ -14,7 +14,9 @@
 ;;
 
 (require 'comint)
-(require 'eshell)
+
+; For eshell-output-filter-functions, eshell-last-input-start:
+(require 'esh-mode) 
 
 (eval-when-compile
   (require 'cl)
@@ -28,79 +30,60 @@
   (setq load-path (cddr load-path)))
 (require 'rbdbgr-regexp)
 
-; FIXME: DRY CODE below!
-(defun rbdbg-track-hist-newer()
+(defun rbdbg-track-hist-fn-internal(fn)
   (interactive)
   (let* ((loc-hist (rbdbg-dbgr-loc-hist rbdbg-dbgr))
 	 (cmd-window (selected-window))
 	 (cmd-buff (current-buffer))
-	 (position (rbdbg-loc-hist-newer loc-hist))
+	 (position (funcall fn loc-hist))
 	 (loc (rbdbg-loc-hist-item loc-hist)))
     (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
-    ; FIXME: DRY below code. See also comments elsewhere
+    ; FIXME: Combine common code with loc-action? 
+    ; See also comments why we do the below there.
     (set-buffer cmd-buff)
     (select-window cmd-window))
   )
+
+; FIXME: Can we dry code more via a macro?
+(defun rbdbg-track-hist-newer()
+  (interactive)
+  (rbdbg-track-hist-fn-internal 'rbdbg-loc-hist-newer))
 
 (defun rbdbg-track-hist-newest()
   (interactive)
-  (let* ((loc-hist (rbdbg-dbgr-loc-hist rbdbg-dbgr))
-	 (cmd-window (selected-window))
-	 (cmd-buff (current-buffer))
-	 (position (rbdbg-loc-hist-newest loc-hist))
-	 (loc (rbdbg-loc-hist-item loc-hist)))
-    (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
-    ; FIXME: DRY below code. See also comments elsewhere
-    (set-buffer cmd-buff)
-    (select-window cmd-window))
-  )
+  (rbdbg-track-hist-fn-internal 'rbdbg-loc-hist-newest))
 
 (defun rbdbg-track-hist-older()
   (interactive)
-  (let* ((loc-hist (rbdbg-dbgr-loc-hist rbdbg-dbgr))
-	 (cmd-window (selected-window))
-	 (cmd-buff (current-buffer))
-	 (position (rbdbg-loc-hist-older loc-hist))
-	 (loc (rbdbg-loc-hist-item loc-hist)))
-    (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
-    ; FIXME: DRY below code. See also comments elsewhere
-    (set-buffer cmd-buff)
-    (select-window cmd-window))
-  )
+  (rbdbg-track-hist-fn-internal 'rbdbg-loc-hist-older))
 
 (defun rbdbg-track-hist-oldest()
   (interactive)
-  (let* ((loc-hist (rbdbg-dbgr-loc-hist rbdbg-dbgr))
-	 (cmd-window (selected-window))
-	 (cmd-buff (current-buffer))
-	 (position (rbdbg-loc-hist-oldest loc-hist))
-	 (loc (rbdbg-loc-hist-item loc-hist)))
-    (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
-    ; FIXME: DRY below code. See also comments elsewhere
-    (set-buffer cmd-buff)
-    (select-window cmd-window))
-  )
+  (rbdbg-track-hist-fn-internal 'rbdbg-loc-hist-oldest))
 
-(defun rbdbg-track-loc-action(loc cmd-buff cmd-window)
+(defun rbdbg-track-loc-action(loc &optional cmd-buff cmd-window)
   "If loc is valid, show loc and do whatever actions we do for
 encountering a new loc."
   (if (rbdbg-loc-p loc)
       (progn 
+	(if (null cmd-buff) (setq cmd-buff (current-buffer)))
+	(if (null cmd-window) (setq cmd-window (selected-window)))
+	
 	(rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
-	; (rbdbg-loc-hist-add (rbdbg-dbgr-loc-hist rbdbg-dbgr) loc)
-      )
-    (message "%s" loc))
 
-  ; We need to go back to the process/command buffer because other
-  ; output-filter hooks run after this may assume they are in that
-  ; buffer.
-  (set-buffer cmd-buff)
+        ; We need to go back to the process/command buffer because other
+        ; output-filter hooks run after this may assume they are in that
+        ; buffer.
+	(set-buffer cmd-buff)
 
-  ; I like to stay on the debugger prompt rather than the found
-  ; source location. Folks like Anders (who would like to totally
-  ; get rid of the command line) no doubt feel differently about this.
-  (select-window cmd-window))
+	; hist add has to be done in cmd-buff since rbdbg-dbgr
+	(rbdbg-loc-hist-add (rbdbg-dbgr-loc-hist rbdbg-dbgr) loc)
 
+        ; I like to stay on the debugger prompt rather than the found
+        ; source location. Folks like Anders (who would like to totally
+        ; get rid of the command line) no doubt feel differently about this.
+        (select-window cmd-window))
+    (message "%s" loc)))
 
 (defun rbdbg-track-comint-output-filter-hook(text)
   "An output-filter hook custom for comint shells.  Find

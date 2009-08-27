@@ -13,7 +13,7 @@ Use the command `rbdbg-minor-mode' to toggle or set this variable.")
 
 (defvar rbdbg-track-minor-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "\C-cg"	'rbdbg-track-hist-newest)
+    (define-key map [M-right]	'rbdbg-track-hist-newest)
     (define-key map [M-down]	'rbdbg-track-hist-newer)
     (define-key map [M-up]	'rbdbg-track-hist-older)
     (define-key map [M-S-down]	'rbdbg-track-hist-newest)
