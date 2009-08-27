@@ -2,11 +2,8 @@
 ;;; Commentary:
 
 ;; This file manages a ring of (recently stopped) positions to allow
-;; the programmer to move back and forth between them.
+;; the programmer to move between them.
 
-
-;; FIXME? We don't have the buffer/file/marker positioning code motion
-;; here yet. Should we? 
 
 ;;; Code:
 
@@ -49,7 +46,6 @@ component in LOC-HIST"
   ;; Perhaps duplicates should be controlled by an option.
   (let ((ring (rbdbg-loc-hist-ring loc-hist)))
     (unless (equal (rbdbg-loc-hist-item loc-hist) item)
-      (message "dup item size is %s" (ring-length ring))
       (ring-insert-at-beginning ring item))))
 
 (defun rbdbg-loc-hist-clear(loc-hist)
