@@ -2,9 +2,9 @@
 
 (eval-when-compile
   (require 'cl)
-  (setq load-path (cons nil load-path))
+  (setq load-path (cons nil (cons ".." load-path)))
   (load "rbdbg-track")
-  (setq load-path (cdr load-path)))
+  (setq load-path (cddr load-path)))
 
 (defvar rbdbg-track-minor-mode nil
   "Non-nil if using rbdbgr-track mode as a minor mode of some other mode.

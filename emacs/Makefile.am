@@ -3,7 +3,9 @@ lisp_files = \
 	rbdbg-loc.el \
 	rbdbg-lochist.el \
 	rbdbg-track.el \
-	rbdbgr-regexp.el
+	rbdbg-window.el \
+	rbdbgr-regexp.el \
+	rbdbgt-mode.el 
 
 check_DATA = \
 	test/behave.el	\
@@ -17,8 +19,9 @@ ELCFILES   = \
 	rbdbg-loc.elc     \
 	rbdbg-track.elc   \
 	rbdbg-lochist.elc \
-	rbdbgr-regexp.elc
-
+	rbdbg-window.elc \
+	rbdbgr-regexp.elc \
+	rbdbgt-mode.elc 
 
 if INSTALL_EMACS_LISP
 lisp_LISP = $(lisp_files)

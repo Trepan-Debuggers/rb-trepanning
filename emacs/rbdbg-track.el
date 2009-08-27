@@ -1,35 +1,5 @@
 ;;; rbdbg-track.el --- Tracking the Ruby debugger from a shell
 
-;;; Commentary:
-
-;;  `rbdbg-track-mode' allows access to full debugger user interface
-;;   for Ruby debugger sessions started in a standard shell window.
-;;   `turn-on-rbdbg-track-mode' turns the mode on and
-;;   `turn-off-rbdbg-track-mode' turns it off.
-;;
-;;; Customization:
-;;  `rbdbg-track' sets whether file tracking is done by the shell prompt.
-;;  `rbdbg-track-minor-mode-string' sets the mode indicator to show that
-;;  tracking is in effect.
-;;
-
-;;; Code:
-
-;; -------------------------------------------------------------------
-;; Customizable variables.
-;;
-
-(defgroup rbdbg-track nil
-  "Ruby debug and rbdbg file tracking by watching the shell prompt."
-  :prefix "rbdbg-track"
-  :group 'shell)
-
-(defcustom rbdbg-track-minor-mode-string " rbdbg"
-  "*String to use in the minor mode list when rbdbg-track is enabled."
-  :type 'string
-  :group 'rbdbg)
-
-
 ;; -------------------------------------------------------------------
 ;; Variables.
 ;;
@@ -44,75 +14,74 @@
 ;;
 
 (require 'comint)
-(require 'custom)
+(require 'eshell)
 
 (eval-when-compile
   (require 'cl)
-  (setq load-path (cons nil load-path))
+  (setq load-path (cons nil (cons ".." load-path)))
   (load "rbdbg-loc")
+  (load "rbdbg-lochist")
   (load "rbdbg-file")
+  (load "rbdbg-window")
   (load "rbdbgr-regexp")
-  (setq load-path (cdr load-path)))
+  (setq load-path (cddr load-path)))
 
-(define-minor-mode rbdbg-track-mode
-  "Minor mode for tracking ruby debugging inside a process shell."
-  :init-value nil
-  ;; The indicator for the mode line.
-  :lighter rdebug-track-mode-text
-  ;; The minor mode bindings.
-  :global nil
-  :group 'rbdbg
-  ;; (rbdbg-track-toggle-stack-tracking 1)
-  ;; (setq rbdbg-track-is-tracking-p t)
-  ;; (local-set-key "\C-cg" 'rdebug-goto-traceback-line)
-  ;; (local-set-key "\C-cG" 'rdebug-goto-dollarbang-traceback-line)
+(defun rbdbg-track-loc-action(loc cmd-buff cmd-window)
+  "If loc is valid, show loc and do whatever actions we do for
+encountering a new loc."
+  (if (rbdbg-loc-p loc)
+      (progn 
+	(rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
+	; (rbdbg-loc-hist-add loc)
+      )
+    (message "%s" loc))
 
-  (add-hook 'comint-output-filter-functions 
-	    'rbdbg-track-comint-output-filter-hook)
-  ;; (run-mode-hooks 'rdebug-track-mode-hook)
-;; FIXME: add buffer local variables (in the process buffer) for:
-;; rbdbg-last-output-start
-)
+  ; We need to go back to the process/command buffer because other
+  ; output-filter hooks run after this may assume they are in that
+  ; buffer.
+  (set-buffer cmd-buff)
 
-; FIXME: Move this windowing routine into a file handling windowing.
-(defun rbdbg-split-or-other-window()
-  "Split the window if there is only one in the current
-  frame. However if there is more than one window move to that"
-  (interactive)
-  ;; Anders code has more complicated logic for figuring out
-  ;; which of serveral "other" windows is the one you want to switch
-  ;; to.
-  (if (one-window-p) (split-window) (other-window 1)))
+  ; I like to stay on the debugger prompt rather than the found
+  ; source location. Folks like Anders (who would like to totally
+  ; get rid of the command line) no doubt feel differently about this.
+  (select-window cmd-window))
+
 
 (defun rbdbg-track-comint-output-filter-hook(text)
-  "An output-filter hook custom for comint shells.  Find and show
-in a buffer the indicated rbdbg location printed before a prompt.
-The parameter TEXT appears because it is part of the
-comint-output-filter-functions API. Instead we use marks set in
-buffer-local variables to extract text"
+  "An output-filter hook custom for comint shells.  Find
+location(s), if any, and run the action(s) associated with
+finding a new location(s).  The parameter TEXT appears because it
+is part of the comint-output-filter-functions API. Instead we use
+marks set in buffer-local variables to extract text"
 
   ;; Instead of trying to piece things together from partial text
   ;; (which can be almost useless depending on Emacs version), we
   ;; monitor to the point where we have the next rbdbg prompt, and then
   ;; check all text from comint-last-input-end to process-mark.
-  (let* ((curr-buff (current-buffer))
-	 (curr-window (selected-window))
-	 (curr-proc (get-buffer-process curr-buff))
-	 (proc-mark (process-mark curr-proc))
-	 (block-start (max comint-last-input-end 
-			   (- proc-mark rbdbg-track-char-range))))
-    (rbdbg-track-from-region block-start proc-mark)
 
-    ; We need to go back to the comint buffer because other
-    ; comint-output-filter hooks run after this may assume they are in
-    ; a comint-buffer.
-    (set-buffer curr-buff)
+  ; FIXME: Add unwind-protect? 
+  (lexical-let* ((proc-buff (current-buffer))
+		 (proc-window (selected-window))
+		 (curr-proc (get-buffer-process proc-buff))
+		 (last-output-end (process-mark curr-proc))
+		 (last-output-start (max comint-last-input-end 
+				   (- last-output-end rbdbg-track-char-range)))
+		 (loc (rbdbg-track-from-region last-output-start 
+					       last-output-end)))
 
-    ; I like to stay on the debugger prompt rather than the found
-    ; source location. Folks like Anders (who would like to totally
-    ; get rid of the command line) no doubt feel differently about this.
-    (select-window curr-window) 
-    ))
+    (rbdbg-track-loc-action loc proc-buff proc-window)))
+
+(defun rbdbg-track-eshell-output-filter-hook()
+  "An output-filter hook custom for eshell shells.  Find
+location(s), if any, and run the action(s) associated with We use
+marks set in buffer-local variables to extract text"
+
+  ; FIXME: Add unwind-protect? 
+  (lexical-let ((proc-buff (current-buffer))
+		(proc-window (selected-window))
+		(loc (rbdbg-track-from-region eshell-last-output-start 
+					      eshell-last-output-end)))
+    (rbdbg-track-loc-action loc proc-buff proc-window)))
 
 (defun rbdbg-track-from-region(from to)
   (interactive "r")
@@ -122,8 +91,7 @@ buffer-local variables to extract text"
 ; FIXME: move somewhere else? Or maybe a top-level tracking UI will
 ; be created in another file
 (defun rbdbg-track-loc(text)
-  "Select position a buffer in the file indicated by scanning TEXT for a location.
-We use `rbdbg-input-prompt-regexp' to find and parse the
+"We use `rbdbg-input-prompt-regexp' to find and parse the
 location"
   ; FIXME rbdbgr-loc-regexp is for rbdbgr. Change to rbdbg-loc-regexp
   ; which will be generic and picked up from a buffer-local variable
@@ -131,11 +99,10 @@ location"
   (if (string-match rbdbgr-loc-regexp text)
       (lexical-let* ((filename (match-string rbdbgr-loc-regexp-file-group text))
 		     (lineno (string-to-number
-			      (match-string rbdbgr-loc-regexp-line-group text)))
-		     (loc (rbdbg-file-loc-from-line filename lineno)))
-	(if (rbdbg-loc-p loc)
-	    (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
-	  (message "%s" loc)))))
+			      (match-string rbdbgr-loc-regexp-line-group text))))
+	(rbdbg-file-loc-from-line filename lineno))
+    nil))
+  
 
 ;; -------------------------------------------------------------------
 ;; The end.

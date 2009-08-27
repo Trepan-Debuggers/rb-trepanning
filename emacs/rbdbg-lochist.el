@@ -23,7 +23,7 @@
   :type 'integer
   :group 'rbdbg)
 
-(defun rbdbg-loc-hist-new()
+(defun make-rbdbg-loc-hist()
   (list (make-ring rbdbg-loc-hist-size) -1))
 
 (defun rbdbg-loc-hist-ring(loc-hist)

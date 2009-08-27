@@ -11,7 +11,7 @@
 
   (context "location ring initialization and fields access: "
 	   (tag lochist)
-	   (lexical-let ((loc-hist (rbdbg-loc-hist-new))
+	   (lexical-let ((loc-hist (make-rbdbg-loc-hist))
 			 (filename (buffer-file-name (current-buffer)))
 			 (loc (rbdbg-loc-current)))
 	     
