@@ -14,7 +14,7 @@
 
 (setq rbdbg-dbgr (make-rbdbg-dbgr
 		  :name dbg-name
-		  :loc-regexp (rbdbg-dbgr-loc-pat-regexp loc-pat)
+		  :loc-regexp (rbdbg-dbgr-loc-pat-regexp      loc-pat)
 		  :file-group (rbdbg-dbgr-loc-pat-file-group  loc-pat)
 		  :line-group (rbdbg-dbgr-loc-pat-line-group  loc-pat))) 
 

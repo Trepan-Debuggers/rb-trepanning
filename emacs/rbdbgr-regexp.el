@@ -10,6 +10,8 @@
 ;;
 
 (defstruct rbdbg-dbgr-loc-pat
+  "Information to match and extract a file, line number location from
+a string output by a debugger"
   (regexp     :type string)
   (file-group :type integer)
   (line-group :type integer))
