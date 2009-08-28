@@ -56,6 +56,18 @@ component in LOC-HIST"
     (while (not (ring-empty-p ring))
       (ring-remove ring))))
 
+(defun rbdbg-loc-hist-index(loc-hist)
+  "Return the ring-index value of LOC-HIST"
+  (lexical-let* ((index (rbdbg-loc-hist-position loc-hist))
+		 (ring (rbdbg-loc-hist-ring loc-hist))
+		 (head (car ring))
+		 (ringlen (cadr ring))
+		 (vec (cddr ring))
+		 (veclen (length vec)))
+    (cond ((zerop head) 0)
+	  ((zerop (mod index ringlen)) ringlen)
+	  (t (ring-index index head ringlen veclen)))
+    ))
 
 (defun rbdbg-loc-hist-set (loc-hist position)
   "Set LOC-HIST to POSITION in the stopping history"

@@ -32,12 +32,13 @@
 
 (defun rbdbg-track-hist-fn-internal(fn)
   (interactive)
-  (let* ((loc-hist (rbdbg-dbgr-loc-hist rbdbg-dbgr))
+  (lexical-let* ((loc-hist (rbdbg-dbgr-loc-hist rbdbg-dbgr))
 	 (cmd-window (selected-window))
 	 (cmd-buff (current-buffer))
 	 (position (funcall fn loc-hist))
 	 (loc (rbdbg-loc-hist-item loc-hist)))
     (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
+    (message "history position %s" (rbdbg-loc-hist-index loc-hist))
     ; FIXME: Combine common code with loc-action? 
     ; See also comments why we do the below there.
     (set-buffer cmd-buff)
@@ -87,8 +88,8 @@ encountering a new loc."
 
 (defun rbdbg-track-comint-output-filter-hook(text)
   "An output-filter hook custom for comint shells.  Find
-location(s), if any, and run the action(s) associated with
-finding a new location(s).  The parameter TEXT appears because it
+location/s, if any, and run the action(s) associated with
+finding a new location/s.  The parameter TEXT appears because it
 is part of the comint-output-filter-functions API. Instead we use
 marks set in buffer-local variables to extract text"
 
@@ -107,7 +108,7 @@ marks set in buffer-local variables to extract text"
 		 (loc (rbdbg-track-from-region last-output-start 
 					       last-output-end)))
 
-    (rbdbg-track-loc-action loc proc-buff proc-window)))
+    (if loc (rbdbg-track-loc-action loc proc-buff proc-window))))
 
 (defun rbdbg-track-eshell-output-filter-hook()
   "An output-filter hook custom for eshell shells.  Find
@@ -127,25 +128,27 @@ marks set in buffer-local variables to extract text"
   (rbdbg-track-loc (buffer-substring from to)))
 
 (defun rbdbg-track-loc(text)
-"Do regular-expression matching to find a file name and line number inside
+  "Do regular-expression matching to find a file name and line number inside
 string TEXT. If we match we will turn the result into a rbdbg-loc struct.
 Otherwise return nil."
-
+  
   ; NOTE: rbdbg-dbgr is a buffer local variable containing a debugger
   ; "struct". In that struct are the fields loc-regexp, file-group,
   ; and line-group. By setting the the fields of rbdbg-dbgr appropriately 
   ; we can accomodate a family of debuggers.
-  (if (string-match (rbdbg-dbgr-loc-regexp rbdbg-dbgr) text)
-      (lexical-let* ((filename (match-string 
-				(rbdbg-dbgr-file-group rbdbg-dbgr) 
-				text))
-		     (lineno (string-to-number
-			      (match-string (rbdbg-dbgr-line-group rbdbg-dbgr)
-					    text))))
-	(rbdbg-file-loc-from-line filename lineno))
-    nil))
-  
 
+  (lexical-let ((loc-regexp (rbdbg-dbgr-loc-regexp rbdbg-dbgr))
+		(file-group (rbdbg-dbgr-file-group rbdbg-dbgr))
+		(line-group (rbdbg-dbgr-line-group rbdbg-dbgr)))
+    (if (and loc-regexp (string-match loc-regexp text))
+	(lexical-let* ((filename (match-string file-group text))
+		       (lineno (string-to-number
+				(match-string line-group text))))
+	  (if (and filename lineno)
+	      (rbdbg-file-loc-from-line filename lineno)
+	    nil))
+      nil)))
+  
 ;; -------------------------------------------------------------------
 ;; The end.
 ;;

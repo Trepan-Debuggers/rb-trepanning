@@ -20,13 +20,19 @@
 
 ; FIXME/WARNING the below is customized for rbdbgr
 (lexical-let* ((filename (symbol-file 'behave))
-	       (debugger-output (format "-> (%s:7)\n(rbdbgr):\n" filename))
+	       (line-number 7)
+	       (debugger-output (format "-> (%s:%d)\n(rbdbgr):\n" 
+					filename line-number))
 	       (loc (rbdbg-track-loc debugger-output)))
 
-  (context "rdbg-file-line-count: "
+  (context "rdbg-track: "
 	   (tag track)
 	   (specify "loc extracted"
 		    (expect (rbdbg-loc-p loc) t))
+	   (specify "loc filename extracted"
+		    (expect (rbdbg-loc-filename loc) equal filename))
+	   (specify "loc line-number extracted"
+		    (expect (rbdbg-loc-line-number loc) equal line-number))
 	   ))
 
 (behave "track")

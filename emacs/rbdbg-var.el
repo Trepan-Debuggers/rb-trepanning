@@ -14,7 +14,7 @@
 
 (defvar rbdbg-dbgr (make-rbdbg-dbgr
 		    :name "unknown-debugger-name"
-		    :loc-regexp "??"
+		    :loc-regexp nil
 		    :file-group -1
 		    :line-group -1
 		    :loc-hist   nil)
