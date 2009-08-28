@@ -28,7 +28,49 @@
   (load "rbdbgr-regexp")
   (setq load-path (cddr load-path)))
 (require 'rbdbg-file)
+(require 'rbdbg-loc)
 (require 'rbdbgr-regexp)
+
+(defun rbdbg-track-comint-output-filter-hook(text)
+  "An output-filter hook custom for comint shells.  Find
+location/s, if any, and run the action(s) associated with
+finding a new location/s.  The parameter TEXT appears because it
+is part of the comint-output-filter-functions API. Instead we use
+marks set in buffer-local variables to extract text"
+
+  ;; Instead of trying to piece things together from partial text
+  ;; (which can be almost useless depending on Emacs version), we
+  ;; monitor to the point where we have the next rbdbg prompt, and then
+  ;; check all text from comint-last-input-end to process-mark.
+
+  ; FIXME: Add unwind-protect? 
+  (lexical-let* ((proc-buff (current-buffer))
+		 (proc-window (selected-window))
+		 (curr-proc (get-buffer-process proc-buff))
+		 (last-output-end (process-mark curr-proc))
+		 (last-output-start (max comint-last-input-end 
+				   (- last-output-end rbdbg-track-char-range)))
+		 (loc (rbdbg-track-from-region last-output-start 
+					       last-output-end)))
+
+    (if loc (rbdbg-track-loc-action loc proc-buff proc-window))))
+
+(defun rbdbg-track-eshell-output-filter-hook()
+  "An output-filter hook custom for eshell shells.  Find
+location(s), if any, and run the action(s) associated with We use
+marks set in buffer-local variables to extract text"
+
+  ; FIXME: Add unwind-protect? 
+  (lexical-let ((proc-buff (current-buffer))
+		(proc-window (selected-window))
+		(loc (rbdbg-track-from-region eshell-last-output-start 
+					      eshell-last-output-end)))
+    (rbdbg-track-loc-action loc proc-buff proc-window)))
+
+(defun rbdbg-track-from-region(from to)
+  (interactive "r")
+  (if (> from to) (psetq to from from to))
+  (rbdbg-track-loc (buffer-substring from to)))
 
 (defun rbdbg-track-hist-fn-internal(fn)
   (interactive)
@@ -86,47 +128,6 @@ encountering a new loc."
         (select-window cmd-window))
     (message "%s" loc)))
 
-(defun rbdbg-track-comint-output-filter-hook(text)
-  "An output-filter hook custom for comint shells.  Find
-location/s, if any, and run the action(s) associated with
-finding a new location/s.  The parameter TEXT appears because it
-is part of the comint-output-filter-functions API. Instead we use
-marks set in buffer-local variables to extract text"
-
-  ;; Instead of trying to piece things together from partial text
-  ;; (which can be almost useless depending on Emacs version), we
-  ;; monitor to the point where we have the next rbdbg prompt, and then
-  ;; check all text from comint-last-input-end to process-mark.
-
-  ; FIXME: Add unwind-protect? 
-  (lexical-let* ((proc-buff (current-buffer))
-		 (proc-window (selected-window))
-		 (curr-proc (get-buffer-process proc-buff))
-		 (last-output-end (process-mark curr-proc))
-		 (last-output-start (max comint-last-input-end 
-				   (- last-output-end rbdbg-track-char-range)))
-		 (loc (rbdbg-track-from-region last-output-start 
-					       last-output-end)))
-
-    (if loc (rbdbg-track-loc-action loc proc-buff proc-window))))
-
-(defun rbdbg-track-eshell-output-filter-hook()
-  "An output-filter hook custom for eshell shells.  Find
-location(s), if any, and run the action(s) associated with We use
-marks set in buffer-local variables to extract text"
-
-  ; FIXME: Add unwind-protect? 
-  (lexical-let ((proc-buff (current-buffer))
-		(proc-window (selected-window))
-		(loc (rbdbg-track-from-region eshell-last-output-start 
-					      eshell-last-output-end)))
-    (rbdbg-track-loc-action loc proc-buff proc-window)))
-
-(defun rbdbg-track-from-region(from to)
-  (interactive "r")
-  (if (> from to) (psetq to from from to))
-  (rbdbg-track-loc (buffer-substring from to)))
-
 (defun rbdbg-track-loc(text)
   "Do regular-expression matching to find a file name and line number inside
 string TEXT. If we match we will turn the result into a rbdbg-loc struct.
@@ -148,6 +149,20 @@ Otherwise return nil."
 	      (rbdbg-file-loc-from-line filename lineno)
 	    nil))
       nil)))
+  
+(defun rbdbg-track-set-debugger(debugger-name)
+  (interactive "sDebugger name: ")
+  (lexical-let ((loc-pat (gethash debugger-name rbdbg-dbgr-pat-hash)))
+    (if loc-pat 
+	(setq rbdbg-dbgr (make-rbdbg-dbgr
+			  :name debugger-name
+			  :loc-regexp (rbdbg-dbgr-loc-pat-regexp     loc-pat)
+			  :file-group (rbdbg-dbgr-loc-pat-file-group loc-pat)
+			  :line-group (rbdbg-dbgr-loc-pat-line-group loc-pat)
+			  :loc-hist   (make-rbdbg-loc-hist)))
+      (message "I Don't have %s listed as a debugger." debugger-name)
+      ))
+  )
   
 ;; -------------------------------------------------------------------
 ;; The end.

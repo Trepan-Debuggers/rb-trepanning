@@ -9,6 +9,8 @@ want to save the values that were seen/requested originally."
    (line-number :type integer)
    (marker      :type marker))
 
+(defalias 'rbdbg-loc? 'rbdbg-loc-p)
+
 (defun rbdbg-loc-current()
   "Create a location object for the point in the current buffer."
   (make-rbdbg-loc :filename (buffer-file-name (current-buffer))
@@ -40,3 +42,5 @@ WINDOW-FN is called before switching buffers"
 		  (goto-line line-number)
 		  (rbdbg-loc-marker= loc (point-marker))))))
 	)))
+
+(provide 'rbdbg-loc)

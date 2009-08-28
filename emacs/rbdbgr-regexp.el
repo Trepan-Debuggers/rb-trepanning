@@ -30,10 +30,10 @@ a string output by a debugger inside a process shell"
        :file-group 1
        :line-group 2))
 
-; Create one for the Korn Shell debugger "kshdb". 
-(setf (gethash "kshdb" rbdbg-dbgr-pat-hash)
+; Create one for ruby-debug
+(setf (gethash "rdebug" rbdbg-dbgr-pat-hash)
       (make-rbdbg-dbgr-loc-pat
-       :regexp "\\(^\\|\n\\)(\\([^:]+\\):\\([0-9]*\\))"
+       :regexp "\\(?:source \\)?\\(\\(?:[a-zA-Z]:\\)?[^:\n]*\\):\\([0-9]*\\).*\n"
        :file-group 2
        :line-group 3))
 
@@ -44,12 +44,40 @@ a string output by a debugger inside a process shell"
        :file-group 1
        :line-group 2))
 
-; And one for the Bash debugger "bashdb". 
+; And the older Python debugger "pydb". 
+(setf (gethash "pydb" rbdbg-dbgr-pat-hash)
+      (make-rbdbg-dbgr-loc-pat
+       :regexp "^(\\(\\(?:[a-zA-Z]:\\)?[-a-zA-Z0-9_/.\\\\ ]+\\):\\([0-9]+\\))"
+       :file-group 1
+       :line-group 2))
+
+; Create one for the Korn Shell debugger "kshdb". 
+(setf (gethash "kshdb" rbdbg-dbgr-pat-hash)
+      (make-rbdbg-dbgr-loc-pat
+       :regexp "\\(^\\|\n\\)(\\([^:]+\\):\\([0-9]*\\))"
+       :file-group 2
+       :line-group 3))
+
+; And Z Shell debugger "zshdb". 
+(setf (gethash "zshdb" rbdbg-dbgr-pat-hash)
+      (make-rbdbg-dbgr-loc-pat
+       :regexp "\\(^\\|\n\\)(\\([^:]+\\):\\([0-9]*\\))"
+       :file-group 2
+       :line-group 3))
+
+; One for the Bash debugger "bashdb". 
 (setf (gethash "bashdb" rbdbg-dbgr-pat-hash)
       (make-rbdbg-dbgr-loc-pat
        :regexp "\\(^\\|\n\\)(\\([^:]+\\):\\([0-9]*\\))"
        :file-group 2
        :line-group 3))
+
+; And finally for GNU Make + debugger "remake". 
+(setf (gethash "remake" rbdbg-dbgr-pat-hash)
+      (make-rbdbg-dbgr-loc-pat
+       :regexp "\\(?:^\\|\n\\)(\\(\\(?:[a-zA-Z]:\\)?[-a-zA-Z0-9_/.\\\\ ]+\\):\\([0-9]+\\))"
+       :file-group 1
+       :line-group 2))
 
 (provide 'rbdbgr-regexp)
 

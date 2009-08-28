@@ -4,8 +4,12 @@
   (require 'cl)
   (setq load-path (cons nil (cons ".." load-path)))
   (load "rbdbg-track")
+  (load "rbdbg-loc")
   (load "rbdbg-lochist")
+  (load "rbdbg-file")
   (load "rbdbg-var")
+  (load "rbdbg-window")
+  (load "rbdbgr-regexp")
   (setq load-path (cddr load-path)))
 (require 'rbdbg-track)
 
@@ -41,16 +45,9 @@ Use the command `rbdbg-minor-mode' to toggle or set this variable.")
   ;; Other debuggers will be put in rbdbg-dbgr-pat-hash and the 
   ;; below should be customizable for those debuggers by setting
   ;; dbg-name accordingly. Put this in a subroutine.
-  (lexical-let* ((dbg-name "rbdbgr")
-		 (loc-pat (gethash dbg-name rbdbg-dbgr-pat-hash)))
-    (setq rbdbg-dbgr (make-rbdbg-dbgr
-		      :name dbg-name
-		      :loc-regexp (rbdbg-dbgr-loc-pat-regexp     loc-pat)
-		      :file-group (rbdbg-dbgr-loc-pat-file-group loc-pat)
-		      :line-group (rbdbg-dbgr-loc-pat-line-group loc-pat)
-		      :loc-hist   (make-rbdbg-loc-hist))))
-    
-    (run-mode-hooks 'rbdbg-track-mode-hook)
+  (rbdbg-track-set-debugger "rbdbgr")
+  
+  (run-mode-hooks 'rbdbg-track-mode-hook)
 ;; FIXME: add buffer local variables (in the process buffer) for:
 ;; rbdbg-last-output-start
 )
