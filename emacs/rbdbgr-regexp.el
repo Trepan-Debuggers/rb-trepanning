@@ -18,7 +18,7 @@ a string output by a debugger"
 
 (defvar rbdbg-dbgr-pat-hash (make-hash-table :test 'equal)
   "Hash key is the debugger (string) name. The value of the hash
-  rbdbg-dbgr-loc-pat struct")
+  is a rbdbg-dbgr-loc-pat struct")
 
 ; Create one for the Ruby 1.9 debugger "rbdbgr". 
 (setf (gethash "rbdbgr" rbdbg-dbgr-pat-hash)
