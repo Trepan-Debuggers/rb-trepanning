@@ -1,15 +1,23 @@
 ;;; rbdbgr-var.el --- debugger variables (other than regexps)
+(require 'cl)
 
-; The debugger "object"/structure specific to a process buffer.
-(defstruct rbdbg-dbgr 
-  loc-hist    ; ring of locations seen in the course of execution
+(defstruct rbdbg-dbgr
+  "The debugger object/structure specific to a process buffer."
+  (name       :type string) ; Name of debugger
+  (loc-regexp :type string) ; Location regular expression string
+  ; FIXME: use include?
+  (file-group :type integer)
+  (line-group :type integer)
+  (loc-hist)    ; ring of locations seen in the course of execution
               ; see rbdbg-lochist
-  loc-regexp  ; regular expression matching a location 
-  loc-regexp-file-group ; position of file in loc-regexp
-  loc-regexp-line-group ; position of line number in loc-regexp
 )
 
-(defvar rbdbg-dbgr (make-rbdbg-dbgr)
+(defvar rbdbg-dbgr (make-rbdbg-dbgr
+		    :name "unknown-debugger-name"
+		    :loc-regexp "??"
+		    :file-group -1
+		    :line-group -1
+		    :loc-hist   nil)
   "Debugger object for a process buffer.")
 (make-variable-buffer-local 'rbdbg-dbgr)
 

@@ -1,4 +1,4 @@
-;;; rbdbgr-regexp.el --- Ruby debugger regular expressions
+;;; rbdbgr-regexp.el --- Debugger regular expressions
 
 ;; Here we have regular expressions and names for matched patterns
 ;; of those regular expressions.
@@ -9,15 +9,19 @@
 ;; Variables defining regular expressions (regexp:s).
 ;;
 
-(defconst rbdbgr-loc-regexp
-  ".. (\\([-a-zA-Z0-9_/.]*\\):\\([0-9]+\\))"
-  "Regular expression for a rbdbgr position.")
+(defstruct rbdbg-dbgr-loc-pat
+  (regexp     :type string)
+  (file-group :type integer)
+  (line-group :type integer))
 
-(defconst rbdbgr-loc-regexp-file-group 1
-  "Group position in `rbdbgr-position-regexp' that matches the file name.")
+(defvar rbdbg-dbgr-pat-hash (make-hash-table :test 'equal)
+  "Hash indexed by debugger name of rbdbg-dbgr-pat")
 
-(defconst rbdbgr-loc-regexp-line-group 2
-  "Group position in `rbdbgr-position-regexp' that matches the line number.")
+(setf (gethash "rbdbgr" rbdbg-dbgr-pat-hash)
+      (make-rbdbg-dbgr-loc-pat
+       :regexp ".. (\\([-a-zA-Z0-9_/.]*\\):\\([0-9]+\\))"
+       :file-group 1
+       :line-group 2))
 
 (provide 'rbdbgr-regexp)
 

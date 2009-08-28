@@ -1,9 +1,26 @@
 (load-file "./behave.el")
 (load-file "../rbdbgr-regexp.el")
+(load-file "../rbdbg-var.el")
 
 (behave-clear-contexts)
 
-(defun loc-match(text) (string-match rbdbgr-loc-regexp text))
+
+; Some setup usually done in setting up the buffer.
+; We customize this for the debugger rbdbgr. Others may follow.
+; FIXME: encapsulate this.
+(setq dbg-name "rbdbgr")
+(setq loc-pat (gethash dbg-name rbdbg-dbgr-pat-hash))
+
+(setq rbdbg-dbgr (make-rbdbg-dbgr
+		  :name dbg-name
+		  :loc-regexp (rbdbg-dbgr-loc-pat-regexp loc-pat)
+		  :file-group (rbdbg-dbgr-loc-pat-file-group  loc-pat)
+		  :line-group (rbdbg-dbgr-loc-pat-line-group  loc-pat))) 
+
+
+(defun loc-match(text) 
+  (string-match (rbdbg-dbgr-loc-regexp rbdbg-dbgr) text)
+)
 
 (context "location matching: "
 	 (tag regexp)
@@ -11,11 +28,12 @@
 	   (specify "basic location"
 		    (expect (numberp (loc-match text)) t))
 	   (specify "extract file name"
-		    (message "%s" (match-string rbdbgr-loc-regexp-file-group text))
-		    (expect (match-string rbdbgr-loc-regexp-file-group text)
+		    (expect (match-string (rbdbg-dbgr-file-group rbdbg-dbgr)
+					  text)
 			    equal "./rbdbgr.rb"))
 	   (specify "extract line number"
-		    (expect (match-string rbdbgr-loc-regexp-line-group text)
+		    (expect (match-string (rbdbg-dbgr-line-group rbdbg-dbgr)
+					  text)
 			    equal "73"))
 	   
 	   (specify "unmatched location"

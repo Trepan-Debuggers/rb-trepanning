@@ -27,6 +27,7 @@
   (load "rbdbg-window")
   (load "rbdbgr-regexp")
   (setq load-path (cddr load-path)))
+(require 'rbdbg-file)
 (require 'rbdbgr-regexp)
 
 (defun rbdbg-track-hist-fn-internal(fn)
@@ -125,18 +126,22 @@ marks set in buffer-local variables to extract text"
   (if (> from to) (psetq to from from to))
   (rbdbg-track-loc (buffer-substring from to)))
 
-; FIXME: move somewhere else? Or maybe a top-level tracking UI will
-; be created in another file
 (defun rbdbg-track-loc(text)
-"We use `rbdbg-input-prompt-regexp' to find and parse the
-location"
-  ; FIXME rbdbgr-loc-regexp is for rbdbgr. Change to rbdbg-loc-regexp
-  ; which will be generic and picked up from a buffer-local variable
-  ; containing the "debugger" object.
-  (if (string-match rbdbgr-loc-regexp text)
-      (lexical-let* ((filename (match-string rbdbgr-loc-regexp-file-group text))
+"Do regular-expression matching to find a file name and line number inside
+string TEXT. If we match we will turn the result into a rbdbg-loc struct.
+Otherwise return nil."
+
+  ; NOTE: rbdbg-dbgr is a buffer local variable containing a debugger
+  ; "struct". In that struct are the fields loc-regexp, file-group,
+  ; and line-group. By setting the the fields of rbdbg-dbgr appropriately 
+  ; we can accomodate a family of debuggers.
+  (if (string-match (rbdbg-dbgr-loc-regexp rbdbg-dbgr) text)
+      (lexical-let* ((filename (match-string 
+				(rbdbg-dbgr-file-group rbdbg-dbgr) 
+				text))
 		     (lineno (string-to-number
-			      (match-string rbdbgr-loc-regexp-line-group text))))
+			      (match-string (rbdbg-dbgr-line-group rbdbg-dbgr)
+					    text))))
 	(rbdbg-file-loc-from-line filename lineno))
     nil))
   
