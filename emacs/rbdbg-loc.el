@@ -1,6 +1,5 @@
 (eval-when-compile (require 'cl))
 
-
 (defstruct rbdbg-loc 
 "Our own location type. Even though a mark contains a
 file-name (via a buffer) and a line number (via an offset), we
@@ -39,7 +38,8 @@ WINDOW-FN is called before switching buffers"
 	      (if (and marker (marker-position marker))
 		  (goto-char (marker-position marker))
 		(progn 
-		  (goto-line line-number)
+		  (goto-char (point-min))
+		  (forward-line line-number)
 		  (rbdbg-loc-marker= loc (point-marker))))))
 	)))
 

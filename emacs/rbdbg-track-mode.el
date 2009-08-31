@@ -1,8 +1,8 @@
 ;;  `rbdbg-track-mode' tracks shell output 
 
 (eval-when-compile
-  (require 'cl)
   (setq load-path (cons nil (cons ".." load-path)))
+  (require 'cl)
   (load "rbdbg-track")
   (load "rbdbg-loc")
   (load "rbdbg-lochist")

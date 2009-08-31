@@ -1,5 +1,5 @@
 ;;; rbdbgr-var.el --- debugger variables (other than regexps)
-(require 'cl)
+(eval-when-compile (require 'cl))
 
 (defstruct rbdbg-dbgr
   "The debugger object/structure specific to a process buffer."

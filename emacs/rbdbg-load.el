@@ -1,4 +1,4 @@
-(require 'cl)
+(eval-when-compile (require 'cl))
 
 (defun rbdbg-directory ()
   "The directory of this file, or nil."
@@ -51,6 +51,6 @@
 	  (setq full-filename (format "%s%s.el" (rbdbg-directory) filename))
 	  (message "Rocky is loading %s" full-filename)
 	  (load-file full-filename))
-   / (setq load-path (cdr load-path))
+    (setq load-path (cdr load-path))
     ))
   
