@@ -23,13 +23,24 @@
 			  rbdbg-loc-file))
 	 (setup)
 	 ;; Try byte compiling a file and then rereading
-	 (byte-compile-file rdbg-loc-file)
-	 (rbdbg-require-relative "rbdbg-loc.elc" nil)
-	 (specify "Read elc file when we already have read in an el file"
-		  (rbdbg-require-relative "rbdbg-loc.elc" t)
-		  (expect (symbol-file 'rbdbg-loc-current) equal
-			  (concat rbdbg-loc-file "c")))
-	 )
+	 (setq rbdbg-loc-file-compiled (concat rbdbg-loc-file "c"))
+	 (unless (file-readable-p rbdbg-loc-file-compiled)
+	   (byte-compile-file rbdbg-loc-file))
+	 (if (file-readable-p rbdbg-loc-file-compiled)
+	     (progn 
+	       (rbdbg-require-relative "rbdbg-loc.elc" nil)
+	       (specify "Read elc file when we already have read in an el file"
+			(rbdbg-require-relative (file-name-nondirectory
+						 rbdbg-loc-file-compiled))
+			(expect (symbol-file 'rbdbg-loc-current) equal
+				rbdbg-loc-file-compiled))
+	       ;; (setup)
+	       ;; (specify "Read el file by default when we already
+	       ;; have read in an elc file"
+	       ;; 		(rbdbg-require-relative "rdbg-loc" t)
+	       ;; 		(expect (symbol-file 'rbdbg-loc-current) equal
+	       ;; 			rbdbg-loc-file))
+	       )))
 
 (behave "load")
 
