@@ -4,14 +4,15 @@
 
 (behave-clear-contexts)
 
-;; (defun setup()
-;;      (lexical-let ((loc-hist (make-rbdbg-loc-hist))
-;; 		   (filename (buffer-file-name (current-buffer)))
-;; 		   (loc (rbdbg-loc-current)))
-;;        (rbdbg-loc-hist-add loc-hist loc)
-;;        ;; (message "aa ring-index %s" 
-;;        ;; 		(rbdbg-loc-hist-index loc-hist))))
-;; ; (setup)
+;;; (defun setup()
+;;;      (lexical-let ((loc-hist (make-rbdbg-loc-hist))
+;;; 		   (filename (buffer-file-name (current-buffer)))
+;;; 		   (loc (rbdbg-loc-current)))
+;;;        (rbdbg-loc-hist-add loc-hist loc)))
+;;;        ;; (message "aa ring-index %s" 
+;;;        ;; 		(rbdbg-loc-hist-index loc-hist))))
+
+;;; (setup)
 
 
 (lexical-let ((saved-buffer (current-buffer)))
