@@ -6,10 +6,10 @@
 
 
 ;;; Code:
-
+ 
+(require 'ring)
 (eval-when-compile 
   (require 'cl)
-  (require 'ring)
   (setq load-path (cons nil (cons ".." load-path)))
   (load "rbdbg-loc")
   (setq load-path (cddr load-path)))

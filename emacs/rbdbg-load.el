@@ -10,34 +10,41 @@
         (expand-file-name (file-name-directory file-name))
       nil)))
 
-(defun rbdbg-require-relative (filename &optional source-first)
-  "load FILE relative to  `rbdbg-directory'"
-  (lexical-let* ((ext (file-name-extension filename))
-		 (file-name-short 
-		  (expand-file-name (concat (rbdbg-directory) filename)))
-		 (first-filename file-name-short)
-		 (el  (concat file-name-short ".el"))
-		 (elc (concat file-name-short ".elc"))
-		 file-list ret-value)
-    (cond ((equal ext "el")
-	   (setq first-filename file-name-short)
-	   (setq el nil))
-	  ((equal ext "elc")
-	   (setq first-filename file-name-short)
-	   (setq elc nil)))
-    
-    (if source-first 
-	(setq file-list (list first-filename el elc))
-      (setq file-list (list first-filename elc el)))
-    (loop for filename in file-list do
-	  (if (and filename (file-readable-p filename))
-	      (progn 
-		(load filename)
-		(setq ret-value t)
-		(return))
-	    ))
-    ret-value))
-
+(defun rbdbg-require-relative (filename-list &optional source-first)
+  "load FILENAME relative to `rbdbg-directory' if FILENAME is
+already loaded it is reloaded. FILENAME can also be a list of
+strings in which case each element is loaded. Suffixes '.el' and
+'.elc' are automatically appended to filenames. If optional
+argument SOURCE-FILE is t, then we prefer the source source file
+over a compiled name."
+  (if (not (listp filename-list)) (setq filename-list (list filename-list)))
+  (loop for filename in filename-list do 
+	(lexical-let* ((ext (file-name-extension filename))
+		       (file-name-short 
+			(expand-file-name (concat (rbdbg-directory) filename)))
+		       (first-filename file-name-short)
+		       (el  (concat file-name-short ".el"))
+		       (elc (concat file-name-short ".elc"))
+		       file-list ret-value)
+	  (cond ((equal ext "el")
+		 (setq first-filename file-name-short)
+		 (setq el nil))
+		((equal ext "elc")
+		 (setq first-filename file-name-short)
+		 (setq elc nil)))
+	  
+	  (if source-first 
+	      (setq file-list (list first-filename el elc))
+	    (setq file-list (list first-filename elc el)))
+	  (loop for filename in file-list do
+		(if (and filename (file-readable-p filename))
+		    (progn 
+		      (load filename)
+		      (setq ret-value t)
+		      (return))
+		  ))
+	  ret-value)
+	))
   
 (defun rbdbg-load-all-files()
   (lexical-let ((file-list '("rbdbgr-regexp" "rbdbg-var" 
@@ -54,3 +61,4 @@
     (setq load-path (cdr load-path))
     ))
   
+(provide 'rbdbg-load)
