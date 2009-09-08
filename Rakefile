@@ -29,4 +29,4 @@ end
 
 desc "Test everything - same as test."
 task :check => :test
-
+task :default => :test
