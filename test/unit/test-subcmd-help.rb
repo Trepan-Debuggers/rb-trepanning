@@ -7,7 +7,7 @@ require_relative %w(.. .. lib core)
 class Debugger
 end
 
-# Test Debugger:CmdProcessor
+# Test Debugger::CmdProcessor
 class TestSubCmdHelp < Test::Unit::TestCase
 
   def setup

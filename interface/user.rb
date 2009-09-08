@@ -70,13 +70,14 @@ class Debugger::UserInterface < Debugger::Interface
 
   def read_command(prompt='')
     line = self.readline(prompt)
-    # Do something with history?
+    # FIXME: Do something with history?
     return line
   end
 
   def readline(prompt='')
-    Readline.readline(prompt)
     # FIXME: use routines from output system
+    require 'readline'
+    Readline.readline(prompt)
     # if prompt and prompt.size > 0
     #   output.write(prompt)
     #   output.flush()
@@ -92,7 +93,7 @@ if __FILE__ == $0
   if ARGV.size > 0
     begin
       line = intf.readline("Type something: ")
-    rescue EOFError
+    rescue IOError
       puts "No input EOF: "
     else
       puts "You typed: #{line}"
