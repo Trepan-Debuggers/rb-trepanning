@@ -39,7 +39,7 @@ WINDOW-FN is called before switching buffers"
 		  (goto-char (marker-position marker))
 		(progn 
 		  (goto-char (point-min))
-		  (forward-line line-number)
+		  (forward-line (- line-number 1))
 		  (rbdbg-loc-marker= loc (point-marker))))))
 	)))
 

@@ -80,7 +80,9 @@ marks set in buffer-local variables to extract text"
 	 (position (funcall fn loc-hist))
 	 (loc (rbdbg-loc-hist-item loc-hist)))
     (rbdbg-loc-goto loc 'rbdbg-split-or-other-window)
-    (message "history position %s" (rbdbg-loc-hist-index loc-hist))
+    (message "history position %s line %s" 
+	     (rbdbg-loc-hist-index loc-hist)
+	     (rbdbg-loc-line-number loc))
     ; FIXME: Combine common code with loc-action? 
     ; See also comments why we do the below there.
     (set-buffer cmd-buff)

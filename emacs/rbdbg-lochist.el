@@ -44,60 +44,61 @@ component in LOC-HIST"
   ;; Switching frames shouldn't save a new ring
   ;; position. Also make sure no position is different.
   ;; Perhaps duplicates should be controlled by an option.
-  (let ((ring (rbdbg-loc-hist-ring loc-hist)))
+  (lexical-let* ((ring (rbdbg-loc-hist-ring loc-hist))
+		 (head (car ring)))
     (unless (equal (rbdbg-loc-hist-item loc-hist) item)
+      (setf (rbdbg-loc-hist-position loc-hist) (- head 1))
       (ring-insert-at-beginning ring item))))
 
 (defun rbdbg-loc-hist-clear(loc-hist)
   "Clear out all source locations in LOC-HIST"
-  (let ((ring (ring-ref (rbdbg-loc-hist-ring loc-hist)
-			(rbdbg-loc-hist-position loc-hist))))
-    (setf (rbdbg-loc-hist-position loc-hist) -1)
+  (lexical-let* ((ring (ring-ref (rbdbg-loc-hist-ring loc-hist)
+				 (rbdbg-loc-hist-position loc-hist)))
+		 (head (car ring)))
+    (setf (rbdbg-loc-hist-position loc-hist) (- head 1))
     (while (not (ring-empty-p ring))
       (ring-remove ring))))
 
 (defun rbdbg-loc-hist-index(loc-hist)
   "Return the ring-index value of LOC-HIST"
-  (lexical-let* ((index (rbdbg-loc-hist-position loc-hist))
+  (lexical-let* (
 		 (ring (rbdbg-loc-hist-ring loc-hist))
 		 (head (car ring))
 		 (ringlen (cadr ring))
-		 (vec (cddr ring))
-		 (veclen (length vec)))
-    (cond ((zerop head) 0)
-	  ((zerop (mod index ringlen)) ringlen)
-	  (t (ring-index index head ringlen veclen)))
+		 (index (mod (+ ringlen head 
+				(- (rbdbg-loc-hist-position loc-hist)))
+			     ringlen)))
+    (if (zerop index) ringlen index)
     ))
 
 (defun rbdbg-loc-hist-set (loc-hist position)
   "Set LOC-HIST to POSITION in the stopping history"
   (setf (rbdbg-loc-hist-position loc-hist) position))
 
-; FIXME: add numeric arg? 
+;; FIXME: add numeric arg? 
 (defun rbdbg-loc-hist-newer (loc-hist)
   "Set LOC-HIST position to an newer position."
-    (if (equal (rbdbg-loc-hist-position loc-hist) -1)
-	(message "At newest - Will set to wrap to oldest."))
-    (setf (rbdbg-loc-hist-position loc-hist) 
-	 (ring-plus1 (rbdbg-loc-hist-position loc-hist)
-		      (ring-length (rbdbg-loc-hist-ring loc-hist)))))
+  
+  (setf (rbdbg-loc-hist-position loc-hist) 
+	(ring-plus1 (rbdbg-loc-hist-position loc-hist)
+		    (ring-length (rbdbg-loc-hist-ring loc-hist)))))
 
 (defun rbdbg-loc-hist-newest (loc-hist)
   "Set LOC-HIST position to the newest position."
   (setf (rbdbg-loc-hist-position loc-hist) -1))
   
-; FIXME: add numeric arg? 
+;; FIXME: add numeric arg? 
 (defun rbdbg-loc-hist-older (loc-hist)
   "Set LOC-HIST position to an older position."
-    (if (equal (rbdbg-loc-hist-position loc-hist) 0)
-	(message "At oldest - Will set to wrap to newest."))
     (setf (rbdbg-loc-hist-position loc-hist) 
 	 (ring-minus1 (rbdbg-loc-hist-position loc-hist)
 		      (ring-length (rbdbg-loc-hist-ring loc-hist)))))
 
 (defun rbdbg-loc-hist-oldest (loc-hist)
   "Set LOC-HIST to the oldest stopping point."
-  (setf (rbdbg-loc-hist-position loc-hist) 0))
+  (lexical-let* ((ring (rbdbg-loc-hist-ring loc-hist))
+		 (head (car ring)))
+    (setf (rbdbg-loc-hist-position loc-hist) head)))
 
 (provide 'rbdbg-loc-hist)
 
