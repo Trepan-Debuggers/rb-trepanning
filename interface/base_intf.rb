@@ -25,9 +25,9 @@ class Debugger
     end
 
     def initialize(inp=nil, out=nil, opts={})
-      @input       = inp
+      @input       = inp or STDIN
       @interactive = false 
-      @opts        = opts
+      @opts        = opts or STDOUT
       @output      = out
     end
 

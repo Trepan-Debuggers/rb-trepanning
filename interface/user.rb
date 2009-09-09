@@ -18,13 +18,7 @@ class Debugger::UserInterface < Debugger::Interface
 
   def initialize(inp=nil, out=nil, opts={})
     # atexit.register(self.finalize)
-
-    # FIXME: do something like super.initialize
-    @input       = inp
-    @interactive = false 
-    @opts        = opts
-    @output      = out
-
+    super(inp, out, opts)
     @interactive = true # Or at least so we think initially
   end
 
