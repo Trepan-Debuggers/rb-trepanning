@@ -4,11 +4,19 @@
 require_relative %w(.. rbdbgr)
 
 module Rbdbgr
-  def debug_program(program_to_debug)
+  require 'rbconfig'
+
+  def ruby_path
+    File.join(Config::CONFIG['bindir'], 
+              Config::CONFIG['RUBY_INSTALL_NAME'])
+  end
+
+  def debug_program(ruby_path, program_to_debug)
     # Make sure Ruby script syntax checks okay.
     # Otherwise we get a load message that looks like rbdbgr has 
     # a problem. 
-    output = `ruby -c #{program_to_debug} 2>&1`
+    
+    output = `#{ruby_path} -c #{program_to_debug} 2>&1`
     if $?.exitstatus != 0 and RUBY_PLATFORM !~ /mswin/
       puts output
       exit $?.exitstatus 
@@ -40,9 +48,14 @@ end
 if __FILE__ == $0
   include Rbdbgr
 
-  # One way to get local variables is to create a block run once.
+  # One way to get local variables is to create a block which is run
+  # once.  
+  # 
+  # Note however that since we are constants below, we can't
+  # wrap all of this in a procedure as that would be defining
+  # constants dynamically.
   1.times do 
-    | ; rdebug_path, program_to_debug |
+    | ; rbdbgr_path, program_to_debug |
     if ARGV.empty?
       STDERR.puts 'Sorry - for now you must specify a Ruby script to debug.'
       exit(-1)
@@ -50,20 +63,21 @@ if __FILE__ == $0
     
     Debugger::ARGV = ARGV.clone
 
-    rdebug_path = File.expand_path($0)
+    rbdbgr_path = File.expand_path($0)
     if RUBY_PLATFORM =~ /mswin/
-      rdebug_path += '.cmd' unless rdebug_path =~ /\.cmd$/i
+      rbdbgr_path += '.cmd' unless rbdbgr_path =~ /\.cmd$/i
     end
 
     # FIXME: do we need to test defined? 
-    Debugger::RDEBUG_SCRIPT = rdebug_path
-    Debugger::RDEBUG_FILE = __FILE__
-    Debugger::INITIAL_DIR = Dir.pwd
+    Debugger::RUBY_PATH    = ruby_path
+    Debugger::RBDBGR_PATH  = rbdbgr_path
+    Debugger::RBDBGR_FILE  = __FILE__
+    Debugger::INITIAL_DIR  = Dir.pwd
 
     program_to_debug = ARGV.shift
     program_to_debug = whence_file(program_to_debug) unless 
       File.exist?(program_to_debug)
     Debugger::PROG_SCRIPT = program_to_debug
-    debug_program(File.expand_path(program_to_debug))
+    debug_program(Debugger::RUBY_PATH, File.expand_path(program_to_debug))
   end
 end
