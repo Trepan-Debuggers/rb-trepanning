@@ -39,7 +39,11 @@ we are in interactive mode, we'll prompt to make sure."
         sig = 'KILL'
       end
     end
-    Process.kill(sig, Process.pid)
+    begin
+      Process.kill(sig, Process.pid)
+    rescue Errno::ESRCH
+      errmsg "Unable to send kill #{sig} to process #{Process.pid}"
+    end
   end
 end
 

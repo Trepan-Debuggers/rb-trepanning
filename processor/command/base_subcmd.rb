@@ -177,7 +177,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative %w(.. mock)
-  dbgr = MockDebugger.new
+  dbgr = MockDebugger::MockDebugger.new(nil)
   cmds = dbgr.core.processor.instance_variable_get('@commands')
   p cmds.keys
   subcmd = Debugger::Subcommand.new(cmds['exit'])

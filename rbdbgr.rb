@@ -1,11 +1,13 @@
 #!/usr/bin/env ruby
-require 'trace'                   # Trace filtering
+require 'trace'                      # Trace filtering
 require 'thread_frame'
-require_relative %w(lib core)     # core event-handling mechanism
-require_relative %w(lib default)  # default debugger settings
+require_relative %w(lib core)        # core event-handling mechanism
+require_relative %w(lib default)     # default debugger settings
+require_relative %w(interface user)  # user interface (includes I/O)
 class Debugger
 
   attr_accessor :core         # access to Debugger::Core instance
+  attr_accessor :intf         # The way the outside world interfaces with us.
   attr_accessor :restart_argv # How to restart us, empty or nil. 
                               # Note restart[0] is typically $0.
   attr_reader   :settings     # Hash[:symbol] of things you can configure
@@ -13,6 +15,7 @@ class Debugger
 
   def initialize(settings={})
     @settings     = DbgSettings::DEFAULT_SETTINGS.merge(settings)
+    @intf         = Debugger::UserInterface.new
     @core         = Core.new(self, @settings[:core_opts])
     @restart_argv = @settings[:restart_argv]
     @trace_filter = TraceFilter.new

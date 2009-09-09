@@ -1,18 +1,16 @@
 # I/O related command processor methods
 class Debugger
-  # FIXME: All of this should go use an interface.
   class CmdProcessor
     def errmsg(message)
-      puts "Error: #{message}"
+      @dbgr.intf.errmsg(message)
     end
 
     def msg(message)
-      puts message
+      @dbgr.intf.msg(message)
     end
 
     def read_command()
-      require 'readline'
-      Readline.readline(@settings[:prompt])
+      @dbgr.intf.readline(@settings[:prompt])
     end
   end
 end

@@ -130,8 +130,8 @@ if __FILE__ == $0
     def run(args); puts 'test testing run' end
   end
 
-  d = MockDebugger.new
-  testcmd    = Debugger::TestCommand.new
+  d = MockDebugger::MockDebugger.new(nil)
+  testcmd    = Debugger::TestCommand.new(nil)
   # testcmd.debugger = d
   testcmd.proc     = d.core.processor
   # testcmdMgr = Subcmd.new('test', testcmd)
