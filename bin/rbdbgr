@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# -*- Ruby -*-
 # Invoke debugger from the command line. 
 
 require_relative %w(.. rbdbgr)
@@ -53,7 +54,7 @@ module Rbdbgr
     end
     for dirname in ENV['PATH'].split(File::PATH_SEPARATOR) do
       prog_script_try = File.join(dirname, prog_script)
-      return prog_script_try if File.exist?(prog_script_try)
+      return prog_script_try if File.readable?(prog_script_try)
     end
     # Failure
     return prog_script
