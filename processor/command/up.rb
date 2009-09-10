@@ -6,7 +6,7 @@ class Debugger::Command::UpCommand < Debugger::Command
     HELP = 
 "u(p) [count]
 
-Move the current frame up in the stack trace (to a newer frame). 0 is
+Move the current frame up in the stack trace (to an older frame). 0 is
 the most recent frame. If no count is given, move up 1.
 
 See also 'down' and 'frame'.
@@ -49,7 +49,7 @@ See also 'down' and 'frame'.
       count = @proc.get_an_int(count_str, opts)
       return false unless count
     end
-    @proc.adjust_frame(-count, false)
+    @proc.adjust_frame(count, false)
     return false
   end
 end

@@ -50,7 +50,7 @@ See also 'up' and 'frame'.
       count = @proc.get_an_int(count_str, opts)
       return false unless count
     end
-    @proc.adjust_frame(count, false)
+    @proc.adjust_frame(-count, false)
     return false
   end
 end
