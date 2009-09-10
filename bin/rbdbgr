@@ -16,7 +16,7 @@ module Rbdbgr
   # The caller must ensure that ARGV is set up to remove any debugger
   # arguments or things that the debugged program isn't supposed to
   # see.  FIXME: Should we make ARGV an explicit parameter?
-  def debug_program(ruby_path, program_to_debug)
+  def debug_program(dbgr, ruby_path, program_to_debug)
 
     # Make sure Ruby script syntax checks okay.
     # Otherwise we get a load message that looks like rbdbgr has 
@@ -28,10 +28,13 @@ module Rbdbgr
     end
     # print "\032\032starting\n" if Debugger.annotate and Debugger.annotate > 2
 
-    dc = Debugger.new(:restart_argv => [File.expand_path($0)])
-    dc.debugger do
+    dbgr.trace_filter.excluded << self.method(:debug_program)
+    old_dollar_0 = $0
+    $0 = program_to_debug
+    dbgr.debugger do
       load program_to_debug
     end
+    $0 = old_dollar_0
   end
 
   # Do a shell-like path lookup for prog_script and return the results.
@@ -74,6 +77,7 @@ if __FILE__ == $0
     end
 
     # FIXME: do we need to test defined? 
+    # FIXME: Should (some of) these be instance variables?
     Debugger::RUBY_PATH    = ruby_path
     Debugger::RBDBGR_PATH  = rbdbgr_path
     Debugger::RBDBGR_FILE  = __FILE__
@@ -83,6 +87,10 @@ if __FILE__ == $0
     program_to_debug = whence_file(program_to_debug) unless 
       File.exist?(program_to_debug)
     Debugger::PROG_SCRIPT = program_to_debug
-    debug_program(Debugger::RUBY_PATH, File.expand_path(program_to_debug))
+
+    # Set global so others may use this debugger.
+    $rbdbgr = Debugger.new(:restart_argv => [File.expand_path($0)])
+    debug_program($rbdbgr, Debugger::RUBY_PATH, 
+                  File.expand_path(program_to_debug))
   end
 end

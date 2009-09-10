@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 require 'columnize'
-require_relative 'base_cmd'
+require_relative 'base_subcmd'
 require_relative %w(.. subcmd)
 
-class Debugger::SubcommandMgr < Debugger::Command
+class Debugger::SubSubcommandMgr < Debugger::Subcommand
 
   unless defined?(CATEGORY)
     CATEGORY      = 'status'
@@ -14,58 +14,46 @@ class Debugger::SubcommandMgr < Debugger::Command
     NEED_STACK    = false
   end
 
-  attr_accessor :subcmds  # Array of instaniated Debugger::Subcommand objects
-  attr_reader   :name     # Name of command
+  attr_accessor :pname
+  attr_accessor :subcmds  # Array of instantiated Debugger::Subcommand objects
 
   # Initialize show subcommands. Note: instance variable name
   # has to be setcmds ('set' + 'cmds') for subcommand completion
   # to work.
-  def initialize(proc)
+  def initialize(proc, parent)
     @name    = obj_const(self, :NAME)
     @subcmds = Debugger::Subcmd.new(self)
+    @pname   = parent.name
     @proc    = proc
-    load_debugger_subcommands(@name, self)
+    load_debugger_subsubcommands(@name, self)
   end
 
   # Create an instance of each of the debugger subcommands. Commands
-  # are found by importing files in the directory 'name' + '_sub'. Some
+  # are found by importing files in the directory 'name' + 'sub'. Some
   # files are excluded via an array set in initialize.  For each of
   # the remaining files, we import them and scan for class names
   # inside those files and for each class name, we will create an
   # instance of that class. The set of DebuggerCommand class instances
   # form set of possible debugger commands.
-  def load_debugger_subcommands(name, parent)
+  def load_debugger_subsubcommands(name, obj)
 
     # Initialization
     cmd_names     = []
-    subcmd_names  = []
     cmd_dir = File.dirname(__FILE__)
-    subcmd_dir = File.join(cmd_dir, name + '_subcmd')
+    subcmd_dir = File.join(cmd_dir, @pname + '_subcmd', name + '_subcmd')
     files = Dir.glob(File.join(subcmd_dir, '*.rb'))
-    require_relative %w(.. .. rbdbgr)
     files.each do |rb| 
-      basename = File.basename(rb, '.rb')
-      if File.directory?(File.join(File.dirname(rb), basename + '_subcmd'))
-        subcmd_names << name.capitalize + basename.capitalize
-      else
-        cmd_names << name.capitalize + basename.capitalize
-      end
+      # p rb
+      cmd_names << name.capitalize + File.basename(rb, '.rb').capitalize
       require rb
     end if File.directory?(subcmd_dir)
 
     subcommands = {}
     cmd_names.each do |name|
-      subcmd_class = "Debugger::Subcommand::#{name}.new(self)"
+      subcmd_class = "Debugger::Subsubcommand::#{name}.new(self, #{pname})"
       cmd = self.instance_eval(subcmd_class)
       cmd_name = cmd.name
       @subcmds.add(cmd)
-    end
-    subcmd_names.each do |name|
-      subcmd_class = "Debugger::SubSubcommand::#{name}.new(self, parent)"
-      cmd = self.instance_eval(subcmd_class)
-      cmd_name = cmd.name
-      ## FIXME: The following line causes a failure:
-      ## @subcmds.add(cmd)
     end
   end
 
@@ -82,7 +70,7 @@ class Debugger::SubcommandMgr < Debugger::Command
   def help(args)
     if args.size <= 2
       # "help cmd". Give the general help for the command part.
-      doc = my_const(:HELP)
+      doc = self.class.const_get(:HELP)
       if doc
        return doc
       else
@@ -169,5 +157,5 @@ if __FILE__ == $0
   dbgr = MockDebugger::MockDebugger.new(nil)
   cmds = dbgr.core.processor.commands
   cmd  = cmds['set']
-  Debugger::SubcommandMgr.new(dbgr.core.processor)
+  Debugger::SubSubcommandMgr.new(dbgr.core.processor, cmd)
 end

@@ -31,7 +31,7 @@ module MockDebugger
     else
       dbgr = MockDebugger.new(nil)
     end
-    cmds = dbgr.core.processor.instance_variable_get('@commands')
+    cmds = dbgr.core.processor.commands
     cmd  = cmds[name]
 
     def cmd.msg(message)

@@ -194,8 +194,8 @@ if __FILE__ == $0
   dbg =  Debugger.new
   dbg.core.processor.msg('I am main')
   dbg.core.processor.errmsg('Whoa!')
-  cmds = dbg.core.processor.instance_variable_get('@commands')
-  p dbg.core.processor.instance_variable_get('@aliases')
+  cmds = dbg.core.processor.commands
+  p dbg.core.processor.aliases
   cmd_name, cmd_obj = cmds.first
   puts cmd_obj.class.const_get(:HELP)
   puts cmd_obj.class.const_get(:SHORT_HELP)

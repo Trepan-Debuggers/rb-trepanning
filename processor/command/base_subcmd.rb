@@ -170,7 +170,12 @@ class Debugger
     end
   end
 
-  class Subsubcommand  < Subcommand
+  # FIXME: Put in another file? 
+  class SubSubcommand  < Subcommand
+    def initialize(cmd, parent)
+      @cmd    = cmd
+      @parent = parent
+    end
   end
 end
 
@@ -178,7 +183,7 @@ if __FILE__ == $0
   # Demo it.
   require_relative %w(.. mock)
   dbgr = MockDebugger::MockDebugger.new(nil)
-  cmds = dbgr.core.processor.instance_variable_get('@commands')
+  cmds = dbgr.core.processor.commands
   p cmds.keys
   subcmd = Debugger::Subcommand.new(cmds['exit'])
   def subcmd.msg(message)
