@@ -1,6 +1,8 @@
 #!/usr/bin/env rake
 # -*- Ruby -*-
 require 'rubygems'
+require 'rake/gempackagetask'
+require 'rake/rdoctask'
 require 'rake/testtask'
 
 rake_dir = File.dirname(__FILE__)
@@ -61,3 +63,39 @@ end
 desc "Test everything - same as test."
 task :check => :test
 task :default => :test
+
+FILES = FileList[
+  'README',
+  'Rakefile',
+  'bin/*',
+  'interface/*',
+  'lib/*',
+  'processor/**/*.rb',
+  'test/**/*.rb',
+]                        
+
+spec = Gem::Specification.new do |spec|
+  spec.name = "rbdbgr"
+  spec.homepage = "http://github.com/rocky/rbdbgr/tree/master"
+  spec.summary = "Modular Ruby 1.9 Debugger"
+  spec.description = spec.summary
+  spec.version = '0.0.1'
+  spec.author = "R. Bernstein"
+  spec.email = "rockyb@rubyforge.org"
+  spec.platform = Gem::Platform::RUBY
+  spec.bindir = "bin"
+  spec.executables = ["rbdbgr"]
+  spec.files = FILES.to_a
+
+  spec.date = Time.now
+  spec.add_dependency('rb-threadframe', '>= 0.2')
+  spec.add_dependency('rb-trace', '>= 0.1')
+  
+  spec.has_rdoc = true
+  spec.extra_rdoc_files = ['README']
+end
+
+# Rake task to build the default package
+Rake::GemPackageTask.new(spec) do |pkg|
+  pkg.need_tar = true
+end

@@ -6,6 +6,13 @@ require_relative %w(.. rbdbgr)
 module Rbdbgr
   require 'rbconfig'
 
+  # Return an ARRAY which makes explicit what array to pass system()
+  # to reinvoke this debugger. We want to make explicit both the Ruby
+  # interpreter used and the file name of the program to debug.
+  def explicit_restart_argv(argv)
+    %W(#{ruby_path} #{File.expand_path($0)}) + argv
+  end
+
   # Path name of ruby interpreter we were invoked with.
   def ruby_path
     File.join(Config::CONFIG['bindir'], 
@@ -89,7 +96,8 @@ if __FILE__ == $0
     Debugger::PROG_SCRIPT = program_to_debug
 
     # Set global so others may use this debugger.
-    $rbdbgr = Debugger.new(:restart_argv => [File.expand_path($0)])
+    $rbdbgr = Debugger.new(:restart_argv => 
+                           explicit_restart_argv(Debugger::ARGV))
     debug_program($rbdbgr, Debugger::RUBY_PATH, 
                   File.expand_path(program_to_debug))
   end
