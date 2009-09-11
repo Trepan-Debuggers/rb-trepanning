@@ -2,9 +2,10 @@ class Debugger
   class CmdProcessor
     DEFAULT_SETTINGS = {
       :autoeval      => true,
-      :stack_trace_on_error => false,
+      :different     => false,  # stop *only* when  different position? 
       :prompt        => '(rbdbgr): ',
-      :width         => (ENV['COLUMNS'] || '80').to_i
+      :stack_trace_on_error => false,
+      :width         => (ENV['COLUMNS'] || '80').to_i,
     }
   end
 end

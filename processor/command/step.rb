@@ -17,11 +17,11 @@ count is 0.
 There is however another way to specify an *single* EVENT-NAME, by
 suffixing one of the symbols '<', '>', or '!' after the command or on
 an alias of that.  A suffix of '+' on a command or an alias forces a
-move to another line, while a suffix of '-' disables this requirement.
+move to another position, while a suffix of '-' disables this requirement.
 A suffix of '>' will continue until the next call. ('finish' will run
 run until the return for that call.)
 
-If no suffix is given, the debugger setting 'different-line'
+If no suffix is given, the debugger setting 'different'
 determines this behavior.
 
 Examples: 
@@ -37,7 +37,7 @@ Related and similar is the 'next' command.  See also the commands:
 'skip', 'jump' (there's no 'hop' yet), 'continue', 'return' and
 'finish' for other ways to progress execution."
 
-    ALIASES      = %w(s)
+    ALIASES      = %w(s step+ step- s+ s-)
     CATEGORY     = 'running'
     MIN_ARGS     = 0   # Need at least this many
     MAX_ARGS     = 1   # Need at most this many
@@ -48,9 +48,16 @@ Related and similar is the 'next' command.  See also the commands:
 
   # This method runs the command
   def run(args) # :nodoc
+    case args[0][-1..-1] 
+    when '-'
+      @proc.different_pos = false
+    when '+'
+      @proc.different_pos = true
+    end
+      
     if args.size == 1
       # Form is: "step" which means "step 1"
-      @proc.core.step_count = 1
+      @proc.core.step_count = 0
     else
       count_str = args[1]
       opts = {

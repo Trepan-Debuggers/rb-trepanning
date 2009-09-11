@@ -15,11 +15,21 @@ class Debugger
                                   # indexed by name
     attr_reader   :dbgr           # Debugger instance (via
                                   # Debugger::Core instance)
+    attr_accessor :different_pos  # Same type as settings[:different] 
+                                  # this is the temporary value for the
+                                  # next stop while settings is the default
+                                  # value to use.
     attr_accessor :leave_cmd_loop # Commands set this to signal to leave
                                   # the command loop (which often continues to 
                                   # run the debugged program). 
     attr_reader   :settings       # Hash[:symbol] of command processor
                                   # settings
+
+    # The following are used in to force stopping at a different line
+    # number. FIXME: could generalize to a position object.
+    attr_accessor :last_pos       # Last position. Tuple: of
+                                  # [location, container]
+
 
     EVENT2ICON = {
       'c-call'         => 'C>',
@@ -38,7 +48,9 @@ class Debugger
     def initialize(core, settings={})
       @core           = core
       @dbgr           = core.dbgr
+      @last_pos       = [nil, nil]
       @settings       = settings.merge(DEFAULT_SETTINGS)
+      @different_pos  = @settings[:different]
 
       # Start with empty thread and frame info.
       frame_teardown 
@@ -130,8 +142,22 @@ class Debugger
       return false
     end
 
+    def skip_if_same_position(frame)
+      new_pos = [frame.source_container,
+                 frame.source_location]
+      retval = (@last_pos == new_pos) && @different_pos
+      @last_pos = new_pos
+      return retval
+    end
+
     # This is the main entry point.
     def process_commands(frame)
+
+      return if skip_if_same_position(frame)
+
+      # Set up the default value @different_pos for the
+      # next time we come here.
+      @different_pos = @settings[:different]
 
       frame_setup(frame, Thread.current)
       print_location

@@ -11,14 +11,13 @@ end
 class TestCommandHelp < Test::Unit::TestCase
 
   def setup
-    @errors   = []
-    @msgs     = []
     @dbg      = Debugger.new
     @core     = Debugger::Core.new(@dbg)
     @cmdproc  = @core.processor = Debugger::CmdProcessor.new(@core)
-    @cmds     = @cmdproc.instance_variable_get('@commands')
-    @help_cmd = @cmds['help']
-    def @help_cmd.msg(message)
+    @cmds     = @cmdproc.commands
+    @name     = File.basename(__FILE__, '.rb').split(/-/)[2]
+    @my_cmd   = @cmds[@name]
+    def @cmdproc.msg(message)
       @msgs << message
     end
   end
@@ -26,9 +25,9 @@ class TestCommandHelp < Test::Unit::TestCase
   # Test we can run 'help *cmd* for each command
   def test_help_command
     @cmds.each do |cmd_name, cmd|
-      @help_cmd.instance_variable_set('@msgs', [])
-      @help_cmd.run(['help', cmd_name])
-      assert_equal(false,  @help_cmd.instance_variable_get('@msgs').empty?)
+      @cmdproc.instance_variable_set('@msgs', [])
+      @my_cmd.run([@name, cmd_name])
+      assert_equal(false,  @cmdproc.instance_variable_get('@msgs').empty?)
     end
   end
 

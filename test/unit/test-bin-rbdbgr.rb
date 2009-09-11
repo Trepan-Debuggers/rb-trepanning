@@ -32,6 +32,8 @@ expected:
 
     basename_me = File.basename(__FILE__)
     dirname_me  = File.dirname(__FILE__)
+
+    # Add my directory onto the beginning of PATH
     path_dirs = ENV['PATH'].split(File::PATH_SEPARATOR)
     path_dirs.unshift(dirname_me)
     ENV['PATH'] = path_dirs.join(File::PATH_SEPARATOR)
@@ -39,6 +41,7 @@ expected:
     assert_equal(File.join(dirname_me, basename_me), 
                  whence_file(basename_me),
                  "whence_file should have found me")
+    # Restore old path
     path_dirs.shift 
     ENV['PATH'] = path_dirs.join(File::PATH_SEPARATOR)
   end
