@@ -3,7 +3,7 @@ class Debugger::Command::StepCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
-"step[+|-|<|>|!] [EVENT-NAME...] [count]
+"step[+|-|<|>|!|<>] [EVENT-NAME...] [count]
 Execute the current line, stopping at the next event.
 
 With an integer argument, step that many times.
@@ -29,15 +29,18 @@ Examples:
   step 1      # same as above
   step 5/5+0  # same as above
   step line   # step only line events
-  step call   # step only call events
-  step>       # same as above
-  step call line # Step line *and* call events
+  step call   # step only call call events
+  step>       # step call and C-call events
+  step<       # step only return and C-return events
+  step call line   # Step line *and* call events
+  step<>      # same as step call c-call return c-return 
+
 
 Related and similar is the 'next' command.  See also the commands:
 'skip', 'jump' (there's no 'hop' yet), 'continue', 'return' and
 'finish' for other ways to progress execution."
 
-    ALIASES      = %w(s step+ step- s+ s-)
+    ALIASES      = %w(s step+ step- step< step> step<> s> s< s+ s- s<>)
     CATEGORY     = 'running'
     MIN_ARGS     = 0   # Need at least this many
     MAX_ARGS     = 1   # Need at most this many
@@ -53,6 +56,14 @@ Related and similar is the 'next' command.  See also the commands:
       @proc.different_pos = false
     when '+'
       @proc.different_pos = true
+    when '<'
+      if args.size > 1 && args[0][-2..-2]  == '>'
+        @proc.stop_events = Set.new(['c-call', 'c-return', 'call' 'return'])
+      else
+        @proc.stop_events = Set.new(['c-return', 'return'])
+      end
+    when '>'
+      @proc.stop_events = Set.new(['c-call', 'call'])
     end
       
     if args.size == 1

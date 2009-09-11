@@ -1,6 +1,7 @@
 # The main "driver" class for a command processor. Other parts of the 
 # command class and debugger command objects are pulled in from here.
 
+require 'set'
 require_relative 'default'  # Command Processor default settings
 require_relative 'frame'
 require_relative 'msg'
@@ -24,6 +25,16 @@ class Debugger
                                   # run the debugged program). 
     attr_reader   :settings       # Hash[:symbol] of command processor
                                   # settings
+    attr_accessor :stop_events    # Set or nil. If not nil, only
+                                  # events in this set will be
+                                  # considered for stopping. This is
+                                  # like core.step_events (which could
+                                  # be used instead), but it is a set
+                                  # of event names rather than a
+                                  # bitmask and it is intended to be
+                                  # more temporarily changed via "step>" or
+                                  # "step!" commands.
+                                  
 
     # The following are used in to force stopping at a different line
     # number. FIXME: could generalize to a position object.
@@ -49,8 +60,10 @@ class Debugger
       @core           = core
       @dbgr           = core.dbgr
       @last_pos       = [nil, nil]
+      @last_pos       = [nil, nil]
       @settings       = settings.merge(DEFAULT_SETTINGS)
       @different_pos  = @settings[:different]
+      @stop_events    = nil
 
       # Start with empty thread and frame info.
       frame_teardown 
@@ -142,22 +155,32 @@ class Debugger
       return false
     end
 
-    def skip_if_same_position(frame)
+    def skip?(frame)
       new_pos = [frame.source_container,
                  frame.source_location]
-      retval = (@last_pos == new_pos) && @different_pos
+
+      skip_val = @stop_events && !@stop_events.member?(@core.event)
+      if @settings[:'debug-skip']
+        puts "skip: #{skip_val.inspect}, last: #{@last_pos}, new: #{new_pos}" 
+        puts "diff1: #{@different_pos}, event: #{@core.event}, #{@stop_events.map if @stop_events}" 
+      end
+      skip_val = (@last_pos == new_pos) && @different_pos unless skip_val
       @last_pos = new_pos
-      return retval
+
+      unless skip_val
+        # Set up the default values for the
+        # next time we consider skipping.
+        @different_pos = @settings[:different]
+        @stop_events   = nil
+      end
+
+      return skip_val
     end
 
     # This is the main entry point.
     def process_commands(frame)
 
-      return if skip_if_same_position(frame)
-
-      # Set up the default value @different_pos for the
-      # next time we come here.
-      @different_pos = @settings[:different]
+      return if skip?(frame)
 
       frame_setup(frame, Thread.current)
       print_location
