@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. base_subcmd)
 
-class Debugger::Subcommand::InfoLine < Debugger::Subcommand
+class Debugger::Subcommand::InfoProgram < Debugger::Subcommand
   unless defined?(HELP)
-    HELP         = 'Show information about the current line'
+    HELP         = 'Information about debugged program and its environment'
     MIN_ABBREV   = 'li'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
@@ -12,9 +12,7 @@ class Debugger::Subcommand::InfoLine < Debugger::Subcommand
 
   def run(args)
     frame = @proc.frame
-    msg("Line %s of %s at pc offset %d" %
-        [frame.source_location[0], frame.source_container[1],
-         frame.pc_offset])
+    msg("Program stop event: %s" % @proc.core.event)
   end
 
 end
@@ -27,7 +25,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::ShowAutoeval.new(cmd)
+  subcommand = Debugger::Subcommand::InfoProgram.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)
