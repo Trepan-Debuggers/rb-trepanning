@@ -7,17 +7,26 @@ require_relative %w(.. rbdbgr)
 module Rbdbgr
   require 'rbconfig'
 
-  # Return an ARRAY which makes explicit what array to pass system()
-  # to reinvoke this debugger. We want to make explicit both the Ruby
-  # interpreter used and the file name of the program to debug.
+  # Return an ARRAY which makes explicit what array is needed to pass
+  # to system() to reinvoke this debugger using the same Ruby
+  # interpreter.  Therefore, We want to the full path of both the Ruby
+  # interpreter and the debugger file ($0). We do this so as not to
+  # rely on an OS search lookup and/or the current working directory
+  # not getting changed from the initial invocation.
+  #
+  #    Hmmm, perhaps it is better to also save the initial working
+  #    directory? Yes, but on the other hand we can't assume that it 
+  #    still exists so we might still need to have the full paths.
+  # 
+  # It is the caller's responsibility to ensure that argv is the same
+  # as ARGV when the debugger was invokes.
   def explicit_restart_argv(argv)
-    %W(#{ruby_path} #{File.expand_path($0)}) + argv
+    [ruby_path, File.expand_path($0)] + argv
   end
 
-  # Path name of ruby interpreter we were invoked with.
+  # Path name of Ruby interpreter we were invoked with.
   def ruby_path
-    File.join(Config::CONFIG['bindir'], 
-              Config::CONFIG['RUBY_INSTALL_NAME'])
+    File.join(%w(bindir RUBY_INSTALL_NAME).map{|k| Config::CONFIG[k]})
   end
 
   # Given a Ruby interpreter and program we are to debug, debug it.
