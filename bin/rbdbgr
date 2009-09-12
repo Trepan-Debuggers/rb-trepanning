@@ -46,12 +46,26 @@ module Rbdbgr
     # print "\032\032starting\n" if Debugger.annotate and Debugger.annotate > 2
 
     dbgr.trace_filter.excluded << self.method(:debug_program)
+
+    
     old_dollar_0 = $0
-    $0 = program_to_debug
+
+    # Without the dance below to set $0, setting it to a signifcantly
+    # longer value will truncate it in some OS's. See
+    # http://www.ruby-forum.com/topic/187083
+    $progname = program_to_debug
+    alias $0 $progname
+    dollar_0_tracker = lambda {|val| $program_name = val} 
+    trace_var(:$0, dollar_0_tracker)
+
     dbgr.debugger do
       load program_to_debug
     end
+
+    # The dance we have to undo to restore $0 and undo the mess created
+    # above.
     $0 = old_dollar_0
+    untrace_var(:$0, dollar_0_tracker)
   end
 
   # Do a shell-like path lookup for prog_script and return the results.
