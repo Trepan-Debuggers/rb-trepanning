@@ -2,7 +2,7 @@
 require 'trace'
 require_relative %w(.. base_subcmd)
 
-class Debugger::Subcommand::ShowTraceset < Debugger::Subcommand
+class Debugger::Subcommand::ShowEvents < Debugger::Subcommand
   unless defined?(HELP)
     HELP         = 'Show trace events we may stop on'
     MIN_ABBREV   = 'traces'.size
@@ -32,7 +32,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::ShowAutoeval.new(cmd)
+  subcommand = Debugger::Subcommand::ShowEvents.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)

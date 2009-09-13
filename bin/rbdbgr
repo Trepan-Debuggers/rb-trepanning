@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # -*- Ruby -*-
 # Invoke debugger from the command line. 
-
 require_relative %w(.. rbdbgr)
 
 module Rbdbgr

@@ -32,6 +32,7 @@ class Debugger
           s += " at lines #{frame.source_location}"
         end
       end
+      # s += " pc: #{frame.pc_offset}" if frame.pc_offset > 0
       return s
     end
 

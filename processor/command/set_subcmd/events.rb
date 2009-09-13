@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
+require 'trace'
 require_relative %w(.. base_subcmd)
 
-class Debugger::Subcommand::InfoLine < Debugger::Subcommand
+class Debugger::Subcommand::SetEvents < Debugger::Subcommand
   unless defined?(HELP)
-    HELP         = 'Show information about the current line'
-    MIN_ABBREV   = 'li'.size
+    HELP         = 'Set trace events we may stop on'
+    MIN_ABBREV   = 'traces'.size
     NAME         = File.basename(__FILE__, '.rb')
-    NEED_STACK   = true
-    SHORT_HELP   = HELP
+    SHORT_HELP   = HELP.split("\n")[0]
   end
 
-  def run(args)
-    frame = @proc.frame
-    msg("Line %s of %s at pc offset %d" %
-        [frame.source_location[0], frame.source_container[1],
-         frame.pc_offset])
+  # FIXME: this really should be a subcommand of "set trace"
+  def run(events)
+    bitmask, bad_events = Trace.events2bitmask(events)
+    unless bad_events.empty?
+      errmsg("Event names unrecognized/ignored: %s" % bad_events.join(', '))
+    end
+    @proc.core.step_events = bitmask
   end
-
 end
 
 if __FILE__ == $0
@@ -27,7 +28,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::ShowAutoeval.new(cmd)
+  subcommand = Debugger::Subcommand::SetEvents.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)
@@ -39,7 +40,9 @@ if __FILE__ == $0
   def subcommand.errmsg(message)
     puts message
   end
-  subcommand.run_show_bool
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
+  puts
+  subcommand.run([])
+  subcommand.run(['call', 'line', 'foo'])
 end
