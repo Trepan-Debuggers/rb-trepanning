@@ -9,8 +9,6 @@ class Debugger::SubSubcommand::ShowTrace < Debugger::SubSubcommandMgr
     MIN_ARGS      = 0
     MAX_ARG       = nil
     NAME          = File.basename(__FILE__, '.rb')
-    NEED_STACK    = false
-    SHORT_HELP    = 'Show aspects regarding tracing'
   end
 end
 

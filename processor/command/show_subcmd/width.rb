@@ -6,7 +6,6 @@ class Debugger::Subcommand::ShowWidth < Debugger::ShowIntSubcommand
     HELP = 'Show the number of characters the debugger thinks are in a line'
     MIN_ABBREV   = 'wid'.size
     NAME         = File.basename(__FILE__, '.rb')
-    SHORT_HELP   = HELP
   end
 
 end

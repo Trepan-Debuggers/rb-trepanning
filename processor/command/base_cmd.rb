@@ -7,10 +7,23 @@ class Debugger
   class Command
     attr_accessor :core, :proc
 
+    MIN_ARGS      = 0      # run()'s args array must be at least this many
+    MAX_ARGS      = nil    # run()'s args array must be at least this many
+    NEED_STACK    = false  # We'll say that commands which need a stack
+                           # to run have to declare that and those that
+                           # don't don't have to mention it.
+
     def initialize(proc)
       @name = my_const(:NAME)
       @proc = proc
     end
+
+    def category
+      my_const(:CATEGORY)
+    end
+
+    # FIXME: probably there is a way to do the delegation to proc methods
+    # without having type it all out.
 
     def confirm(message, default)
       @proc.confirm(message, default)
@@ -18,11 +31,6 @@ class Debugger
 
     def errmsg(message)
       @proc.errmsg(message)
-    end
-    # FIXME: probably there is a way to create 
-    # category, help, and short_help methods in a loop.
-    def category
-      my_const(:CATEGORY)
     end
 
     def msg(message)

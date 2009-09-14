@@ -9,7 +9,6 @@ class Debugger::Command::RestartCommand < Debugger::Command
     call. All state is lost, and new copy of the debugger is used.'
     
     CATEGORY     = 'support'
-    MIN_ARGS     = 0  # Need at least this many
     MAX_ARGS     = 0  # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = '(Hard) restart of program via exec()'
@@ -39,6 +38,7 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  MockDebugger::show_special_class_constants(cmd)
   dbgr.restart_argv = []
   cmd.run([name])
   dbgr.restart_argv = [File.expand_path($0), 'exit']

@@ -47,4 +47,16 @@ module MockDebugger
     return dbgr, cmd
   end
   module_function :setup
+
+  def show_special_class_constants(cmd)
+    puts 'ALIASES: %s' % [cmd.class.const_get('ALIASES').inspect] if
+      cmd.class.constants.member?(:ALIASES)
+    %w(CATEGORY HELP MIN_ARGS MAX_ARGS 
+       NAME NEED_STACK SHORT_HELP).each do |name|
+      puts '%s: %s' % [name, cmd.class.const_get(name).inspect]
+    end
+    puts '- - -'
+  end
+  module_function :show_special_class_constants
+
 end

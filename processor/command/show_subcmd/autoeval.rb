@@ -6,7 +6,6 @@ class Debugger::Subcommand::ShowAutoeval < Debugger::ShowBoolSubcommand
     HELP = "Show evaluation of unrecognized debugger commands"
     MIN_ABBREV   = 'autoe'.size
     NAME          = File.basename(__FILE__, '.rb')
-    SHORT_HELP   = HELP
   end
 
 end

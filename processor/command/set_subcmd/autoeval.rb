@@ -3,7 +3,7 @@ require_relative %w(.. base_subcmd)
 
 class Debugger::Subcommand::SetAutoeval < Debugger::SetBoolSubcommand
   unless defined?(HELP)
-    HELP = "Evaluate unrecognized commands.
+    HELP = "Evaluate unrecognized debugger commands.
 
 Often inside the debugger, one would like to be able to run arbitrary
 Ruby commands without having to preface Python expressions with \"print\" or
@@ -36,7 +36,6 @@ problem. Another possibility is to go into a real Ruby shell via the
     IN_LIST      = true
     MIN_ABBREV   = 'autoe'.size
     NAME          = File.basename(__FILE__, '.rb')
-    SHORT_HELP   = 'Evaluate unrecognized debugger commands'
   end
 
 end

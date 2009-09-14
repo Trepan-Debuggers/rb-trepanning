@@ -20,7 +20,6 @@ override this setting."
     IN_LIST      = true
     MIN_ABBREV   = 'dif'.size
     NAME         = File.basename(__FILE__, '.rb')
-    SHORT_HELP   = HELP.split("\n")[0]
   end
 
   def run(args)

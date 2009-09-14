@@ -42,7 +42,6 @@ Related and similar is the 'next' command.  See also the commands:
 
     ALIASES      = %w(s step+ step- step< step> step<> s> s< s+ s- s<>)
     CATEGORY     = 'running'
-    MIN_ARGS     = 0   # Need at least this many
     MAX_ARGS     = 1   # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
@@ -90,5 +89,6 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  MockDebugger::show_special_class_constants(cmd)
   p cmd.run([name])
 end

@@ -13,8 +13,6 @@ that method.
 
     ALIASES       = %w(disas) # Note we will have disable
     CATEGORY      = 'data'
-    MIN_ARGS      = 0  # Need at least this many
-    MAX_ARGS      = 1  # Need at most this many
     NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = true
     SHORT_HELP    = 'Disassemble Ruby VM instructions'
@@ -51,6 +49,7 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  MockDebugger::show_special_class_constants(cmd)
   def small_fn(cmd, name)
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
     cmd.run [name]

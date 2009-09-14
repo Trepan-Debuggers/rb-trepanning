@@ -9,8 +9,6 @@ is given that is the return code passed to exit() - presumably the
 return code that will be passed back to the OS.'
     
     CATEGORY     = 'support'
-    MIN_ARGS     = 0  # Need at least this many
-    MAX_ARGS     = 1  # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = 'Exit program via "exit!"'
   end
@@ -29,6 +27,7 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  MockDebugger::show_special_class_constants(cmd)
   name = File.basename(__FILE__, '.rb')
   cmd.run([name, '10'])
 end

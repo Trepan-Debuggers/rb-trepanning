@@ -21,7 +21,6 @@ Examples:
 
     ALIASES       = %w(bt backtrace)
     CATEGORY      = 'stack'
-    MIN_ARGS      = 0  # Need at least this many
     MAX_ARGS      = 1  # Need at most this many
     NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = true
@@ -55,6 +54,7 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  MockDebugger::show_special_class_constants(cmd)
 
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
 

@@ -6,7 +6,6 @@ class Debugger::Subcommand::ShowDifferent < Debugger::ShowBoolSubcommand
     HELP = "Show status of 'set different'"
     MIN_ABBREV   = 'dif'.size
     NAME         = File.basename(__FILE__, '.rb')
-    SHORT_HELP   = HELP
   end
 
 end

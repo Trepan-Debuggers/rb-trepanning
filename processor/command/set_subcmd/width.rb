@@ -7,7 +7,6 @@ class Debugger::Subcommand::SetWidth < Debugger::Subcommand
     IN_LIST      = true
     MIN_ABBREV   = 'wid'.size
     NAME         = File.basename(__FILE__, '.rb')
-    SHORT_HELP   = HELP
   end
 
   def run(args)

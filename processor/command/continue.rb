@@ -14,8 +14,6 @@ position before continuing.'
 
     ALIASES      = %w(c)
     CATEGORY     = 'running'
-    MIN_ARGS     = 0   # Need at least this many
-    MAX_ARGS     = 1   # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = 'Continue execution of debugged program'
   end

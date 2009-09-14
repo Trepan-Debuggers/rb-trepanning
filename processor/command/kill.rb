@@ -13,7 +13,6 @@ If 'unconditionally' is given, no questions are asked. Otherwise, if
 we are in interactive mode, we'll prompt to make sure."
 
     CATEGORY     = 'running'
-    MIN_ARGS     = 0  # Need at least this many
     MAX_ARGS     = 1  # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = 'Send this process a POSIX signal ("9" for "kill -9")'
@@ -51,6 +50,7 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  MockDebugger::show_special_class_constants(cmd)
   %w(fooo 1 -1 HUP -9).each do |arg| 
     puts "#{name} #{arg}"
     cmd.run([name, arg])

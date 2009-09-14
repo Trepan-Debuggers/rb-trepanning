@@ -14,8 +14,6 @@ Type "help set *" for just the list of "set" subcommands.
 '
 
     CATEGORY      = 'data'
-    MIN_ARGS      = 0
-    MAX_ARG       = nil
     NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'Modify parts of the debugger environment'
@@ -26,5 +24,6 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  MockDebugger::show_special_class_constants(cmd)
   cmd.run([name])
 end

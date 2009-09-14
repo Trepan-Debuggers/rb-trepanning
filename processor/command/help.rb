@@ -35,8 +35,6 @@ See also 'examine' and 'whatis'.
     'stack'       => 'Examining the call stack'
     }
     CATEGORY      = 'support'
-    MIN_ARGS      = 0    # Need at least this many
-    MAX_ARGS      = nil  # Need at most this many
     NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'Print commands or give help for command(s)'
@@ -119,6 +117,8 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  MockDebugger::show_special_class_constants(cmd)
+
   cmd.run %w(help help)
   puts '=' * 40
   cmd.run %w(help *)

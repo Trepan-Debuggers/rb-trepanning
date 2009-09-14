@@ -7,10 +7,9 @@ class Debugger::Subcommand::SetEvents < Debugger::Subcommand
     HELP         = 'Set trace events we may stop on'
     MIN_ABBREV   = 'traces'.size
     NAME         = File.basename(__FILE__, '.rb')
-    SHORT_HELP   = HELP.split("\n")[0]
   end
 
-  # FIXME: this really should be a subcommand of "set trace"
+  # FIXME: perhaps this should be a subcommand of "set trace" ? 
   def run(events)
     bitmask, bad_events = Trace.events2bitmask(events)
     unless bad_events.empty?
