@@ -45,8 +45,8 @@ module Rbdbgr
     # print "\032\032starting\n" if Debugger.annotate and Debugger.annotate > 2
 
     dbgr.trace_filter.excluded << self.method(:debug_program)
+    dbgr.trace_filter.excluded << Kernel.method(:load)
 
-    
     old_dollar_0 = $0
 
     # Without the dance below to set $0, setting it to a signifcantly
@@ -58,7 +58,7 @@ module Rbdbgr
     trace_var(:$0, dollar_0_tracker)
 
     dbgr.debugger do
-      load program_to_debug
+      Kernel::load program_to_debug
     end
 
     # The dance we have to undo to restore $0 and undo the mess created
