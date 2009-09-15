@@ -123,7 +123,20 @@ class Debugger
                     (EVENT2ICON[@core.event] || @core.event)
                   end
       line_no   = @frame.source_location[0]
-      msg "#{ev} (#{container}:#{line_no})"
+      loc       = "#{container}:#{line_no}"
+      if @frame.source_container[0] != 'file'
+        frame = @frame
+        via = loc
+        while frame.source_container[0] != 'file' and frame.prev do
+          frame     = frame.prev
+        end
+        if frame.source_container[0] == 'file'
+          container = frame.source_container[1]
+          line_no   = frame.source_location[0]
+          loc       += " via #{container}:#{line_no}"
+        end
+      end
+      msg "#{ev} (#{loc})"
     end
 
     # Run one debugger command. True is returned if we want to quit.
