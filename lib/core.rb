@@ -94,7 +94,7 @@ class Debugger
         step_count_save = step_count
         @step_count     = -1 
 
-        bgr.trace_filter.set_trace_func(@event_proc) unless
+        dbgr.trace_filter.set_trace_func(@event_proc) unless
           RubyVM::TraceHook::trace_hooks.member?(@event_proc)
           
         # FIXME: this doesn't work. Bug in rb-trace? 
