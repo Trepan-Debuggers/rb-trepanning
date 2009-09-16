@@ -40,7 +40,8 @@ class Debugger
 
       DEFAULT_SETTINGS = {
         :cmdproc_opts => {},
-        :step_count   => 0,  # Stop at next event
+        :hook_name    => :event_processor, # or :old_event_processor
+        :step_count   => 0,                # Stop at next event
         :step_events  => DEFAULT_EVENT_MASK | INSN_EVENT_MASK,
         :async_events => ASYNC_EVENT_MASK
       } 
@@ -49,13 +50,14 @@ class Debugger
 
     def initialize(debugger, settings={})
       @dbgr         = debugger
-      @event_proc   = self.method(:event_processor).to_proc
       @settings     = DEFAULT_SETTINGS.merge(settings)
       @step_count   = @settings[:step_count]
       @step_events  = @settings[:step_events]
       @async_events = @settings[:async_events]
 
-      @processor   = CmdProcessor.new(self, @settings[:cmdproc_opts])
+      hook_name     = @settings[:hook_name]
+      @event_proc   = self.method(hook_name).to_proc
+      @processor    = CmdProcessor.new(self, @settings[:cmdproc_opts])
     end
 
     # A trace-hook processor with the interface a trace hook should have.
@@ -92,7 +94,7 @@ class Debugger
         step_count_save = step_count
         @step_count     = -1 
 
-        dbgr.trace_filter.set_trace_func(@event_proc) unless
+        bgr.trace_filter.set_trace_func(@event_proc) unless
           RubyVM::TraceHook::trace_hooks.member?(@event_proc)
           
         # FIXME: this doesn't work. Bug in rb-trace? 
