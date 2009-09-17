@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 require_relative 'base_cmd'
+require_relative %w(.. .. lib disassemble)
 
 class Debugger::Command::DisassembleCommand < Debugger::Command
+    include Debugger::Disassemble
 
   unless defined?(HELP)
     HELP = 
@@ -28,7 +30,8 @@ that method.
         errmsg "Can't handle C functions yet."
         return
       elsif @proc.frame.iseq
-        msg(@proc.frame.iseq.disasm)
+        ary = mark_disassembly(@proc.frame.iseq.disasm, @proc.frame.pc_offset)
+        msg ary
         return
       end
     else
