@@ -7,8 +7,8 @@ class Debugger::Command::IRBCommand < Debugger::Command
     HELP = 
 "          irb [-d]\tstarts an Interactive Ruby (IRB) session.
 
-If -d is added you can get access to debugger state via the global variable
-$RDEBUG_state. 
+If -d is added you can get access to debugger frame the global variable
+$rbdbgr_frame. 
 
 irb is extended with methods 'cont', 'n' and 'step' which 
 run the corresponding debugger commands. In contrast to the real debugger
@@ -34,11 +34,11 @@ commands these commands don't allow command arguments.
     # end
 
     save_trap = trap("SIGINT") do
-      throw :IRB_EXIT, :cont if $rdebug_in_irb
+      throw :IRB_EXIT, :cont if $rbdbgr_in_irb
     end
 
-    $rdebug_frame = @proc.frame if add_debugging
-    $rdebug_in_irb = true
+    $rbdbgr_frame = @proc.frame if add_debugging
+    $rbdbgr_in_irb = true
     cont = IRB.start_session(@proc.frame.binding)
     # case cont
     # when :cont
