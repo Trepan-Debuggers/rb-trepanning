@@ -44,8 +44,8 @@ module Rbdbgr
     end
     # print "\032\032starting\n" if Debugger.annotate and Debugger.annotate > 2
 
-    dbgr.trace_filter.excluded << self.method(:debug_program)
-    dbgr.trace_filter.excluded << Kernel.method(:load)
+    dbgr.trace_filter << self.method(:debug_program)
+    dbgr.trace_filter << Kernel.method(:load)
 
     old_dollar_0 = $0
 
