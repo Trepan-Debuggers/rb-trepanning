@@ -19,10 +19,11 @@ class Debugger
     @core         = Core.new(self, @settings[:core_opts])
     @restart_argv = @settings[:restart_argv]
     @trace_filter = TraceFilter.new
-    @trace_filter.excluded << self.method(:debugger)
-    @trace_filter.excluded << @core.method(:debugger)
-    @trace_filter.excluded << @core.method(:event_processor)
-    @trace_filter.excluded << @trace_filter.method(:set_trace_func)
+    @trace_filter << self.method(:debugger)
+    @trace_filter << @core.method(:debugger)
+    @trace_filter << @core.method(:event_processor)
+    @trace_filter << @trace_filter.method(:set_trace_func)
+    @trace_filter << Kernel.method(:set_trace_func)
   end
 
   # Enter the debugger. One-time step you need to do first:
