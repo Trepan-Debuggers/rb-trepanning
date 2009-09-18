@@ -59,6 +59,7 @@ class Debugger
     def initialize(core, settings={})
       @core           = core
       @dbgr           = core.dbgr
+      @hidelevels     = {}
       @last_pos       = [nil, nil]
       @last_pos       = [nil, nil]
       @settings       = settings.merge(DEFAULT_SETTINGS)

@@ -9,10 +9,25 @@ class Debugger
                                   # but no way to move in the other direction.
                                   # So we store the top frame. 
     attr_reader   :threads2frames # Hash[thread_id] -> top_frame
+    attr_accessor :hidelevels     # Hash[thread_id] -> FixNum, the
+                                  # level of the last frame to
+                                  # show. If we called the debugger
+                                  # directly, then there is generally
+                                  # a portion of a backtrace we don't
+                                  # want to show. We don't need to
+                                  # store this for all threads, just
+                                  # those we want to hide frame on. A
+                                  # value of 1 means to hide just the
+                                  # oldest level. The default or
+                                  # showing all levels is 0.
+    
 
     def adjust_frame(frame_num, absolute_pos)
+      hide_level  = @hidelevels[Thread.current] || 0
+      stack_size = @top_frame.stack_size - hide_level
+
       if absolute_pos
-        frame_num += @top_frame.stack_size if frame_num < 0
+        frame_num += stack_size if frame_num < 0
       else
         frame_num += @frame_index
       end
@@ -20,7 +35,7 @@ class Debugger
       if frame_num < 0
         errmsg('Adjusting would put us beyond the newest frame.')
         return
-      elsif frame_num >= @top_frame.stack_size
+      elsif frame_num >= stack_size
         errmsg('Adjusting would put us beyond the oldest frame.')
         return
       end
@@ -43,6 +58,7 @@ class Debugger
       @frame_index    = 0
       @current_thread = current_thread
       @frame = @top_frame = frame
+
       @threads2frames ||= {}  # or do we want = {} ? 
       @threads2frames[@current_thread] = @top_frame
     end
@@ -100,6 +116,7 @@ if __FILE__ == $0
   end
 
   proc = Debugger::CmdProcessor.new(RubyVM::ThreadFrame.current)
+  proc.hidelevels = {}
   puts "stack size: #{proc.top_frame.stack_size}"
   0.upto(proc.top_frame.stack_size) { |i| proc.adjust_frame(i, true) }
   puts '*' * 10

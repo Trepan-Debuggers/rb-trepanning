@@ -32,12 +32,15 @@ Examples:
 
   # This method runs the command
   def run(args) # :nodoc
+    hide_level  = @proc.hidelevels[Thread.current] || 0
+    stack_size = @proc.top_frame.stack_size - hide_level
     if args.size > 1
-      stack_size = @proc.top_frame.stack_size
       count = @proc.get_int(args[1], 
                             :cmdname   => 'where',
-                            :max_value => stack_size-1)
+                            :max_value => stack_size)
       return false unless count
+    else
+      count = stack_size
     end
     if @proc.frame
       print_stack_trace(@proc.top_frame, count, @proc.frame_index)
