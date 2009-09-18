@@ -2,6 +2,7 @@ class Debugger
   class CmdProcessor
     DEFAULT_SETTINGS = {
       :autoeval      => true,
+      :autoirb       => false,
       :different     => false,  # stop *only* when  different position? 
       :prompt        => '(rbdbgr): ',
       :stack_trace_on_error => false,

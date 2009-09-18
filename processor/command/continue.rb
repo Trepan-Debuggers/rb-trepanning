@@ -1,4 +1,5 @@
 require_relative 'base_cmd'
+require_relative %w(.. running)
 class Debugger::Command::ContinueCommand < Debugger::Command
 
   unless defined?(HELP)
@@ -20,8 +21,7 @@ position before continuing.'
 
   # This method runs the command
   def run(args) # :nodoc
-    @proc.core.step_count = -1    # No more event stepping
-    @proc.leave_cmd_loop  = true  # Break out of the processor command loop.
+    @proc.continue
   end
 end
 

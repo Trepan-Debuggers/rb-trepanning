@@ -50,24 +50,25 @@ Related and similar is the 'next' command.  See also the commands:
 
   # This method runs the command
   def run(args) # :nodoc
+    opts = {}
     case args[0][-1..-1] 
     when '-'
-      @proc.different_pos = false
+      opts[:different_pos] = false
     when '+'
-      @proc.different_pos = true
+      opts[:different_pos] = true
     when '<'
       if args.size > 1 && args[0][-2..-2]  == '>'
-        @proc.stop_events = Set.new(['c-call', 'c-return', 'call' 'return'])
+        opts[:stop_events] = Set.new(['c-call', 'c-return', 'call' 'return'])
       else
-        @proc.stop_events = Set.new(['c-return', 'return'])
+        opts[:stop_events] = Set.new(['c-return', 'return'])
       end
     when '>'
-      @proc.stop_events = Set.new(['c-call', 'call'])
+      opts[:stop_events] = Set.new(['c-call', 'call'])
     end
       
     if args.size == 1
       # Form is: "step" which means "step 1"
-      @proc.core.step_count = 0
+      step_count = 0
     else
       count_str = args[1]
       opts = {
@@ -79,9 +80,9 @@ Related and similar is the 'next' command.  See also the commands:
       count = @proc.get_an_int(count_str, opts)
       return unless count
       # step 1 is core.step_count = 0 or "stop next event"
-      @proc.core.step_count = count - 1  
+      step_count = count - 1  
     end
-    @proc.leave_cmd_loop  = true  # Break out of the processor command loop.
+    @proc.step(step_count, opts)
   end
 end
 

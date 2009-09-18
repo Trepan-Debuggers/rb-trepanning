@@ -199,6 +199,8 @@ class Debugger
       print_location
 
       @leave_cmd_loop = false
+      irb_cmd = @commands['irb']
+      irb_cmd.run(['irb']) if @settings[:autoirb] && irb_cmd
       while not @leave_cmd_loop do
         process_command_and_quit?()
         # Might have other stuff here.

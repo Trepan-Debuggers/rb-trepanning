@@ -24,7 +24,7 @@ commands these commands don't allow command arguments.
   # This method runs the command
   def run(args) # :nodoc
     if args.size > 1
-      add_debugging = '-d' == args[0]
+      add_debugging = '-d' == args[1]
       # FIXME -d ? 
     end
 
@@ -40,23 +40,18 @@ commands these commands don't allow command arguments.
     $rbdbgr_frame = @proc.frame if add_debugging
     $rbdbgr_in_irb = true
     cont = IRB.start_session(@proc.frame.binding)
-    # case cont
-    # when :cont
-    #   @state.proceed 
-    # when :step
-    #   force = Command.settings[:force_stepping]
-    #   @state.context.step(1, force)
-    #   @state.proceed 
+    case cont
+    when :cont
+      @proc.continue
+    when :step
+      @proc.step(1, {})
     # when :next
     #   force = Command.settings[:force_stepping]
     #   @state.context.step_over(1, @state.frame_pos, force)
     #   @state.proceed 
-    # else
-    #   file = @state.context.frame_file(0)
-    #   line = @state.context.frame_line(0)
-    #   CommandProcessor.print_location_and_text(file, line)
-    #   @state.previous_line = nil
-    # end
+    else
+      @proc.print_location
+    end
   end
 end
 

@@ -33,9 +33,9 @@ command. It is possible to remove that alias if this causes constant
 problem. Another possibility is to go into a real Ruby shell via the
 'irb' command.
 "
-    IN_LIST      = true
-    MIN_ABBREV   = 'autoe'.size
-    NAME          = File.basename(__FILE__, '.rb')
+    IN_LIST    = true
+    MIN_ABBREV = 'autoe'.size
+    NAME        = File.basename(__FILE__, '.rb')
   end
 
 end
