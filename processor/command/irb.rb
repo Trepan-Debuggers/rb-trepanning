@@ -37,8 +37,8 @@ commands these commands don't allow command arguments.
       throw :IRB_EXIT, :cont if $rbdbgr_in_irb
     end
 
-    $rbdbgr_frame = @proc.frame if add_debugging
-    $rbdbgr_in_irb = true
+    $rbdbgr = @proc.core.dbgr if add_debugging
+
     cont = IRB.start_session(@proc.frame.binding)
     case cont
     when :cont
@@ -52,6 +52,7 @@ commands these commands don't allow command arguments.
     else
       @proc.print_location
     end
+    $rbdbgr = nil if add_debugging
   end
 end
 
