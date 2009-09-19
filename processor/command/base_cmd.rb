@@ -39,8 +39,7 @@ class Debugger
 
     # Convenience short-hand for @dbgr.intf[-1].msg_nocr
     def msg_nocr(msg)
-      @proc.msg_nocr(msg)
-      # @dbgr.intf[-1].msg_nocr(msg)
+      @dbgr.intf[-1].msg_nocr(msg)
     end
 
     def my_const(name)

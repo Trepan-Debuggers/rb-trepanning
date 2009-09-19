@@ -14,7 +14,7 @@ module MockDebugger
 
     def initialize(debugger, settings={})
       @settings = DbgSettings::DEFAULT_SETTINGS.merge(settings)
-      @intf     = Debugger::UserInterface.new
+      @intf     = [Debugger::UserInterface.new]
       @core     = Debugger::Core.new(self)
     end
 
