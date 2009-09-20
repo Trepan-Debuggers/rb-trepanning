@@ -25,10 +25,11 @@ class Debugger
     end
 
     def initialize(inp=nil, out=nil, opts={})
-      @input       = inp or STDIN
+      @eof         = false
+      @input       = inp || STDIN
       @interactive = false 
-      @opts        = opts or STDOUT
-      @output      = out
+      @opts        = opts
+      @output      = out || STDOUT
     end
 
     # Closes all input and/or output.
@@ -42,29 +43,30 @@ class Debugger
       raise RuntimeError, NotImplementedMessage
     end
 
+    def eof?
+      @eof
+    end
+    
     # Common routine for reporting debugger error messages.
     def errmsg(str, prefix='*** ')
       raise RuntimeError, NotImplementedMessage
     end
 
     def finalize(last_wishes=nil)
-      raise RuntimeError, NotImplementedMessage
+      close
     end
 
     # used to write to a debugger that is connected to this
     # server; `str' written will have a newline added to it.
     def msg(msg)
-      # FIXME: use method from input.
-      puts msg
-      # @output.writeline(msg)
+      @output.puts(msg)
     end
 
     # used to write to a debugger that is connected to this
     # server; `str' written will not have a newline added to it
     def msg_nocr(msg)
       # FIXME: use method from input.
-      print msg
-      # @output.write(msg)
+      @output.print(msg)
     end
 
     def read_command( prompt)

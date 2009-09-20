@@ -64,12 +64,6 @@ class Debugger::ScriptInterface < Debugger::Interface
     raise IOError if @opts[:abort_on_error]
   end
 
-  def finalize(last_wishes=nil)
-    # print exit annotation
-    # save history
-    close
-  end
-
   # Script interface to read a command. `prompt' is a parameter for 
   # compatibilty and is ignored.
   def read_command(prompt='')
@@ -88,7 +82,12 @@ class Debugger::ScriptInterface < Debugger::Interface
   #
   # Could decide make this look for interactive input?
   def readline(prompt='')
-    return input.readline()
+    begin 
+      return input.readline().chomp
+    rescue EOFError
+      @eof = true
+      raise EOFError
+    end
   end
 end
 

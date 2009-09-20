@@ -5,6 +5,7 @@
 ## import atexit -- from python
 
 # Our local modules
+
 require_relative 'base_intf'
 
 # Minput     = import_relative('dbg_input', '..io', 'pydbgr')
@@ -19,6 +20,13 @@ class Debugger::UserInterface < Debugger::Interface
   def initialize(inp=nil, out=nil, opts={})
     # atexit.register(self.finalize)
     super(inp, out, opts)
+    begin
+      require 'readline'
+      @have_gnu_readline = true
+    rescue LoadError
+      @have_gnu_readline = false
+    end
+    @use_gnu_readline = @have_gnu_readline
     @interactive = true # Or at least so we think initially
   end
 
@@ -32,12 +40,16 @@ class Debugger::UserInterface < Debugger::Interface
   # sure it's okay. Expect a yes/no answer to `prompt' which is printed,
   # suffixed with a question mark and the default value.  The user
   # response converted to a boolean is returned.
-
   def confirm(prompt, default)
     default_str = default ? 'Y/n' : 'N/y'
     while true do
       response = readline('%s (%s) ' % 
-                          [prompt, default_str]).strip.downcase
+                          [prompt, default_str])
+      response = if response 
+                   response.strip.downcase
+                 else
+                   default
+                 end
       if response.empty?
         response = default
         break
@@ -58,8 +70,7 @@ class Debugger::UserInterface < Debugger::Interface
   def finalize(last_wishes=none)
     # print exit annotation
     # save history
-    close()
-    return
+    super
   end
 
   def read_command(prompt='')
@@ -69,14 +80,24 @@ class Debugger::UserInterface < Debugger::Interface
   end
 
   def readline(prompt='')
-    # FIXME: use routines from output system
-    require 'readline'
-    Readline.readline(prompt)
-    # if prompt and prompt.size > 0
-    #   output.write(prompt)
-    #   output.flush()
-    # end
-    # return input.readline()
+    @output.flush()
+    if @use_gnu_readline
+      return Readline.readline(prompt)
+      unless line
+        @eof = true
+        raise EOFError
+      end
+    else
+      if prompt and prompt.size > 0
+        @output.print(prompt)
+      end
+      begin
+        return @input.readline()
+      rescue EOFError
+        @eof = true
+        raise
+      end
+    end
   end
 end
 
@@ -87,14 +108,17 @@ if __FILE__ == $0
   if ARGV.size > 0
     begin
       line = intf.readline("Type something: ")
-    rescue IOError
-      puts "No input EOF: "
+    rescue EOFError
+      puts "No input, got EOF"
     else
       puts "You typed: #{line}"
     end
-    line = intf.confirm("Are you sure", false)
-    puts "You typed: #{line}"
-    line = intf.confirm("Are you not sure", true)
-    puts "You typed: #{line}"
+    puts "EOF is now: %s" % intf.eof?.inspect
+    unless intf.eof?
+      line = intf.confirm("Are you sure", false)
+      puts "You typed: #{line}"
+      line = intf.confirm("Are you not sure", true)
+      puts "You typed: #{line}"
+    end
   end
 end

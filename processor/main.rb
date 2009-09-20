@@ -143,7 +143,7 @@ class Debugger
     # Run one debugger command. True is returned if we want to quit.
     def process_command_and_quit?()
       str = read_command()
-      return false unless str
+      return true unless str
       args = str.split
       return false if args.size == 0
       cmd_name = args[0]
@@ -151,13 +151,9 @@ class Debugger
       if @commands.member?(cmd_name)
         cmd = @commands[cmd_name]
         if ok_for_running(cmd, cmd_name, args.size-1)
-          return cmd.run(args) 
-        else
-          return false
+          cmd.run(args) 
         end
-      else
-        # Warning: the next line is going away...
-        return true if !str || 'q' == str.strip
+        return false
       end
         
       # Eval anything that's not a command.
@@ -207,7 +203,7 @@ class Debugger
       irb_cmd.run(['irb']) if @settings[:autoirb] && irb_cmd
 
       while not @leave_cmd_loop do
-        process_command_and_quit?()
+        break if process_command_and_quit?()
         # Might have other stuff here.
       end
     rescue IOError, Errno::EPIPE

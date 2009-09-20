@@ -10,7 +10,9 @@ class Debugger
     end
 
     def read_command()
-      @dbgr.intf[-1].readline(@settings[:prompt])
+      @dbgr.intf.pop if @dbgr.intf[-1].eof? && @dbgr.intf.size > 1
+      return false if @dbgr.intf[-1].eof? 
+      @dbgr.intf[-1].read_command(@settings[:prompt])
     end
   end
 end
