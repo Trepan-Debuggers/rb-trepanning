@@ -1,0 +1,74 @@
+# -*- coding: utf-8 -*-
+require_relative 'base_cmd'
+# Mstack     = import_relative('stack', '...lib')
+
+class Debugger::Command::NextCommand < Debugger::Command
+
+  unless defined?(HELP)
+    HELP = 
+"next[+|-] [count]
+
+Step one statement ignoring steps into function calls at this level.
+
+With an integer argument, perform 'next' that many times. However if
+an exception occurs at this level, or we 'return' or 'yield' or the
+thread changes, we stop regardless of count.
+
+A suffix of '+' on the command or an alias to the command forces to
+move to another line, while a suffix of '-' does the opposite and
+disables the requiring a move to a new line. If no suffix is given,
+the debugger setting 'different-line' determines this behavior.
+"
+
+    ALIASES      = %w(next+ next- n n- n+)
+    CATEGORY     = 'running'
+    # execution_set = ['Running']
+    MAX_ARGS     = 1   # Need at most this many
+    NAME         = File.basename(__FILE__, '.rb')
+    NEED_STACK   = true
+    SHORT_HELP   = 'Step program without entering called functions'
+  end
+
+  def run(args)
+    # FIXME put common opts processing in a common subroutine
+    opts = @proc.parse_next_step_suffix(args[0][-1..-1])
+    if args.size == 1
+      # Form is: "next" which means "next 1"
+      step_count = 0
+    else
+      count_str = args[1]
+      opts = {
+        :msg_on_error => 
+        "The 'next' command argument must eval to an integer. Got: %s" % 
+        count_str,
+        :min_value => 1
+      }
+      count = @proc.get_an_int(count_str, opts)
+      return unless count
+      # step 1 is core.step_count = 0 or "stop next event"
+      step_count = count - 1  
+    end
+    @proc.next(step_count, opts)
+  end
+end
+
+if __FILE__ == $0
+  require_relative %w(.. mock)
+  name = File.basename(__FILE__, '.rb')
+  dbgr, cmd = MockDebugger::setup(name)
+  MockDebugger::show_special_class_constants(cmd)
+  [%w(n 5), %w(next 1+2), %w(n foo)].each do |c|
+    dbgr.core.step_count = 0
+    cmd.proc.leave_cmd_loop = false
+    result = cmd.run(c)
+    puts 'Run result: %s' % result
+    puts 'step_count %d, leave_cmd_loop: %s' % [dbgr.core.step_count,
+                                                cmd.proc.leave_cmd_loop]
+  end
+  [%w(n), %w(next+), %w(n-)].each do |c|
+    dbgr.core.step_count = 0
+    cmd.proc.leave_cmd_loop = false
+    result = cmd.run(c)
+    puts cmd.proc.different_pos
+  end
+end
