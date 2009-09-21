@@ -27,7 +27,8 @@ module IRB # :nodoc:
   
   def self.start_session(binding)
     unless @__initialized
-      ENV['IRBRC'] = File.expand_path(File.join(%w(.. .. irbrc)))
+      irbrc = File.expand_path(File.join(File.dirname(__FILE__), %w(.. irbrc)))
+      ENV['IRBRC'] = irbrc
       args = ARGV.dup
       ARGV.replace([])
       IRB.setup(nil)

@@ -26,6 +26,8 @@ commands these commands don't allow command arguments.
     if args.size > 1
       add_debugging = '-d' == args[1]
       # FIXME -d ? 
+    else
+      add_debugging = false
     end
 
     # unless @state.interface.kind_of?(LocalInterface)
@@ -52,7 +54,6 @@ commands these commands don't allow command arguments.
     else
       @proc.print_location
     end
-    $rbdbgr = nil if add_debugging
   end
 end
 
