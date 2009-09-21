@@ -27,12 +27,23 @@ module IRB # :nodoc:
   
   def self.start_session(binding)
     unless @__initialized
+
+      # Set to run the standard rbdbgr IRB profile
       irbrc = File.expand_path(File.join(File.dirname(__FILE__), %w(.. irbrc)))
       ENV['IRBRC'] = irbrc
+
       args = ARGV.dup
       ARGV.replace([])
       IRB.setup(nil)
       ARGV.replace(args)
+      
+      # If the user has a IRB profile, run that now.
+      if ENV['RBDBGR_IRB']
+        ENV['IRBRC'] = ENV['RBDBGR_IRB']
+        @CONF[:RC_NAME_GENERATOR]=nil
+        IRB.run_config
+      end
+
       @__initialized = true
     end
     

@@ -8,9 +8,10 @@ IRB.conf[:PROMPT][:SIMPLE] =
      :PROMPT_N=>"rbdbgr >> ",
      :PROMPT_S=>nil,
      :RETURN=>"=> %s\n"}
-puts "You are in a rbdbr session. You should have access to program scope."
+puts "You are in a rbdbgr session. You should have access to program scope."
 puts "'step', 'n', 'cont' commands have been added."
 if defined?($rbdbgr) && $rbdbgr
    puts 'You should have access to debugger state via global variable $rbdbgr'
 end
 
+  
