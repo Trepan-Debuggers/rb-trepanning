@@ -51,22 +51,7 @@ Related and similar is the 'next' command.  See also the commands:
 
   # This method runs the command
   def run(args) # :nodoc
-    opts = {}
-    case args[0][-1..-1] 
-    when '-'
-      opts[:different_pos] = false
-    when '+'
-      opts[:different_pos] = true
-    when '<'
-      if args.size > 1 && args[0][-2..-2]  == '>'
-        opts[:stop_events] = Set.new(['c-call', 'c-return', 'call' 'return'])
-      else
-        opts[:stop_events] = Set.new(['c-return', 'return'])
-      end
-    when '>'
-      opts[:stop_events] = Set.new(['c-call', 'call'])
-    end
-      
+    opts = @proc.parse_next_step_suffix(args[0])
     if args.size == 1
       # Form is: "step" which means "step 1"
       step_count = 0

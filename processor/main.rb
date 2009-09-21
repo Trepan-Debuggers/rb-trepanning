@@ -23,6 +23,10 @@ class Debugger
     attr_accessor :leave_cmd_loop # Commands set this to signal to leave
                                   # the command loop (which often continues to 
                                   # run the debugged program). 
+    attr_accessor :next_level     # Fixnum. frame.stack_size has to be <= than this.
+                                  # If next'ing, this will be > 0.
+    attr_accessor :next_thread    # If non-nil then in stepping the thread has to be 
+                                  # this thread.
     attr_reader   :settings       # Hash[:symbol] of command processor
                                   # settings
     attr_accessor :stop_events    # Set or nil. If not nil, only
@@ -62,6 +66,8 @@ class Debugger
       @hidelevels     = {}
       @last_pos       = [nil, nil]
       @last_pos       = [nil, nil]
+      @next_level     = 32000
+      @next_thread    = nil
       @settings       = settings.merge(DEFAULT_SETTINGS)
       @different_pos  = @settings[:different]
       @stop_events    = nil
@@ -166,14 +172,25 @@ class Debugger
     end
 
     def skip?(frame)
+
+      if @settings[:'debug-skip']
+        puts "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.map if @stop_events}" 
+        puts "nl  : #{@next_level},    ssize : #{frame.stack_size}" 
+        puts "nt  : #{@next_thread},   thread: #{Thread.current}" 
+      end
+
+      return true if 
+        @next_level < frame.stack_size && Thread.current == @next_thread
+
       new_pos = [frame.source_container,
                  frame.source_location]
 
       skip_val = @stop_events && !@stop_events.member?(@core.event)
+
       if @settings[:'debug-skip']
         puts "skip: #{skip_val.inspect}, last: #{@last_pos}, new: #{new_pos}" 
-        puts "diff1: #{@different_pos}, event: #{@core.event}, #{@stop_events.map if @stop_events}" 
       end
+
       skip_val = (@last_pos == new_pos) && @different_pos unless skip_val
       @last_pos = new_pos
 

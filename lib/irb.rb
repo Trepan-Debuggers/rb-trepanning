@@ -21,12 +21,13 @@ module IRB # :nodoc:
 
   if defined?(ExtendCommandBundle)
     ExtendCommandBundle.def_extend_command 'cont', :Continue
-    # ExtendCommandBundle.def_extend_command 'n', :Next
+    ExtendCommandBundle.def_extend_command 'n', :Next
     ExtendCommandBundle.def_extend_command 'step', :Step
   end
   
   def self.start_session(binding)
     unless @__initialized
+      ENV['IRBRC'] = File.expand_path(File.join(%w(.. .. irbrc)))
       args = ARGV.dup
       ARGV.replace([])
       IRB.setup(nil)

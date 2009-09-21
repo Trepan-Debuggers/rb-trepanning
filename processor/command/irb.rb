@@ -57,8 +57,12 @@ commands these commands don't allow command arguments.
 end
 
 if __FILE__ == $0
+  require 'thread_frame'
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
   MockDebugger::show_special_class_constants(cmd)
+  # Get an IRB session -- the hard way :-)
+  cmd.proc.frame_setup(RubyVM::ThreadFrame.current, Thread.current)
+  cmd.run([name]) if ARGV.size > 0
 end

@@ -12,7 +12,7 @@ module MockDebugger
     # Note restart[0] is typically $0.
     attr_reader   :settings     # Hash[:symbol] of things you can configure
 
-    def initialize(debugger, settings={})
+    def initialize(settings={})
       @settings = DbgSettings::DEFAULT_SETTINGS.merge(settings)
       @intf     = [Debugger::UserInterface.new]
       @core     = Debugger::Core.new(self)
@@ -22,14 +22,12 @@ module MockDebugger
 
   # Common Mock debugger setup 
   def setup(name)
-    if ARGV.size > 0 
-      if ARGV[0] == 'debug'
-        require_relative %w(.. rbdbgr)
-        dbgr = Debugger.new()
-        dbgr.debugger
-      end
+    if ARGV.size > 0 && ARGV[0] == 'debug'
+      require_relative %w(.. rbdbgr)
+      dbgr = Debugger.new()
+      dbgr.debugger
     else
-      dbgr = MockDebugger.new(nil)
+      dbgr = MockDebugger.new()
     end
     cmds = dbgr.core.processor.commands
     cmd  = cmds[name]

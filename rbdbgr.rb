@@ -30,6 +30,9 @@ class Debugger
   # Enter the debugger. One-time step you need to do first:
   #    require 'rbdbgr'
   #    mydbg = Debugger.new()
+  # or if you haven't mucked around with $0 and ARGV, you might try:
+  #    mydbg = Debugger.new(:restart_argv => [File.expand_path($0)] + ARGV))
+  # which will tell the debugger how to "restart" the program.
   #
   # If you want a synchronous stop in your program call to the
   # debugger at the point of the call, set opts[:immediate]

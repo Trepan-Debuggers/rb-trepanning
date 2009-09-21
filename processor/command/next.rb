@@ -6,7 +6,7 @@ class Debugger::Command::NextCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
-"next[+|-] [count]
+"next[+|-|<|>|!|<>] [EVENT-NAME...] [count]
 
 Step one statement ignoring steps into function calls at this level.
 
@@ -18,20 +18,31 @@ A suffix of '+' on the command or an alias to the command forces to
 move to another line, while a suffix of '-' does the opposite and
 disables the requiring a move to a new line. If no suffix is given,
 the debugger setting 'different-line' determines this behavior.
+
+If no suffix is given, the debugger setting 'different'
+determines this behavior.
+
+Examples: 
+  next        # next 1 event, *any* event 
+  next 1      # same as above
+  next 5/5+0  # same as above
+  next line   # next using only line events
+  next call   # next using only call call events
+  next<>      # next using call return events at this level or below
 "
 
-    ALIASES      = %w(next+ next- n n- n+)
+    ALIASES      = %w(n next+ next- next< next> next<>- n> n< n+ n- n<>)
     CATEGORY     = 'running'
     # execution_set = ['Running']
-    MAX_ARGS     = 1   # Need at most this many
+    MAX_ARGS     = 1   # Need at most this many. FIXME: will be eventually 2
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
     SHORT_HELP   = 'Step program without entering called functions'
   end
 
-  def run(args)
-    # FIXME put common opts processing in a common subroutine
-    opts = @proc.parse_next_step_suffix(args[0][-1..-1])
+  # This method runs the command
+  def run(args) # :nodoc
+    opts = @proc.parse_next_step_suffix(args[0])
     if args.size == 1
       # Form is: "next" which means "next 1"
       step_count = 0

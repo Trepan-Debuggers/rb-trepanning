@@ -42,8 +42,8 @@ class Debugger
         :cmdproc_opts => {},
         :hook_name    => :event_processor, # or :old_event_processor
         :step_count   => 0,                # Stop at next event
-        :step_events  => DEFAULT_EVENT_MASK | INSN_EVENT_MASK,
-        :async_events => ASYNC_EVENT_MASK
+        :async_events => ASYNC_EVENT_MASK,
+        :step_events  => DEFAULT_EVENT_MASK # | INSN_EVENT_MASK,
       } 
 
     end
