@@ -29,10 +29,11 @@ module MockDebugger
     else
       dbgr = MockDebugger.new()
     end
+
     cmds = dbgr.core.processor.commands
     cmd  = cmds[name]
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
-
+    show_special_class_constants(cmd) if show_constants
 
     def cmd.msg(message)
       puts message
@@ -43,8 +44,6 @@ module MockDebugger
     def cmd.confirm(prompt, default)
       true
     end
-
-    show_special_class_constants(cmd) if show_constants
 
     return dbgr, cmd
   end
