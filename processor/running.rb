@@ -13,7 +13,7 @@ class Debugger
 
     # Does whatever needs to be done to set to "next" program
     # execution.
-    def next(step_count, opts)
+    def next(step_count=1, opts={})
       step(step_count, opts)
       @next_level      = @top_frame.stack_size
       @next_thread     = Thread.current
@@ -21,7 +21,7 @@ class Debugger
 
     # Does whatever needs to be done to set to step program
     # execution.
-    def step(step_count, opts)
+    def step(step_count=1, opts={})
       continue
       @core.step_count = step_count
       @different_pos   = opts[:different_pos] if 

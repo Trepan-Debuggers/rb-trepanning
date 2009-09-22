@@ -25,7 +25,6 @@ commands these commands don't allow command arguments.
   def run(args) # :nodoc
     if args.size > 1
       add_debugging = '-d' == args[1]
-      # FIXME -d ? 
     else
       add_debugging = false
     end
@@ -35,26 +34,30 @@ commands these commands don't allow command arguments.
     #   throw :debug_error
     # end
 
-    save_trap = trap("SIGINT") do
+    save_trap = trap('SIGINT') do
       throw :IRB_EXIT, :cont if $rbdbgr_in_irb
     end
 
     $rbdbgr = @proc.core.dbgr if add_debugging
+    $rbdbgr_in_irb = true
 
     cont = IRB.start_session(@proc.frame.binding)
+    trap('SIGINT', save_trap) # Restore old trap
     case cont
     when :cont
       @proc.continue
     when :step
-      @proc.step(1, {})
-    # when :next
-    #   force = Command.settings[:force_stepping]
-    #   @state.context.step_over(1, @state.frame_pos, force)
-    #   @state.proceed 
+      @proc.step # (1, {})
+    when :next
+      @proc.next # (1, {})
     else
       @proc.print_location
     end
-  end
+  ensure
+    $rbdbgr_in_irb = false
+    # restore old trap if any
+    trap('SIGINT', save_trap) if save_trap
+   end
 end
 
 if __FILE__ == $0
