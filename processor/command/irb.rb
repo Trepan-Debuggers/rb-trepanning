@@ -64,6 +64,6 @@ if __FILE__ == $0
   dbgr, cmd = MockDebugger::setup(name)
   MockDebugger::show_special_class_constants(cmd)
   # Get an IRB session -- the hard way :-)
-  cmd.proc.frame_setup(RubyVM::ThreadFrame.current, Thread.current)
+  cmd.proc.frame_setup(RubyVM::ThreadFrame.current)
   cmd.run([name]) if ARGV.size > 0
 end

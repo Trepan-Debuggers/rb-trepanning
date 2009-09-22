@@ -24,8 +24,10 @@ class Debugger
     def step(step_count, opts)
       continue
       @core.step_count = step_count
-      @different_pos   = opts[:different_pos] if opts[:different_pos]
-      @stop_events     = opts[:stop_events]   if opts[:stop_events]
+      @different_pos   = opts[:different_pos] if 
+        opts.member?(:different_pos)
+      @stop_events     = opts[:stop_events]   if 
+        opts.member?(:stop_events)
     end
 
     def parse_next_step_suffix(step_cmd)
@@ -36,13 +38,14 @@ class Debugger
       when '+'
         opts[:different_pos] = true
       when '<'
-        if args.size > 1 && step_cmd[-2..-2] == '>'
-          opts[:stop_events] = Set.new(%w(c-call c-return call return))
-        else
-          opts[:stop_events] = Set.new(%w(c-return return))
-        end
+        opts[:stop_events] = Set.new(%w(c-return return))
       when '>'
         opts[:stop_events] = Set.new(%w(c-call call))
+        if step_cmd.size > 1 && step_cmd[-2..-2] == '<'
+          opts[:stop_events] = Set.new(%w(c-call c-return call return))
+        else
+          opts[:stop_events] = Set.new(%w(c-call call))
+        end
       end
       return opts
     end

@@ -59,7 +59,7 @@ if __FILE__ == $0
   dbgr, cmd = MockDebugger::setup(name)
   MockDebugger::show_special_class_constants(cmd)
 
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
+  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
 
   def sep ; puts '=' * 40 end
   cmd.run [name]

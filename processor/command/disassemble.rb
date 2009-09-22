@@ -54,7 +54,7 @@ if __FILE__ == $0
   dbgr, cmd = MockDebugger::setup(name)
   MockDebugger::show_special_class_constants(cmd)
   def small_fn(cmd, name)
-    cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
+    cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
     cmd.run [name]
   end
   small_fn(cmd, name)

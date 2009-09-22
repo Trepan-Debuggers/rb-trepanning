@@ -42,8 +42,8 @@ class Debugger
 
     # The following are used in to force stopping at a different line
     # number. FIXME: could generalize to a position object.
-    attr_accessor :last_pos       # Last position. Tuple: of
-                                  # [location, container]
+    attr_accessor :last_pos       # Last position. 4-Tuple: of
+                                  # [location, container, stack_size, current_thread]
 
 
     EVENT2ICON = {
@@ -65,7 +65,7 @@ class Debugger
       @dbgr           = core.dbgr
       @hidelevels     = {}
       @last_command   = nil
-      @last_pos       = [nil, nil]
+      @last_pos       = [nil, nil, nil, nil]
       @next_level     = 32000
       @next_thread    = nil
       @settings       = settings.merge(DEFAULT_SETTINGS)
@@ -190,19 +190,19 @@ class Debugger
       return false
     end
 
-    def skip?(frame)
+    def skip?
 
       if @settings[:'debug-skip']
         puts "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.map if @stop_events}" 
-        puts "nl  : #{@next_level},    ssize : #{frame.stack_size}" 
+        puts "nl  : #{@next_level},    ssize : #{@stack_size}" 
         puts "nt  : #{@next_thread},   thread: #{Thread.current}" 
       end
 
       return true if 
-        @next_level < frame.stack_size && Thread.current == @next_thread
+        @next_level < @stack_size && @current_current == @next_thread
 
-      new_pos = [frame.source_container,
-                 frame.source_location]
+      new_pos = [@frame.source_container, @frame.source_location, 
+                 @stack_size, @current_thread]
 
       skip_val = @stop_events && !@stop_events.member?(@core.event)
 
@@ -226,9 +226,9 @@ class Debugger
     # This is the main entry point.
     def process_commands(frame)
 
-      return if skip?(frame)
+      frame_setup(frame)
+      return if skip?
 
-      frame_setup(frame, Thread.current)
       print_location
 
       @leave_cmd_loop = false

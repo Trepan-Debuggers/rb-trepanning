@@ -63,7 +63,7 @@ if __FILE__ == $0
   MockDebugger::show_special_class_constants(cmd)
 
   def sep ; puts '=' * 40 end
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
+  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
   cmd.run [name]
   %w(0 -1 1).each do |count| 
     puts "#{name} #{count}"

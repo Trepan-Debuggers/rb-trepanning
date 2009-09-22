@@ -155,7 +155,7 @@ if __FILE__ == $0
   MockDebugger::show_special_class_constants(cmd)
 
   def sep ; puts '=' * 40 end
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current, Thread::current)
+  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
   %w(0 1 -2).each {|count| cmd.run([name, count]); sep }
   def foo(cmd, name)
     cmd.proc.top_frame = cmd.proc.frame = RubyVM::ThreadFrame::current

@@ -54,12 +54,13 @@ class Debugger
 
     # Initializes the thread and frame variables: @frame, @top_frame, 
     # @frame_index, @current_thread, and @threads2frames
-    def frame_setup(frame, current_thread)
-      @frame_index    = 0
-      @current_thread = current_thread
-      @frame = @top_frame = frame
+    def frame_setup(frame_thread)
+      @frame_index        = 0
+      @frame = @top_frame = frame_thread
+      @current_thread     = @frame.thread
+      @stack_size         = @frame.stack_size
 
-      @threads2frames ||= {}  # or do we want = {} ? 
+      @threads2frames   ||= {}  # or do we want = {} ? 
       @threads2frames[@current_thread] = @top_frame
     end
 
@@ -105,7 +106,7 @@ if __FILE__ == $0
   require 'thread_frame'
   class Debugger::CmdProcessor
     def initialize(frame)
-      frame_setup(frame, Thread::current)
+      frame_setup(frame)
     end
     def errmsg(msg)
       puts msg
