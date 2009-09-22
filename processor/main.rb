@@ -64,7 +64,7 @@ class Debugger
       @core           = core
       @dbgr           = core.dbgr
       @hidelevels     = {}
-      @last_pos       = [nil, nil]
+      @last_command   = nil
       @last_pos       = [nil, nil]
       @next_level     = 32000
       @next_thread    = nil
@@ -148,9 +148,27 @@ class Debugger
 
     # Run one debugger command. True is returned if we want to quit.
     def process_command_and_quit?()
-      str = read_command()
-      return true unless str
-      args = str.split
+      intf = @dbgr.intf
+      return true if intf[-1].eof? && intf.size == 1
+      while !intf[-1].eof? || intf.size > 1
+        begin
+          last_command = read_command().strip
+          last_command = @last_command if 
+            last_command.empty? && @last_command && intf[-1].interactive
+          next if last_command[0..0] == '#' # Skip comment lines
+          break
+        rescue IOError, Errno::EPIPE
+          if @dbgr.intf.size > 1
+            @dbgr.intf.pop 
+            @last_command = nil
+            print_location
+          else
+            msg "EOF - Leaving"
+            return true
+          end
+        end
+      end
+      args = last_command.split
       return false if args.size == 0
       cmd_name = args[0]
       cmd_name = @aliases[cmd_name] if @aliases.member?(cmd_name)
@@ -158,13 +176,14 @@ class Debugger
         cmd = @commands[cmd_name]
         if ok_for_running(cmd, cmd_name, args.size-1)
           cmd.run(args) 
+          @last_command = last_command
         end
         return false
       end
         
       # Eval anything that's not a command.
       if settings[:autoeval]
-        msg debug_eval(str) 
+        msg debug_eval(last_command) 
       else
         undefined_command(cmd_name)
       end
@@ -223,7 +242,6 @@ class Debugger
         break if process_command_and_quit?()
         # Might have other stuff here.
       end
-    rescue IOError, Errno::EPIPE
     # rescue Exception => e
     #   errmsg("INTERNAL ERROR!!!")
     #   b = @frame.binding if @frame 

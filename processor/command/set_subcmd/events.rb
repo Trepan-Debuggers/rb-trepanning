@@ -11,6 +11,7 @@ class Debugger::Subcommand::SetEvents < Debugger::Subcommand
 
   # FIXME: perhaps this should be a subcommand of "set trace" ? 
   def run(events)
+    events.each {|event| event.chomp!(',')}
     bitmask, bad_events = Trace.events2bitmask(events)
     unless bad_events.empty?
       errmsg("Event names unrecognized/ignored: %s" % bad_events.join(', '))
@@ -43,5 +44,8 @@ if __FILE__ == $0
   subcommand.summary_help(name)
   puts
   subcommand.run([])
-  subcommand.run(['call', 'line', 'foo'])
+  [%w(call line foo), %w(insn, c_call, c_return,)].each do |events|
+    subcommand.run(events)
+    puts 'bitmask: %09b, events: %s ' % [dbgr.core.step_events, events.inspect]
+  end
 end
