@@ -50,7 +50,6 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
-  MockDebugger::show_special_class_constants(cmd)
   %w(fooo 1 -1 HUP -9).each do |arg| 
     puts "#{name} #{arg}"
     cmd.run([name, arg])

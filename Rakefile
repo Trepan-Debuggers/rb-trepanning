@@ -60,8 +60,9 @@ task :'check:processor' do
   run_standalone_ruby_file(File.join(%W(#{rake_dir} processor)))
 end
 
+task :check => %w(check:lib check:processor check:commands).map{|c| c.to_sym}
+
 desc "Test everything - same as test."
-task :check => :test
 task :default => :test
 
 FILES = FileList[

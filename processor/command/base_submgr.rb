@@ -166,7 +166,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative %w(.. mock)
-  dbgr = MockDebugger::MockDebugger.new(nil)
+  dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   cmd  = cmds['set']
   Debugger::SubcommandMgr.new(dbgr.core.processor)

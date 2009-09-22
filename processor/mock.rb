@@ -21,7 +21,7 @@ module MockDebugger
   end
 
   # Common Mock debugger setup 
-  def setup(name)
+  def setup(name, show_constants=true)
     if ARGV.size > 0 && ARGV[0] == 'debug'
       require_relative %w(.. rbdbgr)
       dbgr = Debugger.new()
@@ -31,6 +31,8 @@ module MockDebugger
     end
     cmds = dbgr.core.processor.commands
     cmd  = cmds[name]
+    cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
+
 
     def cmd.msg(message)
       puts message
@@ -41,6 +43,8 @@ module MockDebugger
     def cmd.confirm(prompt, default)
       true
     end
+
+    show_special_class_constants(cmd) if show_constants
 
     return dbgr, cmd
   end

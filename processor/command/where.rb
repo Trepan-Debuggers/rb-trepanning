@@ -57,16 +57,13 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
-  MockDebugger::show_special_class_constants(cmd)
-
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
 
   def sep ; puts '=' * 40 end
   cmd.run [name]
   sep
   %w(1 100).each {|count| cmd.run(count); sep }
   def foo(cmd, name)
-    cmd.proc.top_frame = cmd.proc.frame = RubyVM::ThreadFrame::current
+    cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
     cmd.run([name])
   end
   foo(cmd, name)

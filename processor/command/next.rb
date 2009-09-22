@@ -67,7 +67,6 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
-  MockDebugger::show_special_class_constants(cmd)
   [%w(n 5), %w(next 1+2), %w(n foo)].each do |c|
     dbgr.core.step_count = 0
     cmd.proc.leave_cmd_loop = false

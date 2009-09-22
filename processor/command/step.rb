@@ -76,6 +76,5 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
-  MockDebugger::show_special_class_constants(cmd)
   p cmd.run([name])
 end

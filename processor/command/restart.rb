@@ -38,7 +38,6 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
-  MockDebugger::show_special_class_constants(cmd)
   dbgr.restart_argv = []
   cmd.run([name])
   dbgr.restart_argv = [File.expand_path($0), 'exit']
