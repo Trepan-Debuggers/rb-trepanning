@@ -17,12 +17,20 @@ class Debugger
   
   class InputBase
     attr_reader   :input
+    attr_reader   :line_edit
+
+    DEFAULT_OPTS = {
+      :line_edit => false,
+    }
+
     def initialize(inp, opts={})
-      @input = inp
+      @opts      = DEFAULT_OPTS.merge(opts)
+      @input     = inp
+      @line_edit = opts[:line_edit]
     end
 
     def close
-      @input.close if @input
+      @input.close
     end
 
     def eof? 
