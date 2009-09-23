@@ -47,7 +47,7 @@ class Debugger
       def open(inp=nil, opts={})
         inp ||= STDIN
         inp = File.new(inp, 'r') if inp.is_a?(String)
-        opts[:line_edit] = Debugger::GNU_readline? if opts[:line_edit]
+        opts[:line_edit] = false unless inp.tty? && Debugger::GNU_readline?
         self.new(inp, opts)
       end
     end
