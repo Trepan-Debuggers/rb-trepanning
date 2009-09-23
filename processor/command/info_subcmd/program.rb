@@ -12,7 +12,8 @@ class Debugger::Subcommand::InfoProgram < Debugger::Subcommand
 
   def run(args)
     frame = @proc.frame
-    msg("Program stop event: %s" % @proc.core.event)
+    msg("Program stop event: %s PC offset %d" % 
+        [@proc.core.event, frame.pc_offset])
   end
 
 end

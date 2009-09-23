@@ -4,6 +4,7 @@ class Debugger
       :autoeval      => true,
       :autoirb       => false,
       :different     => true,  # stop *only* when  different position? 
+      :'debug-skip'  => false,  
       :prompt        => '(rbdbgr): ',
       :stack_trace_on_error => false,
       :width         => (ENV['COLUMNS'] || '80').to_i,

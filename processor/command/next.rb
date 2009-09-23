@@ -31,7 +31,7 @@ Examples:
   next<>      # next using call return events at this level or below
 "
 
-    ALIASES      = %w(n next+ next- next< next> next<>- n> n< n+ n- n<>)
+    ALIASES      = %w(n next+ next- next< next> next<> next! n> n< n! n+ n- n<>)
     CATEGORY     = 'running'
     # execution_set = ['Running']
     MAX_ARGS     = 1   # Need at most this many. FIXME: will be eventually 2

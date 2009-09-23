@@ -198,6 +198,10 @@ class Debugger
         puts "nt  : #{@next_thread},   thread: #{Thread.current}" 
       end
 
+      # I think raise is an important enough event that we always want
+      # to stop on it.
+      return false if @core.event == 'raise'
+
       return true if 
         @next_level < @stack_size && @current_current == @next_thread
 

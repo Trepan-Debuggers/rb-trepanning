@@ -41,7 +41,7 @@ Related and similar is the 'next' command.  See also the commands:
 'skip', 'jump' (there's no 'hop' yet), 'continue', 'return' and
 'finish' for other ways to progress execution."
 
-    ALIASES      = %w(s step+ step- step< step> step<> s> s< s+ s- s<>)
+    ALIASES      = %w(s step+ step- step< step> step<> step! s> s< s+ s- s<> s!)
     CATEGORY     = 'running'
     MAX_ARGS     = 1   # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')

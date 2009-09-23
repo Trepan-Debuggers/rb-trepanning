@@ -37,6 +37,8 @@ class Debugger
         opts[:different_pos] = false
       when '+'
         opts[:different_pos] = true
+      when '!'
+        opts[:stop_events] = Set.new(%w(raise))
       when '<'
         opts[:stop_events] = Set.new(%w(c-return return))
       when '>'
