@@ -25,16 +25,17 @@ class Debugger
     end
 
     def initialize(inp=nil, out=nil, opts={})
-      @eof         = false
       @input       = inp || STDIN
       @interactive = false 
       @opts        = opts
       @output      = out || STDOUT
+      @eof         = false # FIXME remove me
     end
 
     # Closes all input and/or output.
     def close
-      raise RuntimeError, Debugger::NotImplementedMessage
+      @input.close
+      @output.close
     end
 
     # Called when a dangerous action is about to be done to make sure
@@ -43,10 +44,11 @@ class Debugger
       raise RuntimeError, Debugger::NotImplementedMessage
     end
 
+    # FIXME remove me
     def eof?
       @eof
     end
-    
+
     # Common routine for reporting debugger error messages.
     def errmsg(str, prefix='*** ')
       raise RuntimeError, Debugger::NotImplementedMessage

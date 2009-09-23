@@ -7,8 +7,8 @@
 # Our local modules
 
 require_relative 'base_intf'
+require_relative %w(.. io input)
 
-# Minput     = import_relative('dbg_input', '..io', 'pydbgr')
 # Moutput    = import_relative('dbg_output', '..io', 'pydbgr')
 
 # Interface when communicating with the user in the same
@@ -20,21 +20,11 @@ class Debugger::UserInterface < Debugger::Interface
   def initialize(inp=nil, out=nil, opts={})
     # atexit.register(self.finalize)
     super(inp, out, opts)
-    begin
-      require 'readline'
-      @have_gnu_readline = true
-    rescue LoadError
-      @have_gnu_readline = false
-    end
-    @use_gnu_readline = @have_gnu_readline
-    @interactive = true # Or at least so we think initially
+    inp ||= Debugger::UserInput.open
+    @eof = false  # FIXME REMOVE ME
   end
 
   # Closes both input and output
-  def close
-    @input.close
-    @output.close
-  end
 
   # Called when a dangerous action is about to be done, to make
   # sure it's okay. Expect a yes/no answer to `prompt' which is printed,
@@ -81,6 +71,7 @@ class Debugger::UserInterface < Debugger::Interface
 
   def readline(prompt='')
     @output.flush()
+    # FIXME: Use @input
     if @use_gnu_readline
       return Readline.readline(prompt)
       unless line

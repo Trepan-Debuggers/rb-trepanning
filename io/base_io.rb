@@ -34,7 +34,11 @@ class Debugger
     end
 
     def eof? 
-      @input.eof?
+      begin
+        @input.eof?
+      rescue IOError
+        true
+      end
     end
 
     # Read a line of input. EOFError will be raised on EOF.  

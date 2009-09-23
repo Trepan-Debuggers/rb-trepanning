@@ -31,7 +31,7 @@ class Debugger::ScriptInterface < Debugger::Interface
     @interactive     = false
   end
 
-  # Closes input. (We don't have an output.)
+  # Closes input only.
   def close
     @input.close()
   end

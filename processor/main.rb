@@ -46,19 +46,24 @@ class Debugger
                                   # [location, container, stack_size, current_thread]
 
 
-    EVENT2ICON = {
-      'c-call'         => 'C>',
-      'c-return'       => '<C',
-      'call'           => '->',
-      'class'          => '::',
-      'debugger-call'  => ':o',
-      'end'            => '-|',
-      'raise'          => '!!',
-      'line'           => '--',
-      'return'         => '<-',
-      'vm-insn'        => '..',
-      'unknown'        => '?!',
-    } unless defined?(EVENT2ICON)
+    unless defined?(EVENT2ICON)
+      EVENT2ICON = {
+        'c-call'         => 'C>',
+        'c-return'       => '<C',
+        'call'           => '->',
+        'class'          => '::',
+        'debugger-call'  => ':o',
+        'end'            => '-|',
+        'raise'          => '!!',
+        'line'           => '--',
+        'return'         => '<-',
+        'vm-insn'        => '..',
+        'unknown'        => '?!',
+      } 
+      # These events are important enough event that we always want to
+      # stop on them.
+      UNMASKABLE_EVENTS = Set.new(['end', 'raise', 'unknown'])
+    end
 
     def initialize(core, settings={})
       @core           = core
@@ -198,9 +203,9 @@ class Debugger
         puts "nt  : #{@next_thread},   thread: #{Thread.current}" 
       end
 
-      # I think raise is an important enough event that we always want
-      # to stop on it.
-      return false if @core.event == 'raise'
+      # I think these events are important enough event that we always want
+      # to stop on them.
+      return false if UNMASKABLE_EVENTS.member?(@core.event)
 
       return true if 
         @next_level < @stack_size && @current_current == @next_thread
