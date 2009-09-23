@@ -154,8 +154,8 @@ class Debugger
     # Run one debugger command. True is returned if we want to quit.
     def process_command_and_quit?()
       intf = @dbgr.intf
-      return true if intf[-1].eof? && intf.size == 1
-      while !intf[-1].eof? || intf.size > 1
+      return true if intf[-1].input.eof? && intf.size == 1
+      while !intf[-1].input.eof? || intf.size > 1
         begin
           last_command = read_command().strip
           last_command = @last_command if 

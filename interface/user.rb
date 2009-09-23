@@ -20,8 +20,7 @@ class Debugger::UserInterface < Debugger::Interface
   def initialize(inp=nil, out=nil, opts={})
     # atexit.register(self.finalize)
     super(inp, out, opts)
-    inp ||= Debugger::UserInput.open
-    @eof = false  # FIXME REMOVE ME
+    @input = Debugger::UserInput.open(inp)
   end
 
   # Closes both input and output
@@ -33,19 +32,15 @@ class Debugger::UserInterface < Debugger::Interface
   def confirm(prompt, default)
     default_str = default ? 'Y/n' : 'N/y'
     while true do
-      response = readline('%s (%s) ' % 
-                          [prompt, default_str])
-      response = if response 
-                   response.strip.downcase
-                 else
-                   default
-                 end
-      if response.empty?
-        response = default
-        break
+      begin 
+        response = readline('%s (%s) ' % [prompt, default_str])
+      rescue EOFError
+        return default
       end
+      response = response.strip.downcase
+
       # We don't catch "Yes, I'm sure" or "NO!", but I leave that 
-      # as an excercise for the reader.
+      # as an exercise for the reader.
       break if YES_OR_NO.member?(response)
       msg "Please answer 'yes' or 'no'. Try again."
     end
@@ -64,31 +59,15 @@ class Debugger::UserInterface < Debugger::Interface
   end
 
   def read_command(prompt='')
-    line = self.readline(prompt)
+    line = readline(prompt)
     # FIXME: Do something with history?
     return line
   end
 
   def readline(prompt='')
-    @output.flush()
-    # FIXME: Use @input
-    if @use_gnu_readline
-      return Readline.readline(prompt)
-      unless line
-        @eof = true
-        raise EOFError
-      end
-    else
-      if prompt and prompt.size > 0
-        @output.print(prompt)
-      end
-      begin
-        return @input.readline()
-      rescue EOFError
-        @eof = true
-        raise
-      end
-    end
+    @output.flush
+    @output.print(prompt) if prompt and prompt.size > 0
+    @input.readline
   end
 end
 
@@ -104,12 +83,14 @@ if __FILE__ == $0
     else
       puts "You typed: #{line}"
     end
-    puts "EOF is now: %s" % intf.eof?.inspect
-    unless intf.eof?
+    puts "EOF is now: %s" % intf.input.eof?.inspect
+    unless intf.input.eof?
       line = intf.confirm("Are you sure", false)
       puts "You typed: #{line}"
+      puts "EOF is now: %s" % intf.input.eof?.inspect
       line = intf.confirm("Are you not sure", true)
       puts "You typed: #{line}"
+      puts "EOF is now: %s" % intf.input.eof?.inspect
     end
   end
 end

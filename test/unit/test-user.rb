@@ -9,7 +9,7 @@ class TestInterfaceUser < Test::Unit::TestCase
 
   # Test interface.user.UserInterface.confirm()
   def test_confirm
-
+    
     user_intf = Debugger::UserInterface.new
     def user_intf.readline(prompt)
       $response_answer
@@ -32,4 +32,3 @@ class TestInterfaceUser < Test::Unit::TestCase
   end
   # FIXME: more thorough testing of other routines in user.
 end
-

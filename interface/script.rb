@@ -5,8 +5,7 @@
 
 # Our local modules
 require_relative 'base_intf'
-
-## require_relative %w(.. io scriptin)
+require_relative %w(.. io input)
 ## require_relative %w(.. io dbg_output)
 
 # Interface when reading debugger scripts
@@ -25,15 +24,15 @@ class Debugger::ScriptInterface < Debugger::Interface
     # atexit.register(self.finalize)
     @script_name     = script_name
     @input_lineno    = 0
-    @input           = File.new(script_name, 'r')
+    @input           = Debugger::UserInput.open(script_name,
+                                                :line_edit => false)
     super(@input, out, @opts)
-
     @interactive     = false
   end
 
   # Closes input only.
   def close
-    @input.close()
+    @input.close
   end
 
   # Called when a dangerous action is about to be done, to make

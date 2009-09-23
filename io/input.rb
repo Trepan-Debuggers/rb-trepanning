@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-# Debugger input possibly attached to a user or interactive.
+# Debugger user/command-oriented input possibly attached to IO-style
+# input or GNU Readline.
+# 
 
 require_relative 'base_io'
 
-# Debugger input connected to what we think of as a end-user input
-# as opposed to a relay mechanism to another process. Input could be
-# interative terminal, but it might be file input.
 class Debugger
 
+  # Debugger user/command-oriented input possibly attached to IO-style
+  # input or GNU Readline.
   class UserInput < Debugger::InputBase
 
     def initialize(inp, opts={})
@@ -17,7 +18,7 @@ class Debugger
     end
 
     def eof?
-      @input.eof?
+      @eof
     end
 
     # Read a line of input. EOFError will be raised on EOF.  
@@ -27,8 +28,14 @@ class Debugger
     def readline
       # FIXME we don't do command completion.
       raise EOFError if eof?
-      @opts[:line_edit] ? Readline.readline : @input.gets
-      @eof = @input.eof?
+      begin 
+        line = @opts[:line_edit] ? Readline.readline : @input.gets
+        @eof = !line
+      rescue
+        @eof = true
+      end
+      raise EOFError if eof?
+      return line
     end
     
     class << self

@@ -13,16 +13,22 @@ class Debugger::StringArrayInput < Debugger::InputBase
   end
 
   # this close() interface is defined for class compatibility
-  def close; @closed = true end
+  def close
+    @closed = true 
+  end
 
-  def eof?;  @closed end
-  
+  def eof?
+    @closed || @input.empty?
+  end
+
+  # Nothing to do here. Interface is for compatibility
+  def flush ; end
+
   # Read a line of input. EOFError will be raised on EOF.  
   # Note that we don't support prompting
   def readline
-    raise RuntimeError if @closed 
+    raise EOFError if eof?
     if @input.empty?
-      @closed = true
       raise EOFError
     end
     line = @input.shift
@@ -51,9 +57,13 @@ class Debugger::StringArrayOutput < Debugger::OutputBase
   end
 
   # Nothing to do here. Interface is for compatibility
-  def close; @closed = true end
+  def close
+    @closed = true 
+  end
 
-  def eof?;  @closed end
+  def eof?
+    @closed || @output.empty? 
+  end
 
   # Nothing to do here. Interface is for compatibility
   def flush ; end
