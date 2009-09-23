@@ -28,7 +28,7 @@ we are in interactive mode, we'll prompt to make sure."
         end
 #       FIXME: reinstate
 #       if 'KILL' == sig || Signal['KILL'] == sig
-#           @state.interface.finalize
+#           @proc.intf.finalize
 #       end
     else
       if not confirm('Really kill?', false)

@@ -5,6 +5,10 @@
 
 class Debugger
 
+  unless defined?(NotImplementedMessage)
+    NotImplementedMessage = 'This method must be overriden in a subclass'
+  end
+
   # A debugger interface handles the communication or interaction with between
   # the program and the outside portion which could be
   #  - a user, 
@@ -13,10 +17,6 @@ class Debugger
   class Interface
 
     attr_accessor :interactive, :input, :output
-
-    unless defined?(NotImplementedMessage)
-      NotImplementedMessage = 'This method must be overriden in a subclass'
-    end
 
     unless defined?(YES)
       YES = %w(y yes oui si yep ja)
@@ -34,13 +34,13 @@ class Debugger
 
     # Closes all input and/or output.
     def close
-      raise RuntimeError, NotImplementedMessage
+      raise RuntimeError, Debugger::NotImplementedMessage
     end
 
     # Called when a dangerous action is about to be done to make sure
     # it's okay. `prompt' is printed; user response is returned.
     def confirm(prompt, default=false)
-      raise RuntimeError, NotImplementedMessage
+      raise RuntimeError, Debugger::NotImplementedMessage
     end
 
     def eof?
@@ -49,7 +49,7 @@ class Debugger
     
     # Common routine for reporting debugger error messages.
     def errmsg(str, prefix='*** ')
-      raise RuntimeError, NotImplementedMessage
+      raise RuntimeError, Debugger::NotImplementedMessage
     end
 
     def finalize(last_wishes=nil)
@@ -70,11 +70,11 @@ class Debugger
     end
 
     def read_command( prompt)
-      raise RuntimeError, NotImplementedMessage
+      raise RuntimeError, Debugger::NotImplementedMessage
     end
 
     def readline(prompt, add_to_history=true)
-      raise RuntimeError, NotImplementedMessage
+      raise RuntimeError, Debugger::NotImplementedMessage
     end
   end
 end
