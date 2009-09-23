@@ -5,7 +5,7 @@ require_relative %w(.. base_subcmd)
 class Debugger::Subcommand::ShowEvents < Debugger::Subcommand
   unless defined?(HELP)
     HELP         = 'Show trace events we may stop on'
-    MIN_ABBREV   = 'traces'.size
+    MIN_ABBREV   = 'ev'.size
     NAME         = File.basename(__FILE__, '.rb')
   end
 
