@@ -17,7 +17,7 @@ module FnTestHelper
 
   unless defined?(RBDBGR_PROMPT)
     RBDBGR_PROMPT = /^\(rbdbgr\): /
-    RGDBGR_LOC    = /.. \(.+:\d+\):/
+    RBDBGR_LOC    = /.. \(.+:\d+\)/
   end
 
   # Return the caller's line number
@@ -46,6 +46,26 @@ module FnTestHelper
     end
     assert_equal(right, got)
   end
+
+  # Return output with source lines prompt and command removed
+  def filter_line_cmd(a)
+    # Remove line locations and extra leading spaces.
+    # For example:
+    # -- 42         y = 5
+    # becomes
+    # -- y = 5
+    ## a1 = a.map do |s|
+    ##  s.gsub(/ \d+\s+/, '') if s =~ RBDBGR_PROMPT
+    ## end
+    # Remove debugger location lines. 
+    # For example: 
+    # -- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
+    a2 = a.map do |s|
+      s =~ RBDBGR_LOC ? s.gsub(/\(.+:\d+\)/, '(file:999)') : s
+    end
+    return a2
+  end
+
 end
 
 # Demo it
@@ -53,4 +73,18 @@ if __FILE__ == $0
   include FnTestHelper
   strarray_setup(%w(eh bee see))
   puts get_lineno()
+  p '-- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)' =~ RBDBGR_LOC
+  p '(rbdbgr): exit' =~ RBDBGR_PROMPT
+  output='
+-- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
+(rbdbgr): s
+-- (/src/external-vcs/rbdbgr/tmp/gcd.rb:18)
+(rbdbgr): s
+-- (/src/external-vcs/rbdbgr/tmp/gcd.rb:19)
+(rbdbgr): s
+.. (/src/external-vcs/rbdbgr/tmp/gcd.rb:0)
+(rbdbgr): s
+-> (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
+'.split(/\n/)
+  puts filter_line_cmd(output)
 end
