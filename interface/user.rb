@@ -20,7 +20,11 @@ class Debugger::UserInterface < Debugger::Interface
   def initialize(inp=nil, out=nil, opts={})
     # atexit.register(self.finalize)
     super(inp, out, opts)
-    @input = Debugger::UserInput.open(inp)
+    @input = if inp.class.ancestors.member?(Debugger::InputBase)
+               inp
+             else
+               Debugger::UserInput.open(inp)
+             end
   end
 
   # Closes both input and output
@@ -66,7 +70,7 @@ class Debugger::UserInterface < Debugger::Interface
 
   def readline(prompt='')
     @output.flush
-    @output.print(prompt) if prompt and prompt.size > 0
+    @output.write(prompt) if prompt and prompt.size > 0
     @input.readline
   end
 end

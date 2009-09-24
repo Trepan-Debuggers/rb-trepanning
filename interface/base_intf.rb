@@ -61,7 +61,7 @@ class Debugger
     # used to write to a debugger that is connected to this
     # server; `str' written will have a newline added to it.
     def msg(msg)
-      @output.puts(msg)
+      @output.write(msg)
     end
 
     # used to write to a debugger that is connected to this
