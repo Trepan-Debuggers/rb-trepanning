@@ -1,18 +1,22 @@
 #!/usr/bin/env ruby
 require 'test/unit'
+require 'trace'
 require_relative 'fn_helper'
 
 class TestStep < Test::Unit::TestCase
 
   include FnTestHelper
+  include Trace
 
   def test_step_same_level
 
     # See that we can step with parameter which is the same as 'step 1'
     cmds = ['step', 'continue']
     d = strarray_setup(cmds)
+    d.core.step_events = TEST_STEP_EVENT_MASK
     # require_relative %w(.. .. rbdbgr)
     # dbgr = Debugger.new(); dbgr.debugger
+
     d.start()
     ##############################
     x = 5

@@ -61,14 +61,14 @@ class Debugger
     # used to write to a debugger that is connected to this
     # server; `str' written will have a newline added to it.
     def msg(msg)
-      @output.write(msg)
+      @output.write(msg +"\n")
     end
 
     # used to write to a debugger that is connected to this
     # server; `str' written will not have a newline added to it
     def msg_nocr(msg)
       # FIXME: use method from input.
-      @output.print(msg)
+      @output.write(msg)
     end
 
     def read_command( prompt)

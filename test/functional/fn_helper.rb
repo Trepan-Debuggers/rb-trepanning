@@ -1,8 +1,15 @@
 require 'thread_frame'
+require 'trace'
 require_relative %w(.. .. rbdbgr)
 require_relative %w(.. .. io string_array)
 
 module FnTestHelper
+  include Trace
+
+  # Synchronous events without C frames or instructions
+  TEST_STEP_EVENT_MASK = LINE_EVENT_MASK | CLASS_EVENT_MASK | CALL_EVENT_MASK |
+    RETURN_EVENT_MASK  
+
   # Common setup to create a debugger with stringio attached
   def strarray_setup(debugger_cmds)
     stringin               = Debugger::StringArrayInput.open(debugger_cmds)
@@ -48,15 +55,15 @@ module FnTestHelper
   end
 
   # Return output with source lines prompt and command removed
-  def filter_line_cmd(a)
+  def filter_line_cmd(a, show_prompt=false)
     # Remove line locations and extra leading spaces.
     # For example:
     # -- 42         y = 5
     # becomes
     # -- y = 5
-    ## a1 = a.map do |s|
-    ##  s.gsub(/ \d+\s+/, '') if s =~ RBDBGR_PROMPT
-    ## end
+    a = a.map do |s|
+     s =~ RBDBGR_PROMPT ? nil : s
+    end.compact unless show_prompt
     # Remove debugger location lines. 
     # For example: 
     # -- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
@@ -87,4 +94,6 @@ if __FILE__ == $0
 -> (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
 '.split(/\n/)
   puts filter_line_cmd(output)
+  puts '-' * 10
+  puts filter_line_cmd(output, true)
 end
