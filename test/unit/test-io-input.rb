@@ -10,7 +10,19 @@ class TestIOInput < Test::Unit::TestCase
     assert inp, 'Should have gotten a DebuggerInput object back'
     line = inp.readline.chomp
     assert_equal '#!/usr/bin/env ruby', line
+    assert_equal false, inp.eof?
     inp.close
-    return
+    assert_raises IOError do 
+      inp.close
+    end
+    inp = Debugger::UserInput.open(__FILE__)
+    while not inp.eof?
+      begin
+        inp.readline
+      rescue EOFError
+        assert_equal(true, inp.eof?, 
+                     'EOF should be true after EOFError')
+      end
+    end
   end
 end

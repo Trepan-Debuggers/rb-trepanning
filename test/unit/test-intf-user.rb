@@ -7,7 +7,7 @@ require_relative %w(.. .. interface user)
 # Tests Debugger::UserInterface
 class TestInterfaceUser < Test::Unit::TestCase
 
-  # Test interface.user.UserInterface.confirm()
+  # Test UserInterface.confirm()
   def test_confirm
     
     user_intf = Debugger::UserInterface.new
@@ -26,9 +26,20 @@ class TestInterfaceUser < Test::Unit::TestCase
       ans = user_intf.confirm('Testing', true)
       assert_equal(false, ans)
     end
-    # FIXME: Add checking default values. Checking looping 
-    # values
-    return
+
+    def user_intf.readline(prompt)
+      raise EOFError
+    end
+
+    [true, false].each do |tf|
+      assert_equal(tf, user_intf.confirm('default testing', tf))
+    end
+
+    # Ok, we'll throw in one test of EOFError
+    assert_raises EOFError do 
+      user_intf.readline('')
+    end
+
   end
   # FIXME: more thorough testing of other routines in user.
 end

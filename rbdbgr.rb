@@ -16,7 +16,9 @@ class Debugger
 
   def initialize(settings={})
     @settings     = DbgSettings::DEFAULT_SETTINGS.merge(settings)
-    @intf         = [Debugger::UserInterface.new]
+    input       ||= @settings[:input]
+    output      ||= @settings[:output]
+    @intf         = [Debugger::UserInterface.new(input, output)]
     @core         = Core.new(self, @settings[:core_opts])
     @restart_argv = @settings[:restart_argv]
     @trace_filter = TraceFilter.new
