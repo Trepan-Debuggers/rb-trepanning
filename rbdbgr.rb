@@ -22,9 +22,8 @@ class Debugger
     @core         = Core.new(self, @settings[:core_opts])
     @restart_argv = @settings[:restart_argv]
     @trace_filter = TraceFilter.new
-    @trace_filter << self.method(:debugger)
-    @trace_filter << @core.method(:debugger)
-    @trace_filter << @core.method(:event_processor)
+    [:debugger, :start, :stop].each {|m| @trace_filter << self.method(m)}
+    [:debugger, :event_processor].each {|m| @trace_filter << @core.method(m)}
     @trace_filter << @trace_filter.method(:set_trace_func)
     @trace_filter << Kernel.method(:set_trace_func)
   end
@@ -59,9 +58,9 @@ class Debugger
   def debugger(opts={}, &block)
     # FIXME: one option we may want to pass is the initial trace filter.
     if block
-      @trace_filter.set_trace_func(@core.event_proc)
+      start
       block.call(self)
-      @trace_filter.set_trace_func(nil)
+      stop
     elsif opts[:immediate]
       # Stop immediately, but don't show in the call stack the
       # the position of the call we make below, i.e. set the frame
@@ -75,6 +74,16 @@ class Debugger
       Trace.event_masks[0] |= @core.step_events
       @core.step_count = step_count_save
     end
+  end
+
+  # Set core's trace-event processor to run
+  def start
+    @trace_filter.set_trace_func(@core.event_proc)
+  end
+  
+  # Remove all of our trace events
+  def stop
+    @trace_filter.set_trace_func(nil)
   end
 end
 
