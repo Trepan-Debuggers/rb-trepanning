@@ -11,10 +11,12 @@ module FnTestHelper
     RETURN_EVENT_MASK  
 
   # Common setup to create a debugger with stringio attached
-  def strarray_setup(debugger_cmds)
+  def strarray_setup(debugger_cmds, insn_stepping=false)
     stringin               = Debugger::StringArrayInput.open(debugger_cmds)
     stringout              = Debugger::StringArrayOutput.open
     d_opts                 = {:input  => stringin, :output => stringout}
+    d_opts[:core_opts]     = {:step_events => TEST_STEP_EVENT_MASK}
+    d_opts[:core_opts][:step_events] ||= INSN_EVENT_MASK if insn_stepping
     d                      = Debugger.new(d_opts)
     d.settings[:basename]  = true
     d.settings[:different] = false

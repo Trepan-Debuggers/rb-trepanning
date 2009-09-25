@@ -25,54 +25,54 @@ class TestStep < Test::Unit::TestCase
            '-- y = 6']
     compare_output(out, d, cmds)
 
-#     # See that we can step with a computed count value
-#     cmds = ['step 5-3', 'continue']
-#     d = strarray_setup(cmds)
-#     d.start
-#     ##############################
-#     x = 5
-#     y = 6
-#     z = 7
-#     ##############################
-#     d.stop # (options={'remove': true})
-#     out = ['-- x = 5',
-#            '-- z = 7']
-#     compare_output(out, d, cmds)
+    # See that we can step with a computed count value
+    cmds = ['step 5-3', 'continue']
+    d = strarray_setup(cmds)
+    d.start
+    ##############################
+    x = 5
+    y = 6
+    z = 7
+    ##############################
+    d.stop # ({:remove => true})
+    out = ['-- x = 5',
+           '-- z = 7']
+    compare_output(out, d, cmds)
     
-#     # Test step>
-#     cmds = ['step>', 'continue']
-#     d = strarray_setup(cmds)
-#     d.start()
-#     ##############################
-#     x = 5
-#     def foo()
-#     end
-#     y = 6
-#     foo()
-#     ##############################
-#     d.stop(options={'remove': true})
-#     out = ['-- x = 5',
-#            '-> def foo():']
-#     compare_output(out, d, cmds)
+    # Test step>
+    cmds = ['step>', 'continue']
+    d = strarray_setup(cmds)
+    d.start
+    ##############################
+    x = 5
+    def foo()
+    end
+    y = 6
+    foo
+    ##############################
+    d.stop  # {:remove => true})
+    out = ['-- x = 5',
+           '-> def foo()']
+    compare_output(out, d, cmds)
     
-#     # Test step!
-#     cmds = ['step!', 'continue']
-#     d = strarray_setup(cmds)
-#     d.start()
-#     ##############################
-#     x = 5
-#     begin
-#       y = 2
-#       z = 1/0
-#     rescue
-#     end
-#     ##############################
-#     d.stop(options={'remove': true})
-#     out = ['-- x = 5',
-#            '!! z = 1/0']
-#     compare_output(out, d, cmds)
+    # Test step!
+    cmds = ['step!', 'continue']
+    d = strarray_setup(cmds)
+    d.start()
+    ##############################
+    x = 5
+    begin
+      y = 2
+      z = 1/0
+    rescue
+    end
+    ##############################
+    d.stop # ({:remove => true})
+    out = ['-- x = 5',
+           '!! z = 1/0']
+    compare_output(out, d, cmds)
     
-#     # Test "step" will sets of events. Part 1
+#     # Test "step" with sets of events. Part 1
 #     cmds = ['step call exception',
 #             'step call exception', 'continue']
 #     d = strarray_setup(cmds)
@@ -89,7 +89,7 @@ class TestStep < Test::Unit::TestCase
 #     end
 #     z = 1
 #     ##############################
-#     d.stop(options={'remove': true})
+#     d.stop({:remove => true})
 #     out = ['-- x = 5',
 #            '-> def foo1():',
 #            '!! raise Exception']
@@ -112,7 +112,7 @@ class TestStep < Test::Unit::TestCase
 #     end
 #     z = 1
 #     ##############################
-#     d.stop(options={'remove': true})
+#     d.stop({:remove => true})
 #     out = ['-- x = 5',
 #            '-> def foo2():',
 #            '!! raise Exception']
@@ -147,7 +147,7 @@ class TestStep < Test::Unit::TestCase
 #       x = sqr(4)
 #       y = 5
 #       ##############################
-#       d.stop(options={'remove': true})
+#       d.stop({:remove => true})
 #       compare_output(out, d, cmds)
 #       pass
 #     end
@@ -170,7 +170,7 @@ class TestStep < Test::Unit::TestCase
 #       rescue ZeroDivisionError
 #         self.assertTrue(true, 'Got the exception')
 #       ensure
-#         d.stop(options={'remove': true})
+#         d.stop({:remove => true})
 #       end
       
 #       out = ['-- x = bad(0)',  # line event

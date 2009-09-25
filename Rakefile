@@ -30,9 +30,17 @@ task :'test:unit' do |t|
   end
 end
 
+desc 'Test functional - the medium-sized tests'
+task :'test:functional' do |t|
+  Rake::TestTask.new(:'test:functional') do |t|
+    t.test_files = FileList['test/functional/**/test-*.rb']
+    t.verbose = true
+  end
+end
+
 desc 'Test everything - unit tests for now.'
 task :test do
-  exceptions = ['test:unit'].collect do |task|
+  exceptions = %w(test:unit test:functional).collect do |task|
     begin
       Rake::Task[task].invoke
       nil
