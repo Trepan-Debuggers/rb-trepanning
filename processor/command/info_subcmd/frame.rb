@@ -12,9 +12,15 @@ class Debugger::Subcommand::InfoFrame < Debugger::Subcommand
 
   def run(args)
     frame = @proc.frame
+    line_no   = if @proc.core.event == 'vm-insn'
+                  frame.iseq.offset2lines[frame.pc_offset][0]
+                else
+                  frame.source_location[0]
+                end
+
     msg("Line %s of %s at PC offset %d, type: %s" %
-        [frame.source_location[0], frame.source_container[1],
-         frame.pc_offset, frame.type])
+        [line_no, frame.source_container[1], frame.pc_offset, 
+         frame.type])
   end
 
 end

@@ -60,8 +60,13 @@ class Debugger
 
     # used to write to a debugger that is connected to this
     # server; `str' written will have a newline added to it.
-    def msg(msg)
-      @output.write(msg +"\n")
+    def msg(message)
+      if message.is_a?(Array)
+        message.each{|s| msg(s)}
+      else
+        message = message ? message.to_s + "\n" : ''
+        @output.write(message)
+      end
     end
 
     # used to write to a debugger that is connected to this

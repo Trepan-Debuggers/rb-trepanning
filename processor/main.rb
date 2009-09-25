@@ -134,7 +134,11 @@ class Debugger
                   else
                     (EVENT2ICON[@core.event] || @core.event)
                   end
-      line_no   = @frame.source_location[0]
+      line_no   = if @core.event == 'vm-insn'
+                    @frame.iseq.offset2lines[@frame.pc_offset][0]
+                  else
+                    @frame.source_location[0]
+                  end
       loc       = "#{container}:#{line_no}"
       if @frame.source_container[0] != 'file'
         frame = @frame
