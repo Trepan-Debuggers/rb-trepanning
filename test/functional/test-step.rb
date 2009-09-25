@@ -14,15 +14,13 @@ class TestStep < Test::Unit::TestCase
     cmds = ['step', 'continue']
     d = strarray_setup(cmds)
     d.core.step_events = TEST_STEP_EVENT_MASK
-    # require_relative %w(.. .. rbdbgr)
-    # dbgr = Debugger.new(); dbgr.debugger
 
-    d.start()
+    d.start
     ##############################
     x = 5
     y = 6
     ##############################
-    d.stop()
+    d.stop
     out = ['-- x = 5',
            '-- y = 6']
     compare_output(out, d, cmds)
@@ -30,13 +28,13 @@ class TestStep < Test::Unit::TestCase
 #     # See that we can step with a computed count value
 #     cmds = ['step 5-3', 'continue']
 #     d = strarray_setup(cmds)
-#     d.start()
+#     d.start
 #     ##############################
 #     x = 5
 #     y = 6
 #     z = 7
 #     ##############################
-#     d.stop(options={'remove': true})
+#     d.stop # (options={'remove': true})
 #     out = ['-- x = 5',
 #            '-- z = 7']
 #     compare_output(out, d, cmds)

@@ -68,7 +68,7 @@ module FnTestHelper
     # For example: 
     # -- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
     a2 = a.map do |s|
-      s =~ RBDBGR_LOC ? s.gsub(/\(.+:\d+\)/, '(file:999)') : s
+      s =~ RBDBGR_LOC ? s.gsub(/\(.+:\d+\)\n/, '').chomp : s.chomp
     end
     return a2
   end
