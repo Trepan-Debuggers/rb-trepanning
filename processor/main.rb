@@ -1,6 +1,7 @@
 # The main "driver" class for a command processor. Other parts of the 
 # command class and debugger command objects are pulled in from here.
 
+require 'linecache'
 require 'set'
 require_relative 'default'  # Command Processor default settings
 require_relative 'frame'
@@ -127,7 +128,17 @@ class Debugger
       return true
     end
 
+    # Get line +line_number+ from file named +filename+. Return "\n"
+    # there was a problem. Leaking blanks are stripped off.
+    def line_at(filename, line_number) # :nodoc:
+      @reload_on_change=nil unless defined?(@reload_on_change)
+      line = LineCache::getline(filename, line_number, @reload_on_change)
+      return "\n" unless line
+      return line.gsub(/^\s+/, '').chomp
+    end
+
     def print_location
+      text      = nil
       container = @frame.source_container[1]
       ev        = if @core.event.nil? || @frame_index != 0 
                     '  ' 
@@ -149,10 +160,15 @@ class Debugger
         if frame.source_container[0] == 'file'
           container = frame.source_container[1]
           line_no   = frame.source_location[0]
-          loc       += " via #{container}:#{line_no}"
+          loc      += " via #{container}:#{line_no}"
+          text      = line_at(container, line_no)
         end
+      else
+        text  = line_at(container, line_no)
       end
-      msg "#{ev} (#{loc})"
+      message = "#{ev} (#{loc})"
+      message += "\n#{text}" if text
+      msg message
     end
 
     # Run one debugger command. True is returned if we want to quit.

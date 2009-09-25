@@ -91,6 +91,7 @@ spec = Gem::Specification.new do |spec|
   spec.date = Time.now
   spec.add_dependency('rb-threadframe', '>= 0.2')
   spec.add_dependency('rb-trace', '>= 0.1')
+  spec.add_dependency('linecache')
   
   spec.has_rdoc = true
   spec.extra_rdoc_files = ['README']
