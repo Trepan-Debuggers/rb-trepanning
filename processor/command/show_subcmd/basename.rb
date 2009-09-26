@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. base_subcmd)
 
-class Debugger::Subcommand::SetAutoirb < Debugger::SetBoolSubcommand
+class Debugger::Subcommand::ShowBasename < Debugger::ShowBoolSubcommand
   unless defined?(HELP)
-    HELP = "Set to run irb entering debugger"
-    IN_LIST    = true
-    MIN_ABBREV = 'autoi'.size
+    HELP = "Show only file basename in showing file names"
+    MIN_ABBREV = 'ba'.size
     NAME       = File.basename(__FILE__, '.rb')
   end
 
@@ -19,7 +18,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::SetAutoirb.new(cmd)
+  subcommand = Debugger::Subcommand::ShowAutoirb.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)
@@ -32,5 +31,6 @@ if __FILE__ == $0
     puts message
   end
   subcommand.run_show_bool
+  name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
 end

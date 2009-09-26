@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. base_subcmd)
 
-class Debugger::Subcommand::SetAutoirb < Debugger::SetBoolSubcommand
+class Debugger::Subcommand::SetBasename < Debugger::SetBoolSubcommand
   unless defined?(HELP)
-    HELP = "Set to run irb entering debugger"
+    HELP = "Set to show only file basename in showing file names"
     IN_LIST    = true
-    MIN_ABBREV = 'autoi'.size
+    MIN_ABBREV = 'ba'.size
     NAME       = File.basename(__FILE__, '.rb')
   end
 
@@ -19,7 +19,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::SetAutoirb.new(cmd)
+  subcommand = Debugger::Subcommand::SetBasename.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)

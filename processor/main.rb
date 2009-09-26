@@ -149,14 +149,14 @@ class Debugger
 
     def print_location
       text      = nil
-      container = @frame.source_container[1]
+      container = frame_file(false)
       ev        = if @core.event.nil? || @frame_index != 0 
                     '  ' 
                   else
                     (EVENT2ICON[@core.event] || @core.event)
                   end
       @line_no  = frame_line
-      loc       = "#{container}:#{line_no}"
+      loc       = "#{canonic_file(container)}:#{line_no}"
       if @frame.source_container[0] != 'file'
         frame = @frame
         via = loc
@@ -164,9 +164,9 @@ class Debugger
           frame     = frame.prev
         end
         if frame.source_container[0] == 'file'
-          container = frame.source_container[1]
+          container = frame_file(false)
           @line_no  = frame.source_location[0]
-          loc      += " via #{container}:#{@line_no}"
+          loc      += " via #{canonic_file(container)}:#{@line_no}"
           text      = line_at(container, @line_no)
         end
       else

@@ -52,6 +52,11 @@ class Debugger
 
     end
 
+    def frame_file(canonicalize=true)
+      filename = @frame.source_container[1]
+      canonicalize ? canonic_file(filename) : filename
+    end
+
     def frame_line
       if @core.event == 'vm-insn'
         @frame.iseq.offset2lines(@frame.pc_offset)[0]
@@ -120,7 +125,7 @@ if __FILE__ == $0
       puts msg
     end
     def print_location
-      puts "#{@frame.source_container} #{@frame.source_location[0]}"
+      puts "#{@frame.source_container} #{frame.source_location[0]}"
     end
   end
 

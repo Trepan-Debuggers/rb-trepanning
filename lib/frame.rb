@@ -1,6 +1,6 @@
 class Debugger
   module Frame
-    def format_stack_entry(frame)
+    def format_stack_entry(frame, opts={})
       return 'invalid frame' if frame.invalid?
       # FIXME: prettify 
       s = "#{frame.type} "
