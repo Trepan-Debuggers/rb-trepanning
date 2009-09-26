@@ -86,9 +86,11 @@ or 'show listsize' to see or set the value.
     
     if args.size > 0
       if args[0] == '-'
-        first = [1, @proc.list_lineno - 2*listsize - 1].max
+        return no_frame_msg unless @proc.line_no
+        first = [1, @proc.line_no - 2*listsize - 1].max
       elsif args[0] == '.'
-        first = [1, inspect.getlineno(frame) - listsize/2].max
+        return no_frame_msg unless @proc.line_no
+        first = [1, @proc.frame_line - listsize/2].max
       else
         modfunc, filename, first = @proc.parse_position(args[0])
         if first == nil and modfunc == nil
@@ -130,16 +132,19 @@ or 'show listsize' to see or set the value.
           return nil, nil, nil
         end
       end
-    elsif !@proc.list_lineno and frame
-      first = [1, frame.source_location[0] - listsize/2].max
+    elsif !@proc.line_no and frame
+      first = [1, @proc.frame_line - listsize/2].max
     else
-      first = @proc.list_lineno + 1
+      first = @proc.line_no + 1
     end
-    unless last
-      last = first + listsize - 1
-    end
+    last = first + listsize - 1 unless last
   
     return filename, first, last
+  end
+
+  def no_frame_msg
+    errmsg("No Ruby program loaded.")
+    return nil, nil, nil
   end
     
   def run(args)
@@ -162,7 +167,7 @@ or 'show listsize' to see or set the value.
     end
 
     if last > max_line
-      msg('End position changed to last line %d ' % max_line)
+      # msg('End position changed to last line %d ' % max_line)
       last = max_line
     end
 
@@ -176,10 +181,10 @@ or 'show listsize' to see or set the value.
         s = '%3d' % lineno
         s = s + ' ' if s.size < 4 
         s += breaklist.member?(lineno) ? 'B' : ' '
-        s += (frame && lineno == frame.source_location[0] &&
+        s += (frame && lineno == @proc.frame_line &&
               filename == frame.source_container[1]) ? '->' : '  '
         msg(s + "\t" + line)
-        @proc.list_lineno = lineno
+        @proc.line_no = lineno
       end
     rescue
     end
@@ -190,12 +195,12 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
-  # cmd.run(['list'])
+  cmd.run(['list'])
   # cmdproc = import_relative('cmdproc', '..')
   # cmd.proc = d.core.processor = cmdproc.CommandProcessor(d.core)
   # cmd = ListCommand(d.core.processor)
   # puts '--' * 10
-  # cmd.run(['list', __file__ + ':10'])
+  # cmd.run(['list', __FILE__ + ':10'])
   # puts '--' * 10
   # cmd.run(['list', 'os', '10'])
   # cmd.proc.frame = sys._getframe()

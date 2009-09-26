@@ -1,10 +1,13 @@
 class Debugger
   class CmdProcessor
     DEFAULT_SETTINGS = {
-      :autoeval      => true,
-      :autoirb       => false,
+      :autoeval      => true,  # Ruby eval non-debugger commands
+      :autoirb       => false, # Go into IRB in debugger command loop
+      :autolist      => false, # Run 'list' 
+      :basename      => false, # Show basename of filenames only
       :different     => true,  # stop *only* when  different position? 
-      :'debug-skip'  => false,  
+      :'debug-skip'  => false, # Internal debugging 
+      :listsize      => 10,    # Number of lines in list 
       :prompt        => '(rbdbgr): ',
       :stack_trace_on_error => false,
       :width         => (ENV['COLUMNS'] || '80').to_i,

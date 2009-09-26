@@ -3,6 +3,8 @@
 
 require 'linecache'
 require 'set'
+require 'pathname'  # For cleanpath
+
 require_relative 'default'  # Command Processor default settings
 require_relative 'frame'
 require_relative 'msg'
@@ -24,6 +26,7 @@ class Debugger
     attr_accessor :leave_cmd_loop # Commands set this to signal to leave
                                   # the command loop (which often continues to 
                                   # run the debugged program). 
+    attr_accessor :line_no        # Last line shown in "list" command
     attr_accessor :next_level     # Fixnum. frame.stack_size has to be <= than this.
                                   # If next'ing, this will be > 0.
     attr_accessor :next_thread    # If non-nil then in stepping the thread has to be 
@@ -87,6 +90,13 @@ class Debugger
       load_debugger_commands(cmd_dir)
     end
 
+    def canonic_file(filename)
+      # For now we want resolved filenames 
+      @settings[:basename] ? File.basename(filename) : 
+        # Cache this?
+        Pathname.new(filename).cleanpath.to_s
+    end
+
     def debug_eval(str)
       begin
         b = @frame.binding if @frame 
@@ -145,11 +155,7 @@ class Debugger
                   else
                     (EVENT2ICON[@core.event] || @core.event)
                   end
-      line_no   = if @core.event == 'vm-insn'
-                    @frame.iseq.offset2lines[@frame.pc_offset][0]
-                  else
-                    @frame.source_location[0]
-                  end
+      @line_no  = frame_line
       loc       = "#{container}:#{line_no}"
       if @frame.source_container[0] != 'file'
         frame = @frame
@@ -159,15 +165,18 @@ class Debugger
         end
         if frame.source_container[0] == 'file'
           container = frame.source_container[1]
-          line_no   = frame.source_location[0]
-          loc      += " via #{container}:#{line_no}"
-          text      = line_at(container, line_no)
+          @line_no  = frame.source_location[0]
+          loc      += " via #{container}:#{@line_no}"
+          text      = line_at(container, @line_no)
         end
       else
-        text  = line_at(container, line_no)
+        text  = line_at(container, @line_no)
       end
       message = "#{ev} (#{loc})"
-      message += "\n#{text}" if text
+      if text
+        message += "\n#{text}" 
+        @line_no -= 1
+      end
       msg message
     end
 

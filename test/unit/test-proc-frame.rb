@@ -1,14 +1,13 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'thread_frame'
-require_relative %w(.. .. processor frame)
+require_relative %w(.. .. processor main) # Have to include before frame!
+                                          # FIXME
+require_relative %w(.. .. processor frame) 
+require_relative %w(.. .. lib mock)
 
 $errors = []
 $msgs   = []
-
-class MockDebugger
-  attr_accessor :dbgr
-end unless defined?(MockDebugger)
 
 # Test Debugger:CmdProcessor Frame portion
 class TestCmdProcessorFrame < Test::Unit::TestCase
@@ -16,14 +15,7 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
   def setup
     $errors = []
     $msgs   = []
-
-    if Debugger::CmdProcessor.instance_methods.member?(:load_debugger_commands)
-      # Rake test does this
-      @proc = Debugger::CmdProcessor.new(MockDebugger.new())
-    else
-      # Ruby run on this file only does this
-      @proc = Debugger::CmdProcessor.new
-    end
+    @proc    = Debugger::CmdProcessor.new(Debugger::MockCore.new())
     @proc.frame_index = 0
     class << @proc
       def errmsg(msg)
@@ -39,7 +31,7 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
 
   # See that we have can load up commands
   def test_basic
-    @proc.top_frame = @proc.frame = RubyVM::ThreadFrame.current
+    @proc.frame_setup(RubyVM::ThreadFrame.current)
     @proc.hidelevels = {}
 
     # Test absolute positioning. Should all be okay

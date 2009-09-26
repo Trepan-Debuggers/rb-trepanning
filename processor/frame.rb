@@ -45,11 +45,19 @@ class Debugger
         @frame = frame
         @frame_index = frame_num
         print_location
-        @list_lineno = nil
+        @line_no = frame_line() - 1
       else
         errmsg("Something went wrong getting frame #{frame_num}.")
       end
 
+    end
+
+    def frame_line
+      if @core.event == 'vm-insn'
+        @frame.iseq.offset2lines[@frame.pc_offset][0]
+      else
+        @frame.source_location[0]
+      end
     end
 
     # Initializes the thread and frame variables: @frame, @top_frame, 

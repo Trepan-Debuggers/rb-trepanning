@@ -3,29 +3,8 @@
 class Debugger
   class CmdProcessor
 
-    # FIXME: move to interface.
-    unless defined?(YES)
-      YES = %w(y yes oui si yep ja)
-      NO  = %w(n no non nope nein)
-      YES_OR_NO = YES + NO
-    end
-
-    # FIXME: move to interface.
     def confirm(msg, default)
-      default_str = default ? 'Y/n' : 'N/y'
-      while true do
-        response = Readline.readline("%s (%s) " % 
-                                     [msg, default_str]).strip.downcase
-        if response.empty?
-          response = default
-          break
-        end
-        # We don't catch "Yes, I'm sure" or "NO!", but I leave that 
-        # as an excercise for the reader.
-        break if YES_OR_NO.member?(response)
-        puts "Please answer 'yes' or 'no'. Try again."
-      end
-      return YES.member?(response)
+      @dbgr.intf[-1].confirm(msg, default)
     end
 
     # Like cmdfns.get_an_int(), but if there's a stack frame use that
@@ -133,6 +112,78 @@ class Debugger
       errmsg("Expecting 'on', 1, 'off', or 0. Got: %s." % arg.to_s) if
         print_error
       raise TypeError
+    end
+
+    # parse_position(self, arg)->(fn, name, lineno)
+    # 
+    # Parse arg as [filename:]lineno | function | module
+    # Make sure it works for C:\foo\bar.py:12
+    def parse_position(arg, old_mod=nil)
+        colon = arg.rindex(':') 
+        if colon
+          # First handle part before the colon
+          arg1 = arg[:colon..-1].rstrip
+          lineno_str = arg[colon+1..-1].lstrip
+          (mf, filename, lineno) = parse_position_one_arg(arg1, old_mod,
+                                                          false)
+          filename = canonic_file(arg1) unless filename
+          # Next handle part after the colon
+          val = get_an_int(lineno_str, "Bad line number: %s" % 
+                           lineno_str)
+          lineno = val if val
+        else
+          (mf, filename, lineno) = parse_position_one_arg(arg, old_mod,
+                                                          true)
+        end
+
+        return mf, filename, lineno
+    end
+
+    # parse_position_one_arg(self,arg)->(module/function, file, lineno)
+    #
+    # See if arg is a line number, function name, or module name.
+    # Return what we've found. nil can be returned as a value in
+    # the triple.
+    def parse_position_one_arg(arg, old_mod=nil, show_errmsg)
+      modfunc, filename = nil, nil, nil
+      begin
+        # First see if argument is an integer
+        lineno   = Integer(arg)
+        filename = @frame.source_container[1] unless old_mod
+      rescue
+        msg "Sorry, parse_position_one_arg not complete yet"
+        return nil, nil, nil
+        begin
+          modfunc = debug_eval(arg)
+        rescue
+          modfunc = arg
+        end
+        msg = ('Object %s is not known yet as a function, module, or is not found'
+               + ' along sys.path, and not a line number.') % arg.to_s
+        begin
+          # See if argument is a module or function
+          if inspect.isfunction(modfunc)
+            pass
+          elsif inspect.ismodule(modfunc)
+            filename = modfunc.__file__
+            filename = canonic_file(filename)
+            return modfunc, filename, nil
+          elsif hasattr(modfunc, 'im_func')
+            modfunc = modfunc.im_func
+          else
+            errmsg(msg) if show_errmsg
+            return nil, nil, nil
+          end
+          code     = modfunc.func_code
+          # FIXME:  Can get from iseq. 
+          lineno   = 1 # code.co_firstlineno
+          filename = @frame_source_container[1]
+        rescue
+          errmsg(msg) if show_errmsg
+          return nil, nil, nil
+        end
+      end
+      return modfunc, canonic_file(filename), lineno
     end
   end
 end

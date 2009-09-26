@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 require 'test/unit'
+require_relative %w(.. .. processor main) # Have to include before validate!
+                                          # FIXME
 require_relative %w(.. .. processor validate)
+require_relative %w(.. .. lib mock)
 
 $errors = []
 $msgs   = []
@@ -11,14 +14,8 @@ class TestValidate < Test::Unit::TestCase
   def setup
     $errors = []
     $msgs   = []
+    @proc    = Debugger::CmdProcessor.new(Debugger::MockCore.new())
 
-    if Debugger::CmdProcessor.instance_methods.member?(:load_debugger_commands)
-      # Rake test does this
-      @proc = Debugger::CmdProcessor.new(MockDebugger.new())
-    else
-      # Ruby run on this file only does this
-      @proc = Debugger::CmdProcessor.new
-    end
     class << @proc
       def errmsg(msg)
         $errors << msg
