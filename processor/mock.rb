@@ -16,8 +16,6 @@ module MockDebugger
       @settings = DbgSettings::DEFAULT_SETTINGS.merge(settings)
       @intf     = [Debugger::UserInterface.new]
       @core     = Debugger::Core.new(self)
-      puts "Setting @event"
-      @core.instance_variable_set('@event', 'line')
     end
 
   end

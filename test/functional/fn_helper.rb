@@ -10,7 +10,7 @@ module FnTestHelper
   TEST_STEP_EVENT_MASK = LINE_EVENT_MASK | CLASS_EVENT_MASK | CALL_EVENT_MASK |
     RETURN_EVENT_MASK  
 
-  # Common setup to create a debugger with stringio attached
+  # Common setup to create a debugger with String Array I/O attached
   def strarray_setup(debugger_cmds, insn_stepping=false)
     stringin               = Debugger::StringArrayInput.open(debugger_cmds)
     stringout              = Debugger::StringArrayOutput.open

@@ -28,7 +28,7 @@ A LOCATION is a either
   - a filename, colon, and a number, e.g. foo.rb:5,  
   - or a module name and a number, e.g,. os.path:5.  
   - a '.' for the current line number
-  - a '-' for the lines before the current linenumber
+  - a '-' for the lines before the current line number
 
 If the location form is used with a subsequent parameter, the
 parameter is the starting line number and LISTSIZE lines are
@@ -161,8 +161,8 @@ or 'show listsize' to see or set the value.
     end
 
     if first > max_line
-      errmsg('Bad start line %d - file "%s" has only %d lines' %
-             [first, filename, max_line])
+      errmsg('Bad line range [%d...%d]; file "%s" has only %d lines' %
+             [first, last, filename, max_line])
       return
     end
 
@@ -195,13 +195,11 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  LineCache::cache(__FILE__)
   cmd.run(['list'])
-  # cmdproc = import_relative('cmdproc', '..')
-  # cmd.proc = d.core.processor = cmdproc.CommandProcessor(d.core)
-  # cmd = ListCommand(d.core.processor)
-  # puts '--' * 10
-  # cmd.run(['list', __FILE__ + ':10'])
-  # puts '--' * 10
+  puts '--' * 10
+  cmd.run(['list', __FILE__ + ':10'])
+  puts '--' * 10
   # cmd.run(['list', 'os', '10'])
   # cmd.proc.frame = sys._getframe()
   # cmd.proc.setup()
@@ -212,11 +210,14 @@ if __FILE__ == $0
   # puts '--' * 10
   # cmd.run(['list', '10'])
   # puts '--' * 10
-  # cmd.run(['list', '1000'])
-  # def foo()
-  #   return 'bar'
-  # end
-  # cmd.run(['list', 'foo'])
+  cmd.run(['list', '1000'])
+  def foo()
+     return 'bar'
+  end
+  puts '--' * 10
+  # require_relative %w(.. .. rbdbgr);
+  # dbg = Debugger.new(:set_restart => true); dbg.debugger
+  cmd.run(['list', 'foo'])
   # puts '--' * 10
   # cmd.run(['list', 'os.path'])
   # puts '--' * 10

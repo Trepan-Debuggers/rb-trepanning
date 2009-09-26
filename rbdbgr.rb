@@ -20,7 +20,13 @@ class Debugger
     output      ||= @settings[:output]
     @intf         = [Debugger::UserInterface.new(input, output)]
     @core         = Core.new(self, @settings[:core_opts])
-    @restart_argv = @settings[:restart_argv]
+    @restart_argv = if @settings[:set_restart]
+                      [File.expand_path($0)] + ARGV
+                    elsif @settings[:restart_argv]
+                      @settings[:restart_argv]
+                    else 
+                      nil
+                    end
     @trace_filter = TraceFilter.new
     [:debugger, :start, :stop].each {|m| @trace_filter << self.method(m)}
     [:debugger, :event_processor].each {|m| @trace_filter << @core.method(m)}
@@ -32,7 +38,7 @@ class Debugger
   #    require 'rbdbgr'
   #    mydbg = Debugger.new()
   # or if you haven't mucked around with $0 and ARGV, you might try:
-  #    mydbg = Debugger.new(:restart_argv => [File.expand_path($0)] + ARGV))
+  #    mydbg = Debugger.new(:set_restart=>true))
   # which will tell the debugger how to "restart" the program.
   #
   # If you want a synchronous stop in your program call to the
