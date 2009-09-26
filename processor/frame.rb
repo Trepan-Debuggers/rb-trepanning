@@ -54,7 +54,7 @@ class Debugger
 
     def frame_line
       if @core.event == 'vm-insn'
-        @frame.iseq.offset2lines[@frame.pc_offset][0]
+        @frame.iseq.offset2lines(@frame.pc_offset)[0]
       else
         @frame.source_location[0]
       end
@@ -112,10 +112,10 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
+  require_relative %w(.. lib mock)
+  require_relative %w(main) # Have to include before defining CmdProcessor!
+                            # FIXME
   class Debugger::CmdProcessor
-    def initialize(frame)
-      frame_setup(frame)
-    end
     def errmsg(msg)
       puts msg
     end
@@ -124,7 +124,8 @@ if __FILE__ == $0
     end
   end
 
-  proc = Debugger::CmdProcessor.new(RubyVM::ThreadFrame.current)
+  proc = Debugger::CmdProcessor.new(Debugger::MockCore.new())
+  proc.frame_setup(RubyVM::ThreadFrame.current)
   proc.hidelevels = {}
   puts "stack size: #{proc.top_frame.stack_size}"
   0.upto(proc.top_frame.stack_size) { |i| proc.adjust_frame(i, true) }
