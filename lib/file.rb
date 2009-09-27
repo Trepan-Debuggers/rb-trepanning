@@ -35,7 +35,7 @@ def parse_position(errmsg, arg)
   colon = arg.rindex(':') 
   if colon
     # FIXME: Handle double colons, e.g. File::open
-    filename = arg[colon..-1].rstrip
+    filename = arg[0..colon-1].rstrip
     m, f = lookupmodule(filename)
     if not f
       errmsg.call("'%s' not found using sys.path" % filename)

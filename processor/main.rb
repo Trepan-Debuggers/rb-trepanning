@@ -173,7 +173,7 @@ class Debugger
         text  = line_at(container, @line_no)
       end
       message = "#{ev} (#{loc})"
-      if text
+      if text && !text.strip.empty?
         message += "\n#{text}" 
         @line_no -= 1
       end

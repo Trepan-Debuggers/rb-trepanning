@@ -215,8 +215,6 @@ if __FILE__ == $0
      return 'bar'
   end
   puts '--' * 10
-  # require_relative %w(.. .. rbdbgr);
-  # dbg = Debugger.new(:set_restart => true); dbg.debugger
   cmd.run(['list', 'foo'])
   # puts '--' * 10
   # cmd.run(['list', 'os.path'])

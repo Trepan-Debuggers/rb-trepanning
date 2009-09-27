@@ -122,7 +122,7 @@ class Debugger
         colon = arg.rindex(':') 
         if colon
           # First handle part before the colon
-          arg1 = arg[colon..-1].rstrip
+          arg1 = arg[0..colon-1].rstrip
           lineno_str = arg[colon+1..-1].lstrip
           mf, filename, lineno = parse_position_one_arg(arg1, old_mod, false)
           return nil, nil, nil unless filename
@@ -148,41 +148,28 @@ class Debugger
       begin
         # First see if argument is an integer
         lineno   = Integer(arg)
-        filename = @frame.source_container[1] unless old_mod
       rescue
-        msg "Sorry, parse_position_one_arg not complete yet"
-        return nil, nil, nil
-        begin
-          modfunc = debug_eval(arg)
-        rescue
-          modfunc = arg
-        end
-        msg = ('Object %s is not known yet as a function, module, or is not found'
-               + ' along sys.path, and not a line number.') % arg.to_s
-        begin
-          # See if argument is a module or function
-          if inspect.isfunction(modfunc)
-            pass
-          elsif inspect.ismodule(modfunc)
-            filename = modfunc.__file__
-            filename = canonic_file(filename)
-            return modfunc, filename, nil
-          elsif hasattr(modfunc, 'im_func')
-            modfunc = modfunc.im_func
-          else
-            errmsg(msg) if show_errmsg
-            return nil, nil, nil
-          end
-          code     = modfunc.func_code
-          # FIXME:  Can get from iseq. 
-          lineno   = 1 # code.co_firstlineno
-          filename = @frame_source_container[1]
-        rescue
-          errmsg(msg) if show_errmsg
-          return nil, nil, nil
-        end
+      else
+        filename = @frame.source_container[1] unless old_mod
+        return nil, canonic_file(filename), lineno
       end
-      return modfunc, canonic_file(filename), lineno
+
+      # Next see if argument is a file name 
+      return nil, canonic_file(arg), 1 if LineCache::cached?(arg)
+
+      # How about a method name with an instruction sequence?
+      begin
+        iseq = debug_eval("method(\"#{arg}\").iseq")
+        if iseq.source_container[0] == 'file'
+          filename = iseq.source_container[1]
+          line_no = iseq.offsetlines.values.flatten.uniq.min
+          return arg, canonic_file(filename), line_no
+        end
+      rescue
+      end
+
+      errmsg("#{arg} is not a line number, read-in filename or method that we can get location information about")
+      return nil, nil, nil
     end
   end
 end
