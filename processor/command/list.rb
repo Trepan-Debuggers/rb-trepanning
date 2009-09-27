@@ -206,10 +206,10 @@ if __FILE__ == $0
   # puts '--' * 10
   # cmd.run(['list'])
   # puts '--' * 10
-  # cmd.run(['list', '.'])
-  # puts '--' * 10
-  # cmd.run(['list', '10'])
-  # puts '--' * 10
+  cmd.run(['list', '.'])
+  puts '--' * 10
+  cmd.run(['list', '10'])
+  puts '--' * 10
   cmd.run(['list', '1000'])
   def foo()
      return 'bar'

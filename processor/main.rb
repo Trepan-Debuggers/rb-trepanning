@@ -187,8 +187,9 @@ class Debugger
       while !intf[-1].input.eof? || intf.size > 1
         begin
           last_command = read_command().strip
-          last_command = @last_command if 
-            last_command.empty? && @last_command && intf[-1].interactive
+          if last_command.empty? && @last_command && intf[-1].interactive?
+            last_command = @last_command 
+          end
           next if last_command[0..0] == '#' # Skip comment lines
           break
         rescue IOError, Errno::EPIPE

@@ -17,8 +17,10 @@ class Debugger
       @eof       = false
     end
 
-    def eof?
-      @eof
+    def eof?; @eof end
+
+    def interactive? 
+      @input.respond_to?(:isatty) && @input.isatty
     end
 
     # Read a line of input. EOFError will be raised on EOF.  
@@ -47,8 +49,8 @@ class Debugger
       def open(inp=nil, opts={})
         inp ||= STDIN
         inp = File.new(inp, 'r') if inp.is_a?(String)
-        tty = inp.respond_to?(:isatty) && inp.isatty
-        opts[:line_edit] = false unless tty && Debugger::GNU_readline?
+        opts[:line_edit] = false unless
+          inp.respond_to?(:isatty) && inp.isatty && Debugger::GNU_readline?
         self.new(inp, opts)
       end
     end

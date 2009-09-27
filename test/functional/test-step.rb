@@ -72,28 +72,29 @@ class TestStep < Test::Unit::TestCase
            '!! z = 1/0']
     compare_output(out, d, cmds)
     
-#     # Test "step" with sets of events. Part 1
-#     cmds = ['step call exception',
-#             'step call exception', 'continue']
-#     d = strarray_setup(cmds)
-#     d.start()
-#     ##############################
-#     x = 5
-#     begin
-#       def foo1()
-#         y = 2
-#         raise Exception
-#       end
-#       foo1()
-#     rescue
-#     end
-#     z = 1
-#     ##############################
-#     d.stop({:remove => true})
-#     out = ['-- x = 5',
-#            '-> def foo1():',
-#            '!! raise Exception']
-#     compare_output(out, d, cmds)
+    # # Test "step" with sets of events. Part 1
+    # cmds = ['set events call raise',
+    #         'step', 's!']
+    # # d = strarray_setup(cmds)
+    # d.start()
+    # ##############################
+    # x = 5
+    # begin
+    #   def foo1
+    #     y = 2
+    #     raise Exception
+    #   end
+    #   foo1()
+    # rescue
+    #   puts 'hi'
+    # end
+    # z = 1
+    # ##############################
+    # d.stop # ({:remove => true})
+    # out = ['-- x = 5',
+    #        '-> def foo1',
+    #        '!! raise Exception']
+    # compare_output(out, d, cmds)
     
 #     # Test "step" will sets of events. Part 2
 #     cmds = ['step call exception 1+0',
@@ -122,70 +123,68 @@ class TestStep < Test::Unit::TestCase
 
 #   def test_step_between_fn
 
-#     # Step into and out of a function
-#     def sqr(x)
-#       return x * x
-#     end
-#     [
-#      [['step', 'step', 'continue'],
-#       ['-- x = sqr(4)',
-#        '-- return x * x',
-#        '-- y = 5'],
-#       frozenset(['line'])],
-#      [['step', 'step', 'step', 'step', 'continue'],
-#       ['-- x = sqr(4)',
-#        '-> def sqr(x):',
-#        '-- return x * x',
-#        '<- return x * x',
-#        '-- y = 5'],
-#       tracer.ALL_EVENTS]
-#     ].each do |cmds, out, eventset|
-#       d = strarray_setup(cmds)
-#       d.settings['traceset'] = eventset
-#       d.start()
-#       ##############################
-#       x = sqr(4)
-#       y = 5
-#       ##############################
-#       d.stop({:remove => true})
-#       compare_output(out, d, cmds)
-#       pass
-#     end
+    # Step into and out of a function
+    def sqr(x)
+      y = x * x
+    end
+    cmds = ['set events line call return'] + %w(step) * 4 + %w(continue)
+    out =  ['-- x = sqr(4)',
+            '-> def sqr(x)',
+            '-- y = x * x',
+            '<- end',
+            '-- y = 5']
+    d = strarray_setup(cmds)
+    d.start
+    ##############################
+    x = sqr(4)
+    y = 5
+    ##############################
+    d.stop # ({:remove => true})
+    compare_output(out, d, cmds)
 
-#     def test_step_in_exception
-#       def boom(x)
-#         y = 0/x
-#       end
-#       def bad(x)
-#         boom(x)
-#         return x * x
-#       end
-#       cmds = ['step', 'step', 'step', 'step', 'step', 'step',
-#               'step', 'step', 'step', 'step', 'continue']
-#       d = strarray_setup(cmds)
-#       begin 
-#         d.start()
-#         x = bad(0)
-#         assert_equal(false, true, 'should have raised an exception')
-#       rescue ZeroDivisionError
-#         self.assertTrue(true, 'Got the exception')
-#       ensure
-#         d.stop({:remove => true})
-#       end
-      
-#       out = ['-- x = bad(0)',  # line event
-#              '-> def bad(x):', # call event
-#              '-- boom(x)',     # line event
-#              '-> def boom(x):',# call event
-#              '-- y = 0/x',     # line event
-#              '!! y = 0/x',     # exception event
-#              '<- y = 0/x',     # return event
-#              '!! boom(x)',     # exception event
-#              '<- boom(x)',     # return event
-#              '!! x = bad(0)',  # return event
-#              '-- except ZeroDivisionError:']
-#       compare_output(out, d, cmds)
-#       return
-#     end
+    cmds = ['set events call return',
+            'step', 'step', 'continue']
+    out =  ['-- x = sqr(4)',
+            '-> def sqr(x)',
+            '<- end']
+    d = strarray_setup(cmds)
+    d.start
+    ##############################
+    x = sqr(4)
+    y = 5
+    ##############################
+    d.stop # ({:remove => true})
+    compare_output(out, d, cmds)
+  end
+
+  def test_step_in_exception
+    def boom(x)
+      y = 0/x
+    end
+    def bad(x)
+      boom(x)
+      y = x * x
+    end
+    cmds = %w(step) * 6 + %w(continue)
+    d = strarray_setup(cmds)
+    begin 
+      d.start()
+      x = bad(0)
+      assert_equal(false, true, 'should have raised an exception')
+    rescue ZeroDivisionError
+      assert true, 'Got the exception'
+    ensure
+      d.stop({:remove => true})
+    end
+    
+    out = ['-- x = bad(0)',  # line event
+           '-> def bad(x)',  # call event
+           '-- boom(x)',     # line event
+           '-> def boom(x)', # call event
+           '-- y = 0/x',     # line event
+           '!! y = 0/x',     # exception event
+           '-- end'          # return event
+           ]
+    compare_output(out, d, cmds)
   end
 end

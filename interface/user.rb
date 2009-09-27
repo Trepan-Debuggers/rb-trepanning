@@ -51,27 +51,18 @@ class Debugger::UserInterface < Debugger::Interface
     return YES.member?(response)
   end
 
-  # Common routine for reporting debugger error messages.
-  def errmsg(msg, prefix='*** ')
-    return msg("%s%s" % [prefix, msg])
-  end
-
   def finalize(last_wishes=none)
     # print exit annotation
     # save history
     super
   end
 
+  def interactive? ; @input.interactive? end
+
   def read_command(prompt='')
     line = readline(prompt)
     # FIXME: Do something with history?
     return line
-  end
-
-  def readline(prompt='')
-    @output.flush
-    @output.write(prompt) if prompt and prompt.size > 0
-    @input.readline
   end
 end
 

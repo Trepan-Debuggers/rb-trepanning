@@ -162,7 +162,7 @@ class Debugger
         iseq = debug_eval("method(\"#{arg}\").iseq")
         if iseq.source_container[0] == 'file'
           filename = iseq.source_container[1]
-          line_no = iseq.offsetlines.values.flatten.uniq.min
+          line_no = iseq.offsetlines.values.flatten.min
           return arg, canonic_file(filename), line_no
         end
       rescue

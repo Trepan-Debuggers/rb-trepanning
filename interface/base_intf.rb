@@ -29,7 +29,6 @@ class Debugger
       @interactive = false 
       @opts        = opts
       @output      = out || STDOUT
-      @eof         = false # FIXME remove me
     end
 
     # Closes all input and/or output.
@@ -44,18 +43,20 @@ class Debugger
       raise RuntimeError, Debugger::NotImplementedMessage
     end
 
-    # FIXME remove me
-    def eof?
-      @eof
-    end
-
     # Common routine for reporting debugger error messages.
     def errmsg(str, prefix='*** ')
-      raise RuntimeError, Debugger::NotImplementedMessage
+      return msg("%s%s" % [prefix, str])
     end
 
     def finalize(last_wishes=nil)
       close
+    end
+
+    # Return true if interface is interactive.
+    def interactive?
+      # Default false and making subclasses figure out how to determine
+      # interactiveness.
+      false 
     end
 
     # used to write to a debugger that is connected to this
@@ -72,7 +73,6 @@ class Debugger
     # used to write to a debugger that is connected to this
     # server; `str' written will not have a newline added to it
     def msg_nocr(msg)
-      # FIXME: use method from input.
       @output.write(msg)
     end
 
@@ -80,8 +80,10 @@ class Debugger
       raise RuntimeError, Debugger::NotImplementedMessage
     end
 
-    def readline(prompt, add_to_history=true)
-      raise RuntimeError, Debugger::NotImplementedMessage
+    def readline(prompt='')
+      @output.flush
+      @output.write(prompt) if prompt and prompt.size > 0
+      @input.readline
     end
   end
 end

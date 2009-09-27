@@ -27,7 +27,6 @@ class Debugger::ScriptInterface < Debugger::Interface
     @input           = Debugger::UserInput.open(script_name,
                                                 :line_edit => false)
     super(@input, out, @opts)
-    @interactive     = false
   end
 
   # Closes input only.
@@ -63,6 +62,8 @@ class Debugger::ScriptInterface < Debugger::Interface
     raise IOError if @opts[:abort_on_error]
   end
 
+  def interactive? ; false end
+    
   # Script interface to read a command. `prompt' is a parameter for 
   # compatibilty and is ignored.
   def read_command(prompt='')

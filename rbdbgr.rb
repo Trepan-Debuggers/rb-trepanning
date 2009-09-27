@@ -88,7 +88,7 @@ class Debugger
   end
   
   # Remove all of our trace events
-  def stop
+  def stop(opts={})
     @trace_filter.set_trace_func(nil)
   end
 end
