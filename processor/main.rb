@@ -238,7 +238,7 @@ class Debugger
       return false if UNMASKABLE_EVENTS.member?(@core.event)
 
       return true if 
-        @next_level < @stack_size && @current_current == @next_thread
+        @next_level < @stack_size && Thread.current == @next_thread
 
       new_pos = [@frame.source_container, @frame.source_location, 
                  @stack_size, @current_thread]
