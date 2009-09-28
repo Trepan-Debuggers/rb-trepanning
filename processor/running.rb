@@ -1,3 +1,4 @@
+require_relative %w(.. lib core)
 class Debugger
   class CmdProcessor
 
@@ -13,6 +14,14 @@ class Debugger
 
     # Does whatever needs to be done to set to "next" program
     # execution.
+    def finish(level_count=0, opts={})
+      step(0, opts)
+      @next_level      = @top_frame.stack_size - level_count
+      @next_thread     = Thread.current
+      @stop_events     = Set.new(%w(return))
+    end
+    # Does whatever needs to be done to set to "next" program
+    # execution.
     def next(step_count=1, opts={})
       step(step_count, opts)
       @next_level      = @top_frame.stack_size
@@ -25,9 +34,9 @@ class Debugger
       continue
       @core.step_count = step_count
       @different_pos   = opts[:different_pos] if 
-        opts.member?(:different_pos)
+        opts.keys.member?(:different_pos)
       @stop_events     = opts[:stop_events]   if 
-        opts.member?(:stop_events)
+        opts.keys.member?(:stop_events)
     end
 
     def parse_next_step_suffix(step_cmd)

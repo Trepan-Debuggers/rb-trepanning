@@ -56,13 +56,16 @@ class Debugger
         'c-return'       => '<C',
         'call'           => '->',
         'class'          => '::',
+        'coverage'       => 'co',
         'debugger-call'  => ':o',
         'end'            => '-|',
-        'raise'          => '!!',
         'line'           => '--',
+        'raise'          => '!!',
         'return'         => '<-',
-        'vm-insn'        => '..',
+        'switch'         => 'sw',
         'unknown'        => '?!',
+        'vm'             => 'vm',
+        'vm-insn'        => '..',
       } 
       # These events are important enough event that we always want to
       # stop on them.
@@ -228,14 +231,14 @@ class Debugger
     def skip?
 
       if @settings[:'debug-skip']
-        puts "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.map if @stop_events}" 
+        puts "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.inspect}" 
         puts "nl  : #{@next_level},    ssize : #{@stack_size}" 
         puts "nt  : #{@next_thread},   thread: #{Thread.current}" 
       end
 
       # I think these events are important enough event that we always want
       # to stop on them.
-      return false if UNMASKABLE_EVENTS.member?(@core.event)
+      # return false if UNMASKABLE_EVENTS.member?(@core.event)
 
       return true if 
         @next_level < @stack_size && Thread.current == @next_thread
@@ -250,7 +253,7 @@ class Debugger
       end
 
       skip_val = (@last_pos == new_pos) && @different_pos unless skip_val
-      @last_pos = new_pos
+      @last_pos = new_pos if !@stop_events || @stop_events.member?(@core.event)
 
       unless skip_val
         # Set up the default values for the

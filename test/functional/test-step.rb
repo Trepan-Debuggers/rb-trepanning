@@ -165,7 +165,7 @@ class TestStep < Test::Unit::TestCase
       boom(x)
       y = x * x
     end
-    cmds = %w(step) * 6 + %w(continue)
+    cmds = %w(step! continue)
     d = strarray_setup(cmds)
     begin 
       d.start()
@@ -178,12 +178,7 @@ class TestStep < Test::Unit::TestCase
     end
     
     out = ['-- x = bad(0)',  # line event
-           '-> def bad(x)',  # call event
-           '-- boom(x)',     # line event
-           '-> def boom(x)', # call event
-           '-- y = 0/x',     # line event
            '!! y = 0/x',     # exception event
-           '-- end'          # return event
            ]
     compare_output(out, d, cmds)
   end

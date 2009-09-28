@@ -11,8 +11,12 @@ class Debugger
           args = "(#{frame.arity} args)"
         else
           args = 0.upto(iseq.arity-1).map do |i| 
-            iseq.local_name(i)
-          end.join(', ')
+            begin
+              iseq.local_name(i)
+            rescue
+              nil
+            end
+          end.compact.join(', ')
         end
         s += frame.method
         if frame.type == 'METHOD'

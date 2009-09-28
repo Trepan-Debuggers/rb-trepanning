@@ -62,7 +62,7 @@ Related and similar is the 'next' command.  See also the commands:
         "The 'step' command argument must eval to an integer. Got: %s" % 
         count_str,
         :min_value => 1
-      }
+      }.merge(opts)
       count = @proc.get_an_int(count_str, opts)
       return unless count
       # step 1 is core.step_count = 0 or "stop next event"
