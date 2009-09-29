@@ -16,7 +16,7 @@ class Debugger::Subcommand::InfoFrame < Debugger::Subcommand
         [@proc.frame_line, frame.source_container[1], frame.pc_offset, 
          frame.type])
     if @proc.core.event == 'return'
-      msg("Return value class: #{@proc.frame.sp(-1).class}")
+      msg("Return value class: #{@proc.frame.sp(1).class}")
     end
   end
 
