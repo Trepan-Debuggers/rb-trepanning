@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. base_subcmd)
 
-class Debugger::Subcommand::InfoFrame < Debugger::Subcommand
+class Debugger::Subcommand::InfoReturn < Debugger::Subcommand
   unless defined?(HELP)
-    HELP         = 'Show information about the selected frame'
+    HELP         = 'Show the value about to be returned'
     MIN_ABBREV   = 'fr'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
@@ -11,12 +11,11 @@ class Debugger::Subcommand::InfoFrame < Debugger::Subcommand
   end
 
   def run(args)
-    frame = @proc.frame
-    msg("Line %s of %s at PC offset %d, type: %s" %
-        [@proc.frame_line, frame.source_container[1], frame.pc_offset, 
-         frame.type])
     if @proc.core.event == 'return'
-      msg("Return value class: #{@proc.frame.sp(-1).class}")
+      msg("Return value: %s" % @proc.frame.sp(-1).inspect)
+    else
+      errmsg("You need to be in a return event to do this. Event is %s" % 
+             @proc.core.event)
     end
   end
 
@@ -30,7 +29,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::InfoFrame.new(cmd)
+  subcommand = Debugger::Subcommand::InfoReturn.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)

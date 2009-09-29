@@ -9,7 +9,7 @@ class TestFinish < Test::Unit::TestCase
 
   def test_finish_between_fn
     
-    # Next over a function
+    # Finish over functions
     def fact(x)
       return 1 if x <= 1
       x = x * fact(x-1)

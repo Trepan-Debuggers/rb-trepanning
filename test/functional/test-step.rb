@@ -16,7 +16,7 @@ class TestStep < Test::Unit::TestCase
     d.core.step_events = TEST_STEP_EVENT_MASK
 
     d.start
-    ##############################
+    ########### t1 ###############
     x = 5
     y = 6
     ##############################
@@ -29,7 +29,7 @@ class TestStep < Test::Unit::TestCase
     cmds = ['step 5-3', 'continue']
     d = strarray_setup(cmds)
     d.start
-    ##############################
+    ########### t2 ###############
     x = 5
     y = 6
     z = 7
@@ -43,7 +43,7 @@ class TestStep < Test::Unit::TestCase
     cmds = ['step>', 'continue']
     d = strarray_setup(cmds)
     d.start
-    ##############################
+    ########### t3 ###############
     x = 5
     def foo()
     end
@@ -59,7 +59,7 @@ class TestStep < Test::Unit::TestCase
     cmds = ['step!', 'continue']
     d = strarray_setup(cmds)
     d.start()
-    ##############################
+    ########### t4 ###############
     x = 5
     begin
       y = 2
@@ -135,7 +135,7 @@ class TestStep < Test::Unit::TestCase
             '-- y = 5']
     d = strarray_setup(cmds)
     d.start
-    ##############################
+    ########### t5 ###############
     x = sqr(4)
     y = 5
     ##############################
@@ -149,7 +149,7 @@ class TestStep < Test::Unit::TestCase
             '<- end']
     d = strarray_setup(cmds)
     d.start
-    ##############################
+    ########### t6 ###############
     x = sqr(4)
     y = 5
     ##############################
@@ -182,4 +182,26 @@ class TestStep < Test::Unit::TestCase
            ]
     compare_output(out, d, cmds)
   end
+
+  def test_step_event
+
+    def fact(x)
+      return 1 if x <= 1
+      x = x * fact(x-1)
+      return x
+    end
+    cmds = ['step<', 'p x', 'continue'] 
+    d = strarray_setup(cmds)
+    d.start
+    ########### t7 ###############
+    x = fact(4)
+    y = 5
+    ##############################
+    d.stop # ({:remove => true})
+    out = ['-- x = fact(4)',
+           '<- return 1 if x <= 1',
+           '1']
+    compare_output(out, d, cmds)
+  end
+
 end
