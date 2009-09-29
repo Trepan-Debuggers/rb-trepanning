@@ -1,24 +1,17 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. base_subcmd)
 
-class Debugger::Subcommand::InfoReturn < Debugger::Subcommand
+class Debugger::Subcommand::InfoPc < Debugger::Subcommand
   unless defined?(HELP)
-    HELP         = 'Show the value about to be returned'
+    HELP         = 'Show the value of the VM stack pointer'
     MIN_ABBREV   = 'fr'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
   end
 
   def run(args)
-    # FIXME: %w(return, c-return)
-    if %w(return).member?(@proc.core.event)
-      msg("Return value: %s" % @proc.frame.sp(-1).inspect)
-    else
-      errmsg("You need to be in a return event to do this. Event is %s" % 
-             @proc.core.event)
-    end
+    msg "VM PC: %d" % @proc.frame.pc_offset
   end
-
 end
 
 if __FILE__ == $0
@@ -29,7 +22,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::InfoReturn.new(cmd)
+  subcommand = Debugger::Subcommand::InfoPc.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)

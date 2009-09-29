@@ -1,24 +1,31 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. base_subcmd)
 
-class Debugger::Subcommand::InfoReturn < Debugger::Subcommand
+class Debugger::Subcommand::InfoSp < Debugger::Subcommand
   unless defined?(HELP)
-    HELP         = 'Show the value about to be returned'
+    HELP         = 'Show the value of the VM stack pointer'
     MIN_ABBREV   = 'fr'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
   end
 
   def run(args)
-    # FIXME: %w(return, c-return)
-    if %w(return).member?(@proc.core.event)
-      msg("Return value: %s" % @proc.frame.sp(-1).inspect)
+    if args.size == 0
+      # Form is: "info sp" which means "info sp 1"
+      position = 1
     else
-      errmsg("You need to be in a return event to do this. Event is %s" % 
-             @proc.core.event)
+      position_str = args[0]
+      opts = {
+        :msg_on_error => 
+        "The 'info sp' command argument must eval to an integer. Got: %s" % position_str,
+        # :min_value => 1,
+        # :max_value => ??
+      }
+      position = @proc.get_an_int(position_str, opts)
+      return unless position
     end
+    msg("VM stack %d: %s" % [position, @proc.frame.sp(position)])
   end
-
 end
 
 if __FILE__ == $0
@@ -29,7 +36,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::InfoReturn.new(cmd)
+  subcommand = Debugger::Subcommand::InfoSp.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)
