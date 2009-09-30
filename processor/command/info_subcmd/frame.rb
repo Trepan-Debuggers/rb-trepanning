@@ -7,7 +7,6 @@ class Debugger::Subcommand::InfoFrame < Debugger::Subcommand
     MIN_ABBREV   = 'fr'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    SHORT_HELP   = HELP.split("\n")[0]
   end
 
   def run(args)

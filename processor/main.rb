@@ -138,6 +138,11 @@ class Debugger
                 "got %d.") % [name, max_args, nargs])
         return false
       end
+      if cmd.class.const_get(:NEED_STACK) && !@frame
+        errmsg "Command '%s' requires at running stack frame." % name
+        return false
+      end
+        
       return true
     end
 
