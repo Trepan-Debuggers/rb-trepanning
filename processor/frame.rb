@@ -59,7 +59,9 @@ class Debugger
 
     def frame_line
       if @core.event == 'vm-insn'
-        @frame.iseq.offset2lines(@frame.pc_offset)[0]
+        pc_offset = @frame.pc_offset
+        return 0 unless pc_offset
+        @frame.iseq.offset2lines(pc_offset)[0]
       else
         @frame.source_location[0]
       end

@@ -1,5 +1,31 @@
 class Debugger
   module Frame
+    def param_names(iseq, start, stop, prefix='')
+      start.upto(stop).map do |i| 
+        begin
+          prefix + iseq.local_name(i)
+        rescue
+          nil
+        end
+      end.compact
+    end
+
+    def all_param_names(iseq)
+      return '' unless iseq
+      params = param_names(iseq, 0, iseq.argc-1, '')
+      if iseq.arg_opts > 0
+        opt_params = param_names(iseq, iseq.argc, 
+                                 iseq.argc + iseq.arg_opts-1, '')
+        opt_params[0] = "optional: #{opt_params[0]}"
+        params += opt_params
+      end
+      params += param_names(iseq, iseq.arg_rest, iseq.arg_rest, '*') if 
+        iseq.arg_rest != -1
+      params += param_names(iseq, iseq.arg_block, iseq.arg_block, '&') if 
+        iseq.arg_block != -1
+      return params.join(', ')
+    end
+
     def format_stack_entry(frame, opts={})
       return 'invalid frame' if frame.invalid?
       # FIXME: prettify 
@@ -7,24 +33,19 @@ class Debugger
       s += "#{eval('self.class', frame.binding)}#" 
       if frame.method and frame.type != 'IFUNC'
         iseq = frame.iseq
-        if 'CFUNC' == frame.type
-          args = "(#{frame.arity} args)"
-        else
-          args = 0.upto(iseq.arity-1).map do |i| 
-            begin
-              iseq.local_name(i)
-            rescue
-              nil
-            end
-          end.compact.join(', ')
-        end
+        args = if 'CFUNC' == frame.type
+                 "(#{frame.arity} args)"
+               else
+                 all_param_names(iseq)
+               end
         s += frame.method
         if frame.type == 'METHOD'
           s += "(#{args})"
         elsif ['BLOCK', 'METHOD', 'LAMBDA', 'TOP', 'EVAL'].member?(frame.type)
           s += " |#{args}|" unless args.empty?
         else
-          s += "(#{frame.arity} args)" unless frame.arity == 0
+          # FIXME: handle post_len post_start
+          s += "(#{all_param_names(iseq)})" 
         end
       end
       s += " in #{frame.source_container[0]} #{frame.source_container[1]}"
@@ -72,6 +93,30 @@ if __FILE__ == $0
     print_stack_trace(RubyVM::ThreadFrame.current)
   end
   foo
+
+  def bar(a, b, c)
+    puts '=' * 10
+    print_stack_trace(RubyVM::ThreadFrame.current)
+  end
+  bar(1, 2, 3)
+
+  def baz(a, b, c=5)
+    puts '=' * 10
+    print_stack_trace(RubyVM::ThreadFrame.current)
+  end
+  baz(1, 2)
+
+  def bat(a, b, &block)
+    puts '=' * 10
+    print_stack_trace(RubyVM::ThreadFrame.current)
+  end
+  bat(1, 2)
+
+  def babe(a, b, *rest)
+    puts '=' * 10
+    print_stack_trace(RubyVM::ThreadFrame.current)
+  end
+  babe(1, 2)
 
   puts '=' * 10
   x  = lambda { |x,y|  print_stack_trace(RubyVM::ThreadFrame::current) }
