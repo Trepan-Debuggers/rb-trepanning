@@ -3,7 +3,7 @@ require_relative %w(.. base_subcmd)
 
 class Debugger::Subcommand::InfoFrame < Debugger::Subcommand
   unless defined?(HELP)
-    HELP         = 'Show information about the selected frame'
+    HELP         = 'Show all information about the selected frame'
     MIN_ABBREV   = 'fr'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
