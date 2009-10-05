@@ -4,14 +4,14 @@ require_relative %w(.. base_subcmd)
 class Debugger::Subcommand::InfoProgram < Debugger::Subcommand
   unless defined?(HELP)
     HELP         = 'Information about debugged program and its environment'
-    MIN_ABBREV   = 'li'.size
+    MIN_ABBREV   = 'pr'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
   end
 
   def run(args)
     frame = @proc.frame
-    msg("Program stop event: %s PC offset %d" % 
+    msg("Program stop event: %s; PC offset %d" % 
         [@proc.core.event, frame.pc_offset])
   end
 

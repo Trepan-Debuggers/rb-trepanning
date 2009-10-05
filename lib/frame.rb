@@ -21,8 +21,16 @@ class Debugger
       end
       params += param_names(iseq, iseq.arg_rest, iseq.arg_rest, '*') if 
         iseq.arg_rest != -1
+      if iseq.arg_post_len > 0
+        # Manditory arguments after optional ones - new in Ruby 1.9
+        post_params = param_names(iseq, iseq.arg_post_start, 
+                                  iseq.post_start + iseq.arg_post_len, '')
+        post_params[0] = "post: #{post_params[0]}"
+        params += post_params
+      end
       params += param_names(iseq, iseq.arg_block, iseq.arg_block, '&') if 
         iseq.arg_block != -1
+
       return params.join(', ')
     end
 
@@ -44,7 +52,6 @@ class Debugger
         elsif ['BLOCK', 'METHOD', 'LAMBDA', 'TOP', 'EVAL'].member?(frame.type)
           s += " |#{args}|" unless args.empty?
         else
-          # FIXME: handle post_len post_start
           s += "(#{all_param_names(iseq)})" 
         end
       end
