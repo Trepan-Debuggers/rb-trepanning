@@ -24,10 +24,10 @@ module MockDebugger
   def setup(name, show_constants=true)
     if ARGV.size > 0 && ARGV[0] == 'debug'
       require_relative %w(.. rbdbgr)
-      dbgr = Debugger.new()
+      dbgr = Debugger.new
       dbgr.debugger
     else
-      dbgr = MockDebugger.new()
+      dbgr = MockDebugger.new
     end
 
     cmds = dbgr.core.processor.commands
@@ -60,4 +60,8 @@ module MockDebugger
   end
   module_function :show_special_class_constants
 
+end
+
+if __FILE__ == $0
+  dbgr = MockDebugger::MockDebugger.new
 end
