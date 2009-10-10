@@ -2,12 +2,9 @@
 require_relative %w(.. base_subcmd)
 require_relative %w(.. base_subsubmgr)
 
-class Debugger::SubSubcommand::ShowTrace < Debugger::SubSubcommandMgr
+class Debugger::SubSubcommand::ShowAuto < Debugger::SubSubcommandMgr
   unless defined?(HELP)
-    HELP = 'Show aspects regarding tracing'
-
-    MIN_ARGS      = 0
-    MAX_ARG       = nil
+    HELP = 'Show auto settings'
     NAME          = File.basename(__FILE__, '.rb')
   end
 end
@@ -17,7 +14,7 @@ if __FILE__ == $0
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   show_cmd = cmds['show']
-  command = Debugger::SubSubcommand::ShowTrace.new(dbgr.core.processor, 
+  command = Debugger::SubSubcommand::ShowAuto.new(dbgr.core.processor, 
                                                    show_cmd)
   name = File.basename(__FILE__, '.rb')
   command.run(['show', name])

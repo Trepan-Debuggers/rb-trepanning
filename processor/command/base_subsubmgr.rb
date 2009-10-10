@@ -25,6 +25,17 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
     @subcmds = Debugger::Subcmd.new(self)
     @pname   = parent.name
     @proc    = proc
+
+    # Set class constant SHORT_HELP to be the first line of HELP
+    # unless it has been defined in the class already.
+    # The below was the simplest way I could find to do this since
+    # we are the super class but want to set the subclass's constant.
+    # defined? didn't seem to work here.
+    c = self.class.constants
+    self.class.const_set('SHORT_HELP', 
+                         self.class.const_get('HELP')) if
+      c.member?(:HELP) and !c.member?(:SHORT_HELP)
+    
     load_debugger_subsubcommands(@name, self)
   end
 
@@ -156,6 +167,6 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
-  cmd  = cmds['set']
+  cmd  = cmds['info']
   Debugger::SubSubcommandMgr.new(dbgr.core.processor, cmd)
 end

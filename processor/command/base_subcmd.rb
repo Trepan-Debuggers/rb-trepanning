@@ -46,7 +46,7 @@ class Debugger
       # @dbgr = cmd.dbgr
 
       # By default the name of the subcommand will be the name of the
-      # last part of module (e.g. "args" in "infos.args" or "basename"
+      # last part of module (e.g. "args" in "info.args" or "basename"
       # in "shows.basename"). However it *is* possible for one to change
       # that -- perhaps one may want to put several subcommands into 
       # a single file. So in those cases, one will have to set @name

@@ -55,17 +55,18 @@ class Debugger::SubcommandMgr < Debugger::Command
 
     subcommands = {}
     cmd_names.each do |name|
+      next unless Debugger::Subcommand.constants.member?(name.to_sym)
       subcmd_class = "Debugger::Subcommand::#{name}.new(self)"
       cmd = self.instance_eval(subcmd_class)
       cmd_name = cmd.name
       @subcmds.add(cmd)
     end
     subcmd_names.each do |name|
+      next unless Debugger::SubSubcommand.constants.member?(name.to_sym)
       subcmd_class = "Debugger::SubSubcommand::#{name}.new(self, parent)"
       cmd = self.instance_eval(subcmd_class)
       cmd_name = cmd.name
-      ## FIXME: The following line causes a failure:
-      ## @subcmds.add(cmd)
+      @subcmds.add(cmd)
     end
   end
 
