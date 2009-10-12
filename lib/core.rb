@@ -1,5 +1,6 @@
 require 'thread_frame'
 require 'trace'
+# require_relative %w(.. .. rb-trace lib trace)
 require_relative %w(.. processor main)
 class Debugger
   # This class contains the Debugger core routines, such as an event

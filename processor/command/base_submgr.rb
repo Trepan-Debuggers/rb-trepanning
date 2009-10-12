@@ -14,8 +14,9 @@ class Debugger::SubcommandMgr < Debugger::Command
     NEED_STACK    = false
   end
 
-  attr_accessor :subcmds  # Array of instaniated Debugger::Subcommand objects
-  attr_reader   :name     # Name of command
+  attr_accessor :subcmds   # Array of instaniated Debugger::Subcommand objects
+  attr_reader   :name      # Name of command
+  attr_reader   :last_args # Last arguments seen
 
   # Initialize show subcommands. Note: instance variable name
   # has to be setcmds ('set' + 'cmds') for subcommand completion
@@ -123,6 +124,7 @@ class Debugger::SubcommandMgr < Debugger::Command
   end
 
   def run(args)
+    @last_args = args
     if args.size < 2
       # We were given cmd without a subcommand; cmd is something
       # like "show", "info" or "set". Generally this means list

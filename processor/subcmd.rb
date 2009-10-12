@@ -47,8 +47,8 @@ class Debugger
     # show command will be run when giving a list of all sub commands
     # of this object. Some commands have long output like "show commands"
     # so we might not want to show that.
-    def add(subcmd_cb)
-      subcmd_name = subcmd_cb.name
+    def add(subcmd_cb, subcmd_name=nil)
+      subcmd_name ||= subcmd_cb.name
       @subcmds[subcmd_name] = subcmd_cb
 
       # We keep a list of subcommands to assist command completion

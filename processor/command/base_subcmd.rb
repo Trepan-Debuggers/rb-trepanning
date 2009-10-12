@@ -180,13 +180,6 @@ class Debugger
     end
   end
 
-  # FIXME: Put in another file? 
-  class SubSubcommand  < Subcommand
-    def initialize(cmd, parent)
-      @cmd    = cmd
-      @parent = parent
-    end
-  end
 end
 
 if __FILE__ == $0

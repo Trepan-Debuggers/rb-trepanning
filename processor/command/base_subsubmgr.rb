@@ -21,8 +21,10 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
   # has to be setcmds ('set' + 'cmds') for subcommand completion
   # to work.
   def initialize(proc, parent)
-    @name    = obj_const(self, :NAME)
+    name     = obj_const(self, :NAME)
+    @name    = name.to_sym
     @subcmds = Debugger::Subcmd.new(self)
+    @parent  = parent
     @pname   = parent.name
     @proc    = proc
 
@@ -36,7 +38,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
                          self.class.const_get('HELP')) if
       c.member?(:HELP) and !c.member?(:SHORT_HELP)
     
-    load_debugger_subsubcommands(@name, self)
+    load_debugger_subsubcommands(name, self)
   end
 
   # Create an instance of each of the debugger subcommands. Commands
@@ -54,17 +56,16 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
     subcmd_dir = File.join(cmd_dir, @pname + '_subcmd', name + '_subcmd')
     files = Dir.glob(File.join(subcmd_dir, '*.rb'))
     files.each do |rb| 
-      # p rb
       cmd_names << name.capitalize + File.basename(rb, '.rb').capitalize
       require rb
     end if File.directory?(subcmd_dir)
 
     subcommands = {}
-    cmd_names.each do |name|
-      subcmd_class = "Debugger::Subsubcommand::#{name}.new(self, #{pname})"
+    cmd_names.each do |subname|
+      subcmd_class = "Debugger::SubSubcommand::#{pname.capitalize}#{subname}.new(self, @parent)"
       cmd = self.instance_eval(subcmd_class)
-      cmd_name = cmd.name
-      @subcmds.add(cmd)
+      cmd_name = "#{pname}#{subname.downcase}"
+      @subcmds.add(cmd, cmd_name)
     end
   end
 
@@ -121,7 +122,8 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
   end
 
   def run(args)
-    if args.size < 2
+    args = @parent.last_args
+    if args.size < 3
       # We were given cmd without a subcommand; cmd is something
       # like "show", "info" or "set". Generally this means list
       # all of the subcommands.
@@ -135,7 +137,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
       return false
     end
 
-    subcmd_prefix = args[1]
+    subcmd_prefix = args.join('')
     # We were given: cmd subcmd ...
     # Run that.
     subcmd = @subcmds.lookup(subcmd_prefix)
