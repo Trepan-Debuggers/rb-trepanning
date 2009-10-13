@@ -62,9 +62,9 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
 
     subcommands = {}
     cmd_names.each do |subname|
-      subcmd_class = "Debugger::SubSubcommand::#{pname.capitalize}#{subname}.new(self, @parent)"
-      cmd = self.instance_eval(subcmd_class)
       cmd_name = "#{pname}#{subname.downcase}"
+      subcmd_class = "Debugger::SubSubcommand::#{@pname.capitalize}#{subname}.new(self, @parent, '#{cmd_name}')"
+      cmd = self.instance_eval(subcmd_class)
       @subcmds.add(cmd, cmd_name)
     end
   end
@@ -93,7 +93,10 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
       end
     end
 
-    subcmd_name = args[2]
+    # require_relative %w(.. .. rbdbgr)
+    # dbgr = Debugger.new(:set_restart => true)
+    # dbgr.debugger(:immediate => true)
+    subcmd_name = args[-1]
 
     if '*' == subcmd_name
       help_text = "List of subcommands for command '%s':\n" % @name

@@ -14,7 +14,7 @@ require_relative 'base_subcmd'
 class Debugger
 
   class SubSubcommand  < Subcommand
-    def initialize(cmd, parent)
+    def initialize(cmd, parent, name)
       @cmd    = cmd
 
       # By default the name of the subcommand will be the name of the
@@ -23,7 +23,7 @@ class Debugger
       # that -- perhaps one may want to put several subcommands into 
       # a single file. So in those cases, one will have to set @name
       # accordingly by other means.
-      @name  = (parent.name.to_s +  my_const(:NAME)).to_sym
+      @name   = name
 
       @parent = parent
       @proc   = parent.proc
@@ -38,18 +38,13 @@ class Debugger
     end
 
     def run_show_bool(what=nil)
+      setting = @name.gsub(/^(set|show)/,'')
       # require_relative %w(.. .. rbdbgr)
       # dbgr = Debugger.new(:set_restart => true)
       # dbgr.debugger(:immediate => true)
-      showsize = 'show'.size
-      setting = if @name[0..showsize-1] == 'show'
-                  @name[showsize..-1]
-                else
-                  @name
-                end
-      val = show_onoff(settings[setting])
-      what = @name unless what
-      msg("%s is %s." % [what, val])
+      val = show_onoff(settings[setting.to_sym])
+      what = setting unless what
+      msg('%s is %s.' % [what, val])
     end
 
   end

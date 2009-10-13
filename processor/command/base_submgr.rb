@@ -95,8 +95,11 @@ class Debugger::SubcommandMgr < Debugger::Command
       end
     end
 
-    subcmd_name = args[2]
+    subcmd_name = args[-1]
 
+    # require_relative %w(.. .. rbdbgr)
+    # dbgr = Debugger.new(:set_restart => true)
+    # dbgr.debugger(:immediate => true)
     if '*' == subcmd_name
       help_text = "List of subcommands for command '%s':\n" % @name
       help_text += Columnize::columnize(@subcmds.list, settings[:width], 
