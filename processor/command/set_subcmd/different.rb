@@ -20,6 +20,8 @@ override this setting."
     IN_LIST      = true
     MIN_ABBREV   = 'dif'.size
     NAME         = File.basename(__FILE__, '.rb')
+    # FIXME: create automatically
+    SHORT_HELP  = "Set to make sure 'next/step' move to a new position"
   end
 
   def run(args)
