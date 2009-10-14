@@ -43,7 +43,6 @@ class Debugger::SubcommandMgr < Debugger::Command
     cmd_dir = File.dirname(__FILE__)
     subcmd_dir = File.join(cmd_dir, name + '_subcmd')
     files = Dir.glob(File.join(subcmd_dir, '*.rb'))
-    require_relative %w(.. .. rbdbgr)
     files.each do |rb| 
       basename = File.basename(rb, '.rb')
       if File.directory?(File.join(File.dirname(rb), basename + '_subcmd'))
@@ -95,30 +94,31 @@ class Debugger::SubcommandMgr < Debugger::Command
       end
     end
 
-    subcmd_name = args[-1]
+    subcmd_name = args[2]
 
-    # require_relative %w(.. .. rbdbgr)
-    # dbgr = Debugger.new(:set_restart => true)
-    # dbgr.debugger(:immediate => true)
     if '*' == subcmd_name
       help_text = "List of subcommands for command '%s':\n" % @name
       help_text += Columnize::columnize(@subcmds.list, settings[:width], 
-                                        '  ', true, true, lineprefix='  ')
+                                        '  ', true, true, lineprefix='  ').chomp
       return help_text
     end
 
     # "help cmd subcmd". Give help specific for that subcommand.
     cmd = @subcmds.lookup(subcmd_name)
     if cmd
-      doc = obj_const(cmd, :HELP)
-      if doc
-        return doc
+      if cmd.respond_to?(:help)
+        return cmd.help(args)
       else
-        errmsg('Sorry - author mess up. ' + 
-               'No help registered for subcommand: ' + 
-               subcmd_name + ', of command: ' + 
-               @name)
-        return nil
+        doc = obj_const(cmd, :HELP)
+        if doc
+          return doc
+        else
+          errmsg('Sorry - author mess up. ' + 
+                 'No help registered for subcommand: ' + 
+                 subcmd_name + ', of command: ' + 
+                 @name)
+          return nil
+        end
       end
     else
       undefined_subcmd(@name, subcmd_name)

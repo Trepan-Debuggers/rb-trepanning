@@ -80,7 +80,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
   #  found, then specific help for that is given. If 'commands' is given
   #  we will list the all the subcommands.
   def help(args)
-    if args.size <= 2
+    if args.size <= 3
       # "help cmd". Give the general help for the command part.
       doc = self.class.const_get(:HELP)
       if doc
@@ -93,20 +93,19 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
       end
     end
 
-    # require_relative %w(.. .. rbdbgr)
-    # dbgr = Debugger.new(:set_restart => true)
-    # dbgr.debugger(:immediate => true)
-    subcmd_name = args[-1]
+    subcmd_name = args[3]
+    subcmd_prefix  = args[1..2].join(' ')
 
     if '*' == subcmd_name
-      help_text = "List of subcommands for command '%s':\n" % @name
-      help_text += Columnize::columnize(@subcmds.list, settings[:width], 
-                                        '  ', true, true, lineprefix='  ')
+      help_text = "List of subcommands for '%s':\n" % subcmd_prefix
+      cmd_names = @subcmds.list.map{|c| c['showauto'.size..-1]}
+      help_text += Columnize::columnize(cmd_names, settings[:width], 
+                                        '  ', true, true, lineprefix='  ').chomp
       return help_text
     end
 
     # "help cmd subcmd". Give help specific for that subcommand.
-    cmd = @subcmds.lookup(subcmd_name)
+    cmd = @subcmds.lookup(args[1..3].join(''))
     if cmd
       doc = obj_const(cmd, :HELP)
       if doc
@@ -119,7 +118,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
         return nil
       end
     else
-      undefined_subcmd(@name, subcmd_name)
+      undefined_subcmd(subcmd_prefix, subcmd_name)
       return nil
     end
   end

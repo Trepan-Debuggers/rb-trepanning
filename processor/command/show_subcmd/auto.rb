@@ -4,7 +4,7 @@ require_relative %w(.. base_subsubmgr)
 
 class Debugger::SubSubcommand::ShowAuto < Debugger::SubSubcommandMgr
   unless defined?(HELP)
-    HELP = 'Show auto settings'
+    HELP = 'Show settings which some sort of "automatic" default behavior'
     NAME = File.basename(__FILE__, '.rb')
   end
 end

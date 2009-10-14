@@ -2,11 +2,11 @@
 require_relative %w(.. .. base_subsubcmd)
 require_relative %w(.. auto)
 
-class Debugger::SubSubcommand::ShowAutoEval < Debugger::ShowBoolSubSubcommand
+class Debugger::SubSubcommand::ShowAutoIrb < Debugger::ShowBoolSubSubcommand
   unless defined?(HELP)
-    HELP = "Show evaluation of unrecognized debugger commands"
-    MIN_ABBREV   = 'ev'.size
-    NAME         = File.basename(__FILE__, '.rb')
+    HELP = "Show if IRB is invoked on debugger stops"
+    MIN_ABBREV = 'ir'.size
+    NAME       = File.basename(__FILE__, '.rb')
     SHORT_HELP   = HELP
   end
 
@@ -26,9 +26,6 @@ if __FILE__ == $0
 
   autox_cmd = Debugger::SubSubcommand::ShowAutoEval.new(show_cmd.proc, auto_cmd,
                                                         'showauto')
-  # require_relative %w(.. .. .. .. rbdbgr)
-  # dbgr = Debugger.new(:set_restart => true)
-  # dbgr.debugger
   autox_cmd.run([])
 
   def show_cmd.msg(message)
@@ -40,4 +37,6 @@ if __FILE__ == $0
   def show_cmd.errmsg(message)
     puts message
   end
+  # name = File.basename(__FILE__, '.rb')
+  # autox_cmd.summary_help(name)
 end
