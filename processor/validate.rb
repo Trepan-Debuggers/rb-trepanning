@@ -122,14 +122,13 @@ class Debugger
         colon = arg.rindex(':') 
         if colon
           # First handle part before the colon
-          arg1 = arg[0..colon-1].rstrip
+          arg1 = arg[0...colon].rstrip
           lineno_str = arg[colon+1..-1].lstrip
           mf, filename, lineno = parse_position_one_arg(arg1, old_mod, false)
           return nil, nil, nil unless filename
           filename = canonic_file(arg1) 
           # Next handle part after the colon
-          val = get_an_int(lineno_str, "Bad line number: %s" % 
-                           lineno_str)
+          val = get_an_int(lineno_str)
           lineno = val if val
         else
           mf, filename, lineno = parse_position_one_arg(arg, old_mod, true)

@@ -14,8 +14,6 @@ the output is intended to be formated as is.
     MIN_ABBREV   = 'maxs'.size
     NAME         = File.basename(__FILE__, '.rb')
     DEFAULT_MIN  = 10
-    # FIXME: create automatically
-    SHORT_HELP  = 'Set maximum number of characters in a string before truncating'
   end
 
   def run(args)

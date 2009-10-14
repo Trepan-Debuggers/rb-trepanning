@@ -198,6 +198,9 @@ if __FILE__ == $0
   LineCache::cache(__FILE__)
   cmd.run(['list'])
   puts '--' * 10
+  # require_relative %w(.. .. rbdbgr)
+  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr.debugger
   cmd.run(['list', __FILE__ + ':10'])
   puts '--' * 10
   # cmd.run(['list', 'os', '10'])

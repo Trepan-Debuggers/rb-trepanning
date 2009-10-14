@@ -11,8 +11,6 @@ see. However if the string has an embedded newline then we will assume
 the output is intended to be formated as.'
     MIN_ABBREV   = 'maxs'.size
     NAME         = File.basename(__FILE__, '.rb')
-    # FIXME: create automatically
-    SHORT_HELP = 'Show the number of characters in a string before truncating'
   end
 
   def run(args)
@@ -29,6 +27,10 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
+  require_relative %w(.. .. .. rbdbgr)
+  dbgr = Debugger.new(:set_restart => true)
+  dbgr.debugger
+
   subcommand = Debugger::Subcommand::ShowMaxstring.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 

@@ -5,8 +5,8 @@ require_relative %w(.. base_subsubmgr)
 class Debugger::SubSubcommand::InfoRegisters < Debugger::SubSubcommandMgr
   unless defined?(HELP)
     HELP         = 
-'List of registers and their contents, for the selected stack frame.
-A register name as an argument means describe only that register.
+'List of contents for the registers of the current stack frame.
+A register name given as an argument lists only that register.
 
 Examples:
   info registers     # show all registers
@@ -19,7 +19,6 @@ Examples:
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
     PREFIX       = 'inforegisters'
-    SHORT_STACK  = 'List of registers and their contents'
   end
 
   def run(args)

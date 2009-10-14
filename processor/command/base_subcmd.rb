@@ -60,9 +60,10 @@ class Debugger
       # we are the super class but want to set the subclass's constant.
       # defined? didn't seem to work here.
       c = self.class.constants
-      self.class.const_set('SHORT_HELP', 
-                           self.class.const_get('HELP')) if
-        c.member?(:HELP) and !c.member?(:SHORT_HELP)
+      if c.member?(:HELP) and !c.member?(:SHORT_HELP)
+        short_help = self.class.const_get('HELP').split("\n")[0].chomp('.')
+        self.class.const_set('SHORT_HELP', short_help)
+      end
     end
 
     # Convenience short-hand for @proc.confirm

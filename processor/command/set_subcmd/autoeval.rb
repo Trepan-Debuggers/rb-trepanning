@@ -36,8 +36,6 @@ problem. Another possibility is to go into a real Ruby shell via the
     IN_LIST    = true
     MIN_ABBREV = 'autoe'.size
     NAME        = File.basename(__FILE__, '.rb')
-    # FIXME: create automatically
-    SHORT_HELP  = 'Evaluate unrecognized debugger commands.'
   end
 
 end

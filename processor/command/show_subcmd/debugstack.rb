@@ -3,7 +3,7 @@ require_relative %w(.. base_subcmd)
 
 class Debugger::Subcommand::ShowDebugstack < Debugger::ShowBoolSubcommand
   unless defined?(HELP)
-    HELP = "Show complete stack including possibly setup stack from rbdbgr"
+    HELP = "Show complete stack including possibly setup stack from rbdbgr."
     MIN_ABBREV   = 'debugs'.size
     NAME          = File.basename(__FILE__, '.rb')
   end

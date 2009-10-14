@@ -3,7 +3,7 @@ require_relative %w(.. base_subcmd)
 
 class Debugger::Subcommand::ShowWidth < Debugger::ShowIntSubcommand
   unless defined?(HELP)
-    HELP = 'Show the number of characters the debugger thinks are in a line'
+    HELP = 'Show the number of characters the debugger thinks are in a line.'
     MIN_ABBREV   = 'wid'.size
     NAME         = File.basename(__FILE__, '.rb')
   end

@@ -39,9 +39,6 @@ class Debugger
 
     def run_show_bool(what=nil)
       setting = @name.gsub(/^(set|show)/,'')
-      # require_relative %w(.. .. rbdbgr)
-      # dbgr = Debugger.new(:set_restart => true)
-      # dbgr.debugger(:immediate => true)
       val = show_onoff(settings[setting.to_sym])
       what = setting unless what
       msg('%s is %s.' % [what, val])
