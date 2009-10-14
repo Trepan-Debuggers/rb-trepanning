@@ -5,7 +5,7 @@ require_relative %w(.. base_subsubmgr)
 class Debugger::SubSubcommand::InfoRegisters < Debugger::SubSubcommandMgr
   unless defined?(HELP)
     HELP         = 
-'List of registers and their contents, for selected stack frame.
+'List of registers and their contents, for the selected stack frame.
 A register name as an argument means describe only that register.
 
 Examples:
