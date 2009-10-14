@@ -97,8 +97,12 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
     subcmd_prefix  = args[1..2].join(' ')
 
     if '*' == subcmd_name
-      help_text = "List of subcommands for '%s':\n" % subcmd_prefix
-      cmd_names = @subcmds.list.map{|c| c['showauto'.size..-1]}
+      # require_relative %w(.. .. rbdbgr)
+      # dbgr = Debugger.new(:set_restart => true)
+      # dbgr.debugger(:immediate => true)
+      prefix_len =  my_const(:PREFIX).size
+      help_text  = "List of subcommands for '%s':\n" % subcmd_prefix
+      cmd_names = @subcmds.list.map{|c| c[prefix_len..-1]}
       help_text += Columnize::columnize(cmd_names, settings[:width], 
                                         '  ', true, true, lineprefix='  ').chomp
       return help_text

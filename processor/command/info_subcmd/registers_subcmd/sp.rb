@@ -12,20 +12,20 @@ class Debugger::Subcommand::InfoRegistersSp < Debugger::SubSubcommand
 
   def run(args)
     if args.size == 0
-      # Form is: "info sp" which means "info sp 1"
-      position = 1
+      # Form is: "info sp" which means "info sp 0"
+      position = 0
     else
       position_str = args[0]
       opts = {
         :msg_on_error => 
-        "The 'info sp' command argument must eval to an integer. Got: %s" % position_str,
+        "The 'info registers sp' command argument must eval to an integer. Got: %s" % position_str,
         # :min_value => 1,
         # :max_value => ??
       }
       position = @proc.get_an_int(position_str, opts)
       return unless position
     end
-    msg("VM stack %d: %s" % [position, @proc.frame.sp(position)])
+    msg("VM sp(%d) = %s" % [position, @proc.frame.sp(position).inspect])
   end
 end
 

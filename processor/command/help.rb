@@ -45,7 +45,7 @@ See also 'examine' and 'whatis'.
     commands = @proc.commands.keys.sort
     width = settings[:width]
     msg(Columnize::columnize(commands, width, ' ' * 4, 
-                             true, true, ' ' * 2))
+                             true, true, ' ' * 2).chomp)
   end
 
   # List the command categories and a short description of each.
@@ -98,8 +98,9 @@ Type "help" followed by command name for full documentation.
       end.sort
 
       width = settings[:width]
-      msg(Columnize::columnize(cmds, width, ' ' * 4, 
-                               true, true, ' ' * 2))
+      str = Columnize::columnize(cmds, width, ' ' * 4, 
+                                 true, true, ' ' * 2)
+      msg str.chomp if str
       return
     end
         

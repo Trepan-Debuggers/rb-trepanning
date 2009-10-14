@@ -2,16 +2,30 @@
 require_relative %w(.. .. base_subsubcmd)
 require_relative %w(.. registers)
 
-class Debugger::SubSubcommand::InfoRegistersPc < Debugger::SubSubcommand
+class Debugger::Subcommand::InfoRegistersLfp < Debugger::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show the value of the VM program counter'
-    MIN_ABBREV   = 'pc'.size
+    HELP         = 'Show the value of the VM stack pointer'
+    MIN_ABBREV   = 'lf'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
   end
 
   def run(args)
-    msg("VM pc = %d" % @proc.frame.pc_offset)
+    if args.size == 0
+      # Form is: "info sp" which means "info sp 1"
+      position = 0
+    else
+      position_str = args[0]
+      opts = {
+        :msg_on_error => 
+        "The 'info registers lfp' command argument must eval to an integer. Got: %s" % position_str,
+        # :min_value => 1,
+        # :max_value => ??
+      }
+      position = @proc.get_an_int(position_str, opts)
+      return unless position
+    end
+    msg("VM lfp(%d) = %s" % [position, @proc.frame.lfp(position).inspect])
   end
 end
 
@@ -24,7 +38,7 @@ if __FILE__ == $0
   # FIXME: DRY the below code
   dbgr, info_cmd = MockDebugger::setup('exit')
   testcmdMgr = Debugger::Subcmd.new(info_cmd)
-  infox_cmd  = Debugger::SubSubcommand::InfoRegistersPc.new(info_cmd.proc, 
+  infox_cmd  = Debugger::SubSubcommand::InfoRegistersSp.new(info_cmd.proc,
                                                             info_cmd,
                                                             'inforegisters')
   # require_relative %w(.. .. .. .. rbdbgr)

@@ -6,45 +6,44 @@ class Debugger::SubSubcommand::InfoRegisters < Debugger::SubSubcommandMgr
   unless defined?(HELP)
     HELP         = 
 'List of registers and their contents, for selected stack frame.
-Register name as argument means describe only that register.'
+A register name as an argument means describe only that register.
+
+Examples:
+  info registers     # show all registers
+  info register pc   # show only the pc register
+  info r sp          # show stack pointer register: sp(0)
+  info r sp 1        # show sp(1)
+'
 
     MIN_ABBREV   = 'r'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
+    PREFIX       = 'inforegisters'
     SHORT_STACK  = 'List of registers and their contents'
-    ALL_ARGS     = %w(pc sp lfp)  # Put in order you want listed
   end
 
   def run(args)
 
     args = @parent.last_args
-    # require_relative %w(.. .. .. rbdbgr)
-    # dbgr = Debugger.new(:set_restart => true)
-    # dbgr.debugger(:immediate => true)
+    all_regs = @subcmds.subcmds.keys
+
     if args.size == 2
       # Form is: "info registers"
-      list = ALL_ARGS
+      all_regs.sort.each do |subcmd_name|
+        @subcmds.subcmds[subcmd_name].run([])
+      end
     else
-      list = args[2..-1].map do |arg|
-        if ALL_ARGS.member?(arg)
-          arg
-        else
-          errmsg("info registers: %s is not a valid register name" % arg)
-          nil
-        end
+      subcmd_name = args[2]
+      key_name    = 'inforegisters' + subcmd_name
+      remain_args = args[3..-1]
+      if all_regs.member?(key_name)
+        @subcmds.subcmds[key_name].run(remain_args) 
+      else
+        errmsg("info registers: %s is not a valid register name" % subcmd_name)
+        nil
       end
     end
 
-    list.each do |arg|
-      case arg
-        when 'lfp'
-        msg("lfp(0): %s" % @parent.proc.frame.lfp(0))
-        when 'pc' 
-        msg "pc: %d" % @parent.proc.frame.pc_offset
-        when 'sp'
-        msg("sp(0): %s" % @parent.proc.frame.sp(0))
-      end
-    end
   end
 end
 

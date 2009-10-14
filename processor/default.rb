@@ -8,6 +8,9 @@ class Debugger
       :different     => true,  # stop *only* when  different position? 
       :'debug-skip'  => false, # Internal debugging 
       :listsize      => 10,    # Number of lines in list 
+      :maxstring     => 100,   # Strings which are larger than this
+                               # will be truncated to this length when
+                               # printed
       :prompt        => '(rbdbgr): ',
       :stack_trace_on_error => false,
       :width         => (ENV['COLUMNS'] || '80').to_i,
