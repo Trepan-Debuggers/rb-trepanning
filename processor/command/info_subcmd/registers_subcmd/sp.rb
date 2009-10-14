@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. base_subcmd)
+require_relative %w(.. .. base_subsubcmd)
+require_relative %w(.. registers)
 
-class Debugger::Subcommand::InfoSp < Debugger::Subcommand
+class Debugger::Subcommand::InfoRegistersSp < Debugger::SubSubcommand
   unless defined?(HELP)
     HELP         = 'Show the value of the VM stack pointer'
-    MIN_ABBREV   = 'fr'.size
+    MIN_ABBREV   = 'sp'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
   end
@@ -30,25 +31,30 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. mock)
-  require_relative %w(.. .. subcmd)
+  require_relative %w(.. .. .. mock)
+  require_relative %w(.. .. .. subcmd)
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::InfoSp.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  dbgr, info_cmd = MockDebugger::setup('exit')
+  testcmdMgr = Debugger::Subcmd.new(info_cmd)
+  infox_cmd  = Debugger::SubSubcommand::InfoRegistersSp.new(info_cmd.proc,
+                                                            info_cmd,
+                                                            'inforegisters')
+  # require_relative %w(.. .. .. .. rbdbgr)
+  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr.debugger
+  infox_cmd.run([])
 
-  def subcommand.msg(message)
+  def info_cmd.msg(message)
     puts message
   end
-  def subcommand.msg_nocr(message)
+  def info_cmd.msg_nocr(message)
     print message
   end
-  def subcommand.errmsg(message)
+  def info_cmd.errmsg(message)
     puts message
   end
-  subcommand.run_show_bool
-  name = File.basename(__FILE__, '.rb')
-  subcommand.summary_help(name)
+  # name = File.basename(__FILE__, '.rb')
+  # subcommand.summary_help(name)
 end

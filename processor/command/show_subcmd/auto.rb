@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. base_subcmd)
+require_relative %w(.. base_subsubcmd)
 require_relative %w(.. base_subsubmgr)
 
 class Debugger::SubSubcommand::ShowAuto < Debugger::SubSubcommandMgr
@@ -17,5 +17,10 @@ if __FILE__ == $0
   command = Debugger::SubSubcommand::ShowAuto.new(dbgr.core.processor, 
                                                   show_cmd)
   name = File.basename(__FILE__, '.rb')
-  command.run(['show', name])
+  cmd_args = ['show', name]
+  show_cmd.instance_variable_set('@last_args', cmd_args)
+  # require_relative %w(.. .. .. rbdbgr)
+  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr.debugger
+  command.run(cmd_args)
 end
