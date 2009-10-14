@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. base_subcmd)
 
-class Debugger::Subcommand::SetWidth < Debugger::Subcommand
+class Debugger::Subcommand::ShowMaxstring < Debugger::ShowIntSubcommand
   unless defined?(HELP)
-    HELP         = 'Set number of characters the debugger thinks are in a line'
-    IN_LIST      = true
-    MIN_ABBREV   = 'wid'.size
+    HELP = 'Show the number of characters in a string before truncating.
+
+Sometimes the string representation of an object is very long. This
+setting limits how much of the string representation you want to
+see. However if the string has an embedded newline then we will assume
+the output is intended to be formated as.'
+    MIN_ABBREV   = 'maxs'.size
     NAME         = File.basename(__FILE__, '.rb')
   end
 
   def run(args)
-    run_set_int(args.join(' '),
-                "The 'width' command requires a line width", 
-                0, nil)
+      run_show_int(:maxstring)
   end
 
 end
@@ -24,8 +26,8 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Debugger::Subcommand::SetWidth.new(cmd)
+  dbgr, cmd = MockDebugger::setup('show')
+  subcommand = Debugger::Subcommand::ShowMaxstring.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)
@@ -37,7 +39,7 @@ if __FILE__ == $0
   def subcommand.errmsg(message)
     puts message
   end
-  subcommand.run(%w(20))
+  subcommand.run([])
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
 end

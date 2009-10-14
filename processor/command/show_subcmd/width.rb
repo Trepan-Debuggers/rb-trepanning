@@ -17,7 +17,7 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('exit')
+  dbgr, cmd = MockDebugger::setup('show')
   subcommand = Debugger::Subcommand::ShowWidth.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
@@ -30,7 +30,7 @@ if __FILE__ == $0
   def subcommand.errmsg(message)
     puts message
   end
-  subcommand.run_show_int
+  subcommand.run([])
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
 end

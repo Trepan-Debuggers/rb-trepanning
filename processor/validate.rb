@@ -18,15 +18,15 @@ class Debugger
           errmsg("Expecting an integer, got: #{arg}.")
         end
         return nil
-        if opts[:min_value] and ret_value < opts[:min_value]
-          errmsg("Expecting integer value to be at least %d; got %d.",
-                 opts[min_value], ret_value)
-          return nil
-        elsif opts[:max_value] and ret_value > opts[:max_value]
-          errmsg("Expecting integer value to be at most %d; got %d.",
-                 opts[:min_value], ret_value)
-          return nil
-        end
+      end
+      if opts[:min_value] and ret_value < opts[:min_value]
+        errmsg("Expecting integer value to be at least %d; got %d." %
+               [opts[:min_value], ret_value])
+        return nil
+      elsif opts[:max_value] and ret_value > opts[:max_value]
+        errmsg("Expecting integer value to be at most %d; got %d." %
+               [opts[:min_value], ret_value])
+        return nil
       end
       return ret_value
     end
