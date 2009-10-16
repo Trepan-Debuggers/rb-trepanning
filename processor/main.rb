@@ -52,11 +52,12 @@ class Debugger
 
     unless defined?(EVENT2ICON)
       EVENT2ICON = {
+        'brkpt'          => 'xx',
         'c-call'         => 'C>',
         'c-return'       => '<C',
         'call'           => '->',
         'class'          => '::',
-        'coverage'       => 'co',
+        'coverage'       => '[]',
         'debugger-call'  => ':o',
         'end'            => '-|',
         'line'           => '--',
@@ -64,7 +65,7 @@ class Debugger
         'return'         => '<-',
         'switch'         => 'sw',
         'unknown'        => '?!',
-        'vm'             => 'vm',
+        'vm'             => 'VM',
         'vm-insn'        => '..',
       } 
       # These events are important enough event that we always want to
