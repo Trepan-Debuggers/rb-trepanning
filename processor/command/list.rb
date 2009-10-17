@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'linecache'
-require_relative 'base_cmd'
+require_relative %w(base cmd)
 
 # Mfile     = import_relative('file', '...lib', 'pydbgr')
 

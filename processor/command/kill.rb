@@ -1,4 +1,4 @@
-require_relative 'base_cmd'
+require_relative %w(base cmd)
 class Debugger::Command::KillCommand < Debugger::Command
 
   unless defined?(HELP)

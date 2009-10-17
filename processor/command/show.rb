@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative('base_submgr')
+require_relative %w(base submgr)
 
 class Debugger::Command::ShowCommand < Debugger::SubcommandMgr
   unless defined?(HELP)

@@ -3,7 +3,7 @@ require 'test/unit'
 require_relative %w(.. .. lib core)
 require_relative %w(.. .. processor main)
 require_relative %w(.. .. processor command exit)
-require_relative %w(.. .. processor command base_subcmd)
+require_relative %w(.. .. processor command base subcmd)
 
 # Mock debugger stub. FIXME: put in comment helper routine.
 class Debugger

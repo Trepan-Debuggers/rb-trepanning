@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'trace'
-require_relative %w(.. base_subcmd)
+require_relative %w(.. base subcmd)
 
 class Debugger::Subcommand::SetEvents < Debugger::Subcommand
   unless defined?(HELP)

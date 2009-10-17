@@ -1,4 +1,4 @@
-require_relative 'base_cmd'
+require_relative %w(base cmd)
 require_relative %w(.. running)
 require_relative %w(.. .. lib brkpt) # FIXME: possibly temporary
 class Debugger::Command::ContinueCommand < Debugger::Command
@@ -27,6 +27,8 @@ position before continuing.'
       # Form is: "continue"
       @proc.continue
     else
+      # FIXME: handle more general condition parameter rather than just
+      # a line number
       line_number_str = args[1]
       opts = {
         :msg_on_error => 
@@ -35,19 +37,7 @@ position before continuing.'
       }
       line_number = @proc.get_an_int(line_number_str, opts)
       return false unless line_number
-      # FIXME: move this into a library routine which uses the breakpoint
-      # manager. This code is temporary, for instant gratification.
-      begin
-        p proc.frame.iseq.lineoffsets
-        p line_number
-        p @proc.frame.iseq.line2offsets(line_number)
-        Breakpoint.new(true, 
-                       @proc.frame.iseq.line2offsets(line_number)[1],
-                       @proc.frame.iseq)
-        # @proc.continue
-      rescue TypeError => e
-        errmsg(e)
-      end
+      @proc.continue(line_number) # should handle condition
     end
   end
 end

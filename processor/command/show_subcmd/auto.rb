@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. base_subsubcmd)
-require_relative %w(.. base_subsubmgr)
+require_relative %w(.. base subsubcmd)
+require_relative %w(.. base subsubmgr)
 
 class Debugger::SubSubcommand::ShowAuto < Debugger::SubSubcommandMgr
   unless defined?(HELP)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-require_relative 'base_cmd'
-require_relative %w(.. subcmd)
+require_relative 'cmd'
+require_relative %w(.. .. subcmd)
 
 class Debugger::SubcommandMgr < Debugger::Command
 
@@ -40,7 +40,7 @@ class Debugger::SubcommandMgr < Debugger::Command
     cmd_names     = []
     subcmd_names  = []
     cmd_dir = File.dirname(__FILE__)
-    subcmd_dir = File.join(cmd_dir, name + '_subcmd')
+    subcmd_dir = File.join(cmd_dir, '..', name + '_subcmd')
     files = Dir.glob(File.join(subcmd_dir, '*.rb'))
     files.each do |rb| 
       basename = File.basename(rb, '.rb')
@@ -176,13 +176,16 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. mock)
+  require_relative %w(.. .. mock)
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   cmd  = cmds['set']
   Debugger::SubcommandMgr.new(dbgr.core.processor)
   puts cmd.help(%w(help set))
   puts '=' * 40
+  # require_relative %w(.. .. .. rbdbgr)
+  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr.debugger
   puts cmd.help(%w(help set *))
   puts '=' * 40
   puts cmd.help(%w(help set d.*))

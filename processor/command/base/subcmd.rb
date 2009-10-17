@@ -8,7 +8,7 @@
 # Base Class for Debugger subcommands. We pull in some helper
 # functions for command from module cmdfns.
 
-require_relative 'base_cmd'
+require_relative 'cmd'
 
 class Debugger
 
@@ -185,7 +185,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. mock)
+  require_relative %w(.. .. mock)
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   p cmds.keys

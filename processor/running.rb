@@ -4,7 +4,17 @@ class Debugger
 
     # Does whatever needs to be done to set to continue program
     # execution.
-    def continue
+    # FIXME: turn line_number into a condition.
+    def continue(line_number=nil)
+      if line_number
+        begin
+          p @frame.iseq.line2offsets(line_number)
+          @brkpts.add(true, @frame.iseq.line2offsets(line_number)[1],
+                      @frame.iseq)
+        rescue TypeError => e
+          errmsg(e)
+        end
+      end
       @next_level      = 32000 # I'm guessing the stack size can't
                                # ever reach this
       @next_thread     = nil

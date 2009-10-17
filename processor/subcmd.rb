@@ -108,7 +108,7 @@ end
 if __FILE__ == $0
 
   require_relative('mock')
-  require_relative(%w(command base_cmd))
+  require_relative(%w(command base cmd))
 
   class Debugger::TestCommand < Debugger::Command
     

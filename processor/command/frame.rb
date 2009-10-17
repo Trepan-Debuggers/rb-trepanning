@@ -1,4 +1,4 @@
-require_relative 'base_cmd'
+require_relative %w(base cmd)
 require_relative %w(.. .. lib frame)
 
 class Debugger::Command::FrameCommand < Debugger::Command

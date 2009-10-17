@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. .. base_subsubcmd)
+require_relative %w(.. .. base subsubcmd)
 require_relative %w(.. registers)
 
 class Debugger::Subcommand::InfoRegistersLfp < Debugger::SubSubcommand

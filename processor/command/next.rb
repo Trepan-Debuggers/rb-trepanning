@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative 'base_cmd'
-# Mstack     = import_relative('stack', '...lib')
+require_relative %w(base cmd)
 
 class Debugger::Command::NextCommand < Debugger::Command
 

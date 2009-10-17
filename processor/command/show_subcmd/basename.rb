@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. base_subcmd)
+require_relative %w(.. base subcmd)
 
 class Debugger::Subcommand::ShowBasename < Debugger::ShowBoolSubcommand
   unless defined?(HELP)

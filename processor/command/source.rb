@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Our local modules
-require_relative 'base_cmd'
+require_relative %w(base cmd)
 require_relative %w(.. .. interface script)
 # Mfile     = import_relative('file', '...lib', 'pydbgr')
 

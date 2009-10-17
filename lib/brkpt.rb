@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
 require 'thread_frame'
+
+# Breakpoint objects
 class Breakpoint
   attr_accessor :condition # if non-nil, this is a String to be eval'd
                            # which must be true to enter the debugger
@@ -14,8 +17,9 @@ class Breakpoint
                            # breakpont
   @@next_id = 1
 
-  def initialize(is_temporary, offset, iseq, condition = nil)
+  def initialize(is_temporary, offset, iseq, condition = 'true')
     @condition = condition
+    @enabled   = true
     @hits      = 0
     @id        = @@next_id
 
@@ -31,6 +35,27 @@ class Breakpoint
     @@next_id += 1
     @temp      = is_temporary
     set
+  end
+
+  def condition?(frame)
+    if eval(@condition, frame.binding)
+      @hits += 1
+      return true
+    else
+      return false
+    end
+  end
+
+  def disable
+    @enabled = false
+  end
+
+  def enabled
+    @enabled = true
+  end
+
+  def enabled?
+    @enabled
   end
 
   def set
@@ -50,19 +75,24 @@ class Breakpoint
   end
 
   def unset
-    @iseq.brkpt_unset(@offset)
+    @iseq.brkpt_clear(@offset)
   end
 
 end
 
 if __FILE__ == $0
-  iseq = RubyVM::ThreadFrame.current.iseq
+  tf = RubyVM::ThreadFrame.current
+  iseq = tf.iseq
   b1 = Breakpoint.new(false, 0, iseq)
   p b1
   p b1.source_location
   p b1.source_container
   b2 = Breakpoint.new(true, 0, iseq)
   p b2
+  puts "b2 id: #{b2.id}"
+  puts "b2 hits: #{b2.hits}"
+  puts "b2.condition? #{b2.condition?(tf)}"
+  puts "b2 hits: #{b2.hits}"
   begin
     b3 = Breakpoint.new(true, iseq.iseq_size, 5)
   rescue TypeError => e

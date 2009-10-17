@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'columnize'
-require_relative 'base_subcmd'
-require_relative %w(.. subcmd)
+require_relative 'subcmd'
+require_relative %w(.. .. subcmd)
 
 class Debugger::SubSubcommandMgr < Debugger::Subcommand
 
@@ -53,7 +53,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
     # Initialization
     cmd_names     = []
     cmd_dir = File.dirname(__FILE__)
-    subcmd_dir = File.join(cmd_dir, @pname + '_subcmd', name + '_subcmd')
+    subcmd_dir = File.join(cmd_dir, '..', @pname + '_subcmd', name + '_subcmd')
     files = Dir.glob(File.join(subcmd_dir, '*.rb'))
     files.each do |rb| 
       cmd_names << name.capitalize + File.basename(rb, '.rb').capitalize
@@ -97,9 +97,6 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
     subcmd_prefix  = args[1..2].join(' ')
 
     if '*' == subcmd_name
-      # require_relative %w(.. .. rbdbgr)
-      # dbgr = Debugger.new(:set_restart => true)
-      # dbgr.debugger(:immediate => true)
       prefix_len =  my_const(:PREFIX).size
       help_text  = "List of subcommands for '%s':\n" % subcmd_prefix
       cmd_names = @subcmds.list.map{|c| c[prefix_len..-1]}
@@ -179,7 +176,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. mock)
+  require_relative %w(.. .. mock)
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   cmd  = cmds['info']

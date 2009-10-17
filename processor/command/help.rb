@@ -1,5 +1,5 @@
 require 'columnize'
-require_relative 'base_cmd'
+require_relative %w(base cmd)
 class Debugger::Command::HelpCommand < Debugger::Command
 
   unless defined?(HELP)

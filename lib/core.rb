@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'thread_frame'
 require 'trace'
 # require_relative %w(.. .. rb-trace lib trace)
@@ -60,7 +61,7 @@ class Debugger
       hook_name     = @settings[:hook_name]
       @event_proc   = self.method(hook_name).to_proc
       @processor    = CmdProcessor.new(self, @settings[:cmdproc_opts])
-      @unmaskable_event = %w(brkpt)
+      @unmaskable_events = %w(brkpt raise switch vm)
     end
 
     # A trace-hook processor with the interface a trace hook should have.
@@ -71,7 +72,7 @@ class Debugger
       if @step_count > 0
         @step_count -= 1
         return
-      elsif @step_count < 0 && ! @unmaskable_event.member?(event)
+      elsif @step_count < 0 && ! @unmaskable_events.member?(event)
         return
       end
 

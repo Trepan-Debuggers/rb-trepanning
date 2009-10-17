@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative 'base_cmd'
+require_relative %w(base cmd)
 class Debugger::Command::NoCacheCommand < Debugger::Command
 
   unless defined?(HELP)

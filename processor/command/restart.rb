@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative 'base_cmd'
+require_relative %w(base cmd)
 require_relative %w(.. .. lib run)
 class Debugger::Command::RestartCommand < Debugger::Command
 

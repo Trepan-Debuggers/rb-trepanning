@@ -9,6 +9,7 @@ require_relative 'default'  # Command Processor default settings
 require_relative 'frame'
 require_relative 'msg'
 require_relative 'validate'
+require_relative %w(.. lib brkptmgr)
 
 class Debugger
   class CmdProcessor
@@ -74,6 +75,7 @@ class Debugger
     end
 
     def initialize(core, settings={})
+      @brkpts         = BreakpointMgr.new
       @core           = core
       @dbgr           = core.dbgr
       @hidelevels     = {}

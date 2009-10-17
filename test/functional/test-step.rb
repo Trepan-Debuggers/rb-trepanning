@@ -72,56 +72,53 @@ class TestStep < Test::Unit::TestCase
            '!! z = 1/0']
     compare_output(out, d, cmds)
     
-    # # Test "step" with sets of events. Part 1
-    # cmds = ['set events call raise',
-    #         'step', 's!']
-    # # d = strarray_setup(cmds)
-    # d.start()
-    # ##############################
-    # x = 5
-    # begin
-    #   def foo1
-    #     y = 2
-    #     raise Exception
-    #   end
-    #   foo1()
-    # rescue
-    #   puts 'hi'
-    # end
-    # z = 1
-    # ##############################
-    # d.stop # ({:remove => true})
-    # out = ['-- x = 5',
-    #        '-> def foo1',
-    #        '!! raise Exception']
-    # compare_output(out, d, cmds)
+    # Test "step" with sets of events. Part 1
+    cmds = ['set events call raise',
+            'step', 's!']
+    d = strarray_setup(cmds)
+    d.start()
+    ########### t5 ###############
+    x = 5
+      def foo1
+        y = 2
+        raise Exception
+      rescue Exception
+      end
+      foo1()
+    z = 1
+    ##############################
+    d.stop # ({:remove => true})
+    out = ['-- x = 5',
+           '-> def foo1',
+           '!! raise Exception']
+    compare_output(out, d, cmds)
     
-#     # Test "step" will sets of events. Part 2
-#     cmds = ['step call exception 1+0',
-#             'step call exception 1', 'continue']
-#     d = strarray_setup(cmds)
-#     d.start()
-#     ##############################
-#     x = 5
-#     begin
-#       def foo2()
-#         y = 2
-#         raise Exception
-#       end
-#       foo2()
-#     rescue
-#     end
-#     z = 1
-#     ##############################
-#     d.stop({:remove => true})
-#     out = ['-- x = 5',
-#            '-> def foo2():',
-#            '!! raise Exception']
-#     compare_output(out, d, cmds)
+    # Test "step" will sets of events. Part 2
+    cmds = ['step> 1+0',
+            'step! 1', 'continue']
+    d = strarray_setup(cmds)
+    d.start()
+    ########### t6 ###############
+    x = 5
+    begin
+      def foo2()
+        y = 2
+        raise Exception
+      end
+      foo2()
+    rescue Exception
+    end
+    z = 1
+    ##############################
+    d.stop({:remove => true})
+    out = ['-- x = 5',
+           '-> def foo2()',
+           '!! raise Exception']
+    compare_output(out, d, cmds)
     
-#   end
+  end
 
-#   def test_step_between_fn
+  def test_step_between_fn
 
     # Step into and out of a function
     def sqr(x)
@@ -135,7 +132,7 @@ class TestStep < Test::Unit::TestCase
             '-- y = 5']
     d = strarray_setup(cmds)
     d.start
-    ########### t5 ###############
+    ########### t7 ###############
     x = sqr(4)
     y = 5
     ##############################
@@ -149,7 +146,7 @@ class TestStep < Test::Unit::TestCase
             '<- end']
     d = strarray_setup(cmds)
     d.start
-    ########### t6 ###############
+    ########### t8 ###############
     x = sqr(4)
     y = 5
     ##############################
@@ -193,7 +190,7 @@ class TestStep < Test::Unit::TestCase
     cmds = ['step<', 'p x', 'continue'] 
     d = strarray_setup(cmds)
     d.start
-    ########### t7 ###############
+    ########### t9 ###############
     x = fact(4)
     y = 5
     ##############################
