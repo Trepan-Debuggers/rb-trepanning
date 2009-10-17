@@ -78,8 +78,10 @@ FILES = FileList[
   'Rakefile',
   'bin/*',
   'interface/*',
+  'io/*',
   'lib/*',
   'processor/**/*.rb',
+  'rbdbgr.rb',
   'test/**/*.rb',
 ]                        
 

@@ -4,45 +4,43 @@
 require_relative %w(.. lib run)
 require_relative %w(.. rbdbgr)
 
-if __FILE__ == $0
-  include Rbdbgr
+include Rbdbgr
 
-  # One way to get local variables is to create a block which is run
-  # once.  
-  # 
-  # Note however that since we are constants below, we can't
-  # wrap all of this in a procedure as that would be defining
-  # constants dynamically.
-  1.times do 
-    | ; rbdbgr_path, program_to_debug |
-    if ARGV.empty?
-      STDERR.puts 'Sorry - for now you must specify a Ruby script to debug.'
-      exit(-1)
-    end
-    
-    Debugger::ARGV = ARGV.clone
-
-    rbdbgr_path = File.expand_path($0)
-    if RUBY_PLATFORM =~ /mswin/
-      rbdbgr_path += '.cmd' unless rbdbgr_path =~ /\.cmd$/i
-    end
-
-    # FIXME: do we need to test defined? 
-    # FIXME: Should (some of) these be instance variables?
-    Debugger::RUBY_PATH    = ruby_path
-    Debugger::RBDBGR_PATH  = rbdbgr_path
-    Debugger::RBDBGR_FILE  = __FILE__
-    Debugger::INITIAL_DIR  = Dir.pwd
-
-    program_to_debug = ARGV.shift
-    program_to_debug = whence_file(program_to_debug) unless 
-      File.exist?(program_to_debug)
-    Debugger::PROG_SCRIPT = program_to_debug
-
-    # Set global so others may use this debugger.
-    $rbdbgr = Debugger.new(:restart_argv => 
-                           explicit_restart_argv(Debugger::ARGV))
-    debug_program($rbdbgr, Debugger::RUBY_PATH, 
-                  File.expand_path(program_to_debug))
+# One way to get local variables is to create a block which is run
+# once.  
+# 
+# Note however that since we are constants below, we can't
+# wrap all of this in a procedure as that would be defining
+# constants dynamically.
+1.times do 
+  | ; rbdbgr_path, program_to_debug |
+  if ARGV.empty?
+    STDERR.puts 'Sorry - for now you must specify a Ruby script to debug.'
+    exit(-1)
   end
+  
+  Debugger::ARGV = ARGV.clone
+
+  rbdbgr_path = File.expand_path($0)
+  if RUBY_PLATFORM =~ /mswin/
+    rbdbgr_path += '.cmd' unless rbdbgr_path =~ /\.cmd$/i
+  end
+
+  # FIXME: do we need to test defined? 
+  # FIXME: Should (some of) these be instance variables?
+  Debugger::RUBY_PATH    = ruby_path
+  Debugger::RBDBGR_PATH  = rbdbgr_path
+  Debugger::RBDBGR_FILE  = __FILE__
+  Debugger::INITIAL_DIR  = Dir.pwd
+
+  program_to_debug = ARGV.shift
+  program_to_debug = whence_file(program_to_debug) unless 
+    File.exist?(program_to_debug)
+  Debugger::PROG_SCRIPT = program_to_debug
+
+  # Set global so others may use this debugger.
+  $rbdbgr = Debugger.new(:restart_argv => 
+                         explicit_restart_argv(Debugger::ARGV))
+  debug_program($rbdbgr, Debugger::RUBY_PATH, 
+                File.expand_path(program_to_debug))
 end
