@@ -161,7 +161,6 @@ class Debugger
     def run(args)
       run_set_bool(args)
     end
-
   end
 
   class ShowBoolSubcommand < Subcommand

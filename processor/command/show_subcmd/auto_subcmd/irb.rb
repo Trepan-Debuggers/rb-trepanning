@@ -27,16 +27,6 @@ if __FILE__ == $0
   autox_cmd = Debugger::SubSubcommand::ShowAutoEval.new(show_cmd.proc, auto_cmd,
                                                         'showauto')
   autox_cmd.run([])
-
-  def show_cmd.msg(message)
-    puts message
-  end
-  def show_cmd.msg_nocr(message)
-    print message
-  end
-  def show_cmd.errmsg(message)
-    puts message
-  end
   # name = File.basename(__FILE__, '.rb')
   # autox_cmd.summary_help(name)
 end

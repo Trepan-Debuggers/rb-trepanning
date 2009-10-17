@@ -34,7 +34,22 @@ class Debugger
     end
 
     def string_in_show
-      my_const(:SHORT_HELP)['Show '.size .. -1].capitalize
+      help_constant_sym = if self.class.constants.member?(:SHORT_HELP) 
+                            :SHORT_HELP 
+                          else :HELP
+                          end
+      my_const(help_constant_sym)['Show '.size .. -1].capitalize
+    end
+
+    # Set a Boolean-valued debugger setting. 
+    def run_set_bool(args, default=true)
+      args = ['on'] if args.empty?
+      setting = @name.gsub(/^(set|show)/,'')
+      begin
+        settings[setting.to_sym] = @proc.get_onoff(args[0])
+        run_show_bool(setting)
+      rescue NameError, TypeError
+      end
     end
 
     def run_show_bool(what=nil)
@@ -44,6 +59,12 @@ class Debugger
       msg('%s is %s.' % [what, val])
     end
 
+  end
+
+  class SetBoolSubSubcommand < SubSubcommand
+    def run(args)
+      run_set_bool(args)
+    end
   end
 
   class ShowBoolSubSubcommand < SubSubcommand

@@ -29,7 +29,7 @@ class Breakpoint
     
     @iseq      = iseq
     raise TypeError, 
-    "offset #{offset} not found in instruction sequence" unless 
+    "offset #{offset.inspect} not found in instruction sequence" unless 
       iseq.offset2lines(offset)
     @offset    = offset 
     @@next_id += 1

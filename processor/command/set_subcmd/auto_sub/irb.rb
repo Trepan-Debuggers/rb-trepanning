@@ -1,36 +1,35 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. base subcmd)
+require_relative %w(.. .. base subsubcmd)
 
-class Debugger::Subcommand::SetAutoirb < Debugger::SetBoolSubcommand
+class Debugger::Subcommand::SetAutoIrb < Debugger::SetBoolSubSubcommand
   unless defined?(HELP)
     HELP = "Set to run irb entering debugger"
-    IN_LIST    = true
-    MIN_ABBREV = 'autoi'.size
+    MIN_ABBREV = 'ir'.size
     NAME       = File.basename(__FILE__, '.rb')
+    PREFIX     = %w(set auto irb)
   end
 
 end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. mock)
-  require_relative %w(.. .. subcmd)
+  require_relative %w(.. .. .. mock)
+  require_relative %w(.. .. .. subcmd)
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::SetAutoirb.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  dbgr, set_cmd = MockDebugger::setup('set')
+  auto_cmd      = Debugger::SubSubcommand::SetAuto.new(dbgr.core.processor, 
+                                                       set_cmd)
+  # FIXME: remove the 'join' below
+  cmd_name      = Debugger::Subcommand::SetAutoIrb::PREFIX.join('')
+  autox_cmd     = Debugger::SubSubcommand::SetAutoIrb.new(set_cmd.proc, 
+                                                          auto_cmd,
+                                                          cmd_name)
+  # require_relative %w(.. .. .. .. rbdbgr)
+  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr.debugger
+  autox_cmd.run([])
+  autox_cmd.run(['off'])
 
-  def subcommand.msg(message)
-    puts message
-  end
-  def subcommand.msg_nocr(message)
-    print message
-  end
-  def subcommand.errmsg(message)
-    puts message
-  end
-  subcommand.run_show_bool
-  subcommand.summary_help(name)
 end

@@ -2,19 +2,27 @@ require_relative %w(.. lib core)
 class Debugger
   class CmdProcessor
 
-    # Does whatever needs to be done to set to continue program
-    # execution.
+    # Does whatever needs to be done to set a breakpoint
     # FIXME: turn line_number into a condition.
-    def continue(line_number=nil)
-      if line_number
+    def breakpoint(number, is_offset = false)
+      if number
         begin
-          p @frame.iseq.line2offsets(line_number)
-          @brkpts.add(true, @frame.iseq.line2offsets(line_number)[1],
-                      @frame.iseq)
+          p number, is_offset, @frame.iseq.line2offsets(number)
+          offset = is_offset ? number : (@frame.iseq.line2offsets(number)[1])
+          @brkpts.add(true, offset, @frame.iseq)
+          return true
         rescue TypeError => e
           errmsg(e)
         end
       end
+      return false
+    end
+
+    # Does whatever needs to be done to set to continue program
+    # execution.
+    # FIXME: turn line_number into a condition.
+    def continue(*args)
+      return unless args.empty? || breakpoint(*args)
       @next_level      = 32000 # I'm guessing the stack size can't
                                # ever reach this
       @next_thread     = nil

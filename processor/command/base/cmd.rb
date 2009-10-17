@@ -63,7 +63,11 @@ class Debugger
     end
 
     def short_help
-      my_const(:SHORT_HELP)
+      help_constant_sym = if self.class.constants.member?(:SHORT_HELP) 
+                            :SHORT_HELP 
+                          else :HELP
+                          end
+      my_const(help_constant_sym)
     end
   end
 end

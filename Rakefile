@@ -82,7 +82,7 @@ FILES = FileList[
   'lib/*',
   'processor/**/*.rb',
   'rbdbgr.rb',
-  'test/**/*.rb',
+  # 'test/**/*.rb',
 ]                        
 
 spec = Gem::Specification.new do |spec|
