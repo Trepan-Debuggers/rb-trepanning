@@ -30,6 +30,11 @@ class Breakpoint
     @offset    = offset 
     @@next_id += 1
     @temp      = is_temporary
+    set
+  end
+
+  def set
+    @iseq.brkpt_set(@offset)
   end
 
   def source_container
@@ -42,6 +47,10 @@ class Breakpoint
 
   def temp?
     @temp
+  end
+
+  def unset
+    @iseq.brkpt_unset(@offset)
   end
 
 end

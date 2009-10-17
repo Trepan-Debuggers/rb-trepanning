@@ -60,18 +60,23 @@ class Debugger
       hook_name     = @settings[:hook_name]
       @event_proc   = self.method(hook_name).to_proc
       @processor    = CmdProcessor.new(self, @settings[:cmdproc_opts])
+      @unmaskable_event = %w(brkpt)
     end
 
     # A trace-hook processor with the interface a trace hook should have.
     def event_processor(event, frame, arg=nil)
-
       # FIXME: Block all other threads
-      # FIXME: check for breakpoints. For now there are none.
+      # FIXME: check for breakpoints or other unmaskable events. 
+      # For now there are none.
       if @step_count > 0
         @step_count -= 1
         return
-      elsif @step_count < 0
+      elsif @step_count < 0 && ! @unmaskable_event.member?(event)
         return
+      end
+
+      if event == 'break'
+        # FIXME If breakpoint, check breakpoint conditions 
       end
         
       @arg   = arg
