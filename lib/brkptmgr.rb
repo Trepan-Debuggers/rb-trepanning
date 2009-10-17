@@ -1,5 +1,5 @@
 require_relative 'brkpt'
-class BreakpointMgr << Array
+class BreakpointMgr < Array
 
   def initialize
     @list = []

@@ -11,10 +11,14 @@ class Debugger
     end
     
     # Find subcmd in self.subcmds
-    def lookup(subcmd_prefix)
-      pat = /^#{subcmd_prefix}/
+    def lookup(subcmd_prefix, use_regexp=true)
+      compare = if use_regexp 
+                  lambda{|name| name.to_s =~ /^#{subcmd_prefix}/}
+                else
+                  lambda{|name| 0 == name.to_s.index(subcmd_prefix)}
+                end
       @subcmds.each do |subcmd_name, subcmd|
-        if subcmd_name =~ pat &&
+        if compare.call(subcmd_name) &&
             subcmd_prefix.size >= subcmd.class.const_get(:MIN_ABBREV)
           return subcmd
         end

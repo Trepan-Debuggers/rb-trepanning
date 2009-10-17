@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-require 'columnize'
 require_relative 'base_cmd'
 require_relative %w(.. subcmd)
 
@@ -97,14 +96,13 @@ class Debugger::SubcommandMgr < Debugger::Command
     subcmd_name = args[2]
 
     if '*' == subcmd_name
-      help_text = "List of subcommands for command '%s':\n" % @name
-      help_text += Columnize::columnize(@subcmds.list, settings[:width], 
-                                        '  ', true, true, lineprefix='  ').chomp
+      help_text = ["List of subcommands for command '%s':\n" % @name]
+      help_text << columnize_commands(@subcmds.list)
       return help_text
     end
 
     # "help cmd subcmd". Give help specific for that subcommand.
-    cmd = @subcmds.lookup(subcmd_name)
+    cmd = @subcmds.lookup(subcmd_name, false)
     if cmd
       if cmd.respond_to?(:help)
         return cmd.help(args)
@@ -121,8 +119,15 @@ class Debugger::SubcommandMgr < Debugger::Command
         end
       end
     else
-      undefined_subcmd(@name, subcmd_name)
-      return nil
+      matches = @subcmds.list.grep(/^#{subcmd_name}/).sort
+      if matches.empty?
+        errmsg("No #{name} subcommands found matching /^#{subcmd_name}/. Try \"help\" #{@name}.")
+        return nil
+      else
+        help_text = ["Subcommand(s) of \"#{@name}\" matching /^#{subcmd_name}/:"]
+        help_text << columnize_commands(matches.sort)
+        return help_text
+      end
     end
   end
 
@@ -176,4 +181,9 @@ if __FILE__ == $0
   cmds = dbgr.core.processor.commands
   cmd  = cmds['set']
   Debugger::SubcommandMgr.new(dbgr.core.processor)
+  puts cmd.help(%w(help set))
+  puts '=' * 40
+  puts cmd.help(%w(help set *))
+  puts '=' * 40
+  puts cmd.help(%w(help set d.*))
 end

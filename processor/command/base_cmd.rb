@@ -22,6 +22,13 @@ class Debugger
       my_const(:CATEGORY)
     end
 
+    # List commands arranged in an aligned columns
+    def columnize_commands(commands)
+      width = settings[:width]
+      Columnize::columnize(commands, width, ' ' * 4, 
+                               true, true, ' ' * 2).chomp
+    end
+
     # FIXME: probably there is a way to do the delegation to proc methods
     # without having type it all out.
 

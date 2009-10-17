@@ -109,7 +109,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
     end
 
     # "help cmd subcmd". Give help specific for that subcommand.
-    cmd = @subcmds.lookup(args[1..3].join(''))
+    cmd = @subcmds.lookup(args[1..3].join(''), false)
     if cmd
       doc = obj_const(cmd, :HELP)
       if doc
@@ -122,8 +122,15 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
         return nil
       end
     else
-      undefined_subcmd(subcmd_prefix, subcmd_name)
-      return nil
+      matches = @subcmds.list.grep(/^#{subcmd_name}/).sort
+      if matches.empty?
+        errmsg("No #{name} subcommands found matching /^#{subcmd_name}/. Try \"help\" #{@name}.")
+        return nil
+      else
+        help_text = ["Subcommand(s) of \"#{@name}\" matching /^#{subcmd_name}/:"]
+        help_text << columnize_commands(matches.sort)
+        return help_text
+      end
     end
   end
 
@@ -177,4 +184,13 @@ if __FILE__ == $0
   cmds = dbgr.core.processor.commands
   cmd  = cmds['info']
   Debugger::SubSubcommandMgr.new(dbgr.core.processor, cmd)
+  puts cmd.help(%w(help info registers))
+  puts '=' * 40
+  puts cmd.help(%w(help info registers *))
+  puts '=' * 40
+  # FIXME
+  # require_relative %w(.. .. rbdbgr)
+  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr.debugger
+  # puts cmd.help(%w(help info registers p.*))
 end

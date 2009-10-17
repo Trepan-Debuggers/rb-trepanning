@@ -40,14 +40,6 @@ See also 'examine' and 'whatis'.
     SHORT_HELP    = 'Print commands or give help for command(s)'
   end
 
-  # List all commands arranged in an aligned columns
-  def columnize_all_commands
-    commands = @proc.commands.keys.sort
-    width = settings[:width]
-    msg(Columnize::columnize(commands, width, ' ' * 4, 
-                             true, true, ' ' * 2).chomp)
-  end
-
   # List the command categories and a short description of each.
   def list_categories
     msg("Classes of commands:")
@@ -57,6 +49,7 @@ See also 'examine' and 'whatis'.
     final_msg = '
 Type "help" followed by a class name for a list of commands in that class.
 Type "help *" for the list of all commands.
+Type "help REGEXP" for the list of commands matching /^#{REGEXP}/
 Type "help CLASS *" for the list of all commands in class CLASS.
 Type "help" followed by command name for full documentation.
 '
@@ -68,7 +61,8 @@ Type "help" followed by command name for full documentation.
     if args.size > 1
       cmd_name = args[1]
       if cmd_name == '*'
-        columnize_all_commands
+        msg("All command names:")
+        msg columnize_commands(@proc.commands.keys.sort)
       elsif CATEGORIES.member?(cmd_name)
         show_category(args[1], args[2..-1])
       elsif @proc.commands.member?(cmd_name)
@@ -77,9 +71,14 @@ Type "help" followed by command name for full documentation.
           cmd_obj.respond_to?(:help) ? cmd_obj.help(args) : 
           cmd_obj.class.const_get(:HELP)
         msg(help_text) if help_text
-      else
-        errmsg('Undefined command: "%s".  Try "help".' % 
-               cmd_name)
+      else 
+        matches = @proc.commands.keys.grep(/^#{cmd_name}/).sort
+        if matches.empty?
+          errmsg("No commands found matching /^#{cmd_name}/. Try \"help\".")
+        else
+          msg("Command names matching /^#{cmd_name}/:")
+          msg columnize_commands(matches.sort)
+        end
       end
     else
       list_categories
@@ -98,10 +97,7 @@ Type "help" followed by command name for full documentation.
       end.sort
 
       width = settings[:width]
-      str = Columnize::columnize(cmds, width, ' ' * 4, 
-                                 true, true, ' ' * 2)
-      msg str.chomp if str
-      return
+      return columnize_commands(cmds)
     end
         
     msg("%s." % CATEGORIES[category])
@@ -130,4 +126,7 @@ if __FILE__ == $0
   cmd.run %w(help support)
   puts '=' * 40
   cmd.run %w(help support *)
+
+  puts '=' * 40
+  cmd.run %w(help s.*)
 end
