@@ -33,7 +33,6 @@ if __FILE__ == $0
   subcommand = Debugger::Subcommand::InfoReturn.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
-  subcommand.run_show_bool
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
 end

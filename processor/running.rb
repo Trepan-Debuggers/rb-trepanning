@@ -5,20 +5,20 @@ class Debugger
     # Does whatever needs to be done to set a breakpoint
     # FIXME: turn line_number into a condition.
     def breakpoint(number, is_offset = false)
-      iseq = @frame.iseq
       if number
         if is_offset 
           offset = number 
+          iseq = @frame.iseq
         else 
-          offset = @frame.iseq.child_iseqs.detect do |is|
-            iseq = is
-            is.lineoffsets.keys.member?(number) end.line2offsets(number)[1]
+          iseq = @frame.iseq.child_iseqs.detect do |iseq|
+            iseq.lineoffsets.keys.member?(number) end
+          offset = iseq ? iseq.line2offsets(number)[1] : nil
         end
         unless offset
           errmsg("Line number #{number} not found for breakpoint")
           return nil
         end
-        return @brkpts.add(true, offset, iseq)
+        return @brkpts.add(false, offset, iseq)
       end
       return nil
     end

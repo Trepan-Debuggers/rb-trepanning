@@ -5,14 +5,14 @@ require_relative %w(.. base subcmd)
 class Debugger::Subcommand::InfoFile < Debugger::Subcommand
   unless defined?(HELP)
     HELP =
-'info file [filename [all | lines | sha1 | size]]
+'info file [{FILENAME|.} [all | brkpts | sha1 | size]]
 
 Show information about the current file. If no filename is given and
 the program is running then the current file associated with the
 current stack entry is used. Sub options which can be shown about a file are:
 
-lines -- Line numbers where there are statement boundaries. 
-         These lines can be used in breakpoint commands.
+brkpts -- Line numbers where there are statement boundaries. 
+          These lines can be used in breakpoint commands.
 sha1  -- A SHA1 hash of the source text. This may be useful in comparing
          source code.
 size  -- The number of lines in the file.
@@ -35,7 +35,7 @@ all   -- All of the above information.
       end
       filename = @proc.frame.source_container[1]
     else
-      filename = args[0]
+      filename = ('.' == args[0]) ? @proc.frame.source_container[1] : args[0]
     end
     
     m = filename + ' is'
@@ -54,24 +54,24 @@ all   -- All of the above information.
     args[1..-1].each do |arg|
       processed_arg = false
 
-      if ['all', 'size'].member?(arg)
+      if %w(all size).member?(arg)
         max_line = LineCache::size(filename)
         msg "File has %d lines." % max_line if max_line
         processed_arg = true
       end
 
-      if ['all', 'sha1'].member?(arg)
+      if %w(all sha1).member?(arg)
         msg("SHA1 is %s." % LineCache::sha1(filename))
         processed_arg = true
       end
-      if ['all', 'lines'].member?(arg)
+      if %w(all brkpts).member?(arg)
         msg("Possible breakpoint line numbers:")
         lines = LineCache::trace_line_numbers(filename)
         fmt_lines = columnize_commands(lines)
         msg(fmt_lines)
         processed_arg = true
       end
-      if ['all', 'stat'].member?(arg)
+      if %w(all stat).member?(arg)
         msg("stat info\n\t%s." % LineCache::stat(filename).inspect)
         processed_arg = true
       end
@@ -91,14 +91,9 @@ if __FILE__ == $0
   subcommand = Debugger::Subcommand::InfoFile.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
-  # sub.run([])
-  # cp.curframe = inspect.currentframe()
-  # sub.run(['file.py', 'foo'])
-  # [200, 80].each do |width|
-  #   sub.settings['width'] = width
-  #   sub.run(['file.py', 'lines'])
-  #   print sub.run([])
-  # end
+  subcommand.run([])
+  LineCache::cache(__FILE__)
+  subcommand.run(%w(. all))
   # sub.run(['file.py', 'all'])
   # sub.run(['file.py', 'lines', 'sha1'])
 end
