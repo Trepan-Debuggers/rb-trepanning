@@ -5,7 +5,7 @@ require 'trace'
 require_relative %w(.. processor main)
 class Debugger
   # This class contains the Debugger core routines, such as an event
-  # processor is responsible of handling what to do when an event is
+  # processor which is responsible of handling what to do when an event is
   # triggered.
   # 
   # See also 'rdbgr' the top-level Debugger class and command-line routine
