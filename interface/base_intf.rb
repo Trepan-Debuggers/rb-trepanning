@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # A base class for a debugger interface.
 
-## FIXME: hook into to-be-written input/output subsystem.
-
 class Debugger
 
   unless defined?(NotImplementedMessage)
