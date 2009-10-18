@@ -17,9 +17,10 @@ class Breakpoint
                            # breakpont
   @@next_id = 1
 
-  def initialize(is_temporary, offset, iseq, condition = 'true')
+  def initialize(is_temporary, offset, iseq, condition = 'true',
+                 enabled = 'true')
     @condition = condition
-    @enabled   = true
+    @enabled   = enabled
     @hits      = 0
     @id        = @@next_id
 
@@ -37,8 +38,8 @@ class Breakpoint
     set
   end
 
-  def condition?(frame)
-    if eval(@condition, frame.binding)
+  def condition?(bind)
+    if eval(@condition, bind)
       @hits += 1
       return true
     else
@@ -75,7 +76,7 @@ class Breakpoint
   end
 
   def unset
-    @iseq.brkpt_clear(@offset)
+    @iseq.brkpt_unset(@offset)
   end
 
 end
@@ -91,7 +92,7 @@ if __FILE__ == $0
   p b2
   puts "b2 id: #{b2.id}"
   puts "b2 hits: #{b2.hits}"
-  puts "b2.condition? #{b2.condition?(tf)}"
+  puts "b2.condition? #{b2.condition?(tf.binding)}"
   puts "b2 hits: #{b2.hits}"
   begin
     b3 = Breakpoint.new(true, iseq.iseq_size, 5)

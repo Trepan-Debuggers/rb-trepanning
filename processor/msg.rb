@@ -9,6 +9,10 @@ class Debugger
       @dbgr.intf[-1].msg(saferep(message))
     end
 
+    def msg_nocr(message)
+      @dbgr.intf[-1].msg_nocr(saferep(message))
+    end
+
     def read_command()
       @dbgr.intf[-1].read_command(@settings[:prompt])
     end

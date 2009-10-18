@@ -38,6 +38,9 @@ module MockDebugger
     def cmd.msg(message)
       puts message
     end
+    def cmd.msg_nocr(message)
+      print message
+    end
     def cmd.errmsg(message)
       puts "Error: #{message}"
     end

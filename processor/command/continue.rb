@@ -36,21 +36,21 @@ Examples:
     else
       # FIXME: handle more general condition parameter rather than just
       # a line number
-      line_number_str = args[1]
-      if line_number_str.size > 0 && line_number_str[0].downcase == 'o'
+      position_str = args[1]
+      if position_str.size > 0 && position_str[0].downcase == 'o'
         use_offset = true
-        line_number_str[0] = ''
+        position_str[0] = ''
       else
         use_offset = false
       end
       opts = {
         :msg_on_error => 
-        "The 'continue' command argument must eval to an integer. Got: %s" % line_number_str,
+        "The 'continue' command argument must eval to an integer. Got: %s" % position_str,
         :min_value => 0
       }
-      line_number = @proc.get_an_int(line_number_str, opts)
-      return false unless line_number
-      @proc.continue(line_number, use_offset) # should handle condition
+      position = @proc.get_an_int(position_str, opts)
+      return false unless position
+      @proc.continue(position, use_offset) # should handle condition
     end
   end
 end

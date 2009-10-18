@@ -7,12 +7,18 @@ class Debugger::Subcommand::InfoProgram < Debugger::Subcommand
     MIN_ABBREV   = 'pr'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
+    PREFIX       = %w(info program)
   end
 
   def run(args)
     frame = @proc.frame
     msg("Program stop event: %s; PC offset %d" % 
         [@proc.core.event, frame.pc_offset])
+    if @proc.brkpt
+      msg('It is stopped at %sbreakpoint %d.' %
+          [@proc.brkpt.temp? ? 'temporary ' : '',
+           @proc.brkpt.id])
+    end
   end
 
 end
@@ -28,15 +34,6 @@ if __FILE__ == $0
   subcommand = Debugger::Subcommand::InfoProgram.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
-  def subcommand.msg(message)
-    puts message
-  end
-  def subcommand.msg_nocr(message)
-    print message
-  end
-  def subcommand.errmsg(message)
-    puts message
-  end
   subcommand.run_show_bool
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)

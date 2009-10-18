@@ -11,14 +11,14 @@ A register name given as an argument lists only that register.
 Examples:
   info registers     # show all registers
   info register pc   # show only the pc register
-  info r sp          # show stack pointer register: sp(0)
-  info r sp 1        # show sp(1)
+  info reg sp        # show stack pointer register: sp(0)
+  info reg sp 1      # show sp(1)
 '
 
-    MIN_ABBREV   = 'r'.size
+    MIN_ABBREV   = 'reg'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    PREFIX       = 'inforegisters'
+    PREFIX       = %w(info registers)
   end
 
   def run(args)

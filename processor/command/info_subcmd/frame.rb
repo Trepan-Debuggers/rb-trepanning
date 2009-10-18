@@ -7,6 +7,7 @@ class Debugger::Subcommand::InfoFrame < Debugger::Subcommand
     MIN_ABBREV   = 'fr'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
+    PREFIX       = %w(info frame)
   end
 
   def run(args)
@@ -32,15 +33,6 @@ if __FILE__ == $0
   subcommand = Debugger::Subcommand::InfoFrame.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
-  def subcommand.msg(message)
-    puts message
-  end
-  def subcommand.msg_nocr(message)
-    print message
-  end
-  def subcommand.errmsg(message)
-    puts message
-  end
   subcommand.run_show_bool
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)

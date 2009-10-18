@@ -15,6 +15,13 @@ class Debugger
   class CmdProcessor
     attr_reader   :aliases        # Hash[String] of command names
                                   # indexed by alias name
+    attr_reader   :brkpt          # Breakpoint. If we are stopped at a
+                                  # breakpoint this is the one we
+                                  # found.  (There may be other
+                                  # breakponts that would have caused a stop
+                                  # as well; this is just one of them).
+                                  # If no breakpoint stop this is nil.
+    attr_reader   :brkpts         # BreakpointManager. 
     attr_reader   :core           # Debugger core object
     attr_reader   :commands       # Hash[String] of command objects
                                   # indexed by name
@@ -76,6 +83,7 @@ class Debugger
 
     def initialize(core, settings={})
       @brkpts         = BreakpointMgr.new
+      @brkpt          = nil
       @core           = core
       @dbgr           = core.dbgr
       @hidelevels     = {}
@@ -236,7 +244,12 @@ class Debugger
       return false
     end
 
-    def skip?
+    def breakpoint_skip?
+      @brkpt = @brkpts.find(@frame.iseq, @frame.pc_offset, @frame.binding)
+      !@brkpt
+    end
+
+    def stepping_skip?
 
       if @settings[:'debug-skip']
         puts "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.inspect}" 
@@ -277,7 +290,7 @@ class Debugger
     def process_commands(frame)
 
       frame_setup(frame)
-      return if skip?
+      return if breakpoint_skip? && stepping_skip?
 
       print_location
 

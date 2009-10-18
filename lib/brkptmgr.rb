@@ -1,6 +1,8 @@
 require_relative 'brkpt'
 class BreakpointMgr
 
+  attr_reader :list
+
   def initialize
     @list = []
   end
@@ -30,7 +32,22 @@ class BreakpointMgr
   end
 
   def add(*args)
-    @list << Breakpoint.new(*args)
+    brkpt = Breakpoint.new(*args)
+    @list << brkpt
+    return brkpt
+  end
+
+  def find(iseq, offset, bind)
+    @list.detect do |bp| 
+      begin
+        return bp if bp.condition?(bind)
+      rescue
+      end if bp.enabled? && bp.iseq.equal?(iseq) && bp.offset == offset
+    end
+  end
+
+  def size
+    @list.size
   end
 
   def reset
@@ -44,8 +61,9 @@ if __FILE__ == $0
   brkpts = BreakpointMgr.new
   brkpts.add(false, 0, iseq)
   p brkpts[2]
-  brkpts << Breakpoint.new(false, 0, iseq)
-  p brkpts[2]
+  b2 = Breakpoint.new(false, 0, iseq)
+  brkpts << b2
+  p brkpts.find(b2.iseq, b2.offset)
   p brkpts[2]
   p brkpts.delete(2)
   p brkpts[2]

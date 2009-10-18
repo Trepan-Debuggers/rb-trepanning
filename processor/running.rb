@@ -7,15 +7,13 @@ class Debugger
     def breakpoint(number, is_offset = false)
       if number
         begin
-          p number, is_offset, @frame.iseq.line2offsets(number)
           offset = is_offset ? number : (@frame.iseq.line2offsets(number)[1])
-          @brkpts.add(true, offset, @frame.iseq)
-          return true
+          return @brkpts.add(true, offset, @frame.iseq)
         rescue TypeError => e
           errmsg(e)
         end
       end
-      return false
+      return nil
     end
 
     # Does whatever needs to be done to set to continue program
