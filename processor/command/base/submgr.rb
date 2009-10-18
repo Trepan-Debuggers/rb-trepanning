@@ -96,7 +96,7 @@ class Debugger::SubcommandMgr < Debugger::Command
     subcmd_name = args[2]
 
     if '*' == subcmd_name
-      help_text = ["List of subcommands for command '%s':\n" % @name]
+      help_text = ["List of subcommands for command '%s':" % @name]
       help_text << columnize_commands(@subcmds.list)
       return help_text
     end

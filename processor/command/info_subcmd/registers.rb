@@ -15,7 +15,7 @@ Examples:
   info reg sp 1      # show sp(1)
 '
 
-    MIN_ABBREV   = 'reg'.size
+    MIN_ABBREV   = 'reg'.size  # Note we have "info return"
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
     PREFIX       = %w(info registers)

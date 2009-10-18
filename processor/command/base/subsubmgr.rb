@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-require 'columnize'
 require_relative 'subcmd'
 require_relative %w(.. .. subcmd)
 
@@ -98,10 +97,9 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
 
     if '*' == subcmd_name
       prefix_len =  my_const(:PREFIX).size
-      help_text  = "List of subcommands for '%s':\n" % subcmd_prefix
+      help_text  = ["List of subcommands for '%s':" % subcmd_prefix]
       cmd_names = @subcmds.list.map{|c| c[prefix_len..-1]}
-      help_text += Columnize::columnize(cmd_names, settings[:width], 
-                                        '  ', true, true, lineprefix='  ').chomp
+      help_text << columnize_commands(cmd_names)
       return help_text
     end
 
@@ -147,14 +145,14 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
       return false
     end
 
-    subcmd_prefix = args.join('')
+    subcmd_prefix = args[0..2].join('')
     # We were given: cmd subcmd ...
     # Run that.
     subcmd = @subcmds.lookup(subcmd_prefix)
     if subcmd
       subcmd.run(args[2..-1])
     else
-      undefined_subcmd(@name, subcmd_prefix)
+      undefined_subcmd(obj_const(self, :PREFIX).join(' '), args[-1])
     end
   end
 

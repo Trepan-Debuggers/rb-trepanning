@@ -6,7 +6,7 @@ class Debugger::SubSubcommand::ShowAuto < Debugger::SubSubcommandMgr
   unless defined?(HELP)
     HELP   = 'Show settings which some sort of "automatic" default behavior.'
     NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = 'showauto'
+    PREFIX = %w(show auto)
   end
 end
 

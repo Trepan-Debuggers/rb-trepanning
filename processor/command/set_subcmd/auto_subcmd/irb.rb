@@ -3,7 +3,7 @@ require_relative %w(.. .. base subsubcmd)
 
 class Debugger::Subcommand::SetAutoIrb < Debugger::SetBoolSubSubcommand
   unless defined?(HELP)
-    HELP = "Set to run irb entering debugger"
+    HELP = "Set to automatically go into irb each time we enter the debugger"
     MIN_ABBREV = 'ir'.size
     NAME       = File.basename(__FILE__, '.rb')
     PREFIX     = %w(set auto irb)

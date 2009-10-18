@@ -2,8 +2,6 @@
 require 'linecache'
 require_relative %w(base cmd)
 
-# Mfile     = import_relative('file', '...lib', 'pydbgr')
-
 class Debugger::Command::ListCommand < Debugger::Command
   unless defined?(HELP)
     HELP = 

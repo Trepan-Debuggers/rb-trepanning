@@ -4,7 +4,7 @@ require_relative %w(.. base subcmd)
 class Debugger::Subcommand::InfoReturn < Debugger::Subcommand
   unless defined?(HELP)
     HELP         = 'Show the value about to be returned'
-    MIN_ABBREV   = 'ret'.size
+    MIN_ABBREV   = 'ret'.size # Note we have "info registers"
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
     PREFIX       = %w(info return)

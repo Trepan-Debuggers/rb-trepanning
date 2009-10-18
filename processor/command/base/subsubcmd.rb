@@ -43,10 +43,10 @@ class Debugger
 
     # Set a Boolean-valued debugger setting. 
     def run_set_bool(args, default=true)
-      args = ['on'] if args.empty?
+      set_val = args.size < 2 ? 'on' : args[1]
       setting = @name.gsub(/^(set|show)/,'')
       begin
-        settings[setting.to_sym] = @proc.get_onoff(args[0])
+        settings[setting.to_sym] = @proc.get_onoff(set_val)
         run_show_bool(setting)
       rescue NameError, TypeError
       end
