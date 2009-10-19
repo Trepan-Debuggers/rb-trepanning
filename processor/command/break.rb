@@ -12,7 +12,7 @@ the debugger however may occur via breakpoints or explicit calls, or
 exceptions.
 
 If a parameter is given, a temporary breakpoint is set at that position
-before continuing. Offset are numbers preficed with an "O" otherwise
+before continuing. Offset are numbers prefaced with an "O" otherwise
 the parameter is taken as a line number.
 
 Examples:
