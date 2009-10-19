@@ -9,6 +9,7 @@ class Breakpoint
                            # been hit (with a true condition). Do we want
                            # to hits independent of the condition?
   attr_reader   :id        # Fixnum. Name of breakpoint
+  attr_reader   :ignore    # Fixnum. Number of times encounterd to ignore
   attr_reader   :iseq      # Instruction sequence associated with this
                            # breakpoint. From this we can derive
                            # information such as source location.
@@ -23,6 +24,7 @@ class Breakpoint
     @enabled   = enabled
     @hits      = 0
     @id        = @@next_id
+    @ignore    = 0
 
     raise TypeError, 
     "#{iseq} is not an instruction sequence" unless 
@@ -40,8 +42,13 @@ class Breakpoint
 
   def condition?(bind)
     if eval(@condition, bind)
-      @hits += 1
-      return true
+      if @ignore > 0
+        @ignore -= 1
+        return false
+      else
+        @hits += 1
+        return true
+      end
     else
       return false
     end

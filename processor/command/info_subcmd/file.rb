@@ -28,14 +28,14 @@ all   -- All of the above information.
   
   # Get file information
   def run(args)
-    if args.size == 0
+    if args.empty?
+      filename = ('.' == args[0]) ? @proc.frame.source_container[1] : args[0]
+    else
       if not @proc.frame
         errmsg("No frame - no default file.")
         return false
       end
       filename = @proc.frame.source_container[1]
-    else
-      filename = ('.' == args[0]) ? @proc.frame.source_container[1] : args[0]
     end
     
     m = filename + ' is'

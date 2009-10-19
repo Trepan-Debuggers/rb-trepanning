@@ -37,6 +37,10 @@ class BreakpointMgr
     return brkpt
   end
 
+  def empty?
+    @list.empty?
+  end
+
   def find(iseq, offset, bind)
     @list.detect do |bp| 
       begin

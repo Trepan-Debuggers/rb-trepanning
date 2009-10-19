@@ -52,7 +52,9 @@ Examples:
       return false unless position
       bp = @proc.breakpoint(position, use_offset) # should handle condition
       if bp
-        msg "Breakpoint #{bp.id} set in #{bp.iseq.source_container.join(' ')}, VM offset #{bp.offset}."
+        msg("Breakpoint %d set in %s,\n\tVM offset %d of instruction sequence %s." %
+            [bp.id, bp.iseq.source_container.join(' '),
+             bp.offset, bp.iseq.name] )
       end
     end
   end

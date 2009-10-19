@@ -5,10 +5,14 @@
 
 class Debugger
   module Disassemble
+    # FIXME: add a routine to split into separate groups of instruction
+    # sequences and access by offset.
     def mark_disassembly(disassembly_str, pc_offset)
       dis_array = disassembly_str.split(/\n/)
       offset_str = "%04d " % pc_offset
       dis_array.map do |line|
+        # FIXME: offset is not enough, we also need the
+        # instruction sequence *name*.
         prefix = if line =~ /\d{4} /
                    (line =~ /^#{offset_str}/ ?  '--> ': '    ')
                  else
