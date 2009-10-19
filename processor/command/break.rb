@@ -1,6 +1,6 @@
 require_relative %w(base cmd)
-require_relative %w(.. running)
-require_relative %w(.. .. lib brkpt) # FIXME: possibly temporary
+require_relative %w(.. breakpoint)
+require_relative %w(.. .. lib brkpt)
 class Debugger::Command::BreakCommand < Debugger::Command
 
   unless defined?(HELP)
@@ -18,7 +18,7 @@ Examples:
 '
 
     ALIASES      = %w(b)
-    CATEGORY     = 'running'
+    CATEGORY     = 'breakpoints'
     NAME         = File.basename(__FILE__, '.rb')
     MAX_ARGS     = 1  # Need at most this many
     SHORT_HELP  = 'Set a breakpoint'
@@ -26,7 +26,6 @@ Examples:
 
   # This method runs the command
   def run(args) # :nodoc
-    p args
     if args.size == 1
       use_offset = true
       position = @proc.frame.pc_offset

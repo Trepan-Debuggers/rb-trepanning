@@ -62,6 +62,10 @@ class Breakpoint
     @enabled = true
   end
 
+  def enabled=(bool)
+    @enabled = bool
+  end
+
   def enabled?
     @enabled
   end
