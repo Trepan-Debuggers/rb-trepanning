@@ -5,15 +5,11 @@ class Debugger::Command::BreakCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
-'break [offset|line number]
+'break [line number|offset]
 
-Leave the debugger loop and break execution. Subsequent entry to
-the debugger however may occur via breakpoints or explicit calls, or
-exceptions.
-
-If a parameter is given, a temporary breakpoint is set at that position
-before continuing. Offset are numbers prefaced with an "O" otherwise
-the parameter is taken as a line number.
+With a line number argument, set a break there in the current
+instruction sequence.  With an offset (a number prefaced with an "O")
+set a breakpoint at that instruction offset.
 
 Examples:
    break
@@ -30,9 +26,10 @@ Examples:
 
   # This method runs the command
   def run(args) # :nodoc
+    p args
     if args.size == 1
-      # Form is: "break" FIXME: Run info break? 
-      # ???
+      use_offset = true
+      position = @proc.frame.pc_offset
     else
       # FIXME: handle more general condition parameter rather than just
       # a line number
@@ -50,12 +47,12 @@ Examples:
       }
       position = @proc.get_an_int(position_str, opts)
       return false unless position
-      bp = @proc.breakpoint(position, use_offset) # should handle condition
-      if bp
-        msg("Breakpoint %d set in %s,\n\tVM offset %d of instruction sequence %s." %
-            [bp.id, bp.iseq.source_container.join(' '),
-             bp.offset, bp.iseq.name] )
-      end
+    end
+    bp = @proc.breakpoint(position, use_offset) # should handle condition
+    if bp
+      msg("Breakpoint %d set in %s,\n\tVM offset %d of instruction sequence %s." %
+          [bp.id, bp.iseq.source_container.join(' '),
+           bp.offset, bp.iseq.name] )
     end
   end
 end
