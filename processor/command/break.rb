@@ -20,7 +20,6 @@ Examples:
     ALIASES      = %w(b)
     CATEGORY     = 'breakpoints'
     NAME         = File.basename(__FILE__, '.rb')
-    MAX_ARGS     = 2  # Need at most this many
     SHORT_HELP  = 'Set a breakpoint'
   end
 

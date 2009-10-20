@@ -21,7 +21,6 @@ class TestLibBrkptMgr < Test::Unit::TestCase
     assert_equal(0, brkpts.size)
     b2 = brkpts << Breakpoint.new(true, offsets[1], iseq)
 
-    require_relative %w(.. .. rbdbgr)
     assert_equal(nil, brkpts.find(iseq, offset, tf.binding))
     brkpts.reset
     assert_equal(0, brkpts.size)

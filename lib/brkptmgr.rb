@@ -69,7 +69,7 @@ if __FILE__ == $0
   p brkpts[2]
   b2 = Breakpoint.new(false, 0, iseq)
   brkpts << b2
-  p brkpts.find(b2.iseq, b2.offset)
+  p brkpts.find(b2.iseq, b2.offset, nil)
   p brkpts[2]
   p brkpts.delete(2)
   p brkpts[2]

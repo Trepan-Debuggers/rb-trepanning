@@ -85,17 +85,22 @@ class Debugger
     # return nil
     def get_int_noerr(arg)
       b = @frame ? @frame.binding : nil
-      begin
-        val = Integer(eval(arg, b))
-      rescue SyntaxError
-        return nil
-      rescue 
-        return nil
-      end
+      val = Integer(eval(arg, b))
+    rescue SyntaxError
+      nil
+    rescue 
+      nil
     end
 
     def method_iseq(method_string)
-      debug_eval_no_errmsg("method(\"#{method_string}\").iseq")
+      parts = method_string.split(/[.]/)
+      string = 
+        if parts.size < 2 
+          "method(\"#{method_string}\").iseq"
+        else
+          parts[0..-2].join('.')+".method(\"#{parts[-1]}\").iseq"
+        end
+      debug_eval_no_errmsg(string)
     rescue
       nil
     end
@@ -219,4 +224,5 @@ if __FILE__ == $0
   def foo; 5 end
   puts proc.method_iseq('food').inspect
   puts proc.method_iseq('foo').inspect
+  puts proc.method_iseq('proc.method_iseq').inspect
 end
