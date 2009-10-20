@@ -27,8 +27,8 @@ class Debugger::Subcommand::InfoBreak < Debugger::Subcommand
         [bp.id, disp, iseq.source_container.join(' '),
          iseq.offset2lines(bp.offset).join(', ')])
     if verbose
-      msg("\tVM offset %d of instruction sequence %s" % 
-          [bp.offset, iseq.name])
+      msg("\tVM offset %d of instruction sequence %s#%x" % 
+          [bp.offset, iseq.name, iseq.object_id])
     end
     if bp.condition != 'true'
       msg("\tstop only if %s" % bp.condition)
