@@ -95,13 +95,9 @@ class Debugger
     end
 
     def method_iseq(method_string)
-      begin
-        iseq = debug_eval("method(\"#{method_string}\").iseq")
-        return iseq
-      rescue NameError
-      rescue
-        return nil
-      end
+      debug_eval_no_errmsg("method(\"#{method_string}\").iseq")
+    rescue
+      nil
     end
 
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.

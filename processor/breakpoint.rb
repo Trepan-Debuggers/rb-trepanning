@@ -2,7 +2,7 @@ require_relative %w(.. lib core)
 class Debugger
   class CmdProcessor
     # Does whatever needs to be done to set a breakpoint
-    def breakpoint_line(line_number, iseq)
+    def breakpoint_line(line_number, iseq, temp=false)
       # FIXME: handle breakpoint conditions.
       iseq = iseq.child_iseqs.detect do |iseq|
         iseq.lineoffsets.keys.member?(line_number) 

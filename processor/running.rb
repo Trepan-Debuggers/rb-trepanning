@@ -6,7 +6,6 @@ class Debugger
     # execution.
     # FIXME: turn line_number into a condition.
     def continue(*args)
-      return unless args.empty? || breakpoint(*args)
       @next_level      = 32000 # I'm guessing the stack size can't
                                # ever reach this
       @next_thread     = nil

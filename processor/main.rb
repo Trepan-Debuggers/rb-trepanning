@@ -125,6 +125,15 @@ class Debugger
       end
     end
 
+    def debug_eval_no_errmsg(str)
+      begin
+        b = @frame.binding if @frame 
+        b ||= binding
+        eval(str, b)
+      rescue StandardError, ScriptError => e
+      end
+    end
+
     def exception_dump(e, stack_trace, b=nil)
       if stack_trace
         at = eval("caller(2)", b)
