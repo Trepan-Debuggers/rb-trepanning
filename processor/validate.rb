@@ -94,6 +94,16 @@ class Debugger
       end
     end
 
+    def method_iseq(method_string)
+      begin
+        iseq = debug_eval("method(\"#{method_string}\").iseq")
+        return iseq
+      rescue NameError
+      rescue
+        return nil
+      end
+    end
+
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.
     # Any other value is raises TypeError.
     def get_onoff(arg, default=nil, print_error=true)
@@ -157,14 +167,11 @@ class Debugger
       return nil, canonic_file(arg), 1 if LineCache::cached?(arg)
 
       # How about a method name with an instruction sequence?
-      begin
-        iseq = debug_eval("method(\"#{arg}\").iseq")
-        if iseq.source_container[0] == 'file'
-          filename = iseq.source_container[1]
-          line_no = iseq.offsetlines.values.flatten.min
-          return arg, canonic_file(filename), line_no
-        end
-      rescue
+      iseq = method_iseq(arg)
+      if iseq && iseq.source_container[0] == 'file'
+        filename = iseq.source_container[1]
+        line_no = iseq.offsetlines.values.flatten.min
+        return arg, canonic_file(filename), line_no
       end
 
       errmsg("#{arg} is not a line number, read-in filename or method that we can get location information about")
@@ -175,15 +182,19 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  class Debugger::CmdProcessor
-    def errmsg(msg)
-      puts msg
-    end
-  end
-  cp = Debugger::CmdProcessor.new
+  require 'thread_frame'
+  require_relative %w(.. lib mock)
+  require_relative %w(main) # Have to include before defining CmdProcessor!
+                            # FIXME
+
+  proc = Debugger::CmdProcessor.new(Debugger::MockCore.new())
+  proc.frame_setup(RubyVM::ThreadFrame.current)
   onoff = %w(1 0 on off)
-  onoff.each { |val| puts "onoff(#{val}) = #{cp.get_onoff(val)}" }
+  onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }
   %w(1 1E bad 1+1 -5).each do |val| 
-    puts "get_int_noerr(#{val}) = #{cp.get_int_noerr(val).inspect}" 
+    puts "get_int_noerr(#{val}) = #{proc.get_int_noerr(val).inspect}" 
   end
+  def foo; 5 end
+  puts proc.method_iseq('food').inspect
+  puts proc.method_iseq('foo').inspect
 end

@@ -2,24 +2,26 @@ require_relative %w(.. lib core)
 class Debugger
   class CmdProcessor
     # Does whatever needs to be done to set a breakpoint
-    def breakpoint(number, is_offset = false)
-      # FIXME: turn line_number into a condition.
-      if number
-        if is_offset 
-          offset = number 
-          iseq = @frame.iseq
-        else 
-          iseq = @frame.iseq.child_iseqs.detect do |iseq|
-            iseq.lineoffsets.keys.member?(number) end
-          offset = iseq ? iseq.line2offsets(number)[1] : nil
-        end
-        unless offset
-          errmsg("Line number #{number} not found for breakpoint")
-          return nil
-        end
-        return @brkpts.add(false, offset, iseq)
+    def breakpoint_line(line_number, iseq)
+      # FIXME: handle breakpoint conditions.
+      iseq = iseq.child_iseqs.detect do |iseq|
+        iseq.lineoffsets.keys.member?(line_number) 
       end
-      return nil
+      offset = iseq ? iseq.line2offsets(line_number)[1] : nil
+      unless offset
+        errmsg("Line number #{line_number} not found for breakpoint")
+        return nil
+      end
+      @brkpts.add(false, offset, iseq)
+    end
+
+    def breakpoint_offset(offset, iseq)
+      # FIXME: handle breakpoint conditions.
+      unless iseq.offsetlines.keys.member?(offset)
+        errmsg("Offset #{offset} not found in #{iseq.name} for breakpoint")
+        return nil
+      end
+      @brkpts.add(false, offset, iseq)
     end
 
     # Enable or disable a breakpoint given its breakpoint number.
