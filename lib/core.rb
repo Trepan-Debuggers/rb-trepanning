@@ -76,10 +76,6 @@ class Debugger
         return
       end
 
-      if event == 'break'
-        # FIXME If breakpoint, check breakpoint conditions 
-      end
-        
       @arg   = arg
       @event = event
       @frame = frame

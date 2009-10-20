@@ -55,26 +55,23 @@ class TestNext < Test::Unit::TestCase
     compare_output(out, d, cmds)
   end
   
-#   def test_next_in_exception
-#     cmds = ['next! 4', 'continue']
-#     d = strarray_setup(cmds)
-#     d.start
-#     ########### t2 ###############
-#     def boom(x)
-#       y = 0/x
-#     end
-#     begin
-#       got_boom = false
-#       x = boom(4)
-#     rescue
-#       bot_boom = true
-#     end
-#     ##############################
-#     d.stop # ({:remove => true})
-#     out = ['-- x = buggy_fact(4)',
-#            '!! x = buggy_fact(4)']
-#     compare_output(out, d, cmds)
-#   end
+  def test_next_in_exception
+    cmds = %w(next! continue)
+    d = strarray_setup(cmds)
+    d.start
+    ########### t2 ###############
+    begin
+      got_boom = false
+      x = 4/0
+    rescue
+      got_boom = true
+    end
+    ##############################
+    d.stop # ({:remove => true})
+    out = ['-- begin',
+           '!! x = 4/0']
+    compare_output(out, d, cmds)
+  end
 end
 
 

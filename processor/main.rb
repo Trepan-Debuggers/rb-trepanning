@@ -244,9 +244,8 @@ class Debugger
       return false
     end
 
-    def breakpoint_skip?
+    def breakpoint?
       @brkpt = @brkpts.find(@frame.iseq, @frame.pc_offset, @frame.binding)
-      !@brkpt
     end
 
     def stepping_skip?
@@ -261,8 +260,13 @@ class Debugger
       # to stop on them.
       # return false if UNMASKABLE_EVENTS.member?(@core.event)
 
+      frame = @frame
+      while 'CFUNC' == frame.type && frame do
+        frame = frame.prev
+      end
       return true if 
-        @next_level < @stack_size && Thread.current == @next_thread
+        !frame || (@next_level < frame.stack_size &&
+                   Thread.current == @next_thread)
 
       new_pos = [@frame.source_container, @frame.source_location, 
                  @stack_size, @current_thread]
@@ -290,7 +294,7 @@ class Debugger
     def process_commands(frame)
 
       frame_setup(frame)
-      return if breakpoint_skip? && stepping_skip?
+      return if !breakpoint? && stepping_skip?
 
       print_location
 

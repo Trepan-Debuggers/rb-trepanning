@@ -43,10 +43,12 @@ class BreakpointMgr
 
   def find(iseq, offset, bind)
     @list.detect do |bp| 
-      begin
-        return bp if bp.condition?(bind)
-      rescue
-      end if bp.enabled? && bp.iseq.equal?(iseq) && bp.offset == offset
+      if bp.enabled? && bp.iseq.equal?(iseq) && bp.offset == offset
+        begin
+          return bp if bp.condition?(bind)
+        rescue
+        end 
+      end
     end
   end
 
