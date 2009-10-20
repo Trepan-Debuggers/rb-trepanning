@@ -20,7 +20,7 @@ Examples:
     ALIASES      = %w(b)
     CATEGORY     = 'breakpoints'
     NAME         = File.basename(__FILE__, '.rb')
-    MAX_ARGS     = 1  # Need at most this many
+    MAX_ARGS     = 2  # Need at most this many
     SHORT_HELP  = 'Set a breakpoint'
   end
 
@@ -34,29 +34,8 @@ Examples:
       bp = @proc.breakpoint_offset(@proc.frame.pc_offset, 
                                    @proc.frame.iseq) 
     else
-      cmd_name, first = args.shift(2)
-      iseq = @proc.method_iseq(first)
-      position_str = 
-        if iseq
-          args.empty? ? 'O0' : args.shift
-        else
-          iseq = @proc.frame.iseq 
-          first
-        end
-      use_offset = 
-        if position_str.size > 0 && position_str[0].downcase == 'o'
-          position_str[0] = ''
-          true
-        else
-          false
-        end
-      opts = {
-        :msg_on_error => 
-        "The 'break' command argument must eval to an integer. Got: %s" % position_str,
-        :min_value => 0
-      }
-      position = @proc.get_an_int(position_str, opts)
-      return false unless position
+      position, iseq, use_offset = @proc.breakpoint_position(args[1..-1])
+      return false unless position && iseq
       bp = 
         if use_offset
           @proc.breakpoint_offset(position, iseq)

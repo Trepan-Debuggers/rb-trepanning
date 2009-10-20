@@ -36,28 +36,13 @@ Examples:
     else
       # FIXME: handle more general condition parameter rather than just
       # a line number
-      # FIXME: move to a "get breakpoint location" routine and combine
-      # with break.rb
-      cmd, position_str = args.shift(2)
-      use_offset = 
-        if position_str.size > 0 && position_str[0].downcase == 'o'
-          position_str[0] = ''
-          true
-        else
-          false
-        end
-      opts = {
-        :msg_on_error => 
-        "The 'continue' command argument must eval to an integer. Got: %s" % position_str,
-        :min_value => 0
-      }
-      position = @proc.get_an_int(position_str, opts)
-      return false unless position
+      position, iseq, use_offset = @proc.breakpoint_position(args[1..-1])
+      return false unless position && iseq
       bp = 
         if use_offset
-          @proc.breakpoint_offset(position, @proc.frame.iseq, true)
+          @proc.breakpoint_offset(position, iseq, true)
         else
-          @proc.breakpoint_line(position, @proc.frame.iseq, true)
+          @proc.breakpoint_line(position, iseq, true)
         end
       return unless bp
       @proc.continue(position, use_offset) # should handle condition

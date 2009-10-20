@@ -100,6 +100,32 @@ class Debugger
       nil
     end
 
+    def breakpoint_position(args)
+      first = args.shift
+      iseq = method_iseq(first)
+      position_str = 
+        if iseq
+          args.empty? ? 'O0' : args.shift
+        else
+          iseq = @frame.iseq 
+          first
+        end
+      use_offset = 
+        if position_str.size > 0 && position_str[0].downcase == 'o'
+          position_str[0] = ''
+          true
+        else
+          false
+        end
+      opts = {
+        :msg_on_error => 
+        "The 'break' command argument must eval to an integer. Got: %s" % position_str,
+        :min_value => 0
+      }
+      position = get_an_int(position_str, opts)
+      return [position, iseq, use_offset]
+    end
+
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.
     # Any other value is raises TypeError.
     def get_onoff(arg, default=nil, print_error=true)
