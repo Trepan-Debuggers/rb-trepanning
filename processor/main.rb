@@ -104,6 +104,10 @@ class Debugger
       load_debugger_commands(cmd_dir)
     end
 
+    def canonic_container(container)
+      [container[0], canonic_file(container[1])]
+    end
+
     def canonic_file(filename)
       # For now we want resolved filenames 
       @settings[:basename] ? File.basename(filename) : 
@@ -250,6 +254,7 @@ class Debugger
 
     def stepping_skip?
 
+      return true if @core.step_count < 0
       if @settings[:'debug-skip']
         puts "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.inspect}" 
         puts "nl  : #{@next_level},    ssize : #{@stack_size}" 
