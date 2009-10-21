@@ -45,7 +45,7 @@ Examples:
           @proc.breakpoint_line(position, iseq, true)
         end
       return unless bp
-      @proc.continue(position, use_offset) # should handle condition
+      @proc.continue
     end
   end
 end

@@ -5,7 +5,7 @@ class Debugger
     # Does whatever needs to be done to set to continue program
     # execution.
     # FIXME: turn line_number into a condition.
-    def continue(*args)
+    def continue
       @next_level      = 32000 # I'm guessing the stack size can't
                                # ever reach this
       @next_thread     = nil
