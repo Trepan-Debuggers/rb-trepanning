@@ -12,7 +12,7 @@ class Debugger
         errmsg("Line number #{line_number} not found for breakpoint")
         return nil
       end
-      @brkpts.add(false, offset, iseq)
+      @brkpts.add(temp, offset, iseq)
     end
 
     def breakpoint_offset(offset, iseq, temp=false)
@@ -21,7 +21,7 @@ class Debugger
         errmsg("Offset #{offset} not found in #{iseq.name} for breakpoint")
         return nil
       end
-      @brkpts.add(false, offset, iseq)
+      @brkpts.add(temp, offset, iseq)
     end
 
     # Enable or disable a breakpoint given its breakpoint number.

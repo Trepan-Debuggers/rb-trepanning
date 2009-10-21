@@ -23,12 +23,19 @@ class BreakpointMgr
   def delete(index)
     bp = detect(index)
     if bp
-      bp.unset
-      @list = @list.reject{|candidate| candidate == bp}
+      delete_by_brkpt(bp)
       return bp
     else
       return nil
     end
+  end
+
+  def delete_by_brkpt(bp)
+    p bp
+    bp.unset
+    @list = @list.reject{|candidate| candidate == bp}
+    p @list
+    return bp
   end
 
   def add(*args)

@@ -258,6 +258,8 @@ class Debugger
 
     def breakpoint?
       @brkpt = @brkpts.find(@frame.iseq, @frame.pc_offset, @frame.binding)
+      @brkpts.delete_by_brkpt(@brkpt) if @brkpt && @brkpt.temp?
+      return !!@brkpt
     end
 
     def stepping_skip?
