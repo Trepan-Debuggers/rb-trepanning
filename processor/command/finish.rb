@@ -7,17 +7,20 @@ class Debugger::Command::FinishCommand < Debugger::Command
     HELP = 
 "finish [levels]
 
-Continue execution until leaving the current function. When `level' is
-specified, that many frame levels need to be popped. The default is 1.
-Note that 'yield' and exceptions raised my reduce the number of stack
-frames. Also, if a thread is switched, we stop ignoring levels.
+Continue execution until leaving the current function. 
+Sometimes this is called 'step out'.
 
-next> is similar in that it stops at a return, but it doesn't
+When `levels' is specified, that many frame levels need to be
+popped. The default is 1.  Note that 'yield' and exceptions raised my
+reduce the number of stack frames. Also, if a thread is switched, we
+stop ignoring levels.
+
+'next>' is similar in that it stops at a return, but it doesn't
 guarentee the stack level is the same as or less than the current
 one. 
 
 See the break command if you want to stop at a particular point in a
-program. In general, finish, step and next may slow a program down
+program. In general, 'finish', 'step' and 'next' may slow a program down
 while 'break' will have less overhead."
 
     ALIASES      = %w(fin)

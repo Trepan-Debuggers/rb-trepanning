@@ -6,6 +6,7 @@ class Debugger::Command::StepCommand < Debugger::Command
     HELP = 
 "step[+|-|<|>|!|<>] [EVENT-NAME...] [count]
 Execute the current line, stopping at the next event.
+Sometimes this is called 'step into'.
 
 With an integer argument, step that many times.
 

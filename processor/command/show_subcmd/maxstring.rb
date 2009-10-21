@@ -27,22 +27,13 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
-  require_relative %w(.. .. .. rbdbgr)
-  dbgr = Debugger.new(:set_restart => true)
-  dbgr.debugger
+  # require_relative %w(.. .. .. rbdbgr)
+  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr.debugger
 
   subcommand = Debugger::Subcommand::ShowMaxstring.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
-  def subcommand.msg(message)
-    puts message
-  end
-  def subcommand.msg_nocr(message)
-    print message
-  end
-  def subcommand.errmsg(message)
-    puts message
-  end
   subcommand.run([])
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
