@@ -31,10 +31,8 @@ class BreakpointMgr
   end
 
   def delete_by_brkpt(bp)
-    p bp
     bp.unset
     @list = @list.reject{|candidate| candidate == bp}
-    p @list
     return bp
   end
 

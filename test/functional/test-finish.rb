@@ -15,7 +15,7 @@ class TestFinish < Test::Unit::TestCase
       x = x * fact(x-1)
       return x
     end
-    cmds = %w(step finish) + ['p x', 'continue'] 
+    cmds = %w(step finish) + ['24 == x', 'continue'] 
     d = strarray_setup(cmds)
     d.start
     ##############################
@@ -26,7 +26,7 @@ class TestFinish < Test::Unit::TestCase
     out = ['-- x = fact(4)',
            '-> def fact(x)',
            '<- end',
-           '24']
+           'true']
     compare_output(out, d, cmds)
   end
   

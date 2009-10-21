@@ -187,7 +187,7 @@ class TestStep < Test::Unit::TestCase
       x = x * fact(x-1)
       return x
     end
-    cmds = ['step<', 'p x', 'continue'] 
+    cmds = ['step<', '1 == x', 'continue'] 
     d = strarray_setup(cmds)
     d.start
     ########### t9 ###############
@@ -197,7 +197,7 @@ class TestStep < Test::Unit::TestCase
     d.stop # ({:remove => true})
     out = ['-- x = fact(4)',
            '<- return 1 if x <= 1',
-           '1']
+           'true']
     compare_output(out, d, cmds)
   end
 
