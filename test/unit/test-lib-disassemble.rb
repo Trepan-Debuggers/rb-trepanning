@@ -16,7 +16,7 @@ local table (size: 6, argc: 1 [opts: 0, rest: -1, post: 0, block: -1] s1)
 0004 putnil           
 '
     [[-1, -1], [1, -1], [2, 4], [10, -1]].each do |num, pos|
-      ary = mark_disassembly(dis_string, num)
+      ary = mark_disassembly(dis_string, true, num)
       selected = ary.select{|line| line =~ /\d{4} / && line !~ /^   /}
       if pos == -1
         assert_equal([], selected,

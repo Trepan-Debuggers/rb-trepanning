@@ -7,10 +7,10 @@ class Debugger::Command::DisassembleCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
-"disassemble [thing]
+"disassemble [thing] [short]
 
 With no argument, disassemble the current frame.  With a method, disassemble
-that method.
+that method. 
 "
 
     ALIASES       = %w(disas) # Note we will have disable
@@ -24,18 +24,32 @@ that method.
   def run(args)
 
     obj = nil
+    short = 
+      if args.size > 1 && arg[-1] == 'short'
+        args.pop
+        true
+      else
+        short = false
+      end
     if args.size == 1
       # Form is: "disassemble" 
       if @proc.frame.type == 'CFUNC'
         errmsg "Can't handle C functions yet."
         return
       elsif @proc.frame.iseq
-        ary = mark_disassembly(@proc.frame.iseq.disasm, @proc.frame.pc_offset)
-        msg ary
+        @proc.frame.iseq.child_iseqs.each do |iseq|
+          ary = mark_disassembly(iseq.disasm_nochildren, 
+                                 @proc.frame.iseq.equal?(iseq),
+                                 @proc.frame.pc_offset)
+          msg ary
+        end
         return
       end
     else
       thingy = args[1]
+      # FIXME: first try to get iseq so we can partition instruction
+      # sequences better like we do above. And while we're at it, DRY
+      # code with code above.
       if @proc.debug_eval("#{thingy}.respond_to?(:disasm)")
         msg @proc.debug_eval("#{thingy}.disasm")
         return
