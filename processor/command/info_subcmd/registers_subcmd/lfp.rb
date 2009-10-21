@@ -8,6 +8,7 @@ class Debugger::Subcommand::InfoRegistersLfp < Debugger::SubSubcommand
     MIN_ABBREV   = 'lf'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
+    PREFIX       = %w(info registers)
   end
 
   def run(args)
@@ -38,6 +39,7 @@ if __FILE__ == $0
   # FIXME: DRY the below code
   dbgr, info_cmd = MockDebugger::setup('exit')
   testcmdMgr = Debugger::Subcmd.new(info_cmd)
+  cmd_name    = PREFIX.join('')
   infox_cmd  = Debugger::SubSubcommand::InfoRegistersSp.new(info_cmd.proc,
                                                             info_cmd,
                                                             'inforegisters')

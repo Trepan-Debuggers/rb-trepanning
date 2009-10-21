@@ -23,7 +23,8 @@ if __FILE__ == $0
   auto_cmd       = Debugger::SubSubcommand::ShowAuto.new(dbgr.core.processor, 
                                                          show_cmd)
 
-  cmd_name       = PREFIX.join('')
+  # FIXME: remove the 'join' below
+  cmd_name       = Debugger::SubSubcommand::ShowAutoEval::PREFIX.join('')
   autox_cmd      = Debugger::SubSubcommand::ShowAutoEval.new(show_cmd.proc, auto_cmd,
                                                              cmd_name)
   # require_relative %w(.. .. .. .. rbdbgr)

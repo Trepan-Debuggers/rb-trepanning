@@ -7,7 +7,7 @@ class Debugger::SubSubcommand::ShowAutoIrb < Debugger::ShowBoolSubSubcommand
     HELP = "Show if IRB is invoked on debugger stops"
     MIN_ABBREV = 'ir'.size
     NAME       = File.basename(__FILE__, '.rb')
-    SHORT_HELP   = HELP
+    PREFIX     = %w(show auto irb)
   end
 
 end
@@ -24,8 +24,9 @@ if __FILE__ == $0
   auto_cmd       = Debugger::SubSubcommand::ShowAuto.new(dbgr.core.processor, 
                                                          show_cmd)
 
-  autox_cmd = Debugger::SubSubcommand::ShowAutoEval.new(show_cmd.proc, auto_cmd,
-                                                        'showauto')
+  cmd_name       = Debugger::SubSubcommand::ShowAutoIrb::PREFIX.join('')
+  autox_cmd      = Debugger::SubSubcommand::ShowAutoIrb.new(show_cmd.proc, auto_cmd,
+                                                            cmd_name)
   autox_cmd.run([])
   # name = File.basename(__FILE__, '.rb')
   # autox_cmd.summary_help(name)
