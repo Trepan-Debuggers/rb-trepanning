@@ -5,5 +5,5 @@
   ;; Anders code has more complicated logic for figuring out
   ;; which of serveral "other" windows is the one you want to switch
   ;; to.
-  (if (one-window-p) (split-window) (other-window 1)))
+  (if (one-window-p 't) (split-window) (other-window 1)))
 
