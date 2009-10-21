@@ -124,7 +124,8 @@ class Debugger
         end
       opts = {
         :msg_on_error => 
-        "The 'break' command argument must eval to an integer. Got: %s" % position_str,
+        ("argument '%s' does not seem to eval to a method or an integer." % 
+         position_str),
         :min_value => 0
       }
       position = get_an_int(position_str, opts)

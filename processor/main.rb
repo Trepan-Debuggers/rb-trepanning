@@ -121,7 +121,7 @@ class Debugger
         b ||= binding
         eval(str, b)
       rescue StandardError, ScriptError => e
-        exception_dump(e, settings[:stack_trace_on_error], b)
+        exception_dump(e, settings[:stack_trace_on_error], $!.backtrace)
       end
     end
 
@@ -135,16 +135,14 @@ class Debugger
     end
 
 
-    def exception_dump(e, stack_trace, b=nil)
+    def exception_dump(e, stack_trace, backtrace)
       if stack_trace
-        at = eval("caller(2)", b)
-        str = "%s:%s\n" % [at.shift, e.to_s.sub(/\(eval\):1:(in `.*?':)?/, '')]
-        str += at.map{|s| "\tfrom %s" % [s]}.join("\n")
+        str = backtrace.map{|l| "\t#{l}"}.join("\n") rescue nil
       else
         str = "#{e.class} Exception: #{e.message}"
       end
       errmsg str
-#         throw :debug_error
+      # throw :debug_error
     end
 
     # Check that we meed the criteria that cmd specifies it needs
@@ -325,7 +323,7 @@ class Debugger
           break if process_command_and_quit?()
         rescue Exception => e
           errmsg("INTERNAL DEBUGGER ERROR!")
-          exception_dump(e, @settings[:debugexcept], @frame.binding)
+          exception_dump(e, @settings[:debugexcept], $!.backtrace)
         end
       end
     end

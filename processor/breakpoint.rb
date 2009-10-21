@@ -15,7 +15,7 @@ class Debugger
       @brkpts.add(false, offset, iseq)
     end
 
-    def breakpoint_offset(offset, iseq)
+    def breakpoint_offset(offset, iseq, temp=false)
       # FIXME: handle breakpoint conditions.
       unless iseq.offsetlines.keys.member?(offset)
         errmsg("Offset #{offset} not found in #{iseq.name} for breakpoint")

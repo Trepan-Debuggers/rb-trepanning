@@ -19,17 +19,28 @@ that method.
     NEED_STACK    = true
     SHORT_HELP    = 'Disassemble Ruby VM instructions'
   end
-  
+
+  # FIXME: put in processor/data.rb? 
+
+  def marked_disassemble(iseq)
+    iseq.child_iseqs.each do |iseq|
+      ary = mark_disassembly(iseq.disasm_nochildren, 
+                             @proc.frame.iseq.equal?(iseq),
+                             @proc.frame.pc_offset)
+      msg ary
+    end
+  end
+
   # Run command. 
   def run(args)
 
     obj = nil
     short = 
-      if args.size > 1 && arg[-1] == 'short'
+      if args.size > 1 && args[-1] == 'short'
         args.pop
         true
       else
-        short = false
+        false
       end
     if args.size == 1
       # Form is: "disassemble" 
@@ -37,23 +48,13 @@ that method.
         errmsg "Can't handle C functions yet."
         return
       elsif @proc.frame.iseq
-        @proc.frame.iseq.child_iseqs.each do |iseq|
-          ary = mark_disassembly(iseq.disasm_nochildren, 
-                                 @proc.frame.iseq.equal?(iseq),
-                                 @proc.frame.pc_offset)
-          msg ary
-        end
+        marked_disassemble(@proc.frame.iseq)
         return
       end
     else
-      thingy = args[1]
-      # FIXME: first try to get iseq so we can partition instruction
-      # sequences better like we do above. And while we're at it, DRY
-      # code with code above.
-      if @proc.debug_eval("#{thingy}.respond_to?(:disasm)")
-        msg @proc.debug_eval("#{thingy}.disasm")
-        return
-      end
+      iseq = @proc.method_iseq(args[1])
+      marked_disassemble(iseq) if iseq
+      return
     end
     errmsg("Sorry can't handle right now.")
   end
