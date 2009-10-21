@@ -1,5 +1,5 @@
 (load-file "./behave.el")
-(load-file "../rbdbgr-regexp.el")
+(load-file "../rbdbg-regexp.el")
 (load-file "../rbdbg-loc.el")
 (load-file "../rbdbg-var.el")
 (load-file "../rbdbg-track.el")

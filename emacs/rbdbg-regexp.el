@@ -1,4 +1,5 @@
-;;; rbdbgr-regexp.el --- Debugger regular expressions
+;;; rbdbg-regexp.el --- Debugger regular expressions for many kinds of
+;;  debuggers
 
 ;; Here we have regular expressions and names for matched patterns
 ;; of those regular expressions.

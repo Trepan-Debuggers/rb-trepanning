@@ -9,7 +9,7 @@
   (load "rbdbg-file")
   (load "rbdbg-var")
   (load "rbdbg-window")
-  (load "rbdbgr-regexp")
+  (load "rbdbg-regexp")
   (setq load-path (cddr load-path)))
 (require 'rbdbg-track)
 
