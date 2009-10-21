@@ -32,7 +32,11 @@ Examples:
 
   # This method runs the command
   def run(args) # :nodoc
-    hide_level  = @proc.hidelevels[Thread.current] || 0
+    hide_level  = 
+      if !settings[:debugstack] && @proc.hidelevels[Thread.current] 
+        @proc.hidelevels[Thread.current] 
+      else 0 
+      end
     stack_size = @proc.top_frame.stack_size - hide_level
     if args.size > 1
       count = @proc.get_int(args[1], 

@@ -2,11 +2,11 @@
 require_relative %w(.. base subsubcmd)
 require_relative %w(.. base subsubmgr)
 
-class Debugger::SubSubcommand::SetAuto < Debugger::SubSubcommandMgr
+class Debugger::SubSubcommand::SetDebug < Debugger::SubSubcommandMgr
   unless defined?(HELP)
-    HELP   = 'Set controls for things with some sort of "automatic" default behavior.'
+    HELP   = 'Set internal debugger settings.'
     NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %w(set auto)
+    PREFIX = %w(set debug)
   end
 end
 

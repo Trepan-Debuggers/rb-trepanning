@@ -134,6 +134,7 @@ class Debugger
       end
     end
 
+
     def exception_dump(e, stack_trace, b=nil)
       if stack_trace
         at = eval("caller(2)", b)
@@ -320,14 +321,13 @@ class Debugger
       irb_cmd.run(['irb']) if @settings[:autoirb] && irb_cmd
 
       while not @leave_cmd_loop do
-        break if process_command_and_quit?()
-        # Might have other stuff here.
+        begin
+          break if process_command_and_quit?()
+        rescue Exception => e
+          errmsg("INTERNAL DEBUGGER ERROR!")
+          exception_dump(e, @settings[:debugexcept], @frame.binding)
+        end
       end
-    # rescue Exception => e
-    #   errmsg("INTERNAL ERROR!!!")
-    #   b = @frame.binding if @frame 
-    #   exception_dump(e, false, b)
-    #   frame_teardown
     end
 
     # Loads in debugger commands by require'ing each ruby file in the
