@@ -1,6 +1,11 @@
 ;; -------------------------------------------------------------------
 ;; Dependencies.
 ;;
+(eval-when-compile
+  (setq load-path (cons nil (cons ".." load-path)))
+  (require 'cl)
+  (load "rbdbgr-regexp")
+  (setq load-path (cddr load-path)))
 
 
 (defun rbdbgr-get-script-name (args)
@@ -13,7 +18,7 @@ Initially annotate should be set to nil.  Argument ARGS contains
 a tokenized list of the command line."
   ;; Parse the following:
   ;;
-  ;;  [ruby ruby-options] rdebug rdebug-options script-name script-options
+  ;;  [ruby ruby-options] rbdbgr rbdbgr-options script-name script-options
   (and args
        (let ((name nil)
              (annotate-p nil))
@@ -60,7 +65,7 @@ a tokenized list of the command line."
   (save-excursion
     (goto-char pt)
     (let ((s (buffer-substring (line-beginning-position) (line-end-position)))
-	  (gud-comint-buffer (current-buffer)))
+	  (rbdbg-buffer (current-buffer)))
       (when (string-match rbdbgr-traceback-line-re s)
         (rbdbgr-display-line
          (substring s (match-beginning 1) (match-end 1))
@@ -73,7 +78,7 @@ a tokenized list of the command line."
   (save-excursion
     (goto-char pt)
     (let ((s (buffer-substring (line-beginning-position) (line-end-position)))
-	  (gud-comint-buffer (current-buffer)))
+	  (rbdbg-buffer (current-buffer)))
       (when (string-match rbdbgr-dollarbang-traceback-line-re s)
         (rbdbgr-display-line
          (substring s (match-beginning 1) (match-end 1))
@@ -106,7 +111,7 @@ a tokenized list of the command line."
                    (and (eq rbdbgr-restore-original-window-configuration :many)
                         rbdbgr-many-windows))
                (or (rbdbgr-dead-process-p)
-                   (eq process (get-buffer-process gud-comint-buffer)))
+                   (eq process (get-buffer-process rbdbg-buffer)))
                (eq rbdbgr-window-configuration-state 'debugger)
                (not (eq (process-status process) 'run)))
       (rbdbgr-internal-short-key-mode-off)
@@ -196,7 +201,7 @@ String COMMAND-LINE specifies how to run rbdbgr."
 
       ;; Setup exit callback so that the original frame configuration
       ;; can be restored.
-      (let ((process (get-buffer-process gud-comint-buffer)))
+      (let ((process (get-buffer-process rbdbg-buffer)))
         (when process
           (unless (equal rbdbgr-line-width 120)
 	    (gud-call (format "set width %d" rbdbgr-line-width)))

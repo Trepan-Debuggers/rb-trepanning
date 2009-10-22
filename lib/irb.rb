@@ -1,18 +1,26 @@
-# This code comes directly from ruby-debug.
+# This code comes more or less from ruby-debug.
 require 'irb'
 module IRB # :nodoc:
   module ExtendCommand # :nodoc:
-    class Continue # :nodoc:
+    # FIXME: should we read these out of a directory to 
+    #        make this more user-customizable? 
+
+    # a weak irb version of rbdbgr "continue"
+    class Continue
       def self.execute(conf)
         throw :IRB_EXIT, :cont
       end
     end
-    class Next # :nodoc:
+
+    # a weak irb version of rbdbgr "next"
+    class Next
       def self.execute(conf)
         throw :IRB_EXIT, :next
       end
     end
-    class Step # :nodoc:
+
+    # a weak irb version of rbdbgr "step"
+    class Step
       def self.execute(conf)
         throw :IRB_EXIT, :step
       end
@@ -29,7 +37,8 @@ module IRB # :nodoc:
     unless @__initialized
 
       # Set to run the standard rbdbgr IRB profile
-      irbrc = File.expand_path(File.join(File.dirname(__FILE__), %w(.. irbrc)))
+      irbrc = File.expand_path(File.join(File.dirname(__FILE__), 
+                                         %w(.. profile irbrc)))
       ENV['IRBRC'] = irbrc
 
       args = ARGV.dup
