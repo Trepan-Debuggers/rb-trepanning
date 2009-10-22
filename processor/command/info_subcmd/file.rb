@@ -5,7 +5,7 @@ require_relative %w(.. base subcmd)
 class Debugger::Subcommand::InfoFile < Debugger::Subcommand
   unless defined?(HELP)
     HELP =
-'info file [{FILENAME|.} [all | brkpts | sha1 | size]]
+'info file [{FILENAME|.} [all | brkpts | sha1 | size | stat]]
 
 Show information about the current file. If no filename is given and
 the program is running then the current file associated with the
@@ -39,8 +39,8 @@ all   -- All of the above information.
     end
     
     m = filename + ' is'
-    if LineCache::cached_script?(filename)
-      canonic_name = LineCache::unmap_file(filename)
+    canonic_name = LineCache::map_file(filename)
+    if LineCache::cached?(canonic_name)
       m += " cached in debugger"
       if canonic_name != filename
         m += (' as:' + canonic_name)
@@ -61,18 +61,18 @@ all   -- All of the above information.
       end
 
       if %w(all sha1).member?(arg)
-        msg("SHA1 is %s." % LineCache::sha1(filename))
+        msg("SHA1 is %s." % LineCache::sha1(canonic_name))
         processed_arg = true
       end
       if %w(all brkpts).member?(arg)
         msg("Possible breakpoint line numbers:")
-        lines = LineCache::trace_line_numbers(filename)
-        fmt_lines = columnize_commands(lines)
+        lines = LineCache::trace_line_numbers(canonic_name)
+        fmt_lines = columnize_numbers(lines)
         msg(fmt_lines)
         processed_arg = true
       end
       if %w(all stat).member?(arg)
-        msg("stat info\n\t%s." % LineCache::stat(filename).inspect)
+        msg("Stat info:\n\t%s." % LineCache::stat(canonic_name).inspect)
         processed_arg = true
       end
       if not processed_arg

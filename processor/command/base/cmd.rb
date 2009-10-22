@@ -7,11 +7,13 @@ class Debugger
   class Command
     attr_accessor :core, :proc
 
-    MIN_ARGS      = 0      # run()'s args array must be at least this many
-    MAX_ARGS      = nil    # run()'s args array must be at least this many
-    NEED_STACK    = false  # We'll say that commands which need a stack
-                           # to run have to declare that and those that
-                           # don't don't have to mention it.
+    unless defined?(MIN_ARGS)
+      MIN_ARGS      = 0      # run()'s args array must be at least this many
+      MAX_ARGS      = nil    # run()'s args array must be at least this many
+      NEED_STACK    = false  # We'll say that commands which need a stack
+                             # to run have to declare that and those that
+                             # don't don't have to mention it.
+    end
 
     def initialize(proc)
       @name = my_const(:NAME)
@@ -26,7 +28,13 @@ class Debugger
     def columnize_commands(commands)
       width = settings[:width]
       Columnize::columnize(commands, width, ' ' * 4, 
-                               true, true, ' ' * 2).chomp
+                           true, true, ' ' * 2).chomp
+    end
+
+    def columnize_numbers(commands)
+      width = settings[:width]
+      Columnize::columnize(commands, width, ', ',
+                           true, false, ' ' * 2).chomp
     end
 
     # FIXME: probably there is a way to do the delegation to proc methods

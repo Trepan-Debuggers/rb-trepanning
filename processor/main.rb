@@ -209,6 +209,11 @@ class Debugger
           text      = line_at(container, @line_no)
         end
       else
+        map_file, map_line = LineCache::map_file_line(container, @line_no)
+        if [container, @line_no] != [map_file, map_line]
+          loc += " remapped #{canonic_file(map_file)}:#{map_line}"
+        end
+        
         text  = line_at(container, @line_no)
       end
       message = "#{ev} (#{loc})"
