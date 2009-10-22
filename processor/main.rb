@@ -188,7 +188,7 @@ class Debugger
 
     def print_location
       text      = nil
-      container = frame_file(false)
+      container = frame_file(@frame, false)
       ev        = if @core.event.nil? || @frame_index != 0 
                     '  ' 
                   else
@@ -200,10 +200,11 @@ class Debugger
         frame = @frame
         via = loc
         while frame.source_container[0] != 'file' and frame.prev do
+          puts "++ #{frame}"
           frame     = frame.prev
         end
         if frame.source_container[0] == 'file'
-          container = frame_file(false)
+          container = frame_file(frame, false)
           @line_no  = frame.source_location[0]
           loc      += " via #{canonic_file(container)}:#{@line_no}"
           text      = line_at(container, @line_no)

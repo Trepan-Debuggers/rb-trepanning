@@ -52,8 +52,8 @@ class Debugger
 
     end
 
-    def frame_file(canonicalize=true)
-      filename = @frame.source_container[1]
+    def frame_file(frame, canonicalize=true)
+      filename = frame.source_container[1]
       canonicalize ? canonic_file(filename) : filename
     end
 
