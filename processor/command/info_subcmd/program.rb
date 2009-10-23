@@ -30,7 +30,7 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('exit')
+  dbgr, cmd = MockDebugger::setup('info')
   subcommand = Debugger::Subcommand::InfoProgram.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 

@@ -143,10 +143,9 @@ class Debugger
 
 
     def exception_dump(e, stack_trace, backtrace)
+      str = "#{e.class} Exception: #{e.message}"
       if stack_trace
-        str = backtrace.map{|l| "\t#{l}"}.join("\n") rescue nil
-      else
-        str = "#{e.class} Exception: #{e.message}"
+        str += "\n" + backtrace.map{|l| "\t#{l}"}.join("\n") rescue nil
       end
       errmsg str
       # throw :debug_error
