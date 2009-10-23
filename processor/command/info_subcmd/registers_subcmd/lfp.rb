@@ -42,21 +42,12 @@ if __FILE__ == $0
   cmd_name    = PREFIX.join('')
   infox_cmd  = Debugger::SubSubcommand::InfoRegistersSp.new(info_cmd.proc,
                                                             info_cmd,
-                                                            'inforegisters')
+                                                            cmd_name)
   # require_relative %w(.. .. .. .. rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   infox_cmd.run([])
 
-  def info_cmd.msg(message)
-    puts message
-  end
-  def info_cmd.msg_nocr(message)
-    print message
-  end
-  def info_cmd.errmsg(message)
-    puts message
-  end
   # name = File.basename(__FILE__, '.rb')
   # subcommand.summary_help(name)
 end

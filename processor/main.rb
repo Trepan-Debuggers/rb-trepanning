@@ -97,7 +97,6 @@ class Debugger
 
       # FIXME: Rework using a general "set substitute file" command and
       # a global default profile which gets read.
-      load '/src/external-vcs/linecache/branches/ruby-1.9/lib/linecache.rb'
       prelude_file = File.expand_path(File.join(File.dirname(__FILE__), 
                                                 %w(.. data prelude.rb)))
       LineCache::cache(prelude_file)

@@ -8,6 +8,7 @@ class Debugger::Subcommand::InfoRegistersSp < Debugger::SubSubcommand
     MIN_ABBREV   = 'sp'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
+    PREFIX       = %w(info registers sp)
   end
 
   def run(args)
@@ -38,23 +39,15 @@ if __FILE__ == $0
   # FIXME: DRY the below code
   dbgr, info_cmd = MockDebugger::setup('exit')
   testcmdMgr = Debugger::Subcmd.new(info_cmd)
-  infox_cmd  = Debugger::SubSubcommand::InfoRegistersSp.new(info_cmd.proc,
+  cmd_name   = Debugger::SubSubcommand::InfoRegistersPc::PREFIX.join('')
+  infox_cmd  = Debugger::SubSubcommand::InfoRegistersPc.new(info_cmd.proc, 
                                                             info_cmd,
-                                                            'inforegisters')
+                                                            cmd_name)
   # require_relative %w(.. .. .. .. rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   infox_cmd.run([])
 
-  def info_cmd.msg(message)
-    puts message
-  end
-  def info_cmd.msg_nocr(message)
-    print message
-  end
-  def info_cmd.errmsg(message)
-    puts message
-  end
   # name = File.basename(__FILE__, '.rb')
   # subcommand.summary_help(name)
 end
