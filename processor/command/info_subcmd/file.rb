@@ -28,15 +28,16 @@ all   -- All of the above information.
   
   # Get file information
   def run(args)
-    if args.empty?
-      filename = ('.' == args[0]) ? @proc.frame.source_container[1] : args[0]
-    else
-      if not @proc.frame
+    filename = 
+      if args.empty? || '.' == args[0]
+        @proc.frame.source_container[1]
+      elsif not @proc.frame
         errmsg("No frame - no default file.")
         return false
+        nil
+      else
+        @proc.frame.source_container[1]
       end
-      filename = @proc.frame.source_container[1]
-    end
     
     m = filename + ' is'
     canonic_name = LineCache::map_file(filename)
