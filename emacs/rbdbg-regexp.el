@@ -27,7 +27,7 @@ a string output by a debugger inside a process shell"
 ; Create one for the Ruby 1.9 debugger "rbdbgr". 
 (setf (gethash "rbdbgr" rbdbg-dbgr-pat-hash)
       (make-rbdbg-dbgr-loc-pat
-       :regexp ".. (.*?\\(?:via \\)?\\([-a-zA-Z0-9_/.]+\\):\\([0-9]+\\))"
+       :regexp ".. (\\(?:.+ \\(?:via\\|remapped\\) \\)?\\(.+\\):\\([0-9]+\\))"
        :file-group 1
        :line-group 2))
 

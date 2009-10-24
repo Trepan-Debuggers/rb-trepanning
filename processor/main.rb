@@ -6,6 +6,7 @@ require 'set'
 require 'pathname'  # For cleanpath
 
 require_relative 'default'  # Command Processor default settings
+require_relative 'location' # Should come before frame
 require_relative 'frame'
 require_relative 'msg'
 require_relative 'validate'
@@ -13,43 +14,45 @@ require_relative %w(.. lib brkptmgr)
 
 class Debugger
   class CmdProcessor
-    attr_reader   :aliases        # Hash[String] of command names
-                                  # indexed by alias name
-    attr_reader   :brkpt          # Breakpoint. If we are stopped at a
-                                  # breakpoint this is the one we
-                                  # found.  (There may be other
-                                  # breakponts that would have caused a stop
-                                  # as well; this is just one of them).
-                                  # If no breakpoint stop this is nil.
-    attr_reader   :brkpts         # BreakpointManager. 
-    attr_reader   :core           # Debugger core object
-    attr_reader   :commands       # Hash[String] of command objects
-                                  # indexed by name
-    attr_reader   :dbgr           # Debugger instance (via
-                                  # Debugger::Core instance)
-    attr_accessor :different_pos  # Same type as settings[:different] 
-                                  # this is the temporary value for the
-                                  # next stop while settings is the default
-                                  # value to use.
-    attr_accessor :leave_cmd_loop # Commands set this to signal to leave
-                                  # the command loop (which often continues to 
-                                  # run the debugged program). 
-    attr_accessor :line_no        # Last line shown in "list" command
-    attr_accessor :next_level     # Fixnum. frame.stack_size has to be <= than this.
-                                  # If next'ing, this will be > 0.
-    attr_accessor :next_thread    # If non-nil then in stepping the thread has to be 
-                                  # this thread.
-    attr_reader   :settings       # Hash[:symbol] of command processor
-                                  # settings
-    attr_accessor :stop_events    # Set or nil. If not nil, only
-                                  # events in this set will be
-                                  # considered for stopping. This is
-                                  # like core.step_events (which could
-                                  # be used instead), but it is a set
-                                  # of event names rather than a
-                                  # bitmask and it is intended to be
-                                  # more temporarily changed via "step>" or
-                                  # "step!" commands.
+    attr_reader   :aliases         # Hash[String] of command names
+                                   # indexed by alias name
+    attr_reader   :brkpt           # Breakpoint. If we are stopped at a
+                                   # breakpoint this is the one we
+                                   # found.  (There may be other
+                                   # breakponts that would have caused a stop
+                                   # as well; this is just one of them).
+                                   # If no breakpoint stop this is nil.
+    attr_reader   :brkpts          # BreakpointManager. 
+    attr_reader   :core            # Debugger core object
+    attr_reader   :commands        # Hash[String] of command objects
+                                   # indexed by name
+    attr_reader   :dbgr            # Debugger instance (via
+                                   # Debugger::Core instance)
+    attr_accessor :different_pos   # Same type as settings[:different] 
+                                   # this is the temporary value for the
+                                   # next stop while settings is the default
+                                   # value to use.
+    attr_accessor :leave_cmd_loop  # Commands set this to signal to leave
+                                   # the command loop (which often continues to 
+                                   # run the debugged program). 
+    attr_accessor :line_no         # Last line shown in "list" command
+    attr_accessor :next_level      # Fixnum. frame.stack_size has to
+                                   # be <= than this.  If next'ing,
+                                   # this will be > 0.
+    attr_accessor :next_thread     # Thread. If non-nil then in
+                                   # stepping the thread has to be
+                                   # this thread.
+    attr_reader   :settings        # Hash[:symbol] of command
+                                   # processor settings
+    attr_accessor :stop_events     # Set or nil. If not nil, only
+                                   # events in this set will be
+                                   # considered for stopping. This is
+                                   # like core.step_events (which
+                                   # could be used instead), but it is
+                                   # a set of event names rather than
+                                   # a bitmask and it is intended to
+                                   # be more temporarily changed via
+                                   # "step>" or "step!" commands.
                                   
 
     # The following are used in to force stopping at a different line
@@ -59,6 +62,7 @@ class Debugger
 
 
     unless defined?(EVENT2ICON)
+      # We use event icons in printing locations.
       EVENT2ICON = {
         'brkpt'          => 'xx',
         'c-call'         => 'C>',
@@ -82,18 +86,19 @@ class Debugger
     end
 
     def initialize(core, settings={})
-      @brkpts         = BreakpointMgr.new
-      @brkpt          = nil
-      @core           = core
-      @dbgr           = core.dbgr
-      @hidelevels     = {}
-      @last_command   = nil
-      @last_pos       = [nil, nil, nil, nil]
-      @next_level     = 32000
-      @next_thread    = nil
-      @settings       = settings.merge(DEFAULT_SETTINGS)
-      @different_pos  = @settings[:different]
-      @stop_events    = nil
+      @brkpts          = BreakpointMgr.new
+      @brkpt           = nil
+      @core            = core
+      @dbgr            = core.dbgr
+      @hidelevels      = {}
+      @last_command    = nil
+      @last_pos        = [nil, nil, nil, nil]
+      @next_level      = 32000
+      @next_thread     = nil
+      @settings        = settings.merge(DEFAULT_SETTINGS)
+      @different_pos   = @settings[:different]
+      @remap_container = {}  # See location.rb
+      @stop_events     = nil
 
       # FIXME: Rework using a general "set substitute file" command and
       # a global default profile which gets read.
@@ -138,6 +143,7 @@ class Debugger
         b ||= binding
         eval(str, b)
       rescue StandardError, ScriptError => e
+        nil
       end
     end
 
@@ -173,54 +179,6 @@ class Debugger
       end
         
       return true
-    end
-
-    # Get line +line_number+ from file named +filename+. Return "\n"
-    # there was a problem. Leaking blanks are stripped off.
-    def line_at(filename, line_number) # :nodoc:
-      @reload_on_change=nil unless defined?(@reload_on_change)
-      line = LineCache::getline(filename, line_number, @reload_on_change)
-      return "\n" unless line
-      return line.gsub(/^\s+/, '').chomp
-    end
-
-    def print_location
-      text      = nil
-      container = frame_file(@frame, false)
-      ev        = if @core.event.nil? || @frame_index != 0 
-                    '  ' 
-                  else
-                    (EVENT2ICON[@core.event] || @core.event)
-                  end
-      @line_no  = frame_line
-      loc       = "#{canonic_file(container)}:#{line_no}"
-      if @frame.source_container[0] != 'file'
-        frame = @frame
-        via = loc
-        while frame.source_container[0] != 'file' and frame.prev do
-          puts "++ #{frame}"
-          frame     = frame.prev
-        end
-        if frame.source_container[0] == 'file'
-          container = frame_file(frame, false)
-          @line_no  = frame.source_location[0]
-          loc      += " via #{canonic_file(container)}:#{@line_no}"
-          text      = line_at(container, @line_no)
-        end
-      else
-        map_file, map_line = LineCache::map_file_line(container, @line_no)
-        if [container, @line_no] != [map_file, map_line]
-          loc += " remapped #{canonic_file(map_file)}:#{map_line}"
-        end
-        
-        text  = line_at(container, @line_no)
-      end
-      message = "#{ev} (#{loc})"
-      if text && !text.strip.empty?
-        message += "\n#{text}" 
-        @line_no -= 1
-      end
-      msg message
     end
 
     # Run one debugger command. True is returned if we want to quit.

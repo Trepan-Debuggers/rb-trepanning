@@ -3,19 +3,40 @@ require_relative %w(.. base subcmd)
 
 class Debugger::Subcommand::InfoIseq < Debugger::Subcommand
   unless defined?(HELP)
-    HELP         = 'Information about an instruction sequence'
+    HELP         = 
+'info iseq [METHOD|.]
+
+Show information about an instruction sequence.
+
+Examples:
+  info iseq
+  info iseq .
+  info iseq require_relative
+'
     MIN_ABBREV   = 'is'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
     PREFIX       = %w(info iseq)
+    SHORT_HELP   = 'Information about an instruction sequence'
   end
 
   def run(args)
-    iseq = frame = @proc.frame.iseq
-    msg('Instruction sequence: %s' %  iseq)
-    %w(name arity source_container 
-       iseq_size local_size orig object_id).each do |field|
-      msg("\t#{field}: %s" % iseq.send(field))
+    if args.empty? || '.' == args[0]
+      iseq = frame = @proc.frame.iseq
+    elsif 
+      iseq = @proc.method_iseq(args[0])
+    end
+    
+    if iseq
+      msg('Instruction sequence: %s' %  iseq)
+      %w(name arity source_container 
+       iseq_size local_size orig).each do |field|
+        msg("\t#{field}: %s" % iseq.send(field))
+      end
+    else
+      mess = "Can't find instruction sequence"
+      mess += " for #{args.join(' ')}" unless args.empty?
+      errmsg mess
     end
   end
 

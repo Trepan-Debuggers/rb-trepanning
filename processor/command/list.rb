@@ -73,7 +73,8 @@ or 'show listsize' to see or set the value.
     
     frame = @proc.frame
     
-    filename = frame ? frame.source_container[1] : nil
+    source_container = @proc.frame_container(frame, false)
+    filename = source_container[1]
     
     last = nil
     listsize = settings[:listsize]
@@ -190,9 +191,11 @@ or 'show listsize' to see or set the value.
 end
 
 if __FILE__ == $0
+  require_relative %w(.. location)
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  cmd.proc.instance_variable_set('@remap_container', {})
   LineCache::cache(__FILE__)
   cmd.run(['list'])
   puts '--' * 10

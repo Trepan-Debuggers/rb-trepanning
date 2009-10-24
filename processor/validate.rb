@@ -187,7 +187,8 @@ class Debugger
         lineno   = Integer(arg)
       rescue
       else
-        filename = @frame.source_container[1] unless old_mod
+        source_container = frame_container(@frame, false)
+        filename = source_container[1] unless old_mod
         return nil, canonic_file(filename), lineno
       end
 

@@ -1,3 +1,4 @@
+require_relative 'location' # for remap_container
 class Debugger
   class CmdProcessor
 
@@ -52,9 +53,16 @@ class Debugger
 
     end
 
-    def frame_file(frame, canonicalize=true)
-      filename = frame.source_container[1]
-      canonicalize ? canonic_file(filename) : filename
+    def frame_container(frame, canonicalize=true)
+      container = 
+        if @remap_container.member?(frame.source_container)
+          @remap_container[frame.source_container]
+        else
+          frame.source_container
+        end
+
+      container[1] = canonic_file(container[1]) if canonicalize
+      container
     end
 
     def frame_line
