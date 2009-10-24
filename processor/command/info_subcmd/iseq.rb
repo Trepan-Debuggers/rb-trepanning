@@ -33,6 +33,16 @@ Examples:
        iseq_size local_size orig).each do |field|
         msg("\t#{field}: %s" % iseq.send(field))
       end
+      if iseq.brkpts
+        if iseq.brkpts.empty?
+          msg("Breakpoints have been allocated, but none have been set.")
+        else
+          s = iseq.brkpts.size > 1 ? 's' : ''
+          msg("Breakpoint%s at offset%s: %s" % [s, s, iseq.brkpts.join(', ')])
+        end
+      else
+        msg("Breakpoints have not been allocated.")
+      end
     else
       mess = "Can't find instruction sequence"
       mess += " for #{args.join(' ')}" unless args.empty?
