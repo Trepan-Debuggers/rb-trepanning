@@ -4,7 +4,7 @@ require_relative %w(.. registers)
 
 class Debugger::Subcommand::InfoRegistersSp < Debugger::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show the value of the VM stack pointer'
+    HELP         = 'Show the value of the VM stack pointer (SP)'
     MIN_ABBREV   = 'sp'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true

@@ -88,9 +88,11 @@ class TestStep < Test::Unit::TestCase
     z = 1
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- x = 5',
-           '-> def foo1',
-           '!! raise Exception']
+    out = ["-- x = 5",
+           "Trace events we may stop on:",
+           "\tcall, raise",
+           "-> def foo1",
+           "!! raise Exception"]
     compare_output(out, d, cmds)
     
     # Test "step" will sets of events. Part 2
@@ -124,7 +126,7 @@ class TestStep < Test::Unit::TestCase
     def sqr(x)
       y = x * x
     end
-    cmds = ['set events line call return'] + %w(step) * 4 + %w(continue)
+    cmds = %w(step) * 4 + %w(continue)
     out =  ['-- x = sqr(4)',
             '-> def sqr(x)',
             '-- y = x * x',
@@ -142,6 +144,8 @@ class TestStep < Test::Unit::TestCase
     cmds = ['set events call return',
             'step', 'step', 'continue']
     out =  ['-- x = sqr(4)',
+            'Trace events we may stop on:',
+            '	call, return',
             '-> def sqr(x)',
             '<- end']
     d = strarray_setup(cmds)

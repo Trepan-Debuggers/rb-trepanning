@@ -92,19 +92,19 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
       end
     end
 
-    subcmd_name = args[3]
-    subcmd_prefix  = args[1..2].join(' ')
+    prefix      = my_const(:PREFIX)
+    subcmd_name = args[prefix.size+1]
+    prefix_str  = prefix.join(' ')
 
     if '*' == subcmd_name
-      prefix_len =  my_const(:PREFIX).size
-      help_text  = ["List of subcommands for '%s':" % subcmd_prefix]
-      cmd_names = @subcmds.list.map{|c| c[prefix_len..-1]}
+      help_text  = ["List of subcommands for '%s':" % prefix_str]
+      cmd_names = @subcmds.list.map{|c| c[prefix_str.size-1..-1]}
       help_text << columnize_commands(cmd_names)
       return help_text
     end
 
     # "help cmd subcmd". Give help specific for that subcommand.
-    cmd = @subcmds.lookup(args[1..3].join(''), false)
+    cmd = @subcmds.lookup(args[1..prefix.size+1].join(''), false)
     if cmd
       doc = obj_const(cmd, :HELP)
       if doc

@@ -4,7 +4,7 @@ require_relative %w(.. registers)
 
 class Debugger::SubSubcommand::InfoRegistersPc < Debugger::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show the value of the VM program counter'
+    HELP         = 'Show the value of the VM program counter (PC)'
     MIN_ABBREV   = 'pc'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true

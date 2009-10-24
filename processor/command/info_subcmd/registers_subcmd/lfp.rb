@@ -4,11 +4,11 @@ require_relative %w(.. registers)
 
 class Debugger::Subcommand::InfoRegistersLfp < Debugger::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show the value of the VM stack pointer'
+    HELP         = 'Show the value of the VM local frame pointer (LFP)'
     MIN_ABBREV   = 'lf'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    PREFIX       = %w(info registers)
+    PREFIX       = %w(info registers lfp)
   end
 
   def run(args)
