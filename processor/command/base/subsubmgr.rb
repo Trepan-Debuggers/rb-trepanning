@@ -62,8 +62,11 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
     subcommands = {}
     cmd_names.each do |subname|
       cmd_name = "#{pname}#{subname.downcase}"
-      subcmd_class = "Debugger::SubSubcommand::#{@pname.capitalize}#{subname}.new(self, @parent, '#{cmd_name}')"
-      cmd = self.instance_eval(subcmd_class)
+      subclass_name = "#{@pname.capitalize}#{subname}"
+      next unless 
+        Debugger::SubSubcommand.constants.member?(subclass_name.to_sym)
+      cmd = self.instance_eval("Debugger::SubSubcommand::" + subclass_name + 
+                               ".new(self, @parent, '#{cmd_name}')")
       @subcmds.add(cmd, cmd_name)
     end
   end

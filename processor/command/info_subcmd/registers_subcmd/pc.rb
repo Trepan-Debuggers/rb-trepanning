@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. .. base subsubcmd)
-require_relative %w(.. registers)
 
 class Debugger::SubSubcommand::InfoRegistersPc < Debugger::SubSubcommand
   unless defined?(HELP)

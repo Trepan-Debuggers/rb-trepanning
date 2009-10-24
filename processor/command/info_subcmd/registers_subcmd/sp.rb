@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. .. base subsubcmd)
-require_relative %w(.. registers)
+require_relative 'helper'
 
 class Debugger::Subcommand::InfoRegistersSp < Debugger::SubSubcommand
   unless defined?(HELP)
@@ -11,22 +11,9 @@ class Debugger::Subcommand::InfoRegistersSp < Debugger::SubSubcommand
     PREFIX       = %w(info registers sp)
   end
 
+  include Registers
   def run(args)
-    if args.size == 0
-      # Form is: "info sp" which means "info sp 0"
-      position = 0
-    else
-      position_str = args[0]
-      opts = {
-        :msg_on_error => 
-        "The 'info registers sp' command argument must eval to an integer. Got: %s" % position_str,
-        # :min_value => 1,
-        # :max_value => ??
-      }
-      position = @proc.get_an_int(position_str, opts)
-      return unless position
-    end
-    msg("VM sp(%d) = %s" % [position, @proc.frame.sp(position).inspect])
+    register_array_index(PREFIX[-1], args)
   end
 end
 
@@ -37,10 +24,10 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, info_cmd = MockDebugger::setup('exit')
+  dbgr, info_cmd = MockDebugger::setup('info')
   testcmdMgr = Debugger::Subcmd.new(info_cmd)
-  cmd_name   = Debugger::SubSubcommand::InfoRegistersPc::PREFIX.join('')
-  infox_cmd  = Debugger::SubSubcommand::InfoRegistersPc.new(info_cmd.proc, 
+  cmd_name   = Debugger::SubSubcommand::InfoRegistersSp::PREFIX.join('')
+  infox_cmd  = Debugger::SubSubcommand::InfoRegistersSp.new(info_cmd.proc, 
                                                             info_cmd,
                                                             cmd_name)
   # require_relative %w(.. .. .. .. rbdbgr)

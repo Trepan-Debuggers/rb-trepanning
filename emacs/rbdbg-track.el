@@ -145,8 +145,9 @@ Otherwise return nil."
 		(line-group (rbdbg-dbgr-line-group rbdbg-dbgr)))
     (if (and loc-regexp (string-match loc-regexp text))
 	(lexical-let* ((filename (match-string file-group text))
-		       (lineno (string-to-number
-				(match-string line-group text))))
+		       (line-str (match-string line-group text)) 
+		       (lineno (string-to-number (or line-str "1"))))
+	  (unless line-str (message "line number not found -- using 1"))
 	  (if (and filename lineno)
 	      (rbdbg-file-loc-from-line filename lineno)
 	    nil))

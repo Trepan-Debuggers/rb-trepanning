@@ -33,7 +33,7 @@ Examples:
       end
     else
       subcmd_name = args[2]
-      key_name    = 'inforegisters' + subcmd_name
+      key_name    = PREFIX.join('') + subcmd_name
       remain_args = args[3..-1]
       if all_regs.member?(key_name)
         @subcmds.subcmds[key_name].run(remain_args) 

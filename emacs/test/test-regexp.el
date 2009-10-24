@@ -27,6 +27,7 @@
 	 (lexical-let ((text ".. (./rbdbgr.rb:73)")
 		       (text2 "C> ((eval):1 via /tmp/eval2.rb:2)")
 		       (text3 "-- (<internal:prelude>:28 remapped prelude.rb:28)")
+		       (text4 "-- (/src/external-vcs/rbdbgr/processor/command/info_subcmd/registers_subcmd/dfp.rb:2)\nrequire_relative %w(.. .. base subsubcmd)\n")
 		       )
 	   (specify "basic location"
 		    (expect (numberp (loc-match text)) t))
@@ -40,6 +41,9 @@
 	   	    (expect (match-string (rbdbg-dbgr-line-group rbdbg-dbgr)
 	   				  text)
 	   		    equal "73"))
+	   (specify "more compex location"
+		    (expect (numberp (loc-match text4)) t))
+
 
 	   ;; Now try via
 	   (specify "basic via location"
