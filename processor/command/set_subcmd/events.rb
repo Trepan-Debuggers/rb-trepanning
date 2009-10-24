@@ -9,14 +9,16 @@ class Debugger::Subcommand::SetEvents < Debugger::Subcommand
     NAME         = File.basename(__FILE__, '.rb')
   end
 
-  # FIXME: perhaps this should be a subcommand of "set trace" ? 
   def run(events)
-    events.each {|event| event.chomp!(',')}
-    bitmask, bad_events = Trace.events2bitmask(events)
-    unless bad_events.empty?
-      errmsg("Event names unrecognized/ignored: %s" % bad_events.join(', '))
+    unless events.empty?
+      events.each {|event| event.chomp!(',')}
+      bitmask, bad_events = Trace.events2bitmask(events)
+      unless bad_events.empty?
+        errmsg("Event names unrecognized/ignored: %s" % bad_events.join(', '))
+      end
+      @proc.core.step_events = bitmask
     end
-    @proc.core.step_events = bitmask
+    @proc.commands['show'].subcmds.subcmds[:events].run('events')
   end
 end
 
@@ -27,7 +29,7 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('exit')
+  dbgr, cmd = MockDebugger::setup('set')
   subcommand = Debugger::Subcommand::SetEvents.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
