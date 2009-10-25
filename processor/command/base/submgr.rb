@@ -123,8 +123,11 @@ class Debugger::SubcommandMgr < Debugger::Command
       if matches.empty?
         errmsg("No #{name} subcommands found matching /^#{subcmd_name}/. Try \"help\" #{@name}.")
         return nil
+      elsif 1 == matches.size
+        args[-1] = matches[0].to_s
+        help(args)
       else
-        help_text = ["Subcommand(s) of \"#{@name}\" matching /^#{subcmd_name}/:"]
+        help_text = ["Subcommands of \"#{@name}\" matching /^#{subcmd_name}/:"]
         help_text << columnize_commands(matches.sort)
         return help_text
       end

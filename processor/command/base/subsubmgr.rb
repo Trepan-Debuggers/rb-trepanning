@@ -120,12 +120,17 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
         return nil
       end
     else
-      matches = @subcmds.list.grep(/^#{subcmd_name}/).sort
+      keyprefix_str  = prefix.join('')
+      matches = @subcmds.list.grep(/^#{keyprefix_str + subcmd_name}/).sort
       if matches.empty?
-        errmsg("No #{name} subcommands found matching /^#{subcmd_name}/. Try \"help\" #{@name}.")
+        p @subcmds.list
+        errmsg("No #{name} subcommands found matching /^#{subcmd_name}/. Try \"help #{@name}\".")
         return nil
+      elsif 1 == matches.size
+        args[-1] = matches[0].to_s[keyprefix_str.size..-1]
+        help(args)
       else
-        help_text = ["Subcommand(s) of \"#{@name}\" matching /^#{subcmd_name}/:"]
+        help_text = ["Subcommands of \"#{@name}\" matching /^#{subcmd_name}/:"]
         help_text << columnize_commands(matches.sort)
         return help_text
       end
