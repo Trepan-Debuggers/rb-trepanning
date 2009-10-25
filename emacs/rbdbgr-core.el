@@ -2,12 +2,12 @@
 ;; Dependencies.
 ;;
 (eval-when-compile
-  (setq load-path (cons nil (cons ".." load-path)))
-  (require 'cl)
-  (require 'rbdbg-track)
-  (require 'gud)  ; FIXME: GUD is BAD! It is too far broken to be fixed.
-  (require 'rbdbgr-regexp)
-  (setq load-path (cddr load-path)))
+  (require 'cl))
+(setq load-path (cons nil (cons "." load-path)))
+(require 'rbdbg-track)
+(require 'gud)  ; FIXME: GUD is BAD! It is too far broken to be fixed.
+(require 'rbdbgr-regexp)
+(setq load-path (cddr load-path))
 
 
 (defun rbdbgr-get-script-name (args)

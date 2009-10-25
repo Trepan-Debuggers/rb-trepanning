@@ -1,18 +1,26 @@
 ;;  `rbdbg-track-mode' tracks shell output 
 
+(defun rbdbgr-directory ()
+  "The directory of this file, or nil."
+  (let ((file-name (or load-file-name
+                       (symbol-file 'rbdbgr-directory))))
+    (if file-name
+        (file-name-directory file-name)
+      nil)))
+
 (eval-when-compile
-  (setq load-path (cons nil (cons ".." load-path)))
-  (require 'cl)
-  (load "rbdbg-track")
-  (load "rbdbg-loc")
-  (load "rbdbg-lochist")
-  (load "rbdbg-file")
-  (load "rbdbg-var")
-  (load "rbdbg-window")
-  (load "rbdbg-regexp")
-  (setq load-path (cddr load-path)))
+  (require 'cl))
 (require 'rbdbg-track)
+(setq load-path (cons nil (cons (rbdbgr-directory) load-path)))
+(load "rbdbg-track")
+(load "rbdbg-loc")
+(load "rbdbg-lochist")
+(load "rbdbg-file")
+(load "rbdbg-var")
+(load "rbdbg-window")
+(load "rbdbg-regexp")
 (require 'rbdbg-regexp)
+(setq load-path (cddr load-path))
 
 (defvar rbdbg-track-minor-mode nil
   "Non-nil if using rbdbg-track mode as a minor mode of some other mode.

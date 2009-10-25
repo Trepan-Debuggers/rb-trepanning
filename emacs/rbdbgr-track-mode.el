@@ -4,7 +4,15 @@
 (eval-when-compile
   (require 'cl))
 
-(setq load-path (cons nil (cons "." load-path)))
+(defun rbdbgr-directory ()
+  "The directory of this file, or nil."
+  (let ((file-name (or load-file-name
+                       (symbol-file 'rbdbgr-directory))))
+    (if file-name
+        (file-name-directory file-name)
+      nil)))
+
+(setq load-path (cons nil (cons (rbdbgr-directory) load-path)))
 (require 'rbdbg-track-mode)
 (require 'rbdbgr-core)
 (setq load-path (cddr load-path))
@@ -32,9 +40,18 @@ Use the command `rbdbgr-track-mode' to toggle or set this variable.")
   
   (rbdbg-track-set-debugger "rbdbgr")
   (if rbdbgr-track-mode
-      (progn (rbdbg-track-mode 't)
-	     (run-mode-hooks 'rbdbgr-track-mode-hook))
-    (rbdbg-track-mode nil)))
+      (progn 
+	(rbdbg-track-mode 't)
+	;; FIXME: until I figure out why this isn't set in the mode
+	(local-set-key "\C-c!"  'rbdbgr-goto-dollarbang-traceback-line)
+	(local-set-key "\C-ce"  'rbdbgr-goto-traceback-line)
+	(run-mode-hooks 'rbdbgr-track-mode-hook))
+    (progn 
+      ;; FIXME: until I figure out why this isn't set in the mode
+      (rbdbg-track-mode nil)
+      (local-unset-key "\C-c!")
+      (local-unset-key "\C-ce"))
+    ))
   
 
 ;; -------------------------------------------------------------------
