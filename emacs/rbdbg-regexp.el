@@ -80,7 +80,7 @@ a string output by a debugger inside a process shell"
        :file-group 1
        :line-group 2))
 
-(provide 'rbdbgr-regexp)
+(provide 'rbdbg-regexp)
 
 ;;; Local variables:
 ;;; eval:(put 'rbdbgr-debug-enter 'lisp-indent-hook 1)

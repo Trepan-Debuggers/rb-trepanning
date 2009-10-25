@@ -26,7 +26,7 @@ Examples:
   disas require_relative # disassemble method 'require_relative'
  "
 
-    ALIASES       = %w(disas, disassem) # Note we will have disable
+    ALIASES       = %w(disas, disassem) # Note we have disable
     CATEGORY      = 'data'
     NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = true

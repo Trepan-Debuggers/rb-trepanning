@@ -32,11 +32,9 @@
 	   (specify "basic location"
 		    (expect (numberp (loc-match text)) t))
 	   (specify "extract file name"
-		    (message (match-string (rbdbg-dbgr-file-group rbdbg-dbgr)
-					   text)
 	   	    (expect (match-string (rbdbg-dbgr-file-group rbdbg-dbgr)
 	   				  text)
-	   		    equal "./rbdbgr.rb")))
+	   		    equal "./rbdbgr.rb"))
 	   (specify "extract line number"
 	   	    (expect (match-string (rbdbg-dbgr-line-group rbdbg-dbgr)
 	   				  text)

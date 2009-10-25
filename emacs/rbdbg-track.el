@@ -1,4 +1,4 @@
-;;; rbdbg-track.el --- Tracking the Ruby debugger from a shell
+;;; rbdbg-track.el --- Debugger tracking a comint or eshell buffer.
 
 ;; -------------------------------------------------------------------
 ;; Variables.
@@ -25,11 +25,11 @@
   (load "rbdbg-file")
   (load "rbdbg-var")
   (load "rbdbg-window")
-  (load "rbdbgr-regexp")
+  (load "rbdbg-regexp")
   (setq load-path (cddr load-path)))
 (require 'rbdbg-file)
 (require 'rbdbg-loc)
-(require 'rbdbgr-regexp)
+(require 'rbdbg-regexp)
 
 (defun rbdbg-track-comint-output-filter-hook(text)
   "An output-filter hook custom for comint shells.  Find
@@ -130,7 +130,7 @@ encountering a new loc."
         (select-window cmd-window))
     (message "%s" loc)))
 
-(defun rbdbg-track-loc(text)
+(defun rbdbg-track-loc(text &optional opt-regexp opt-file-group opt-line-group)
   "Do regular-expression matching to find a file name and line number inside
 string TEXT. If we match we will turn the result into a rbdbg-loc struct.
 Otherwise return nil."
@@ -140,9 +140,9 @@ Otherwise return nil."
   ; and line-group. By setting the the fields of rbdbg-dbgr appropriately 
   ; we can accomodate a family of debuggers.
 
-  (lexical-let ((loc-regexp (rbdbg-dbgr-loc-regexp rbdbg-dbgr))
-		(file-group (rbdbg-dbgr-file-group rbdbg-dbgr))
-		(line-group (rbdbg-dbgr-line-group rbdbg-dbgr)))
+  (lexical-let ((loc-regexp (or opt-regexp (rbdbg-dbgr-loc-regexp rbdbg-dbgr)))
+		(file-group (or opt-file-group (rbdbg-dbgr-file-group rbdbg-dbgr)))
+		(line-group (or opt-line-group (rbdbg-dbgr-line-group rbdbg-dbgr))))
     (if (and loc-regexp (string-match loc-regexp text))
 	(lexical-let* ((filename (match-string file-group text))
 		       (line-str (match-string line-group text)) 

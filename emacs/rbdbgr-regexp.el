@@ -24,14 +24,14 @@ The values of a hash entry is a rbdbg-dbgr-loc-pat struct")
 ;;  Regular expression that describes a Ruby traceback line.
 (setf (gethash "traceback" rbdbgr-dbgr-pat-hash)
       (make-rbdbg-dbgr-loc-pat
-       :regexp "^[ \t]+from \\([^:]+\\):\\([0-9]+\\)\\( in `.*'\\)?"
-       :file-group 3
+       :regexp "^[ \t]+from \\([^:]+\\):\\([0-9]+\\)\\(?: in `.*'\\)?"
+       :file-group 1
        :line-group 2))
 
 ;;  Regular expression that describes a Ruby $! string
 (setf (gethash "dollar-bang" rbdbgr-dbgr-pat-hash)
       (make-rbdbg-dbgr-loc-pat
-       :regexp "^[ \t]+[[]?\\([^:]+\\):\\([0-9]+\\):in `.*'"
+       :regexp "^[ \t]*[[]?\\(.+\\):\\([0-9]+\\):in `.*'"
        :file-group 1
        :line-group 2))
 

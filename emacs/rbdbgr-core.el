@@ -4,7 +4,9 @@
 (eval-when-compile
   (setq load-path (cons nil (cons ".." load-path)))
   (require 'cl)
-  (load "rbdbgr-regexp")
+  (require 'rbdbg-track)
+  (require 'gud)  ; FIXME: GUD is BAD! It is too far broken to be fixed.
+  (require 'rbdbgr-regexp)
   (setq load-path (cddr load-path)))
 
 
@@ -59,65 +61,37 @@ a tokenized list of the command line."
          (and name
               (list name annotate-p)))))
 
-(defun rbdbgr-goto-traceback-line (pt)
-  "Display the location PT in a source file of the Ruby traceback line."
+(defun rbdbgr-goto-line-for-type (type pt)
+  "Display the location mentioned in line described by PT. TYPE is used
+to get a regular-expresion pattern matching information."
   (interactive "d")
   (save-excursion
     (goto-char pt)
-    (let ((s (buffer-substring (line-beginning-position) (line-end-position)))
-	  (rbdbg-buffer (current-buffer)))
-      (when (string-match rbdbgr-traceback-line-re s)
-        (rbdbgr-display-line
-         (substring s (match-beginning 1) (match-end 1))
-         (string-to-number (substring s (match-beginning 2) (match-end 2))))
-        ))))
+    (lexical-let* ((proc-buff (current-buffer))
+		   (proc-window (selected-window))
+		   (curr-proc (get-buffer-process proc-buff))
+		   (start (line-beginning-position))
+		   (end (line-end-position))
+		   (tb (gethash type rbdbgr-dbgr-pat-hash))
+		   ;; FIXME check that tb is not null and abort if it is.
+		   (loc (rbdbg-track-loc (buffer-substring start end)
+					 (rbdbg-dbgr-loc-pat-regexp tb)
+					 (rbdbg-dbgr-loc-pat-file-group tb)
+					 (rbdbg-dbgr-loc-pat-line-group tb)
+					 )))
+    (if loc (rbdbg-track-loc-action loc proc-buff proc-window)))))
+
+(defun rbdbgr-goto-traceback-line (pt)
+  "Display the location mentioned by the Ruby traceback line
+described by PT."
+  (interactive "d")
+  (rbdbgr-goto-line-for-type "traceback" pt))
 
 (defun rbdbgr-goto-dollarbang-traceback-line (pt)
-  "Display the location PT in a source file of the Ruby $! traceback line."
+  "Display the location mentioned by the Ruby $! traceback line
+described by PT."
   (interactive "d")
-  (save-excursion
-    (goto-char pt)
-    (let ((s (buffer-substring (line-beginning-position) (line-end-position)))
-	  (rbdbg-buffer (current-buffer)))
-      (when (string-match rbdbgr-dollarbang-traceback-line-re s)
-        (rbdbgr-display-line
-         (substring s (match-beginning 1) (match-end 1))
-         (string-to-number (substring s (match-beginning 2) (match-end 2))))
-        ))))
-
-
-;; -------------------------------------------------------------------
-;; The `rbdbgr' command and support functions.
-;;
-
-(defun rbdbgr-process-sentinel (process event)
-  "Restore the original window configuration when the debugger process exits."
-  (rbdbgr-debug-enter "rbdbgr-process-sentinel"
-    (rbdbgr-debug-message "status=%S event=%S state=%S"
-                          (process-status process)
-                          event
-                          rbdbgr-window-configuration-state)
-    (gud-sentinel process event)
-    ;; This will "flush" the last annotation. Especially "output"
-    ;; (a.k.a. "starting") annotations don't have an end markers, if
-    ;; the last command printed something.
-    (if (string= event "finished\n")
-        (gud-rbdbgr-marker-filter "\032\032\n"))
-    ;; When the debugger process exited, when the comint buffer has no
-    ;; buffer process (nil). When the debugger processes is replaced
-    ;; with another process we should not restore the window
-    ;; configuration.
-    (when (and (or (eq rbdbgr-restore-original-window-configuration t)
-                   (and (eq rbdbgr-restore-original-window-configuration :many)
-                        rbdbgr-many-windows))
-               (or (rbdbgr-dead-process-p)
-                   (eq process (get-buffer-process rbdbg-buffer)))
-               (eq rbdbgr-window-configuration-state 'debugger)
-               (not (eq (process-status process) 'run)))
-      (rbdbgr-internal-short-key-mode-off)
-      (rbdbgr-set-window-configuration-state 'original)
-      (rbdbgr-reset-keymaps))))
-
+  (rbdbgr-goto-line-for-type "dollar-bang" pt))
 
 ;; Perform initializations common to all debuggers.
 ;; The first arg is the specified command line,
@@ -160,82 +134,82 @@ buffer."
 	  (set-process-sentinel buffer-process 'gud-sentinel))))
   (gud-set-buffer))
 
-;;;###autoload
-(defun rbdbgr (command-line)
-  "Invoke the rbdbgr Ruby debugger and start the Emacs user interface.
+;; ;;;###autoload
+;; (defun rbdbgr (command-line)
+;;   "Invoke the rbdbgr Ruby debugger and start the Emacs user interface.
 
-String COMMAND-LINE specifies how to run rbdbgr."
-  (interactive
-   (let ((init (buffer-file-name)))
-     (setq init (and init
-                     (file-name-nondirectory init)))
-     (list (gud-query-cmdline 'rbdbgr init))))
-  (rbdbgr-debug-enter "rbdbgr"
-    (rbdbgr-set-window-configuration-state 'debugger t)
-    ;; Parse the command line and pick out the script name and whether
-    ;; --annotate has been set.
-    (let* ((words (with-no-warnings
-                    (split-string-and-unquote command-line)))
-           (script-name-annotate-p (rbdbgr-get-script-name
-                                    (gud-rbdbgr-massage-args "1" words)))
-           (target-name (file-name-nondirectory (car script-name-annotate-p)))
-           (annotate-p (cadr script-name-annotate-p))
-           (cmd-buffer-name (format "rbdbgr-cmd-%s" target-name))
-           (rbdbgr-cmd-buffer-name (format "*%s*" cmd-buffer-name))
-           (rbdbgr-cmd-buffer (get-buffer rbdbgr-cmd-buffer-name))
-	   (program (car words))
-	   (args (cdr words))
-           (gud-chdir-before-run nil))
-
-      ;; `gud-rbdbgr-massage-args' needs whole `command-line'.
-      ;; command-line is refered through dynamic scope.
-      (rbdbgr-common-init cmd-buffer-name rbdbgr-cmd-buffer target-name
-			  program args
-			  'gud-rbdbgr-marker-filter
-			  'gud-rbdbgr-find-file)
-      (setq comint-process-echoes t)
-
-      (setq rbdbgr-inferior-status "running")
-
-      (rbdbgr-command-initialization)
-
-      ;; Setup exit callback so that the original frame configuration
-      ;; can be restored.
-      (let ((process (get-buffer-process rbdbg-buffer)))
-        (when process
-          (unless (equal rbdbgr-line-width 120)
-	    (gud-call (format "set width %d" rbdbgr-line-width)))
-          (set-process-sentinel process
-                                'rbdbgr-process-sentinel)))
-
-
-      ;; Add the buffer-displaying commands to the Gud buffer,
-      ;; FIXME: combine with code in rbdbgr-track.el; make common
-      ;; command buffer mode map.
-      (let ((prefix-map (make-sparse-keymap)))
-        (define-key (current-local-map) gud-key-prefix prefix-map)
-	(define-key prefix-map "t" 'rbdbgr-goto-traceback-line)
-	(define-key prefix-map "!" 'rbdbgr-goto-dollarbang-traceback-line)
-        (rbdbgr-populate-secondary-buffer-map-plain prefix-map))
-
-      (rbdbgr-populate-common-keys (current-local-map))
-      (rbdbgr-populate-debugger-menu (current-local-map))
-
-      (setq comint-prompt-regexp (concat "^" rbdbgr-input-prompt-regexp))
-      (setq paragraph-start comint-prompt-regexp)
-
-      (setcdr (assq 'rbdbgr-debugger-support-minor-mode minor-mode-map-alist)
-              rbdbgr-debugger-support-minor-mode-map-when-active)
-      (when rbdbgr-many-windows
-        (rbdbgr-setup-windows-initially))
-
-      (run-hooks 'rbdbgr-mode-hook))))
+;; String COMMAND-LINE specifies how to run rbdbgr."
+;;   (interactive
+;;    (let ((init (buffer-file-name)))
+;;      (setq init (and init
+;;                      (file-name-nondirectory init)))
+;;      (list (gud-query-cmdline 'rbdbgr init))))
+;;   ;; (rbdbgr-set-window-configuration-state 'debugger t)
+;;   ;; Parse the command line and pick out the script name and whether
+;;   ;; --annotate has been set.
+;;   (let* ((words (with-no-warnings
+;; 		  (split-string-and-unquote command-line)))
+;; 	 (script-name-annotate-p (rbdbgr-get-script-name
+;; 				  (gud-rbdbgr-massage-args "1" words)))
+;; 	 (target-name (file-name-nondirectory (car script-name-annotate-p)))
+;; 	 (annotate-p (cadr script-name-annotate-p))
+;; 	 (cmd-buffer-name (format "rbdbgr-cmd-%s" target-name))
+;; 	 (rbdbgr-cmd-buffer-name (format "*%s*" cmd-buffer-name))
+;; 	 (rbdbgr-cmd-buffer (get-buffer rbdbgr-cmd-buffer-name))
+;; 	 (program (car words))
+;; 	 (args (cdr words))
+;; 	 (gud-chdir-before-run nil))
+    
+;;     ;; `gud-rbdbgr-massage-args' needs whole `command-line'.
+;;     ;; command-line is refered through dynamic scope.
+;;     (rbdbgr-common-init cmd-buffer-name rbdbgr-cmd-buffer target-name
+;; 			program args
+;; 			'gud-rbdbgr-marker-filter
+;; 			'gud-rbdbgr-find-file)
+;;     (setq comint-process-echoes t)
+    
+;;     ;; (setq rbdbgr-inferior-status "running")
+    
+;;     (rbdbgr-command-initialization)
+    
+;;     ;; Setup exit callback so that the original frame configuration
+;;     ;; can be restored.
+;;     ;; (let ((process (get-buffer-process rbdbg-buffer)))
+;;     ;;   (when process
+;;     ;;     (unless (equal rbdbgr-line-width 120)
+;;     ;; 	    (gud-call (format "set width %d" rbdbgr-line-width)))
+;;     ;;     (set-process-sentinel process
+;;     ;;                           'rbdbgr-process-sentinel)))
+    
+    
+;;     ;; Add the buffer-displaying commands to the Gud buffer,
+;;     ;; FIXME: combine with code in rbdbgr-track.el; make common
+;;     ;; command buffer mode map.
+;;     (let ((prefix-map (make-sparse-keymap)))
+;;       (define-key (current-local-map) gud-key-prefix prefix-map)
+;;       (define-key prefix-map "t" 'rbdbgr-goto-traceback-line)
+;;       (define-key prefix-map "!" 'rbdbgr-goto-dollarbang-traceback-line)
+;;       (rbdbgr-populate-secondary-buffer-map-plain prefix-map))
+    
+;;     (rbdbgr-populate-common-keys (current-local-map))
+;;     (rbdbgr-populate-debugger-menu (current-local-map))
+    
+;;     ;; (setq comint-prompt-regexp (concat "^" rbdbgr-input-prompt-regexp))
+;;     ;; (setq paragraph-start comint-prompt-regexp)
+    
+;;     ;; (setcdr (assq 'rbdbgr-debugger-support-minor-mode minor-mode-map-alist)
+;;     ;;         rbdbgr-debugger-support-minor-mode-map-when-active)
+;;     ;; (when rbdbgr-many-windows
+;;     ;;   (rbdbgr-setup-windows-initially))
+    
+;;     (run-hooks 'rbdbgr-mode-hook)))
 
 
 (defun rbdbgr-reset ()
-  "Rbdbgr cleanup - remove debugger's internal buffers (frame, breakpoints, etc.)."
+  "Rbdbgr cleanup - remove debugger's internal buffers (frame,
+breakpoints, etc.)."
   (interactive)
-  (rbdbgr-breakpoint-remove-all-icons)
+  ;; (rbdbgr-breakpoint-remove-all-icons)
   (dolist (buffer (buffer-list))
     (when (string-match "\\*rbdbgr-[a-z]+\\*" (buffer-name buffer))
       (let ((w (get-buffer-window buffer)))
@@ -243,11 +217,11 @@ String COMMAND-LINE specifies how to run rbdbgr."
           (delete-window w)))
       (kill-buffer buffer))))
 
-(defun rbdbgr-reset-keymaps()
-  "This unbinds the special debugger keys of the source buffers."
-  (interactive)
-  (setcdr (assq 'rbdbgr-debugger-support-minor-mode minor-mode-map-alist)
-	  rbdbgr-debugger-support-minor-mode-map-when-deactive))
+;; (defun rbdbgr-reset-keymaps()
+;;   "This unbinds the special debugger keys of the source buffers."
+;;   (interactive)
+;;   (setcdr (assq 'rbdbgr-debugger-support-minor-mode minor-mode-map-alist)
+;; 	  rbdbgr-debugger-support-minor-mode-map-when-deactive))
 
 
 (defun rbdbgr-customize ()
