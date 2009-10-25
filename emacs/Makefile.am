@@ -12,6 +12,8 @@ check: $(CHECK_FILES)
 
 
 # FIGURE out how to DRY the run rules.
+test-core.run:
+	(cd $(srcdir)/test && $(EMACS) -batch -Q -l $(@:.run=.el) )
 test-file.run:
 	(cd $(srcdir)/test && $(EMACS) -batch -Q -l $(@:.run=.el) )
 test-loc.run: 

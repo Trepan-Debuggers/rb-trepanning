@@ -10,56 +10,108 @@
 (setq load-path (cddr load-path))
 
 
-(defun rbdbgr-get-script-name (args)
-  "Parse command line ARGS.
+;; FIXME: move to a more common location. rbdbg-core ? 
+(defun rbdbgr-strip-command-arg (args two-args opt-two-args)
+  "return ARGS with the first argument, an 'option'
+removed. 
 
-A list containing the script name, and whether the annotate
-option was set is returned.
+However if that option argument may take another argument, remove
+that as well. TWO-ARGS is list of options (strings without the
+leading dash) that take a mandatory additional
+argument. OPT-TWO-ARGS is a list of options might take two
+arguments. The rule for an optional argument we use: if the next
+parameter starts with a dash ('-'), it is not part of the
+preceeding parameter when that parameter is optional.
 
-Initially annotate should be set to nil.  Argument ARGS contains
-a tokenized list of the command line."
+NOTE: we don't check whether the first arguments of ARGS is an
+option by testing to see if it starts say with a dash. So on
+return the first argument is always removed.
+"
+  (let ((arg (car args))
+	(d-two-args (mapcar (lambda(x) (concat "-" x)) two-args))
+	(d-opt-two-args (mapcar (lambda(x) (concat "-" x)) opt-two-args))
+	(remaining (cdr args)))
+    (cond 
+     ((member arg d-two-args)
+      (if remaining (cdr remaining)
+	  (progn 
+	    (message "Expecting an argument after %s. Continuing anyway."
+		     arg)
+	    remaining)))
+     ((member arg d-opt-two-args)
+      (if (and remaining (not (string-match "^-" (car remaining))))
+	  (cdr remaining)
+	remaining))
+     (t remaining))))
+
+(defun rbdbgr-get-script-name (orig-args)
+  "Parse command line ARGS for the annotate level and name of script to debug.
+
+ARGS should contain a tokenized list of the command line to run.
+
+We return the script name to be debugged and whether option the
+annotate option (either '--annotate' or '-A') was set."
   ;; Parse the following:
   ;;
   ;;  [ruby ruby-options] rbdbgr rbdbgr-options script-name script-options
-  (and args
-       (let ((name nil)
-             (annotate-p nil))
-         ;; Strip of optional "ruby" or "ruby182" etc.
-         (when (string-match "^ruby[0-9]*$"
-                             (file-name-sans-extension
-                              (file-name-nondirectory (car args))))
-           (pop args)
-           (while (and args
-                       (string-match "^-" (car args)))
-             (if (member (car args) '("-e" "-r" "-I" "-C" "-F" "-K"))
-                 (pop args))
-             (pop args)))
-         ;; Remove "rbdbgr" from "rbdbgr --rbdbgr-options script
-         ;; --script-options"
-         (pop args)
-         ;; Skip to the first non-option argument.
-         (while (and args
-                     (not name))
-           (let ((arg (pop args)))
-             (cond
-              ;; Annotation or emacs option with level number.
-              ((or (member arg '("--annotate" "-A"))
-		   (equal arg "--emacs"))
-               (setq annotate-p t)
-               (pop args))
-              ;; Combined annotation and level option.
-              ((string-match "^--annotate=[0-9]" arg)
-               (setq annotate-p t))
-              ;; Options with arguments.
-              ((member arg '("-h" "--host" "-p" "--port"
-                             "-I" "--include" "-r" "--require"))
-               (pop args))
-              ((string-match "^-" arg)
-               nil)
-              (t
-               (setq name arg)))))
-         (and name
-              (list name annotate-p)))))
+  (let ((args orig-args)
+	(script-name nil)
+	(annotate-p nil)
+	(ruby-opt-two-args '("0" "C" "e" "E" "F" "i"))
+	;; Ruby doesn't have mandatory 2-arg options in our sense,
+	;; since the two args can be run together, e.g. "-C/tmp" or "-C /tmp"
+	;; 
+	(ruby-two-args '())
+	(debugger-name)
+	;; One dash is added automatically to the below, so
+	;; h is really -h and -host is really --host.
+	(rbdbgr-two-args '("h" "-host" "p" "-port"
+			   "I" "-include" "-r" "-require"))
+	(rbdbgr-opt-two-args '()))
+    (if (not (and args))
+	;; Got nothing: return '(nil, nil)
+	'(script-name annotate-p)
+      ;; else
+      ;; Strip off optional "ruby" or "ruby182" etc.
+      (when (string-match "^ruby[-0-9]*$"
+			  (file-name-sans-extension
+			   (file-name-nondirectory (car args))))
+	(pop args) ; remove whatever "ruby" thing found.
+
+	;; Strip off Ruby-specific options
+	(while (and args
+		    (string-match "^-" (car args)))
+	  (setq args (rbdbgr-strip-command-arg 
+		      args ruby-two-args ruby-opt-two-args))))
+
+      ;; Remove "rbdbgr" from "rbdbgr --rbdbgr-options script
+      ;; --script-options"
+      (setq debugger-name (file-name-sans-extension
+			   (file-name-nondirectory (car args))))
+      (unless (string-match "^rbdbgr$" debugger-name)
+	(message 
+	 "Expecting debugger name to be rbdbgr; got `%s'. Stripping anyway."
+	 debugger-name))
+      (pop args)
+      ;; Skip to the first non-option argument.
+      (while (and args (not script-name))
+	(let ((arg (pop args)))
+	  (cond
+	   ;; Annotation or emacs option with level number.
+	   ((or (member arg '("--annotate" "-A"))
+		(equal arg "--emacs"))
+	    (setq annotate-p t)
+	    (pop args))
+	   ;; Combined annotation and level option.
+	   ((string-match "^--annotate=[0-9]" arg)
+	    (setq annotate-p t))
+	   ;; Options with arguments.
+	   ((string-match "^-" arg)
+	    (setq args (rbdbgr-strip-command-arg 
+			args rbdbgr-two-args rbdbgr-opt-two-args)))
+	   ;; Anything else must be the script to debug.
+	   (t (setq script-name arg)))))
+      (list script-name annotate-p))))
 
 (defun rbdbgr-goto-line-for-type (type pt)
   "Display the location mentioned in line described by PT. TYPE is used
