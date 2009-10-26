@@ -3,7 +3,16 @@
 ;;
 (eval-when-compile
   (require 'cl))
-(setq load-path (cons nil (cons "." load-path)))
+
+(defun rbdbgr-directory ()
+  "The directory of this file, or nil."
+  (let ((file-name (or load-file-name
+                       (symbol-file 'rbdbgr-directory))))
+    (if file-name
+        (file-name-directory file-name)
+      nil)))
+
+(setq load-path (cons nil (cons (rbdbgr-directory) load-path)))
 (require 'rbdbg-track)
 (require 'gud)  ; FIXME: GUD is BAD! It is too far broken to be fixed.
 (require 'rbdbgr-regexp)
@@ -95,7 +104,7 @@ annotate option (either '--annotate' or '-A') was set."
       (pop args)
       ;; Skip to the first non-option argument.
       (while (and args (not script-name))
-	(let ((arg (pop args)))
+	(let ((arg (car args)))
 	  (cond
 	   ;; Annotation or emacs option with level number.
 	   ((or (member arg '("--annotate" "-A"))
@@ -104,6 +113,7 @@ annotate option (either '--annotate' or '-A') was set."
 	    (pop args))
 	   ;; Combined annotation and level option.
 	   ((string-match "^--annotate=[0-9]" arg)
+	    (pop args)
 	    (setq annotate-p t))
 	   ;; Options with arguments.
 	   ((string-match "^-" arg)

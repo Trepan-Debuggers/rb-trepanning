@@ -18,7 +18,32 @@
 		    (expect 
 		     (rbdbgr-strip-command-arg '() '() opt-two-args)
 		     equal nil))
-	   ))
+
+	   (specify "Strip ruby and its arg."
+		    (expect 
+		     (rbdbgr-get-script-name 
+		      '("/usr/bin/ruby1.9" "-W" "rbdbgr" "foo"))
+		     equal '("foo" nil)))
+	   
+	   (specify "ruby with two args and rbdbgr with two args"
+		    (expect
+		     (rbdbgr-get-script-name 
+		      '("ruby1.9" "-T3" "rbdbgr" "--port" "123" "bar"))
+		     equal '("bar" nil)))
+
+	   (specify "rbdbgr with annotate args"
+		    (expect
+		     (rbdbgr-get-script-name 
+		      '("rbdbgr" "--port 123" "--annotate=3" "foo"))
+		     equal '("foo" t)))
+
+	   (specify "rbdbgr with emacs"
+		    (expect
+		     (rbdbgr-get-script-name 
+		      '("ruby" "-I/usr/lib/ruby" "rbdbgr" "-h" "foo" 
+			"--emacs" "baz"))
+		     equal '("baz" t)))
+	 ))
 
 (behave "cmd-args")
 
