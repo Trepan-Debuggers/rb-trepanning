@@ -3,11 +3,12 @@ require 'thread_frame'
 
 # Breakpoint objects
 class Breakpoint
-  attr_accessor :condition # if non-nil, this is a String to be eval'd
+  attr_accessor :condition # If non-nil, this is a String to be eval'd
                            # which must be true to enter the debugger
-  attr_accessor :hits      # Fixnum. The number of time breakpoint has
-                           # been hit (with a true condition). Do we want
-                           # to hits independent of the condition?
+  attr_accessor :hits      # Fixnum. The number of timea a breakpoint
+                           # has been hit (with a true condition). Do
+                           # we want to (also) record hits independent
+                           # of the condition?
   attr_reader   :id        # Fixnum. Name of breakpoint
   attr_reader   :ignore    # Fixnum. Number of times encounterd to ignore
   attr_reader   :iseq      # Instruction sequence associated with this

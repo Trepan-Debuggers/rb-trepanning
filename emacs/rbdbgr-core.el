@@ -16,6 +16,7 @@
 (require 'rbdbg-track)
 (require 'gud)  ; FIXME: GUD is BAD! It is too far broken to be fixed.
 (require 'rbdbgr-regexp)
+(require 'rbdbg-scriptbuf-var)
 (setq load-path (cddr load-path))
 
 
@@ -123,6 +124,29 @@ annotate option (either '--annotate' or '-A') was set."
 	   (t (setq script-name arg)))))
       (list script-name annotate-p))))
 
+(defun rbdbgr-query-cmdline (debugger)
+  "Prompt for a debugger command invocation to run"
+;;;  (let* ((debugger rbdbgr-dbgr-name
+;;;	 (cmd-name (gud-val 'command-name debugger)))
+;;;     (unless (boundp hist-sym) (set hist-sym nil))
+;;;     (read-from-minibuffer
+;;;      (format "Run %s (like this): " debugger)
+;;;      (or (car-safe (symbol-value hist-sym))
+;;; 	 (concat (or cmd-name (symbol-name debugger))
+;;; 		 " "
+;;; 		 (or init
+;;; 		     (let ((file nil))
+;;; 		       (dolist (f (directory-files default-directory) file)
+;;; 			 (if (and (file-executable-p f)
+;;; 				  (not (file-directory-p f))
+;;; 				  (or (not file)
+;;; 				      (file-newer-than-file-p f file)))
+;;; 			     (setq file f)))))))
+;;;      gud-minibuffer-local-map nil
+;;;      hist-sym))
+;;;	 ))
+)
+
 (defun rbdbgr-goto-line-for-type (type pt)
   "Display the location mentioned in line described by PT. TYPE is used
 to get a regular-expresion pattern matching information."
@@ -160,41 +184,41 @@ described by PT."
 ;; which starts with the program to debug.
 ;; The other three args specify the values to use
 ;; for local variables in the debugger buffer.
-(defun rbdbgr-common-init (rbdbgr-buffer-name rbdbgr-cmd-buffer target-name
-					      program args
-					      marker-filter
-					      &optional find-file)
-  "Perform initializations common to all debuggers.
+;;; (defun rbdbgr-common-init (rbdbgr-buffer-name rbdbgr-cmd-buffer target-name
+;;; 					      program args
+;;; 					      marker-filter
+;;; 					      &optional find-file)
+;;;   "Perform initializations common to all debuggers.
 
-RBDBGR-BUFFER-NAME is the specified command line, which starts
-with the program to debug. PROGRAM, ARGS and MARKER-FILTER
-specify the values to use for local variables in the debugger
-buffer."
-  (if rbdbgr-cmd-buffer
-      (progn
-	(pop-to-buffer rbdbgr-cmd-buffer)
-	(when (and rbdbgr-cmd-buffer (get-buffer-process rbdbgr-cmd-buffer))
-	  (error "This program is already being debugged"))
-	(apply 'make-comint rbdbgr-buffer-name program nil args)
-	(or (bolp) (newline)))
-    (pop-to-buffer (setq rbdbgr-cmd-buffer
-			 (apply 'make-comint rbdbgr-buffer-name program nil
-				args))))
+;;; RBDBGR-BUFFER-NAME is the specified command line, which starts
+;;; with the program to debug. PROGRAM, ARGS and MARKER-FILTER
+;;; specify the values to use for local variables in the debugger
+;;; buffer."
+;;;   (if rbdbgr-cmd-buffer
+;;;       (progn
+;;; 	(pop-to-buffer rbdbgr-cmd-buffer)
+;;; 	(when (and rbdbgr-cmd-buffer (get-buffer-process rbdbgr-cmd-buffer))
+;;; 	  (error "This program is already being debugged"))
+;;; 	(apply 'make-comint rbdbgr-buffer-name program nil args)
+;;; 	(or (bolp) (newline)))
+;;;     (pop-to-buffer (setq rbdbgr-cmd-buffer
+;;; 			 (apply 'make-comint rbdbgr-buffer-name program nil
+;;; 				args))))
   
-  ;; Since comint clobbered the mode, we don't set it until now.
-  (gud-mode)
-  (set (make-local-variable 'gud-target-name) target-name)
-  (set (make-local-variable 'gud-marker-filter) marker-filter)
-  (set (make-local-variable 'gud-minor-mode) 'rbdbgr)
-  (set (make-local-variable 'gud-last-frame) nil)
-  (set (make-local-variable 'gud-last-last-frame) nil)
+;;;   ;; Since comint clobbered the mode, we don't set it until now.
+;;;   (gud-mode)
+;;;   (set (make-local-variable 'gud-target-name) target-name)
+;;;   (set (make-local-variable 'gud-marker-filter) marker-filter)
+;;;   (set (make-local-variable 'gud-debugger) 'rbdbgr)
+;;;   (set (make-local-variable 'gud-last-frame) nil)
+;;;   (set (make-local-variable 'gud-last-last-frame) nil)
 
-  (let ((buffer-process (get-buffer-process (current-buffer))))
-    (if buffer-process
-	(progn 
-	  (set-process-filter buffer-process 'gud-filter)
-	  (set-process-sentinel buffer-process 'gud-sentinel))))
-  (gud-set-buffer))
+;;;   (let ((buffer-process (get-buffer-process (current-buffer))))
+;;;     (if buffer-process
+;;; 	(progn 
+;;; 	  (set-process-filter buffer-process 'gud-filter)
+;;; 	  (set-process-sentinel buffer-process 'gud-sentinel))))
+;;;   (gud-set-buffer))
 
 ;; ;;;###autoload
 ;; (defun rbdbgr (command-line)

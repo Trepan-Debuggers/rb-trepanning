@@ -23,7 +23,7 @@
   (load "rbdbg-loc")
   (load "rbdbg-lochist")
   (load "rbdbg-file")
-  (load "rbdbg-var")
+  (load "rbdbg-procbuf-var")
   (load "rbdbg-window")
   (load "rbdbg-regexp")
   (setq load-path (cddr load-path)))

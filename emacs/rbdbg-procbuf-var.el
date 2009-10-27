@@ -1,4 +1,5 @@
-;;; rbdbgr-var.el --- debugger variables (other than regexps)
+;;; rbdbg-procbuf-var.el --- debugger variables (other than regexps) for
+;;; a process buffer
 (eval-when-compile (require 'cl))
 
 (defstruct rbdbg-dbgr
@@ -12,19 +13,10 @@
               ; see rbdbg-lochist
 )
 
-(defvar rbdbg-dbgr (make-rbdbg-dbgr
-		    :name "unknown-debugger-name"
-		    :loc-regexp nil
-		    :file-group -1
-		    :line-group -1
-		    :loc-hist   nil)
-  "Debugger object for a process buffer.")
-(make-variable-buffer-local 'rbdbg-dbgr)
-
-(provide 'rbdbgr-var)
+(provide 'rbdbg-procbuf-var)
 
 ;;; Local variables:
 ;;; eval:(put 'rbdbgr-debug-enter 'lisp-indent-hook 1)
 ;;; End:
 
-;;; rbdbgr-vars.el ends here
+;;; rbdbg-vars.el ends here

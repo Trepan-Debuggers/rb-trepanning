@@ -16,11 +16,20 @@
 (load "rbdbg-loc")
 (load "rbdbg-lochist")
 (load "rbdbg-file")
-(load "rbdbg-var")
+(load "rbdbg-procbuf-var")
 (load "rbdbg-window")
 (load "rbdbg-regexp")
 (require 'rbdbg-regexp)
 (setq load-path (cddr load-path))
+
+(defvar rbdbg-dbgr (make-rbdbg-dbgr
+		    :name "unknown-debugger-name"
+		    :loc-regexp nil
+		    :file-group -1
+		    :line-group -1
+		    :loc-hist   nil)
+  "Debugger object for a process buffer.")
+(make-variable-buffer-local 'rbdbg-dbgr)
 
 (defvar rbdbg-track-minor-mode nil
   "Non-nil if using rbdbg-track mode as a minor mode of some other mode.

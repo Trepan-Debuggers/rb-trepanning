@@ -1,6 +1,6 @@
 (load-file "./behave.el")
 (load-file "../rbdbg-regexp.el")
-(load-file "../rbdbg-var.el")
+(load-file "../rbdbg-procbuf-var.el")
 
 (behave-clear-contexts)
 

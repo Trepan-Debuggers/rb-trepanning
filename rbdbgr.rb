@@ -7,12 +7,13 @@ require_relative %w(interface user)  # user interface (includes I/O)
 class Debugger
 
   attr_accessor :core         # access to Debugger::Core instance
-  attr_accessor :intf         # The way the outside world interfaces with us.
-                              # An array, so that interfaces can be stacked.
+  attr_accessor :intf         # Array. The way the outside world
+                              # interfaces with us.  An array, so that
+                              # interfaces can be stacked.
   attr_accessor :restart_argv # How to restart us, empty or nil. 
                               # Note restart[0] is typically $0.
   attr_reader   :settings     # Hash[:symbol] of things you can configure
-  attr_accessor :trace_filter
+  attr_accessor :trace_filter # Procs/Methods we ignore.
 
   def initialize(settings={})
     @settings     = DbgSettings::DEFAULT_SETTINGS.merge(settings)
@@ -99,7 +100,7 @@ if __FILE__ == $0
   end
   # It is imagined that there are all sorts of command-line options here.
   # (I have a good imagination.)
-  dc = Debugger.new(:restart_argv => [File.expand_path($0)])
+  dc = Debugger.new(:set_restart=>true)
 
   puts 'block debugging...'
   dc.debugger {
@@ -121,5 +122,5 @@ if __FILE__ == $0
   end
   dc.debugger
   m = MyClass.new(5)
-  raise RuntimeError
+  raise RuntimeError # To see how we handle post-mortem debugging.
 end
