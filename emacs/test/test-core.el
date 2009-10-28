@@ -1,5 +1,6 @@
+(setq rbdbgr-core "../rbdbgr-core.el")
 (load-file "./behave.el")
-(load-file "../rbdbgr-core.el")
+(load-file rbdbgr-core)
 
 (behave-clear-contexts)
 
@@ -43,7 +44,18 @@
 		      '("ruby" "-I/usr/lib/ruby" "rbdbgr" "-h" "foo" 
 			"--emacs" "baz"))
 		     equal '("baz" t)))
-	 ))
+
+	   ;; FIXME: move to another file.
+	   (specify "ruby-mode? with Lisp file"
+		    (expect 
+		     (rbdbgr-file-ruby-mode? rbdbgr-core) equal nil))
+	   ;; (specify "ruby-mode? with Ruby file"
+	   ;; 	    ;; Set major mode to Ruby-mode
+	   ;; 	    (expect 
+	   ;; 	     (rbdbgr-file-ruby-mode? rbdbgr-core) equal t))
+	   ))
+
+
 
 (behave "cmd-args")
 

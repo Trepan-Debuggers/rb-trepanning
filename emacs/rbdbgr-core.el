@@ -124,28 +124,72 @@ annotate option (either '--annotate' or '-A') was set."
 	   (t (setq script-name arg)))))
       (list script-name annotate-p))))
 
-(defun rbdbgr-query-cmdline (debugger)
-  "Prompt for a debugger command invocation to run"
-;;;  (let* ((debugger rbdbgr-dbgr-name
-;;;	 (cmd-name (gud-val 'command-name debugger)))
-;;;     (unless (boundp hist-sym) (set hist-sym nil))
-;;;     (read-from-minibuffer
-;;;      (format "Run %s (like this): " debugger)
-;;;      (or (car-safe (symbol-value hist-sym))
-;;; 	 (concat (or cmd-name (symbol-name debugger))
-;;; 		 " "
-;;; 		 (or init
-;;; 		     (let ((file nil))
-;;; 		       (dolist (f (directory-files default-directory) file)
-;;; 			 (if (and (file-executable-p f)
-;;; 				  (not (file-directory-p f))
-;;; 				  (or (not file)
-;;; 				      (file-newer-than-file-p f file)))
-;;; 			     (setq file f)))))))
-;;;      gud-minibuffer-local-map nil
-;;;      hist-sym))
-;;;	 ))
-)
+(defun rbdbgr-file-ruby-mode? (filename)
+  "Return true if FILENAME is a buffer we are visiting a buffer
+that is in ruby-mode"
+  (let ((buffer (and filename (find-buffer-visiting filename)))
+	(cur-buff (current-buffer))
+	(match-pos))
+    (if buffer 
+	(progn 
+	  (save-excursion
+	    (switch-to-buffer buffer 't)
+	    (setq match-pos (string-match "^ruby-" (format "%s" major-mode))))
+	  (switch-to-buffer cur-buff)
+	  (and match-pos (= 0 match-pos)))
+      nil)))
+
+
+(defun rbdbgr-suggest-ruby-file ()
+    "Suggest a Ruby file to debug. First priority is given to the
+current buffer. If the major mode is Ruby-mode, then we are
+done. If the major mode is not Ruby, we'll use priority 2 and we
+keep going.  Then we will try files in the default-directory. Of
+those that we are visiting we will see if the major mode is Ruby,
+the first one we find we will return.  Failing this, we see if the
+file is executable and has a .rb suffix. These have priority 8.
+Failing that, we'll go for just having a .rb suffix. These have
+priority 7. And other executable files have priority 6.  Within a
+given priority, we use the first one we find."
+    (let* ((file)
+	   (file-list (directory-files default-directory))
+	   (priority 2)
+	   (result (buffer-file-name)))
+      (if (not (rbdbgr-file-ruby-mode? result))
+	  (while (and (setq file (car-safe file-list)) (< priority 8))
+	    (setq file-list (cdr file-list))
+	    (if (rbdbgr-file-ruby-mode? file)
+		(progn 
+		  (setq result file)
+		  (setq priority 
+			(if (file-executable-p file)
+			    (setq priority 8)
+			  (setq priority 7)))))
+	    ;; The file isn't in a Ruby-mode buffer,
+	    ;; Check for an executable file with a .rb extension.
+	    (if (and file (file-executable-p file)
+		     (not (file-directory-p file)))
+		(if (and (string-match "\.rb$" file))
+		    (if (< priority 6)
+			(progn
+			  (setq result file)
+			  (setq priority 6))))
+	      ;; Found some sort of executable file.
+	      (if (< priority 5)
+		  (progn
+		    (setq result file)
+		    (setq priority 5))))))
+      result))
+
+(defun rbdbgr-query-cmdline ()
+  "Prompt for a rbdbgr debugger command invocation to run.
+Analogous to `gud-query-cmdline'"
+  ;; FIXME: keep a list of recent invocations.
+  (let ((debugger (rbdbg-scriptbuf-var-name rbdbgr-scriptvar))
+	(cmd-name (rbdbg-scriptbuf-var-cmd rbdbgr-scriptvar)))
+    (read-from-minibuffer
+     (format "Run %s (like this): " debugger)
+     (concat cmd-name " " (or (rbdbgr-suggest-ruby-file))))))
 
 (defun rbdbgr-goto-line-for-type (type pt)
   "Display the location mentioned in line described by PT. TYPE is used

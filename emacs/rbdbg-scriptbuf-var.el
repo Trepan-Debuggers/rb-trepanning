@@ -6,14 +6,14 @@
   "debugger object/structure specific to a (top-level) Ruby file
 to be debugged."
   (name       :type string) ;; Name of debugger
-  (cmd-name   :type string) ;; Debugger command invocation. FIXME turn
-			    ;; into a ring of recent invocations.
+  (cmd        :type string) ;; Debugger command invocation. FIXME: turn
+                            ;; into a ring of recent invocations.
   (cmdproc)                 ;; buffer containing debugger process
 )
 
 (defvar rbdbgr-scriptvar (make-rbdbg-scriptbuf-var
 		    :name "rbdbgr"
-		    :cmd-name "rbdbgr"
+		    :cmd  "rbdbgr"
 		    :cmdproc  nil
 		    )
   "Debugger object for a process buffer.")
@@ -25,4 +25,4 @@ to be debugged."
 ;;; eval:(put 'rbdbgr-debug-enter 'lisp-indent-hook 1)
 ;;; End:
 
-;;; rbdbgr-vars.el ends here
+;;; rbdbgr-scriptbuf-var.el ends here
