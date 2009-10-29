@@ -92,6 +92,7 @@ class TestStep < Test::Unit::TestCase
            "Trace events we may stop on:",
            "\tcall, raise",
            "-> def foo1",
+           "!! raise Exception",
            "!! raise Exception"]
     compare_output(out, d, cmds)
     
