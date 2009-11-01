@@ -5,20 +5,22 @@
 
 class Debugger
   module Disassemble
-    # FIXME: add an indicator for where breakpoints are set
-    def mark_disassembly(disassembly_str, iseq_equal, pc_offset)
+    def mark_disassembly(disassembly_str, iseq_equal, pc_offset,
+                         brkpt_offsets=[])
       dis_array = disassembly_str.split(/\n/)
-      offset_str = "%04d " % pc_offset
       dis_array.map do |line|
-        prefix = if line =~ /^\d{4} /
-                   if line =~ /^#{offset_str}/ && iseq_equal
-                     '--> '
-                     else
-                     '    '
-                   end
-                 else
-                   ''
-                 end
+        prefix = 
+          if line =~ /^(\d{4}) /
+            offset = $1.to_i
+            bp = brkpt_offsets && brkpt_offsets.member?(offset) ? 'B' : ' '
+            bp + if offset == pc_offset && iseq_equal
+              '--> '
+            else
+              '    '
+            end
+          else
+            ''
+          end
         prefix + line
       end
     end
@@ -47,9 +49,9 @@ local table (size: 6, argc: 1 [opts: 0, rest: -1, post: 0, block: -1] s1)
 0002 trace            1                                               (  27)
 0004 putnil           
 '
-  [-1, 2, 10].each do |num|
+  [[-1, []], [2, [2]], [10, [0, 4]]].each do |pc_offset, brkpts|
     puts '-' * 20
-    puts mark_disassembly(dis_string, true, num).join("\n")
+    puts mark_disassembly(dis_string, true, pc_offset, brkpts).join("\n")
   end
   puts mark_disassembly(dis_string, false, 2).join("\n")
   p disassemble_split(dis_string)

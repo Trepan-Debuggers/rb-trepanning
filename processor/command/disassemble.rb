@@ -40,7 +40,8 @@ Examples:
       iseqs.each do |iseq|
       ary = mark_disassembly(iseq.disasm_nochildren, 
                              @proc.frame.iseq.equal?(iseq),
-                             @proc.frame.pc_offset)
+                             @proc.frame.pc_offset,
+                             iseq.brkpts)
       msg ary
     end
   end
