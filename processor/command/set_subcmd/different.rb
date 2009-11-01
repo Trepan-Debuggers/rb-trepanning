@@ -12,7 +12,13 @@ is sometimes desirable to continue but stop only when the position
 next changes.
 
 Setting 'different' to on will cause each 'step' or 'next' command to
-stop at a different position. 
+stop at a different position.
+
+Note though that the notion of different does take into account stack
+nesting. So in ARGV.map {|arg| arg.to_i} you get a stop before ARGV as
+well as one in the block -- but only one in the block since subsequent
+steps will be at the same position. If you to ignore stopping at added
+nesting levels, use 'next'.
 
 See also 'step', 'next' which have suffixes '+' and '-' which
 override this setting."

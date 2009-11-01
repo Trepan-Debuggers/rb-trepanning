@@ -13,5 +13,8 @@ puts "'step', 'n', 'cont' commands have been added."
 if defined?($rbdbgr) && $rbdbgr
    puts 'You should have access to debugger state via global variable $rbdbgr'
 end
+if defined?($frame) && $frame
+   puts 'You should have access to the program frame via global variable $frame'
+end
 
   

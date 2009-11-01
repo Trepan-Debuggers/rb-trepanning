@@ -17,7 +17,7 @@ class Debugger
     # execution.
     def finish(level_count=0, opts={})
       step(0, opts)
-      @next_level      = @top_frame.stack_size - level_count
+      @next_level      = @frame.stack_size - level_count
       @next_thread     = Thread.current
       @stop_events     = Set.new(%w(return))
     end

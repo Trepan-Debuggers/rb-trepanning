@@ -23,9 +23,10 @@ Examples:
 
     ALIASES      = %w(c)
     CATEGORY     = 'running'
-    NAME         = File.basename(__FILE__, '.rb')
     MAX_ARGS     = 1  # Need at most this many
-    SHORT_HELP  = 'Continue execution of debugged program'
+    NAME         = File.basename(__FILE__, '.rb')
+    NEED_RUNNING = true
+    SHORT_HELP   = 'Continue execution of debugged program'
   end
 
   # This method runs the command

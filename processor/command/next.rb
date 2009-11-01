@@ -36,7 +36,7 @@ Examples:
     # execution_set = ['Running']
     MAX_ARGS     = 1   # Need at most this many. FIXME: will be eventually 2
     NAME         = File.basename(__FILE__, '.rb')
-    NEED_STACK   = true
+    NEED_RUNNING = true
     SHORT_HELP   = 'Step program without entering called functions'
   end
 

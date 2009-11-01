@@ -173,6 +173,11 @@ class Debugger
                 "got %d.") % [name, max_args, nargs])
         return false
       end
+      # if cmd.class.const_get(:NEED_RUNNING) && !...
+      #   errmsg "Command '%s' requires a running program." % name
+      #   return false
+      # end
+
       if cmd.class.const_get(:NEED_STACK) && !@frame
         errmsg "Command '%s' requires at running stack frame." % name
         return false
@@ -235,7 +240,7 @@ class Debugger
     def stepping_skip?
 
       return true if @core.step_count < 0
-      if @settings[:'debug-skip']
+      if @settings[:'debugskip']
         puts "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.inspect}" 
         puts "nl  : #{@next_level},    ssize : #{@stack_size}" 
         puts "nt  : #{@next_thread},   thread: #{Thread.current}" 
@@ -253,12 +258,12 @@ class Debugger
         !frame || (@next_level < frame.stack_size &&
                    Thread.current == @next_thread)
 
-      new_pos = [@frame.source_container, @frame.source_location, 
+      new_pos = [@frame.source_container, frame_line,
                  @stack_size, @current_thread]
 
       skip_val = @stop_events && !@stop_events.member?(@core.event)
 
-      if @settings[:'debug-skip']
+      if @settings[:'debugskip']
         puts "skip: #{skip_val.inspect}, last: #{@last_pos}, new: #{new_pos}" 
       end
 

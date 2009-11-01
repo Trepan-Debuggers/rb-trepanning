@@ -46,7 +46,7 @@ Related and similar is the 'next' command.  See also the commands:
     CATEGORY     = 'running'
     MAX_ARGS     = 1   # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
-    NEED_STACK   = true
+    NEED_RUNNING = true
     SHORT_HELP   = 'Step program (possibly entering called functions)'
   end
 
