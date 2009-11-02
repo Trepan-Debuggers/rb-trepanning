@@ -1,0 +1,1927 @@
+2009-11-01  rocky <rockyb@rubyforge.org>
+
+	* processor/command/disassemble.rb, processor/validate.rb: Allow
+	breakpoints and disassembly of Proc objects.
+
+2009-11-01  rocky <rockyb@rubyforge.org>
+
+	* lib/disassemble.rb, processor/command/disassemble.rb,
+	test/unit/test-lib-disassemble.rb: Add breakpoint marks to
+	instruction disassembly.
+
+2009-10-31  rocky <rockyb@rubyforge.org>
+
+	* processor/command/continue.rb, processor/command/irb.rb,
+	processor/command/next.rb,
+	processor/command/set_subcmd/different.rb,
+	processor/command/step.rb, processor/main.rb, processor/running.rb,
+	profile/irbrc, test/functional/test-step.rb: Go over some stepping
+	oddities and bugs.  Add command NEED_RUNNING: start putting tracking
+	commands that need a running program. irb -d now sets global $frame.
+	Fix bug in "finish" command and "set debug skip" now works.
+
+2009-10-29  rocky <rockyb@rubyforge.org>
+
+	* test/functional/test-step.rb: Recent svn up for Ruby 1.9 seems to
+	give two events for an exception. Accept in for now.
+
+2009-10-28  R. Bernstein <rocky@gnu.org>
+
+	* emacs/.gitignore, emacs/AUTHORS, emacs/ChangeLog,
+	emacs/Makefile.am, emacs/NEWS, emacs/README, emacs/configure.ac,
+	emacs/rbdbg-file.el, emacs/rbdbg-load.el, emacs/rbdbg-loc.el,
+	emacs/rbdbg-lochist.el, emacs/rbdbg-procbuf-var.el,
+	emacs/rbdbg-regexp.el, emacs/rbdbg-scriptbuf-var.el,
+	emacs/rbdbg-track-mode.el, emacs/rbdbg-track.el,
+	emacs/rbdbg-window.el, emacs/rbdbgr-core.el,
+	emacs/rbdbgr-regexp.el, emacs/rbdbgr-track-mode.el,
+	emacs/rbdbgr.el, emacs/test/.gitignore, emacs/test/Makefile,
+	emacs/test/behave.el, emacs/test/test-core.el,
+	emacs/test/test-file.el, emacs/test/test-load.el,
+	emacs/test/test-loc.el, emacs/test/test-lochist.el,
+	emacs/test/test-regexp.el, emacs/test/test-regexp2.el,
+	emacs/test/test-track.el: Emacs code has moved to emacs-dbgr.
+
+2009-10-28  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbg-scriptbuf-var.el, emacs/rbdbgr-core.el,
+	emacs/test/test-core.el: Suggest candidate Ruby files to debug --
+	inch ever so forward in Emacs code.
+
+2009-10-27  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-procbuf-var.el, emacs/rbdbg-scriptbuf-var.el,
+	emacs/rbdbg-track-mode.el, emacs/rbdbg-track.el,
+	emacs/rbdbg-var.el, emacs/rbdbgr-core.el,
+	emacs/test/test-regexp.el, emacs/test/test-track.el, lib/brkpt.rb,
+	rbdbgr.rb: emacs/*: start to separate buffer-local vars for the
+	process buffer from the          buffer-local vars of the (top-level
+	Ruby) script buffer. reset: mostly small doc-like changes.
+
+2009-10-26  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbgr-core.el, emacs/test/test-core.el: Fix bugs in script
+	args parsing.
+
+2009-10-25  rocky <rockyb@rubyforge.org>
+
+	* emacs/Makefile.am, emacs/rbdbgr-core.el, emacs/test/test-core.el: 
+	Work more on Emacs core at glacial pace. A command option processing
+	routine was revised.
+
+2009-10-25  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/submgr.rb,
+	processor/command/base/subsubmgr.rb: If only one help subcommand
+	matchs a regexp, run help for that.
+
+2009-10-25  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbg-track-mode.el, emacs/rbdbgr-core.el,
+	emacs/rbdbgr-track-mode.el, processor/command/info_subcmd/iseq.rb: 
+	iseq.rb: Show more information in "info seq".  emacs/*: Key-bindings
+	workaround in rbdbgr-track-mode and other fixes.
+
+2009-10-25  rocky <rockyb@rubyforge.org>
+
+	* emacs/.gitignore, emacs/Makefile.am, emacs/rbdbg-regexp.el,
+	emacs/rbdbg-track-mode.el, emacs/rbdbg-track.el,
+	emacs/rbdbgr-core.el, emacs/rbdbgr-regexp.el,
+	emacs/rbdbgr-track-mode.el, emacs/test/test-regexp.el,
+	emacs/test/test-regexp2.el, processor/command/disassemble.rb: Make
+	slight progress on getting Emacs front-end to debugger. Add
+	goto-traceback-line and goto-dollarslash-traceback line.
+
+2009-10-24  rocky <rockyb@rubyforge.org>
+
+	* processor/command/disassemble.rb,
+	processor/command/info_subcmd/iseq.rb: iseq.rb: Show instruction
+	sequence breakpoints disassemble.rb: short by default (option is now
+	"full") allow '.' for 		current instruction sequence.
+
+2009-10-24  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbg-track.el, emacs/test/test-regexp.el,
+	processor/command/base/subsubmgr.rb,
+	processor/command/info_subcmd/registers.rb,
+	processor/command/info_subcmd/registers_subcmd/dfp.rb,
+	processor/command/info_subcmd/registers_subcmd/helper.rb,
+	processor/command/info_subcmd/registers_subcmd/lfp.rb,
+	processor/command/info_subcmd/registers_subcmd/pc.rb,
+	processor/command/info_subcmd/registers_subcmd/sp.rb: Add "info reg
+	dfp" and DRY register array code Emacs: defensive programming when
+	not matching a line number
+
+2009-10-24  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/subsubmgr.rb,
+	processor/command/info_subcmd/registers_subcmd/lfp.rb,
+	processor/command/info_subcmd/registers_subcmd/pc.rb,
+	processor/command/info_subcmd/registers_subcmd/sp.rb,
+	test/functional/test-step.rb: Fix up subcommand help, e.g "help info
+	reg *"
+
+2009-10-24  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/events.rb: Show event after setting
+	them.
+
+2009-10-23  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbg-regexp.el, emacs/test/test-regexp.el,
+	processor/command/info_subcmd/iseq.rb, processor/command/list.rb,
+	processor/command/set_subcmd/substitute_subcmd/path.rb,
+	processor/command/set_subcmd/substitute_subcmd/string.rb,
+	processor/frame.rb, processor/location.rb, processor/main.rb,
+	processor/validate.rb: Add "set substitute string" to map string
+	eval names into a (temporary) file. emacs: expand regexp to deal
+	with "via" or "remap" strings.
+
+2009-10-23  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/info_subcmd/file.rb: Bug in running "info file"
+
+
+2009-10-23  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/info_subcmd/iseq.rb,
+	processor/command/info_subcmd/program.rb,
+	processor/command/set_subcmd/substitute_subcmd/.gitignore,
+	processor/main.rb: Add "info iseq"
+
+2009-10-23  R. Bernstein <rocky@gnu.org>
+
+	Merge branch 'master' of git@github.com:rocky/rbdbgr
+
+2009-10-23  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/info_subcmd/registers_subcmd/lfp.rb,
+	processor/command/info_subcmd/registers_subcmd/pc.rb,
+	processor/command/info_subcmd/registers_subcmd/sp.rb,
+	processor/command/set_subcmd/substitute.rb,
+	processor/command/set_subcmd/substitute_subcmd/path.rb,
+	processor/main.rb: Add gdb "set substitute path" in rudimentary
+	form.
+
+2009-10-22  rocky <rockyb@rubyforge.org>
+
+	* processor/frame.rb, processor/main.rb: Fix bug in eval via.
+
+2009-10-22  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/cmd.rb,
+	processor/command/info_subcmd/file.rb, processor/main.rb: main.rb,
+	file.rb: Remapping <internal:prelude> and more generally any file
+	remapped shows up cmd.rb, file.rb: Show breakpoint numbers in the
+	way numbers are generally handled. in location line and has "info
+	file" properties shown.
+
+2009-10-22  rocky <rockyb@rubyforge.org>
+
+	* data/prelude.rb, emacs/rbdbgr-core.el, emacs/rbdbgr-regexp.el,
+	irbrc, lib/irb.rb, processor/main.rb, profile/irbrc: main: Show
+	<internal:prelude> via LineCache::remap. More work is needed emacs:
+	adding more of the non-trace code. Still far from finished.
+
+2009-10-21  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-regexp.el, emacs/rbdbg-track-mode.el,
+	emacs/rbdbgr-core.el, emacs/rbdbgr-regexp.el, emacs/rbdbgr.el,
+	emacs/test/test-regexp.el, emacs/test/test-track.el: Baby steps
+	towards adding rbdbgr emacs interface
+
+2009-10-21  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-window.el: Don't count th mini-buffer as a separate
+	window in one-window-p.
+
+2009-10-21  R. Bernstein <rocky@gnu.org>
+
+	* lib/brkptmgr.rb, test/functional/test-finish.rb,
+	test/functional/test-step.rb: lib/brkptmgr.rb: remove debug output
+	test/functional/*: silence tests
+
+2009-10-21  rocky <rockyb@rubyforge.org>
+
+	* lib/brkptmgr.rb, processor/breakpoint.rb, processor/main.rb: 
+	Handle temporary breakpoints correctly now
+
+2009-10-21  rocky <rockyb@rubyforge.org>
+
+	* processor/breakpoint.rb, processor/command/disassemble.rb,
+	processor/main.rb, processor/validate.rb: Fix various bugs in/off of
+	"disassemble" command, and showing internal debugger traceback, etc.
+
+
+2009-10-20  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/registers_subcmd/lfp.rb,
+	processor/command/show_subcmd/auto_subcmd/eval.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/maxstring.rb: Small fixes
+
+2009-10-20  rocky <rockyb@rubyforge.org>
+
+	* processor/command/finish.rb, processor/command/next.rb,
+	processor/command/show_subcmd/maxstring.rb,
+	processor/command/step.rb: Small docstring improvements
+
+2009-10-20  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/auto.rb,
+	processor/command/set_subcmd/debug.rb,
+	processor/command/set_subcmd/debug_subcmd/.gitignore,
+	processor/command/set_subcmd/debug_subcmd/except.rb,
+	processor/command/set_subcmd/debug_subcmd/skip.rb,
+	processor/command/set_subcmd/debug_subcmd/stack.rb,
+	processor/command/set_subcmd/debugstack.rb,
+	processor/command/show_subcmd/auto_subcmd/eval.rb,
+	processor/command/show_subcmd/debug.rb,
+	processor/command/show_subcmd/debug_subcmd/.gitignore,
+	processor/command/show_subcmd/debug_subcmd/except.rb,
+	processor/command/show_subcmd/debug_subcmd/skip.rb,
+	processor/command/show_subcmd/debug_subcmd/stack.rb,
+	processor/command/show_subcmd/debugstack.rb,
+	processor/command/where.rb, processor/default.rb, processor/main.rb: 
+	main.rb: Don't crap out on an unhandled exception in running a
+	command. We now have enough of the debugger working where we can
+	dynamically investicagate and fix things. Add "set/show debug"
+	subcommands for turning on/off internal debugger debugging.
+
+2009-10-20  rocky <rockyb@rubyforge.org>
+
+	* processor/command/continue.rb, processor/running.rb: 
+	processor/running.rb: Go back to no argument continue
+
+2009-10-20  rocky <rockyb@rubyforge.org>
+
+	* lib/disassemble.rb, processor/command/disassemble.rb,
+	test/unit/test-lib-disassemble.rb: Fix "disassemble" bug where we
+	might mark multiple locations as current. Add routine to split by
+	offset number in prepration for a more selective disassemble
+	command. Allow one to disassemble without sub disassembly of
+	embedded iseqs.
+
+2009-10-20  R. Bernstein <rocky@gnu.org>
+
+	* lib/brkptmgr.rb, processor/command/break.rb,
+	processor/validate.rb, test/unit/test-cmd-break.rb,
+	test/unit/test-lib-brkptmgr.rb: Remove a bug in the "break" command.
+	Start a unit test for this.
+
+2009-10-20  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/break.rb, processor/command/continue.rb,
+	processor/validate.rb: DRY breakpoint position code.
+
+2009-10-20  R. Bernstein <rocky@gnu.org>
+
+	* processor/breakpoint.rb, processor/command/break.rb,
+	processor/command/continue.rb, processor/main.rb,
+	processor/running.rb, processor/validate.rb: Fix bugs in "break"
+	command; we now allow one to use a method name to start searching
+	for the line number/offset.
+
+2009-10-20  rocky <rockyb@rubyforge.org>
+
+	* processor/breakpoint.rb, processor/command/break.rb,
+	processor/validate.rb: Necessary cleanup in preparation for adding
+	breakpoint using method and instruction-sequence names.
+
+2009-10-19  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/break.rb: Add object id in hex to
+	instruction sequence name.
+
+2009-10-19  rocky <rockyb@rubyforge.org>
+
+	* processor/command/break.rb, processor/main.rb,
+	test/functional/fn_helper.rb, test/functional/test-break.rb: 
+	main.rb: Fix bug in "disable" command. break.rb: Canonicalize name
+	in container. test/* grow for testing breakpoints.
+
+2009-10-19  rocky <rockyb@rubyforge.org>
+
+	* lib/brkptmgr.rb, lib/core.rb, processor/main.rb,
+	test/functional/test-next.rb: Fix bug in next!
+
+2009-10-19  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/disable.rb: Add "disable" command. More work is
+	needed. Bugs in handling enable/disable.
+
+2009-10-19  R. Bernstein <rocky@gnu.org>
+
+	* lib/brkpt.rb, processor/breakpoint.rb,
+	processor/command/break.rb, processor/command/enable.rb,
+	processor/running.rb: processor/command: add an "enable" command.
+	processor/{breakpoint,running}.rb: move breakpoint code to a
+	separate file. processor/command/break.rb: category should be
+	"breakpoint", not "running" lib/brkpt.rb: add enabled=
+
+2009-10-19  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/break.rb: Fix up docstring to break. Allow
+	"break" with no parameters.
+
+2009-10-19  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/break.rb: Doc typo
+
+2009-10-19  rocky <rockyb@rubyforge.org>
+
+	* lib/brkpt.rb, lib/brkptmgr.rb, lib/disassemble.rb,
+	processor/command/break.rb, processor/command/info_subcmd/break.rb,
+	processor/command/info_subcmd/file.rb,
+	processor/command/info_subcmd/frame.rb,
+	processor/command/info_subcmd/program.rb: command/info_sub/break.rb:
+	Add "info break" command. command/{break.rb,info_sub/program.rb}:
+	Use instruction sequence names to start to disambiguate locations.
+	lib/break.rb: Add ignore field to breakpoint object.
+	lib/brkptmgr.rb: add more of the useful Enumerable operators to
+	class lib/disassemble.rb: note flaws we currently have
+
+2009-10-18  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/file.rb,
+	processor/command/info_subcmd/return.rb,
+	processor/command/set_subcmd/events.rb, processor/running.rb: Add
+	'.' for current file. info xx lines -> info xx brkpts running.rb:
+	break had set a temporary rather than permanent breakpoint.
+
+2009-10-18  rocky <rockyb@rubyforge.org>
+
+	* processor/running.rb: Search all iseq's in current, thanks to
+	child_iseqs.
+
+2009-10-18  rocky <rockyb@rubyforge.org>
+
+	* interface/base_intf.rb: One FIXME fixed
+
+2009-10-18  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb: Small doc typo
+
+2009-10-18  rocky <rockyb@rubyforge.org>
+
+	* test/unit/test-lib-brkpt.rb: track breakpoint interface change.
+
+2009-10-18  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/submgr.rb,
+	processor/command/base/subsubcmd.rb,
+	processor/command/base/subsubmgr.rb,
+	processor/command/info_subcmd/file.rb,
+	processor/command/info_subcmd/frame.rb,
+	processor/command/info_subcmd/registers.rb,
+	processor/command/info_subcmd/return.rb, processor/command/list.rb,
+	processor/command/set_subcmd/auto.rb,
+	processor/command/set_subcmd/auto_sub/eval.rb,
+	processor/command/set_subcmd/auto_sub/irb.rb,
+	processor/command/set_subcmd/auto_subcmd/eval.rb,
+	processor/command/set_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/auto.rb: Add "info file" command. Fix
+	"set auto" subcommand. Remove extra \n in "List subcommands" help.
+	Tidy up code more.
+
+2009-10-17  rocky <rockyb@rubyforge.org>
+
+	* lib/brkpt.rb, lib/brkptmgr.rb, processor/command/base/cmd.rb,
+	processor/command/break.rb, processor/command/continue.rb,
+	processor/command/info_subcmd/frame.rb,
+	processor/command/info_subcmd/program.rb,
+	processor/command/info_subcmd/registers.rb,
+	processor/command/info_subcmd/return.rb, processor/main.rb,
+	processor/mock.rb, processor/msg.rb, processor/running.rb,
+	test/unit/test-lib-brkptmgr.rb: Lots of little changes... main.rb:
+	Check breakpoint condition and find breakpoint command/info_subcmd:
+	add PREFIX for future use command/info_subcmd/registers.rb: Minimum
+	abbrev is now "reg" since there is a "return" command/break.rb: "b"
+	is an alias for "break" lib/brkpt.rb: add enabled parameter, stay
+	clear of name "binding" lib/brkptmgr.rb: add a "find" and "size"
+	commands, and access to list. command/*: complete I/O routine with
+	msg_nocr; DRY standalone code. running.rb: remove debug code.
+
+2009-10-17  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, bin/rbdbgr, lib/brkpt.rb,
+	processor/command/base/cmd.rb, processor/command/base/subcmd.rb,
+	processor/command/base/subsubcmd.rb, processor/command/break.rb,
+	processor/command/continue.rb,
+	processor/command/set_subcmd/auto.rb,
+	processor/command/set_subcmd/auto_sub/eval.rb,
+	processor/command/set_subcmd/auto_sub/irb.rb,
+	processor/command/show.rb,
+	processor/command/show_subcmd/auto_subcmd/eval.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb,
+	processor/running.rb: Add a minimal breakpoint command. Add some gem
+	install workarounds. Redmove need for short help constant in
+	subcommands.
+
+2009-10-17  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/auto_sub/eval.rb,
+	processor/command/set_subcmd/auto_sub/irb.rb,
+	processor/command/set_subcmd/autoeval.rb,
+	processor/command/set_subcmd/autoirb.rb: Make {set,show}
+	auto{eval,irb} into sub command More hacking to get gem installation
+	work. Not perfect yet.
+
+2009-10-17  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, bin/rbdbgr: Gem package now installs properly.
+
+2009-10-17  rocky <rockyb@rubyforge.org>
+
+	* lib/brkpt.rb, lib/brkptmgr.rb, lib/core.rb,
+	processor/command/base/cmd.rb, processor/command/base/subcmd.rb,
+	processor/command/base/submgr.rb,
+	processor/command/base/subsubcmd.rb,
+	processor/command/base/subsubmgr.rb, processor/command/base_cmd.rb,
+	processor/command/base_subcmd.rb, processor/command/base_submgr.rb,
+	processor/command/base_subsubcmd.rb,
+	processor/command/base_subsubmgr.rb, processor/command/continue.rb,
+	processor/command/disassemble.rb, processor/command/down.rb,
+	processor/command/exit.rb, processor/command/finish.rb,
+	processor/command/frame.rb, processor/command/help.rb,
+	processor/command/info.rb, processor/command/info_subcmd/frame.rb,
+	processor/command/info_subcmd/program.rb,
+	processor/command/info_subcmd/registers.rb,
+	processor/command/info_subcmd/registers_subcmd/lfp.rb,
+	processor/command/info_subcmd/registers_subcmd/pc.rb,
+	processor/command/info_subcmd/registers_subcmd/sp.rb,
+	processor/command/info_subcmd/return.rb, processor/command/irb.rb,
+	processor/command/kill.rb, processor/command/list.rb,
+	processor/command/next.rb, processor/command/nocache.rb,
+	processor/command/restart.rb, processor/command/set.rb,
+	processor/command/set_subcmd/autoeval.rb,
+	processor/command/set_subcmd/autoirb.rb,
+	processor/command/set_subcmd/basename.rb,
+	processor/command/set_subcmd/debugstack.rb,
+	processor/command/set_subcmd/different.rb,
+	processor/command/set_subcmd/events.rb,
+	processor/command/set_subcmd/maxstring.rb,
+	processor/command/set_subcmd/width.rb, processor/command/show.rb,
+	processor/command/show_subcmd/auto.rb,
+	processor/command/show_subcmd/auto_subcmd/eval.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/basename.rb,
+	processor/command/show_subcmd/debugstack.rb,
+	processor/command/show_subcmd/different.rb,
+	processor/command/show_subcmd/events.rb,
+	processor/command/show_subcmd/maxstring.rb,
+	processor/command/show_subcmd/width.rb,
+	processor/command/source.rb, processor/command/step.rb,
+	processor/command/up.rb, processor/command/where.rb,
+	processor/main.rb, processor/running.rb, processor/subcmd.rb,
+	test/functional/test-step.rb, test/unit/test-base-subcmd.rb,
+	test/unit/test-lib-brkpt.rb: lib/brkpt.rb: add enable/disable
+	fields; set default condition "true" lib/brkptmgr.rb: fill out
+	breakpoint manager more lib/core.rb: add switch and vm to unmaskable
+	events processor/command/base*.rb: move to directory
+	processor/command test/functional/test-step.rb: reinstate exception
+	testing (Todo: nuke VM and sw events in testing)
+
+2009-10-17  rocky <rockyb@rubyforge.org>
+
+	* lib/brkptmgr.rb, processor/command/base_cmd.rb,
+	processor/command/base_submgr.rb,
+	processor/command/base_subsubmgr.rb, processor/command/help.rb,
+	processor/subcmd.rb: help.rb, base_submgr.rb: Allow regexp matching
+	of command names for help listing. Idea courtesy of Michael Lord
+	Welles.  base_subcmd.rb + above: DRY columnize code  brkptmgr.rb:
+	Fix stupid syntax bug  subcmd.rb: lookup() add optional parameter to
+	decide on whether to lookup by 	   regexp or not.
+
+2009-10-17  rocky <rockyb@rubyforge.org>
+
+	* lib/brkpt.rb, lib/brkptmgr.rb, lib/core.rb,
+	processor/command/continue.rb, test/unit/test-lib-brkpt.rb: Start
+	breakpoint handling. Kind of hacky and not bug free, but it's a good
+	start.
+
+2009-10-16  rocky <rockyb@rubyforge.org>
+
+	* lib/brkpt.rb, test/unit/test-lib-brkpt.rb,
+	test/unit/test-lib-frame.rb: Start defining a breakpoint object.
+
+2009-10-16  R. Bernstein <rocky@gnu.org>
+
+	* processor/main.rb: Add breakpoint event.
+
+2009-10-14  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/base_subcmd.rb,
+	processor/command/base_subsubcmd.rb,
+	processor/command/info_subcmd/registers.rb,
+	processor/command/list.rb,
+	processor/command/set_subcmd/autoeval.rb,
+	processor/command/set_subcmd/different.rb,
+	processor/command/set_subcmd/maxstring.rb,
+	processor/command/show_subcmd/auto.rb,
+	processor/command/show_subcmd/debugstack.rb,
+	processor/command/show_subcmd/events.rb,
+	processor/command/show_subcmd/maxstring.rb,
+	processor/command/show_subcmd/width.rb, processor/validate.rb: Pick
+	up short help strings. validate.rb: parse_position() fix bug in
+	calling get_an_int.
+
+2009-10-14  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/info_subcmd/registers.rb: Small doc grammar
+	change.
+
+2009-10-14  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/set_subcmd/autoeval.rb,
+	processor/command/set_subcmd/different.rb,
+	processor/command/set_subcmd/maxstring.rb,
+	processor/command/show_subcmd/maxstring.rb: Temporary: Add explicit
+	SHORT_HELP until I fix to split off only the first line of HELP.
+
+2009-10-14  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/set_subcmd/maxstring.rb,
+	processor/command/set_subcmd/width.rb,
+	processor/command/show_subcmd/maxstring.rb,
+	processor/command/show_subcmd/width.rb, processor/validate.rb: 
+	validate.rb: wasn't respecting min/max limits */maxstring.rb: add
+	set/show maximum string length width.rb: make standalone more real
+	and do more.
+
+2009-10-14  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/base_subsubmgr.rb, processor/command/help.rb,
+	processor/command/info_subcmd/registers.rb,
+	processor/command/info_subcmd/registers_subcmd/.gitignore,
+	processor/command/info_subcmd/registers_subcmd/lfp.rb,
+	processor/command/info_subcmd/registers_subcmd/pc.rb,
+	processor/command/info_subcmd/registers_subcmd/sp.rb,
+	processor/command/show_subcmd/auto.rb, processor/default.rb,
+	processor/msg.rb: complete "info registers", adding "info register
+	lfp". Tidy help * output. default.rb: add saferep to truncate long
+	strings.
+
+2009-10-14  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/pc.rb,
+	processor/command/info_subcmd/registers.rb,
+	processor/command/info_subcmd/registers_subcmd/pc.rb,
+	processor/command/info_subcmd/registers_subcmd/sp.rb,
+	processor/command/info_subcmd/sp.rb,
+	processor/command/show_subcmd/auto.rb: info {pc,sp} -> info
+	registers {pc,sp}
+
+2009-10-13  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_submgr.rb,
+	processor/command/base_subsubmgr.rb,
+	processor/command/show_subcmd/auto.rb,
+	processor/command/show_subcmd/auto_subcmd/eval.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/autoeval.rb,
+	processor/command/show_subcmd/autoirb.rb: sub commands of 'show
+	auto' works, more or less. Remove 'show autoeval' and 'show autoirb'
+	in favor of 'show auto eval' and 'show auto irb'.
+
+2009-10-13  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/base_submgr.rb,
+	processor/command/base_subsubcmd.rb,
+	processor/command/base_subsubmgr.rb: "show auto eval" now works.
+	However, the "help" command needs help.
+
+2009-10-12  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb,
+	processor/command/base_subsubcmd.rb,
+	processor/command/base_subsubmgr.rb, processor/command/nocache.rb,
+	processor/command/show.rb, processor/command/show_subcmd/auto.rb,
+	processor/command/show_subcmd/auto_subcmd/.gitignore,
+	processor/command/show_subcmd/auto_subcmd/eval.rb,
+	processor/command/show_subcmd/autoirb.rb,
+	processor/command/show_subcmd/basename.rb, processor/subcmd.rb: 
+	"show auto eval" close to working.
+
+2009-10-10  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb,
+	processor/command/base_subsubmgr.rb,
+	processor/command/info_subcmd/pc.rb,
+	processor/command/show_subcmd/auto.rb,
+	processor/command/show_subcmd/trace.rb.try: pc.rb: "info pc" Start
+	support for sub sub commands.
+
+2009-10-09  rocky <rockyb@rubyforge.org>
+
+	* processor/command/show_subcmd/trace.rb,
+	processor/command/show_subcmd/trace.rb.try,
+	processor/command/show_subcmd/width.rb, processor/mock.rb: trace.rb:
+	not ready yet for sub-subcommands width: fix standalone bug mock.rb:
+	Add standalone test
+
+2009-10-05  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb, processor/command/info_subcmd/program.rb: Small
+	grammar thing
+
+2009-09-30  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/frame.rb,
+	processor/command/info_subcmd/pc.rb,
+	processor/command/info_subcmd/registers.rb: Add "info registers" in
+	the spirit of gdb. Remove "info pc" as this is now covered by "info
+	registers". frame.rb: now shows: manditory parameters after optional
+	ones.
+
+2009-09-30  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb, processor/frame.rb: method prototypes now show
+	optional parameters, and splatted rest or block parameters (when
+	given)
+
+2009-09-30  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/info_subcmd/frame.rb, processor/main.rb: 
+	main.rb: check that commands that need a stack have one.
+	info_subcmd/frame.rb: DRY code.
+
+2009-09-29  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/info_subcmd/frame.rb,
+	processor/command/info_subcmd/return.rb: Adjust sp for corrected
+	rb-threadframe
+
+2009-09-29  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/info_subcmd/pc.rb,
+	processor/command/info_subcmd/program.rb,
+	processor/command/info_subcmd/return.rb,
+	processor/command/info_subcmd/sp.rb, test/functional/.gitignore,
+	test/unit/test-cmd-kill.rb: pc.rb, sp.rb: add "info pc" and "info
+	sp" commands. info_subcmd/*.rb: remove SHORT_HELP which is set by
+	base class.
+
+2009-09-29  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/return.rb: frame.rb: defensive
+	programming. return.rb: Prepare for adding c return values
+
+2009-09-28  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/frame.rb,
+	processor/command/info_subcmd/return.rb,
+	test/functional/test-finish.rb, test/functional/test-next.rb,
+	test/functional/test-step.rb: info_subcmd/frame.rb: Add "info
+	return" and show return class on "info frame" if we have a return
+	event.  test/*: tag tests for possible automatic extraction.
+
+2009-09-28  R. Bernstein <rocky@gnu.org>
+
+	* test/functional/test-finish.rb: Start functional test for
+	"finish".
+
+2009-09-28  rocky <rockyb@rubyforge.org>
+
+	* test/functional/test-next.rb: Add "next" command functional test.
+
+
+2009-09-27  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb, processor/command/finish.rb,
+	processor/command/step.rb, processor/main.rb, processor/running.rb,
+	test/functional/test-step.rb: Add "finish" command. Fix bugs in
+	stepping to specific events. Add event names for all events: add
+	switch, coverage and vm.
+
+2009-09-27  rocky <rockyb@rubyforge.org>
+
+	* processor/main.rb: Fix bug in "next" command
+
+2009-09-27  rocky <rockyb@rubyforge.org>
+
+	* interface/base_intf.rb, interface/script.rb, interface/user.rb,
+	io/input.rb, processor/command/list.rb, processor/main.rb,
+	processor/validate.rb, rbdbgr.rb, test/functional/test-step.rb: Null
+	return on interactive input now uses last command. Various code
+	cleanups mostly on interfaces. More functional tests.
+
+2009-09-26  rocky <rockyb@rubyforge.org>
+
+	* lib/file.rb, processor/command/list.rb, processor/main.rb,
+	processor/validate.rb: List function-name works now. list file:line
+	works too. Don't show file text if there's nothing to show.
+
+2009-09-26  rocky <rockyb@rubyforge.org>
+
+	* bin/rbdbgr, lib/file.rb, lib/run.rb, processor/command/list.rb,
+	processor/command/restart.rb, processor/mock.rb,
+	processor/validate.rb, rbdbgr.rb, test/functional/fn_helper.rb: 
+	bin/rbdbgr run.rb: Move Rbdbgr module to a module list.rb: bang on
+	some more restart.rb: Add Ruby interpreter if $0 is not executable
+	mock.rb: remove debug statement rbdbgr.rb: Add :set_restart option
+	which is less cumbersome than using            :restart_argv
+
+2009-09-26  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb, processor/command/set_subcmd/autoirb.rb,
+	processor/command/set_subcmd/basename.rb,
+	processor/command/show_subcmd/basename.rb, processor/frame.rb,
+	processor/main.rb: Add set/show basename.
+
+2009-09-26  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/frame.rb, processor/frame.rb: 
+	processor/info_subcmd/frame.rb: DRY code processor/frame.rb:
+	offset2lines semantic change in rb-threadframe. 		    reduce bogus
+	behavior in standalone code.
+
+2009-09-26  rocky <rockyb@rubyforge.org>
+
+	* lib/file.rb, lib/mock.rb, processor/command/list.rb,
+	processor/default.rb, processor/frame.rb, processor/main.rb,
+	processor/mock.rb, processor/validate.rb,
+	test/unit/test-proc-frame.rb, test/unit/test-proc-validate.rb: 
+	list.rb: Hammer on "list" command a little. Needs a lot more work
+	though.  validate.rb: Use confirm from interface in command
+	processor.  defaults.rb: Add defaults for "basename" and "autolist"
+	(neither is setable/showable yet).  mock.rb: Add Debugger::Core mock
+	which reduces bogusness in some unit tests (proc-validate,
+	proc-frame)  file.rb Speaking of bogusness, add parse location
+	routine which doesn't work yet.
+
+2009-09-25  rocky <rockyb@rubyforge.org>
+
+	* processor/command/list.rb: First cut at a list command.
+
+2009-09-25  R. Bernstein <rocky@gnu.org>
+
+	* Rakefile, test/functional/fn_helper.rb,
+	test/functional/test-step.rb: Add more functional tests and run that
+	now by default.
+
+2009-09-25  R. Bernstein <rocky@gnu.org>
+
+	* test/functional/fn_helper.rb, test/functional/test-step.rb: First
+	functional test of stepping works. Stepping code is buggy, but at
+	least the framework works.
+
+2009-09-25  R. Bernstein <rocky@gnu.org>
+
+	* Rakefile, processor/main.rb: Show line text.
+
+2009-09-24  rocky <rockyb@rubyforge.org>
+
+	* interface/base_intf.rb, processor/command/info_subcmd/frame.rb,
+	processor/main.rb: Use thread-frame's offset2lines for getting line
+	numbers of instruction offsets.
+
+2009-09-24  rocky <rockyb@rubyforge.org>
+
+	* interface/base_intf.rb, test/functional/fn_helper.rb,
+	test/functional/test-step.rb: base_intf.rb: use only I/O functions
+	we define. Was missing the newline.  More work towards getting
+	functional testing working.
+
+2009-09-24  R. Bernstein <rocky@gnu.org>
+
+	* interface/base_intf.rb, interface/user.rb,
+	test/functional/test-step.rb: Closer to having functional testing
+	working.
+
+2009-09-24  R. Bernstein <rocky@gnu.org>
+
+	* rbdbgr.rb: Add Debugger::start and Debugger::stop to control
+	tracing
+
+2009-09-24  rocky <rockyb@rubyforge.org>
+
+	* test/functional/fn_helper.rb: Helper functions probably usable
+	now.
+
+2009-09-23  rocky <rockyb@rubyforge.org>
+
+	* io/input.rb, rbdbgr.rb, test/functional/fn_helper.rb,
+	test/unit/test-intf-user.rb, test/unit/test-io-input.rb,
+	test/unit/test-user.rb: input.rb: don't assume input has a tty?
+	method. rbdbgr.rb: Allow one to pass in the input and output
+	descriptors  More and better unit tests.
+
+2009-09-23  R. Bernstein <rocky@gnu.org>
+
+	* io/input.rb, test/unit/test-io-input.rb: :line_edit only works if
+	input is a tty. Add trivial unit test of io/input.
+
+2009-09-23  R. Bernstein <rocky@gnu.org>
+
+	* interface/script.rb, interface/user.rb, io/input.rb,
+	io/string_array.rb, processor/main.rb, test/unit/test-user.rb: Hook
+	user/script interfaces to use new IO-based io/input. string_array
+	now (probably) is usable.  main.rb eof is on the interface's input,
+	not the interface.
+
+2009-09-23  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/set_subcmd/events.rb,
+	processor/command/show_subcmd/events.rb: Set/show events minimum
+	abbrev is "ev".
+
+2009-09-23  R. Bernstein <rocky@gnu.org>
+
+	* interface/base_intf.rb, interface/script.rb, interface/user.rb,
+	io/base_io.rb, io/input.rb, processor/main.rb: input.rb: closer to
+	being usuable. main.rb: Add end and unknown as other unmaskable
+	events
+
+2009-09-23  rocky <rockyb@rubyforge.org>
+
+	* io/base_io.rb, io/input.rb: Rough first cut
+
+2009-09-22  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/program.rb,
+	processor/command/next.rb, processor/command/step.rb,
+	processor/default.rb, processor/main.rb, processor/running.rb: Add
+	stepping to the next exception.
+
+2009-09-22  rocky <rockyb@rubyforge.org>
+
+	* interface/base_intf.rb, io/.gitignore, io/base_io.rb,
+	io/string_array.rb, processor/command/kill.rb: Start I/O layer, in
+	particular string_array which will help in functional testing.
+
+2009-09-22  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/irb.rb, processor/running.rb: irb interrupt
+	handling improvements
+
+2009-09-22  rocky <rockyb@rubyforge.org>
+
+	* processor/mock.rb: Small change
+
+2009-09-22  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb,
+	processor/command/base_subsubmgr.rb,
+	processor/command/disassemble.rb, processor/command/down.rb,
+	processor/command/exit.rb, processor/command/frame.rb,
+	processor/command/help.rb, processor/command/info.rb,
+	processor/command/irb.rb, processor/command/kill.rb,
+	processor/command/next.rb, processor/command/restart.rb,
+	processor/command/set.rb, processor/command/show.rb,
+	processor/command/source.rb, processor/command/step.rb,
+	processor/command/up.rb, processor/command/where.rb,
+	processor/mock.rb, processor/subcmd.rb: DRY code with respect to
+	mock setup. rake :check => :check:lib :check:commands, etc.
+
+2009-09-22  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/command/disassemble.rb,
+	processor/command/down.rb, processor/command/frame.rb,
+	processor/command/irb.rb, processor/command/up.rb,
+	processor/command/where.rb, processor/frame.rb, processor/main.rb,
+	processor/running.rb: Fix bugs in suffix handling for step/next
+	commands. "last position" includes the stack size. frame_setup() can
+	figure out the thread, so no need to pass that.
+
+2009-09-21  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/events.rb, processor/main.rb,
+	processor/msg.rb: Correct process_command_and_quit? to do the right
+	thing on interface EOF.  Also, it now understands comments and how
+	to repeat the last command on the empty string.  This removes bugs
+	in stepping on a "source" command and the duplicate stepping when
+	leaving irb.  events.rb: allow commas to end event names, i.e.   set
+	events line, call, return as well as:   set events line call return
+
+
+2009-09-21  R. Bernstein <rocky@gnu.org>
+
+	* irbrc, lib/irb.rb: Chain in user irbrc if the RBDBGR_IRB
+	environment variable is set.
+
+2009-09-20  rocky <rockyb@rubyforge.org>
+
+	* lib/irb.rb, processor/command/irb.rb: Wasn't getting irbrc path
+	correct
+
+2009-09-20  rocky <rockyb@rubyforge.org>
+
+	* .gitignore, irbrc, lib/core.rb, lib/irb.rb,
+	processor/command/irb.rb, processor/command/next.rb,
+	processor/command/step.rb, processor/default.rb, processor/main.rb,
+	processor/mock.rb, processor/running.rb, rbdbgr.rb: Add custom irb
+	profile for rbdbgr irb sessions. Running processor/command/irb.rb
+	now runs irb which can be used to test the custom profile. Added irb
+	command 'n' for next.  DRY step/next suffix detection code.  Set
+	defaults more for normal users:   set autoeval on   set events:
+	remove instruction stepping   set different on  Did I mention that
+	"next" now works?
+
+2009-09-20  rocky <rockyb@rubyforge.org>
+
+	* processor/command/next.rb: Add debugger "next" command. That
+	wasn't so bad was it? Need unit/integration tests of this stuff.
+
+2009-09-19  rocky <rockyb@rubyforge.org>
+
+	* interface/base_intf.rb, interface/script.rb, interface/user.rb,
+	processor/main.rb, processor/msg.rb: More complete I/O used
+	interface routines. Interfaces now stack. "source" command works
+	modulo one glitch. Fix bug in setting @output.
+
+2009-09-19  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_cmd.rb, processor/command/source.rb,
+	processor/command/step.rb, processor/main.rb, processor/mock.rb,
+	processor/msg.rb, rbdbgr.rb: Pretty close to having a working
+	"source" command - needs a little more work on eof condition.  To
+	that end the, interface is now an array of interfaces.
+
+2009-09-18  rocky <rockyb@rubyforge.org>
+
+	* interface/script.rb: First stab at (a port from pydbgr) of a
+	script interface.
+
+2009-09-18  rocky <rockyb@rubyforge.org>
+
+	* bin/rbdbgr, processor/command/down.rb,
+	processor/command/set_subcmd/debugstack.rb,
+	processor/command/show_subcmd/debugstack.rb,
+	processor/command/up.rb, processor/command/where.rb,
+	processor/frame.rb, processor/main.rb, test/unit/test-proc-frame.rb: 
+	Hide rbdbgr levels of the stack frame unless "set debugstack" is
+	set.
+
+2009-09-17  rocky <rockyb@rubyforge.org>
+
+	* processor/command/irb.rb: $rbdbgr should be top-level debugger
+	object.
+
+2009-09-17  rocky <rockyb@rubyforge.org>
+
+	* lib/irb.rb, processor/command/continue.rb,
+	processor/command/irb.rb, processor/command/set_subcmd/autoeval.rb,
+	processor/command/set_subcmd/autoirb.rb,
+	processor/command/show_subcmd/autoirb.rb,
+	processor/command/step.rb, processor/default.rb, processor/main.rb,
+	processor/running.rb: Add set/show subcommand "set autoirb".
+	Separate "running"-category code from the various debugger commands.
+
+
+2009-09-17  rockyb <rocky@gnu.org>
+
+	* bin/rbdbgr, lib/irb.rb: Use excluded correctly. Disable
+	ExtendCommandBundle for now
+
+2009-09-17  rocky <rockyb@rubyforge.org>
+
+	* processor/command/irb.rb: rdebug -> rbdbgr
+
+2009-09-17  rocky <rockyb@rubyforge.org>
+
+	* lib/irb.rb, processor/command/irb.rb: Add irb command
+	(rudimentary). Yay!
+
+2009-09-17  rocky <rockyb@rubyforge.org>
+
+	* lib/disassemble.rb, processor/command/disassemble.rb,
+	test/unit/test-lib-disassemble.rb: Tag line with PC offset.
+
+2009-09-16  rocky <rockyb@rubyforge.org>
+
+	* rbdbgr.rb: Use proper way to add to list of excluded methods of a
+	trace filter.
+
+2009-09-16  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb: Typo
+
+2009-09-16  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb: Provisions for using original-style hook
+
+2009-09-15  rockyb <rocky@gnu.org>
+
+	* bin/rbdbgr: Add Kernel::load to the list of ignored functions.
+
+2009-09-15  rockyb <rocky@gnu.org>
+
+	* emacs/rbdbgr-regexp.el, emacs/test/test-regexp.el: Update regexp
+	for via locations
+
+2009-09-15  R. Bernstein <rocky@gnu.org>
+
+	* processor/main.rb: Show via location when location is eval or the
+	container is not file.
+
+2009-09-14  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_cmd.rb, processor/command/base_subcmd.rb,
+	processor/command/continue.rb, processor/command/disassemble.rb,
+	processor/command/down.rb, processor/command/exit.rb,
+	processor/command/frame.rb, processor/command/help.rb,
+	processor/command/info.rb, processor/command/kill.rb,
+	processor/command/restart.rb, processor/command/set.rb,
+	processor/command/set_subcmd/autoeval.rb,
+	processor/command/set_subcmd/different.rb,
+	processor/command/set_subcmd/events.rb,
+	processor/command/set_subcmd/width.rb, processor/command/show.rb,
+	processor/command/show_subcmd/autoeval.rb,
+	processor/command/show_subcmd/different.rb,
+	processor/command/show_subcmd/events.rb,
+	processor/command/show_subcmd/trace.rb,
+	processor/command/show_subcmd/width.rb, processor/command/step.rb,
+	processor/command/up.rb, processor/command/where.rb,
+	processor/mock.rb: DRY command code to not set default class
+	constant values. In a subcommand, The default for SHORT_HELP is the
+	first line of the (long) HELP. Add a routine in mock.rb to show all
+	of the used class constants
+
+2009-09-13  rocky <rockyb@rubyforge.org>
+
+	* bin/rbdbgr, lib/frame.rb, processor/command/info_subcmd/frame.rb,
+	processor/command/info_subcmd/line.rb,
+	processor/command/info_subcmd/program.rb,
+	processor/command/set_subcmd/events.rb,
+	processor/command/set_subcmd/traceset.rb,
+	processor/command/show_subcmd/events.rb,
+	processor/command/show_subcmd/traceset.rb: set/show traceset ->
+	set/show event info line -> info frame  Minor other corrections.
+
+2009-09-12  rocky <rockyb@rubyforge.org>
+
+	* .gitignore, bin/rbdbgr: Change $0 the right way. See
+	http://www.ruby-forum.com/topic/187083
+
+2009-09-11  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/info_subcmd/line.rb,
+	processor/command/info_subcmd/program.rb: Add "info program"
+
+2009-09-11  R. Bernstein <rocky@gnu.org>
+
+	* .gitignore, processor/command/info.rb,
+	processor/command/info_subcmd/.gitignore,
+	processor/command/info_subcmd/line.rb: Add info subcommand and in
+	particular "info line" which show PC offset.
+
+2009-09-11  rocky <rockyb@rubyforge.org>
+
+	* processor/command/step.rb, processor/main.rb: Add more step
+	events: {c-,}{call,return}.
+
+2009-09-10  rocky <rockyb@rubyforge.org>
+
+	* bin/rbdbgr: Small changes and doc changes.
+
+2009-09-10  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/different.rb,
+	processor/command/show_subcmd/different.rb,
+	processor/command/step.rb, processor/default.rb, processor/main.rb,
+	test/unit/test-bin-rbdbgr.rb, test/unit/test-cmd-help.rb,
+	test/unit/test-cmd-step.rb: Add ability to step by different
+	position: set/show different and s[tep]{+,-}.  Add unit test for
+	step command which in the process found a bug in handling "step" as
+	well as showing how to improve unit test for the help command.
+
+2009-09-10  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/down.rb, processor/command/up.rb: I had "up" and
+	"down" commands reversed.
+
+2009-09-10  R. Bernstein <rocky@gnu.org>
+
+	* bin/rbdbgr, test/unit/test-bin-rbdbgr.rb: whence tests readable
+	rather than just exist. Add first unit test of rbdbgr functions.
+
+2009-09-10  rocky <rockyb@rubyforge.org>
+
+	* processor/main.rb: Show event status only on top frame
+
+2009-09-09  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, bin/rbdbgr: rbdbgr: Set restart args correclty. I have a
+	feeling I will be using this a lot. Rakefile: start work to make a
+	gem. Doesn't work yet though.
+
+2009-09-09  rocky <rockyb@rubyforge.org>
+
+	* bin/rbdbgr, processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb,
+	processor/command/base_subsubmgr.rb,
+	processor/command/show_subcmd/trace.rb, processor/main.rb,
+	processor/mock.rb: rbdbgr: save/set/restore $0. Exclude
+	debug_program. Pass in debugger object.         Try using $rbdbgr
+	for global debugger variable.  Start sub commands of sub commands.
+	Not working yet.  Define/use some processor attr_reader's to remove
+	ugly instance_variable_get's.
+
+2009-09-09  R. Bernstein <rocky@gnu.org>
+
+	* Rakefile, processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb, processor/command/kill.rb,
+	processor/mock.rb, processor/msg.rb, processor/subcmd.rb, rbdbgr.rb: 
+	Start using user inteface from command processor.  Add rake tasks to
+	be able to run all pieces of the debugger individually (tasks
+	check:lib, check:commands, and check:processor).  Kill deal with
+	failed kill via Errno::ESRCH.
+
+2009-09-09  rocky <rockyb@rubyforge.org>
+
+	* bin/rbdbgr: Small doc update
+
+2009-09-09  rocky <rockyb@rubyforge.org>
+
+	* bin/.gitignore, bin/rbdbgr: Get name of ruby program via rbconfig.
+	RDEBUG -> RBDBGR.
+
+2009-09-08  rocky <rockyb@rubyforge.org>
+
+	* bin/rbdbgr, interface/base_intf.rb, interface/user.rb: 
+	interface/*:  DRY code a little  bin/rbdbgr: Scope variables better,
+	make routines in rbdbgr more unit testable partially by allowing
+	rbdbgr to be loaded/required.
+
+2009-09-08  R. Bernstein <rocky@gnu.org>
+
+	* interface/user.rb, test/unit/test-subcmd-help.rb,
+	test/unit/test-user.rb: First unit test of user interface. (Still
+	not using it yet in rbdbgr though.)
+
+2009-09-08  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of git@github.com:rocky/rbdbgr
+
+2009-09-08  rocky <rockyb@rubyforge.org>
+
+	* Rakefile: Default task for now is test.
+
+2009-09-08  rocky <rockyb@rubyforge.org>
+
+	* interface/.gitignore, interface/base_intf.rb, interface/user.rb: 
+	Start adding interfaces and start with the most common one - a user
+	interface.
+
+2009-09-01  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-loc.el, emacs/rbdbg-lochist.el, emacs/rbdbg-track.el,
+	emacs/test/test-lochist.el: bug fixes in tracking ring positions.
+
+2009-08-31  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbg-load.el, emacs/rbdbg-lochist.el: Allow a list of
+	filenames to require relative
+
+2009-08-31  rocky <rockyb@rubyforge.org>
+
+	* emacs/test/test-load.el: One more require-relative test and more
+	robust testing.
+
+2009-08-31  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-load.el, emacs/rbdbg-loc.el,
+	emacs/rbdbg-track-mode.el, emacs/rbdbg-var.el: Remove warnings.
+
+2009-08-31  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-load.el, emacs/test/test-load.el: Add a custom
+	require-relative routine
+
+2009-08-28  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-loc.el, emacs/rbdbg-track-mode.el,
+	emacs/rbdbg-track.el, emacs/rbdbgr-regexp.el: Add location regexps
+	for *all* of my debuggers. :-)
+
+2009-08-28  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbgr-regexp.el: Add regexps for more languages
+
+2009-08-28  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbg-lochist.el, emacs/rbdbg-track.el, emacs/rbdbg-var.el,
+	emacs/test/test-lochist.el, emacs/test/test-track.el: Do more error
+	checking
+
+2009-08-27  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbgr-regexp.el: More small doc updates
+
+2009-08-27  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbgr-regexp.el: More small doc updates
+
+2009-08-27  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbgr-regexp.el, emacs/test/test-track.el: Add doc string
+
+2009-08-27  rocky <rockyb@rubyforge.org>
+
+	* emacs/Makefile.am, emacs/rbdbg-track-mode.el,
+	emacs/rbdbg-track.el, emacs/rbdbg-var.el, emacs/rbdbgr-regexp.el,
+	emacs/test/test-regexp.el, emacs/test/test-track.el: Regular
+	expressions and pattern groups are now coming from a buffer-local
+	variable inside the process buffer. Start rbdbg-track testing.
+
+2009-08-27  R. Bernstein <rocky@gnu.org>
+
+	* emacs/Makefile.am: Dry Makefile a little and fix a few bugs
+
+2009-08-27  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-lochist.el: Remove debug statement.
+
+2009-08-27  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-lochist.el, emacs/rbdbg-track-mode.el,
+	emacs/rbdbg-track.el: Increase location history ring size (a
+	little). Other small adjustments.
+
+2009-08-27  rockyb <rocky@gnu.org>
+
+	* emacs/rbdbg-file.el, emacs/rbdbg-loc.el, emacs/rbdbg-lochist.el,
+	emacs/rbdbg-track-mode.el, emacs/rbdbg-track.el,
+	emacs/test/test-loc.el: Convert lochist to a defstruct. Bang on
+	location history which now works better.
+
+2009-08-27  rocky <rockyb@rubyforge.org>
+
+	* emacs/Makefile.am, emacs/rbdbg-lochist.el,
+	emacs/rbdbg-track-mode.el, emacs/rbdbg-track.el,
+	emacs/rbdbg-var.el, emacs/rbdbgt-mode.el,
+	emacs/test/test-lochist.el: Add buffer-local debugger defstruct.
+	Start working out kinks in location tracking.
+
+2009-08-27  rocky <rockyb@rubyforge.org>
+
+	* emacs/Makefile.am, emacs/rbdbg-lochist.el, emacs/rbdbg-track.el,
+	emacs/rbdbg-window.el, emacs/rbdbgt-mode.el,
+	emacs/test/test-lochist.el: DRY hook code. Window code is now split
+	in its own file.
+
+2009-08-26  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbgt-mode.el: Support eshell as well as shell. Break out
+	track mode into a separate file.
+
+2009-08-26  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbg-loc.el: Code and doc cleanup
+
+2009-08-26  rockyb <rocky@gnu.org>
+
+	* emacs/rbdbg-file.el, emacs/rbdbg-loc.el, emacs/rbdbg-track.el,
+	emacs/test/test-file.el, emacs/test/test-loc.el: Don't need to do
+	things the hard way - use Common Lisp's defstruct.
+
+2009-08-26  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-track.el: Doc changes.
+
+2009-08-26  rockyb <rocky@gnu.org>
+
+	* emacs/rbdbg-track.el: Wasn't setting the buffer back in the case
+	that we split the window.
+
+2009-08-26  rockyb <rocky@gnu.org>
+
+	* emacs/rbdbg-track.el: Add rbdbg-trace-mode and install a
+	comint-output-filter-function hook. And with this, Yay! we have
+	something minimally tracking locations for rbdbgr.rb.
+
+2009-08-26  R. Bernstein <rocky@gnu.org>
+
+	* emacs/rbdbg-track.el: Small changes.
+
+2009-08-26  rockyb <rocky@gnu.org>
+
+	* emacs/rbdbg-track.el: Add a simple custom windowing routine.
+
+2009-08-26  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbg-loc.el: funcall -> apply
+
+2009-08-26  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbg-file.el, emacs/rbdbg-loc.el, emacs/rbdbg-lochist.el,
+	emacs/rbdbg-track.el, emacs/test/test-loc.el: Pretty much a working
+	comint hook. I can't believe how something this simple was made so
+	complicated.  And we don't need no stinking buffer in a location
+	object - An Emacs mark contains a reference to a buffer.
+
+2009-08-25  rockyb <rocky@gnu.org>
+
+	* emacs/rbdbg-loc.el, emacs/test/test-loc.el: Add routine to go to a
+	location and set the buffer and marker fields.
+
+2009-08-25  rockyb <rocky@gnu.org>
+
+	* emacs/rbdbg-file.el, emacs/rbdbg-loc.el, emacs/test/test-loc.el: 
+	Add buffer to location object. Allow null buffer and marker field
+
+2009-08-25  rocky <rockyb@rubyforge.org>
+
+	* emacs/Makefile.am, emacs/rbdbg-file.el, emacs/rbdbg-track.el,
+	emacs/test/test-file.el, emacs/test/test-loc.el: Add some
+	file-related functions
+
+2009-08-24  rocky <rockyb@rubyforge.org>
+
+	* emacs/rbdbg-track.el, emacs/rbdbgr-regexp.el,
+	emacs/test/test-loc.el, emacs/test/test-lochist.el,
+	emacs/test/test-regexp.el: Name change cleanups and small
+	fixes/improvements.
+
+2009-08-24  rocky <rockyb@rubyforge.org>
+
+	* emacs/Makefile.am, emacs/rbdbg-track.el, emacs/rbdbgr-regexp.el,
+	emacs/test/test-regexp.el: Start filling in  location tracking.
+	Start with regexps.
+
+2009-08-23  rocky <rockyb@rubyforge.org>
+
+	* emacs/.gitignore, emacs/Makefile.am, emacs/rbdbg-loc.el,
+	emacs/rbdbg-lochist.el, emacs/rbdbg-locring.el,
+	emacs/test/.gitignore, emacs/test/behave.el,
+	emacs/test/test-loc.el, emacs/test/test-locring.el: Start rewriting
+	Emacs/Debugger interaction code. From scratch.  This doesn't do
+	anything useful yet.
+
+2009-08-23  rocky <rockyb@rubyforge.org>
+
+	* emacs/.gitignore, emacs/AUTHORS, emacs/ChangeLog,
+	emacs/Makefile.am, emacs/NEWS, emacs/README, emacs/configure.ac,
+	emacs/rbdbg-loc.el, emacs/rbdbg-lochist.el, emacs/rbdbg-locring.el,
+	emacs/test/.gitignore, emacs/test/Makefile, emacs/test/behave.el,
+	emacs/test/test-loc.el, emacs/test/test-lochist.el,
+	emacs/test/test-locring.el: Start rewriting Emacs/Debugger
+	interaction code. From scratch. This time, for sure! Right now there
+	isn't anything useful.
+
+2009-08-22  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, lib/default.rb, processor/command/continue.rb,
+	processor/command/disassemble.rb, processor/command/down.rb,
+	processor/command/exit.rb, processor/command/frame.rb,
+	processor/command/help.rb, processor/command/kill.rb,
+	processor/command/restart.rb, processor/command/set.rb,
+	processor/command/set_subcmd/autoeval.rb,
+	processor/command/set_subcmd/traceset.rb,
+	processor/command/set_subcmd/width.rb, processor/command/show.rb,
+	processor/command/show_subcmd/autoeval.rb,
+	processor/command/show_subcmd/traceset.rb,
+	processor/command/show_subcmd/width.rb, processor/command/step.rb,
+	processor/command/up.rb, processor/command/where.rb,
+	processor/mock.rb, rbdbgr.rb: Add a "restart" command.  We can now
+	debug debugger commands; debugger writers: eat your heart out!  DRY
+	debugger-command demo code by putting more of the boilerplate code
+	into mock.rb More demoing done added through the advanced magic of
+	loops.
+
+2009-08-21  rocky <rockyb@rubyforge.org>
+
+	* rbdbgr.rb: One more to ignore
+
+2009-08-21  rocky <rockyb@rubyforge.org>
+
+	* processor/main.rb: Oops syntax error creapt in
+
+2009-08-21  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/command/disassemble.rb, processor/main.rb: 
+	core.rb: trace vm instructions - Yeah baby! disassemble.rb: show
+	disassembly for *anything* that responds to disasm    better error
+	message for being in C functions. main.rb: add more even icons and
+	show even when we don't have an icon.
+
+2009-08-21  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/disassemble.rb: Add a rudimentary dissassemble
+	command. This time, for sure!
+
+2009-08-21  rockyb <rocky@gnu.org>
+
+	* processor/command/base_subcmd.rb: Add rudimentary disassemble
+
+2009-08-21  R. Bernstein <rocky@gnu.org>
+
+	Merge branch 'master' of git@github.com:rocky/rbdbgr
+
+2009-08-21  R. Bernstein <rocky@gnu.org>
+
+	* lib/core.rb, processor/main.rb, rbdbgr.rb: Add more icons. And a
+	class test.
+
+2009-08-20  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, rbdbgr.rb: More work to make stepping work. There is
+	still weirdness going on. Also it looks like resolution on what's up
+	with event tracing thing is going to be crucial.
+
+2009-08-19  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, rbdbgr.rb: Add event after debugger-call debugging.
+	Don't show stopping points inside debugger method for when
+	:immediate => true  It's almost looking like a real debugger.
+
+2009-08-18  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, lib/frame.rb, processor/command/down.rb,
+	processor/command/set_subcmd/traceset.rb, processor/command/up.rb: 
+	Small doc changes
+
+2009-08-18  rocky <rockyb@rubyforge.org>
+
+	* processor/command/step.rb: Add step command - this time, for sure!
+
+
+2009-08-18  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/command/continue.rb,
+	processor/command/set_subcmd/traceset.rb,
+	processor/command/show_subcmd/traceset.rb, processor/main.rb: First
+	cut at a 'step' command. Better 'continue' command. Event masks now
+	saved in lib/core.rb where this kind of stuff should be. Remove
+	bogosity of returning a value to break out of the command loop - I'm
+	not even sure why I even let it exist this long.
+
+2009-08-18  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb, processor/command/continue.rb,
+	processor/command/exit.rb: Add a *very* rudimentary continue
+	command.
+
+2009-08-18  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/set_subcmd/traceset.rb: Add set traceset.
+
+2009-08-18  R. Bernstein <rocky@gnu.org>
+
+	* lib/core.rb, processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb, processor/command/down.rb,
+	processor/command/frame.rb, processor/command/help.rb,
+	processor/command/set.rb, processor/command/set_subcmd/autoeval.rb,
+	processor/command/set_subcmd/width.rb, processor/command/show.rb,
+	processor/command/show_subcmd/autoeval.rb,
+	processor/command/show_subcmd/traceset.rb,
+	processor/command/show_subcmd/width.rb, processor/command/up.rb,
+	processor/command/where.rb, processor/main.rb, processor/mock.rb,
+	rbdbgr.rb, test/unit/test-base-subcmd.rb,
+	test/unit/test-cmd-help.rb, test/unit/test-lib-frame.rb,
+	test/unit/test-proc-frame.rb, test/unit/test-proc-main.rb,
+	test/unit/test-proc-validate.rb, test/unit/test-subcmd-help.rb: 
+	Remove File.join() from require_relative. It takes an Array!
+
+2009-08-18  rocky <rockyb@rubyforge.org>
+
+	* processor/command/show_subcmd/traceset.rb: Pretty up output a
+	little in show traceset.
+
+2009-08-18  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb,
+	processor/command/show_subcmd/traceset.rb, processor/main.rb,
+	rbdbgr.rb, test/unit/test-subcmd-help.rb: Add "show traceset"
+	command. DRY code with class constants. Check that *subcommands*
+	have needed class contants. Allow commands/subcommands to get at
+	core and the trace filter. Add run_show_val for generic command
+	value display.
+
+2009-08-17  rocky <rockyb@rubyforge.org>
+
+	* processor/validate.rb: Method comment enhancement. My English
+	always amazes me.
+
+2009-08-17  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/main.rb, rbdbgr.rb: ... and block debugging
+	starts to do something useful.
+
+2009-08-17  rockyb <rocky@gnu.org>
+
+	* processor/command/base_cmd.rb, processor/command/base_subcmd.rb,
+	processor/command/exit.rb, processor/command/frame.rb,
+	processor/command/kill.rb, processor/command/where.rb,
+	processor/msg.rb, processor/validate.rb, rbdbgr.rb,
+	test/unit/test-proc-validate.rb: Add a 'kill' command - don't know
+	how I lived this long without it! Add confirm method. Use full
+	sentences in command messages. Start testing validation routines.
+	Nuke trace hook until I figure out the garbage collection segv. I'll
+	be back!
+
+2009-08-17  rockyb <rocky@gnu.org>
+
+	* lib/core.rb, rbdbgr.rb: Small improvements to getting block
+	tracing working.
+
+2009-08-17  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, lib/frame.rb, rbdbgr.rb: Start using tracefilter and
+	debugger block form. Much is broken in this area.
+
+2009-08-08  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of git@github.com:rocky/rbdbgr  Conflicts:
+	processor/main.rb  Conflicts: 	processor/main.rb
+
+2009-08-12  rocky <rockyb@rubyforge.org>
+
+	* processor/command/exit.rb, processor/command/help.rb,
+	processor/command/where.rb, processor/main.rb,
+	test/unit/test-proc-main.rb: I hate conflicted merges
+
+2009-08-08  rocky <rockyb@rubyforge.org>
+
+	* processor/command/exit.rb, processor/command/help.rb,
+	processor/command/where.rb, processor/main.rb,
+	test/unit/test-proc-main.rb: I hate conflicted merges.
+
+2009-08-08  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of git@github.com:rocky/rbdbgr  Conflicts:
+	processor/command/exit.rb 	processor/command/help.rb
+	processor/command/where.rb 	processor/main.rb
+	test/unit/test-proc-main.rb
+
+2009-08-12  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/base_subcmd.rb: Playing switch-board operator.
+	You know, delegation not inheritance
+
+2009-08-12  rockyb <rocky@gnu.org>
+
+	* processor/command/base_cmd.rb, processor/command/base_subcmd.rb,
+	processor/command/down.rb, processor/command/exit.rb,
+	processor/command/frame.rb, processor/command/help.rb,
+	processor/command/set.rb, processor/command/show.rb,
+	processor/command/up.rb, processor/command/where.rb,
+	processor/main.rb, test/unit/test-proc-main.rb: Remove NAME_ALIASES
+	bogosity. We now allow a optional ALIASES array of Strings and a
+	required NAME.
+
+2009-08-08  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_cmd.rb, processor/command/down.rb,
+	processor/command/exit.rb, processor/command/frame.rb,
+	processor/command/help.rb, processor/command/set.rb,
+	processor/command/show.rb, processor/command/up.rb,
+	processor/command/where.rb, processor/main.rb,
+	test/unit/test-proc-main.rb: NAME_ALIASES -> NAME and ALIASES.
+	Commmand#name from class NAME.
+
+2009-08-08  rocky <rockyb@rubyforge.org>
+
+	* processor/command/down.rb, processor/command/exit.rb,
+	processor/command/frame.rb, processor/command/help.rb,
+	processor/command/set.rb, processor/command/show.rb,
+	processor/command/up.rb, processor/command/where.rb,
+	processor/main.rb: Debugger commands are in namespace
+	Debugger::Command rather than Debugger. Regularize code which may
+	facilitate DRYing in the future. TODO: NAME_ALIASES -> ALIASES.
+
+2009-08-08  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_cmd.rb, processor/command/base_subcmd.rb,
+	processor/command/set_subcmd/autoeval.rb,
+	processor/command/set_subcmd/width.rb,
+	processor/command/show_subcmd/.gitignore, processor/main.rb: 
+	Debugger::Subcommand is a subclass of Debugger::Command - DRYs code
+	a little bit. Add undefined command message used when set autoeval
+	is off.
+
+2009-08-08  rocky <rockyb@rubyforge.org>
+
+	* processor/command/show_subcmd/.gitignore,
+	processor/command/show_subcmd/autoeval.rb,
+	processor/command/show_subcmd/width.rb: Add show subcommands: width
+	and autoeval.
+
+2009-08-07  rocky <rockyb@rubyforge.org>
+
+	* processor/command/down.rb, processor/command/set.rb,
+	processor/command/show.rb: Start 'show' command.
+
+2009-08-07  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb,
+	processor/command/set_subcmd/autoeval.rb,
+	processor/command/set_subcmd/width.rb, processor/main.rb: Add second
+	"set" command: set width.
+
+2009-08-07  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_cmd.rb, processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb, processor/command/help.rb,
+	processor/command/set.rb, processor/command/set_subcmd/autoeval.rb,
+	processor/main.rb, processor/subcmd.rb, processor/validate.rb,
+	test/unit/test-cmd-help.rb: Debugger 'set' command on a boolean
+	(autoeval) finally works! The suggests that all of the subcommand
+	work might no longer be vaporware.
+
+2009-08-07  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_cmd.rb, processor/command/base_subcmd.rb,
+	processor/command/base_submgr.rb, processor/command/help.rb,
+	processor/command/set_subcmd/autoeval.rb, processor/main.rb,
+	processor/subcmd.rb: Lots of work getting subcommands ported from
+	Python pydbgr. Much more work needed.
+
+2009-08-06  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_submgr.rb,
+	processor/command/set_subcmd/autoeval.rb, processor/main.rb: First
+	cut at subcmd manager. Much more work is needed though.
+
+2009-08-06  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/base_cmd.rb, processor/command/base_subcmd.rb,
+	processor/command/down.rb, processor/command/set_subcmd/.gitignore,
+	processor/command/set_subcmd/autoeval.rb,
+	test/unit/test-base-subcmd.rb: Start first real subcommand:
+	autoeval.
+
+2009-08-06  rockyb <rocky@gnu.org>
+
+	* processor/command/base_subcmd.rb, test/unit/test-base-subcmd.rb: 
+	Add show_onoff.
+
+2009-08-06  R. Bernstein <rocky@gnu.org>
+
+	* processor/command/base_subcmd.rb, test/unit/test-base-subcmd.rb: 
+	More complete base_subcmd and bug removal via unit testing.
+
+2009-08-06  rocky <rockyb@rubyforge.org>
+
+	* lib/Makefile, processor/Makefile, processor/command/Makefile,
+	test/Makefile, test/unit/Makefile: I see Makefiles everywhere!
+
+2009-08-06  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_cmd.rb, processor/command/base_subcmd.rb,
+	processor/command/help.rb, processor/msg.rb, processor/subcmd.rb: 
+	Start work on subcommand interface.
+
+2009-08-05  rocky <rockyb@rubyforge.org>
+
+	* processor/subcmd.rb: Rough cut at translation of corresponding
+	Python pydbgr code.
+
+2009-08-05  R. Bernstein <rocky@gnu.org>
+
+	* processor/main.rb: Add debugger command argument checking
+
+2009-08-05  rocky <rockyb@rubyforge.org>
+
+	* processor/command/down.rb, processor/command/up.rb,
+	processor/command/where.rb: Localize module require better and small
+	standalone fixes.
+
+2009-08-05  rocky <rockyb@rubyforge.org>
+
+	* Makefile, processor/default.rb, processor/main.rb,
+	processor/msg.rb: Add autoeval setting and turn prompt into a
+	setting Too old to learn to live without a Makefile :-(
+
+2009-08-05  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, lib/default.rb, lib/frame.rb, processor/cmdproc.rb,
+	processor/command/where.rb, processor/default.rb,
+	processor/main.rb, processor/mock.rb, rbdbgr.rb,
+	test/unit/test-cmd-help.rb, test/unit/test-cmdproc.rb,
+	test/unit/test-proc-main.rb: Separate Debugger, Debugger::Core and
+	Debugger::CmdProcessor settings. Fix bugs in "where" command. Add
+	ruby-debug stack_trace_on_error option.
+
+2009-08-05  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/cmdproc.rb, processor/command/down.rb,
+	processor/command/help.rb, processor/command/up.rb,
+	processor/command/where.rb, processor/mock.rb,
+	processor/validate.rb, rbdbgr.rb, test/unit/test-proc-frame.rb: Add
+	access to (top-)level debugger settings - help uses "width" setting
+	of this now.  Start a mock Debugger to help runing/testing
+	individual commands standalone.  Fix bugs in get_int of validate.
+	"where" now sets a max int value.  Probably some other things as
+	well. Whew.
+
+2009-08-04  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/cmdproc.rb, processor/command/down.rb,
+	processor/command/frame.rb, processor/command/help.rb,
+	processor/command/up.rb, processor/command/where.rb: Small temporary
+	changes
+
+2009-08-04  rocky <rockyb@rubyforge.org>
+
+	* processor/command/down.rb, processor/command/frame.rb,
+	processor/command/help.rb, processor/command/up.rb,
+	processor/command/where.rb: API change requires that we can no
+	longer create a Debugger::Core object without a Debugger object.
+	Adjust command standalone demo for this. Todo: create a common mock
+	helper module.
+
+2009-08-04  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, lib/default.rb, processor/cmdproc.rb,
+	processor/command/down.rb, processor/command/up.rb,
+	processor/frame.rb, rbdbgr.rb, test/unit/test-cmd-help.rb,
+	test/unit/test-cmdproc.rb, test/unit/test-proc-frame.rb: Bug fix for
+	negative positioning in frame command. help doc corrections in
+	up/down.  Start adding debugger settings. In doing so we also start
+	start linking together core, command_processor and debugger objects.
+
+
+2009-08-03  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb: Use container type set by rb-threadframe.
+
+2009-08-02  rocky <rockyb@rubyforge.org>
+
+	* test/unit/test-lib-frame.rb: unit test administration
+
+2009-08-01  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb, processor/command/where.rb: Tidy frame output a
+	little.
+
+2009-08-01  rocky <rockyb@rubyforge.org>
+
+	* processor/cmdproc.rb, processor/command/down.rb,
+	processor/command/up.rb, processor/frame.rb,
+	test/unit/test-proc-frame.rb: Add up and down commands. Address some
+	of the frame modularity issues via frame_setup and frame_teardown
+
+2009-07-31  rocky <rockyb@rubyforge.org>
+
+	* processor/cmdproc.rb: Minor
+
+2009-07-31  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/cmdproc.rb, processor/command/frame.rb,
+	test/unit/test-proc-frame.rb: show minimal location in command loop.
+	frame command works now, um, really.
+
+2009-07-31  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb, processor/cmdproc.rb, processor/command/frame.rb,
+	processor/frame.rb, processor/msg.rb, processor/validate.rb,
+	test/unit/test-proc-frame.rb: More complete frame command... hack,
+	hack, hack.
+
+2009-07-31  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/cmdproc.rb, processor/command/frame.rb: 
+	First impression of what a frame command might look like
+
+2009-07-31  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/cmdproc.rb, processor/command/where.rb: 
+	Fill in integer reading routines and add thread2frames in
+	preparation of adding a debugger "frame" command.
+
+2009-07-30  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb, test/unit/test-lib-frame.rb: Remove count_frames
+
+2009-07-30  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb, test/unit/test-lib-frame.rb: Use
+	ThreadFrame#stack_size.
+
+2009-07-30  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb: Don't use ThreadFrame#caller_method but
+	eval('self.class', frame.binding) instead.  Add stack frame numbers
+	to stack listing.
+
+2009-07-28  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb, test/unit/test-lib-frame.rb: Add method class name,
+	C arity, and tidy line numbers.
+
+2009-07-26  rocky <rockyb@rubyforge.org>
+
+	* processor/command/help.rb: Indentation on columns via columnize
+	0.3.1
+
+2009-07-26  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_cmd.rb, processor/command/help.rb: Add
+	category help.
+
+2009-07-26  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base_cmd.rb, processor/command/help.rb,
+	test/unit/test-cmd-help.rb, test/unit/test-cmdproc.rb: Fill out help
+	command some more. Do more stringent testing of class constants.
+
+2009-07-25  rocky <rockyb@rubyforge.org>
+
+	* processor/cmdproc.rb, processor/command/help.rb,
+	processor/command/where.rb: Get "where" command to a point where it
+	is minimally useful. Start "help" command.
+
+2009-07-25  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb: Forgot block args
+
+2009-07-24  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb: Piddle around with showing a frame
+
+2009-07-24  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb: Include arity.
+
+2009-07-23  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb: Show block/frame local information better. More
+	work's needed though.
+
+2009-07-22  rocky <rockyb@rubyforge.org>
+
+	* lib/frame.rb, test/unit/test-lib-frame.rb: Show more frame info
+	via threadframe.
+
+2009-07-19  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, lib/frame.rb, lib/stack.rb, processor/cmdproc.rb,
+	processor/command/base_cmd.rb, processor/command/exit.rb,
+	processor/command/where.rb, rbdbgr.rb: where.rb: now to the state
+	where it does something remotely useful. process_command_and_quit?
+	doesn't try to run a comand after running it cmdproc.rb: set up
+	access from commmand to core and itself. rbdbgr.rb: add debugger()
+	method. exit.rb: fix bug in calling exit without args.
+
+2009-07-18  rocky <rockyb@rubyforge.org>
+
+	* lib/stack.rb: Fill out a tad more.
+
+2009-07-18  rocky <rocky@sanchez.(none)>
+
+	* lib/.gitignore, lib/core.rb, lib/stack.rb, processor/cmdproc.rb,
+	processor/command/exit.rb, processor/command/where.rb,
+	test/unit/test-cmdproc.rb: Start a real command - where. Nowhere
+	near done though.
+
+2009-07-18  rocky <rocky@sanchez.(none)>
+
+	* processor/cmdproc.rb, processor/command/base_cmd.rb,
+	processor/command/exit.rb: Turn some class instance variables into
+	class constants since I don't think they'll change.
+
+2009-07-18  rocky <rocky@sanchez.(none)>
+
+	* processor/command/exit.rb: Minor
+
+2009-07-18  rocky <rocky@sanchez.(none)>
+
+	* processor/cmdproc.rb, processor/command/base_cmd.rb,
+	processor/command/exit.rb, test/unit/test-cmdproc.rb: Start to clean
+	up/simplify how to write debugger commands.
+
+2009-07-17  rocky <rockyb@rubyforge.org>
+
+	* lib/core.rb, processor/command/base_cmd.rb,
+	processor/command/exit.rb, test/unit/test-cmdproc.rb: Thought this
+	was committed. Whateveer. Add unit test. Comment what core does. Add
+	exit command.
+
+2009-07-17  rocky <rocky@sanchez.(none)>
+
+	* README, Rakefile: Administriva
+
+2009-07-17  rocky <rocky@sanchez.(none)>
+
+	* processor/cmdproc.rb, test/unit/.gitignore,
+	test/unit/test-cmdproc.rb: Our first unit test. Yay!
+
+2009-07-17  rocky <rocky@sanchez.(none)>
+
+	* processor/cmdproc.rb, processor/command/exit.rb,
+	processor/command/quit.rb: Now have a mechanism for loading debugger
+	and running debugger commands.
+
+2009-07-17  rocky <rocky@sanchez.(none)>
+
+	* lib/core.rb: Minor
+
+2009-07-17  rocky <rocky@sanchez.(none)>
+
+	* lib/core.rb, processor/cmdproc.rb, processor/command/.gitignore,
+	processor/command/base_cmd.rb, processor/command/quit.rb: Start
+	filling out command structure - but still more baby steps.
+
+2009-07-16  rocky <rocky@sanchez.(none)>
+
+	* Baby steps toward a real debugger. Hah - Florian, I beat you to it!
+
+

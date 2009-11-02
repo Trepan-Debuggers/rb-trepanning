@@ -21,6 +21,11 @@ def run_standalone_ruby_file(directory)
   end
 end
 
+desc "Create a GNU-style ChangeLog via git2cl"
+task :ChangeLog do
+  system("git log --pretty --numstat --summary | git2cl > ChangeLog")
+end
+
 desc 'Test units - the smaller tests'
 task :'test:unit' do |t|
   Rake::TestTask.new(:'test:unit') do |t|
