@@ -79,12 +79,12 @@ class TestStep < Test::Unit::TestCase
     d.start()
     ########### t5 ###############
     x = 5
-      def foo1
-        y = 2
-        raise Exception
-      rescue Exception
-      end
-      foo1()
+    def foo1
+      y = 2
+      raise Exception
+    rescue Exception
+    end
+    foo1()
     z = 1
     ##############################
     d.stop # ({:remove => true})
@@ -94,6 +94,9 @@ class TestStep < Test::Unit::TestCase
            "-> def foo1",
            "!! raise Exception",
            "!! raise Exception"]
+
+    got = filter_line_cmd(d.intf[-1].output.output)
+    out.pop if got.size+1 == out.size
     compare_output(out, d, cmds)
     
     # Test "step" will sets of events. Part 2
