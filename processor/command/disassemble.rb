@@ -50,7 +50,6 @@ Examples:
   def run(args)
 
     obj = nil
-    p args
     include_children = 
       if args.size > 1 && args[-1] == 'full'
         args.pop
@@ -68,7 +67,7 @@ Examples:
         return
       end
     else
-      iseq = @proc.method_iseq(args[1])
+      iseq = @proc.object_iseq(args[1])
       marked_disassemble(iseq, include_children) if iseq
       return
     end
@@ -88,4 +87,9 @@ if __FILE__ == $0
     cmd.run [name]
   end
   small_fn(cmd, name)
+  p = Proc.new do 
+    |x,y| x + y
+  end
+  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+  cmd.run([name, 'p'])
 end

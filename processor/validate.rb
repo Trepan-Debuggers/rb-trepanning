@@ -92,22 +92,26 @@ class Debugger
       nil
     end
 
-    def method_iseq(method_string)
-      parts = method_string.split(/[.]/)
-      string = 
-        if parts.size < 2 
-          "method(\"#{method_string}\").iseq"
-        else
-          parts[0..-2].join('.')+".method(\"#{parts[-1]}\").iseq"
-        end
-      debug_eval_no_errmsg(string)
+    def object_iseq(object_string)
+      if debug_eval_no_errmsg("#{object_string}.respond_to?('iseq')")
+        debug_eval_no_errmsg("#{object_string}.iseq")
+      else
+        parts = object_string.split(/[.]/)
+        string = 
+          if parts.size < 2 
+            "method(\"#{object_string}\").iseq"
+          else
+            parts[0..-2].join('.')+".method(\"#{parts[-1]}\").iseq"
+          end
+        debug_eval_no_errmsg(string)
+      end
     rescue
       nil
     end
 
     def breakpoint_position(args)
       first = args.shift
-      iseq = method_iseq(first)
+      iseq = object_iseq(first)
       position_str = 
         if iseq
           args.empty? ? 'O0' : args.shift
@@ -196,7 +200,7 @@ class Debugger
       return nil, canonic_file(arg), 1 if LineCache::cached?(arg)
 
       # How about a method name with an instruction sequence?
-      iseq = method_iseq(arg)
+      iseq = object_iseq(arg)
       if iseq && iseq.source_container[0] == 'file'
         filename = iseq.source_container[1]
         line_no = iseq.offsetlines.values.flatten.min
@@ -224,7 +228,7 @@ if __FILE__ == $0
     puts "get_int_noerr(#{val}) = #{proc.get_int_noerr(val).inspect}" 
   end
   def foo; 5 end
-  puts proc.method_iseq('food').inspect
-  puts proc.method_iseq('foo').inspect
-  puts proc.method_iseq('proc.method_iseq').inspect
+  puts proc.object_iseq('food').inspect
+  puts proc.object_iseq('foo').inspect
+  puts proc.object_iseq('proc.method_iseq').inspect
 end
