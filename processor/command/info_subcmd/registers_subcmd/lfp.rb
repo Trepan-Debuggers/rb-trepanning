@@ -20,7 +20,8 @@ See also "info register sp".'
   include Registers
   def run(args)
     iseq = frame = @proc.frame.iseq
-    register_array_index(PREFIX[-1], args, iseq.local_size)
+    index = register_array_index(PREFIX[-1], args, iseq.local_size-1)
+    msg("local_name(%d)=%s" % [index, iseq.local_name(index)]) if index
   end
 end
 
