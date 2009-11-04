@@ -3,7 +3,12 @@ require_relative %w(.. .. base subsubcmd)
 
 class Debugger::SubSubcommand::InfoRegistersPc < Debugger::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show the value of the VM program counter (PC)'
+    HELP         = 'Show the value of the VM program counter (PC).
+
+The VM program is an offset into the instruction sequence for the next
+VM instruction in the sequence to be executed. 
+
+See also "info disassemble" and "info registers".'
     MIN_ABBREV   = 'pc'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true

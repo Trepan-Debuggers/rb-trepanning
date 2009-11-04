@@ -4,7 +4,13 @@ require_relative 'helper'
 
 class Debugger::Subcommand::InfoRegistersLfp < Debugger::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show the value of the VM local frame pointer (LFP)'
+    HELP         = 'Show the value of the VM local frame pointer (LFP).
+
+When a local variable is defined for the first time, this stack
+is pushed and the value for local variable is assigned to this stack entry.
+
+See also "info register sp".'
+
     MIN_ABBREV   = 'lf'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
@@ -13,7 +19,8 @@ class Debugger::Subcommand::InfoRegistersLfp < Debugger::SubSubcommand
 
   include Registers
   def run(args)
-    register_array_index(PREFIX[-1], args)
+    iseq = frame = @proc.frame.iseq
+    register_array_index(PREFIX[-1], args, iseq.local_size)
   end
 end
 

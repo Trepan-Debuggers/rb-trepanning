@@ -25,7 +25,7 @@ class Debugger
         return nil
       elsif opts[:max_value] and ret_value > opts[:max_value]
         errmsg("Expecting integer value to be at most %d; got %d." %
-               [opts[:min_value], ret_value])
+               [opts[:max_value], ret_value])
         return nil
       end
       return ret_value

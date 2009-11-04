@@ -4,7 +4,16 @@ require_relative 'helper'
 
 class Debugger::Subcommand::InfoRegistersSp < Debugger::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show the value of the VM stack pointer (SP)'
+    HELP         = 'Show the value of the VM stack pointer (SP).
+
+The VM uses a stack to store temporary values in computations. For
+example to compute "a + b", the values of "a" and "b" are pushed onto
+a stack pointed to by SP. Just before the addition is perofrmed, sp(1)
+will have the value "a" contians and sp(2) will contain the value of
+"b"
+
+See also "info register LFP"'
+
     MIN_ABBREV   = 'sp'.size
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true

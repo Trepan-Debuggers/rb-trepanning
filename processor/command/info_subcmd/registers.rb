@@ -6,13 +6,14 @@ class Debugger::SubSubcommand::InfoRegisters < Debugger::SubSubcommandMgr
   unless defined?(HELP)
     HELP         = 
 'List of contents for the registers of the current stack frame.
-A register name given as an argument lists only that register.
+If a register name given, only only that register is show.
 
 Examples:
   info registers     # show all registers
   info register pc   # show only the pc register
   info reg sp        # show stack pointer register: sp(0)
   info reg sp 1      # show sp(1)
+  info reg lfp       # show lfp(0)
 '
 
     MIN_ABBREV   = 'reg'.size  # Note we have "info return"

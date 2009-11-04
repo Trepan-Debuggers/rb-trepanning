@@ -1,5 +1,5 @@
 module Registers
-    def register_array_index(name, args)
+    def register_array_index(name, args, max_value=nil)
     if args.size == 0
       # Form is: "info xx" which means "info xx 0"
       position = 0
@@ -8,8 +8,8 @@ module Registers
       opts = {
         :msg_on_error => 
         "The 'info registers %s' command argument must eval to an integer. Got: %s" % [name, position_str],
-        # :min_value => 1,
-        # :max_value => ??
+        # :min_value => 0,
+        :max_value => max_value
       }
       position = @proc.get_an_int(position_str, opts)
       return unless position

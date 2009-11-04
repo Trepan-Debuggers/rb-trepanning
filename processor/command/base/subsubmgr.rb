@@ -106,8 +106,12 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
       return help_text
     end
 
-    # "help cmd subcmd". Give help specific for that subcommand.
-    cmd = @subcmds.lookup(args[1..prefix.size+1].join(''), false)
+    # "help cmd subcmd". Give help specific for that subcommand if
+    # the command matches uniquely, or show a list of matching 
+    # subcommands
+    keyprefix_str  = prefix.join('')
+    key_str        = keyprefix_str + subcmd_name
+    cmd = @subcmds.lookup(key_str, false)
     if cmd
       doc = obj_const(cmd, :HELP)
       if doc
@@ -120,8 +124,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
         return nil
       end
     else
-      keyprefix_str  = prefix.join('')
-      matches = @subcmds.list.grep(/^#{keyprefix_str + subcmd_name}/).sort
+      matches = @subcmds.list.grep(/^#{key_str}/).sort
       if matches.empty?
         p @subcmds.list
         errmsg("No #{name} subcommands found matching /^#{subcmd_name}/. Try \"help #{@name}\".")
