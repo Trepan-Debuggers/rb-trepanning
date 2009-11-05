@@ -41,14 +41,6 @@ class Breakpoint
     set
   end
 
-  # Return a one-character "icon" giving the state of the breakpoint
-  # 't': temporary breakpoint
-  # 'B': enabled breakpoint
-  # 'b': disabled breakpoint
-  def icon_char
-    temp? ? 't' : (enabled? ? 'B' : 'b')
-  end
-
   def condition?(bind)
     if eval(@condition, bind)
       if @ignore > 0
@@ -77,6 +69,14 @@ class Breakpoint
 
   def enabled?
     @enabled
+  end
+
+  # Return a one-character "icon" giving the state of the breakpoint
+  # 't': temporary breakpoint
+  # 'B': enabled breakpoint
+  # 'b': disabled breakpoint
+  def icon_char
+    temp? ? 't' : (enabled? ? 'B' : 'b')
   end
 
   def set
