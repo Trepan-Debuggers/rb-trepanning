@@ -46,6 +46,18 @@ class BreakpointMgr
     @list.empty?
   end
 
+  def line_breaks(container)
+    result = {}
+    @list.each do |bp|
+      if bp.source_container == container
+        bp.source_location.each do |line|
+          result[line] = bp 
+        end
+      end
+    end
+    result
+  end
+
   def find(iseq, offset, bind)
     @list.detect do |bp| 
       if bp.enabled? && bp.iseq.equal?(iseq) && bp.offset == offset
@@ -76,6 +88,9 @@ if __FILE__ == $0
   brkpts << b2
   p brkpts.find(b2.iseq, b2.offset, nil)
   p brkpts[2]
+  p '---'
+  p brkpts.line_breaks(iseq.source_container)
+  p '---'
   p brkpts.delete(2)
   p brkpts[2]
 end

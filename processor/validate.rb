@@ -156,7 +156,7 @@ class Debugger
       raise TypeError
     end
 
-    # parse_position(self, arg)->(fn, name, lineno)
+    # parse_position(self, arg)->(fn, container, lineno)
     # 
     # Parse arg as [filename:]lineno | function | module
     # Make sure it works for C:\foo\bar.py:12
@@ -166,20 +166,20 @@ class Debugger
           # First handle part before the colon
           arg1 = arg[0...colon].rstrip
           lineno_str = arg[colon+1..-1].lstrip
-          mf, filename, lineno = parse_position_one_arg(arg1, old_mod, false)
-          return nil, nil, nil unless filename
+          mf, container, lineno = parse_position_one_arg(arg1, old_mod, false)
+          return nil, nil, nil unless container
           filename = canonic_file(arg1) 
           # Next handle part after the colon
           val = get_an_int(lineno_str)
           lineno = val if val
         else
-          mf, filename, lineno = parse_position_one_arg(arg, old_mod, true)
+          mf, container, lineno = parse_position_one_arg(arg, old_mod, true)
         end
 
-        return mf, filename, lineno
+        return mf, container, lineno
     end
 
-    # parse_position_one_arg(self,arg)->(module/function, file, lineno)
+    # parse_position_one_arg(self,arg)->(module/function, container, lineno)
     #
     # See if arg is a line number, function name, or module name.
     # Return what we've found. nil can be returned as a value in
@@ -191,20 +191,21 @@ class Debugger
         lineno   = Integer(arg)
       rescue
       else
-        source_container = frame_container(@frame, false)
-        filename = source_container[1] unless old_mod
-        return nil, canonic_file(filename), lineno
+        container = frame_container(@frame, false)
+        filename = container[1] unless old_mod
+        return nil, [container[0], canonic_file(filename)], lineno
       end
 
       # Next see if argument is a file name 
-      return nil, canonic_file(arg), 1 if LineCache::cached?(arg)
+      return nil, [container && container[0], canonic_file(arg)], 1 if 
+        LineCache::cached?(arg)
 
       # How about a method name with an instruction sequence?
       iseq = object_iseq(arg)
       if iseq && iseq.source_container[0] == 'file'
         filename = iseq.source_container[1]
         line_no = iseq.offsetlines.values.flatten.min
-        return arg, canonic_file(filename), line_no
+        return arg, ['file', canonic_file(filename)], line_no
       end
 
       errmsg("#{arg} is not a line number, read-in filename or method that we can get location information about")

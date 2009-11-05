@@ -23,7 +23,8 @@ class TestBreak < Test::Unit::TestCase
     d.stop
     out = ['-- x = 5',
            'basename is on.',
-           "Breakpoint 1 set in file test-break.rb,\n" + 
+           "Breakpoint 1 set at line 21\n" + 
+           "\tin file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence test_break_same_level.",
            'xx z = 10']
     compare_output(out, d, cmds)
@@ -44,9 +45,11 @@ class TestBreak < Test::Unit::TestCase
     d.stop
     out = ['-- x = 5',
            'basename is on.',
-           "Breakpoint 2 set in file test-break.rb,\n" + 
+           "Breakpoint 2 set at line 42\n" +
+           "\tin file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence test_break_same_level.",
-           "Breakpoint 3 set in file test-break.rb,\n" + 
+           "Breakpoint 3 set at line 43\n" + 
+           "\tin file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence test_break_same_level.",
            'xx z = 10']
     compare_output(out, d, cmds)

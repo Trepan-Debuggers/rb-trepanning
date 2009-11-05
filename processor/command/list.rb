@@ -91,7 +91,7 @@ or 'show listsize' to see or set the value.
         return no_frame_msg unless @proc.line_no
         first = [1, @proc.frame_line - listsize/2].max
       else
-        modfunc, filename, first = @proc.parse_position(args[0])
+        modfunc, container, first = @proc.parse_position(args[0])
         if first == nil and modfunc == nil
           # error should have been shown previously
           return nil, nil, nil
@@ -138,7 +138,7 @@ or 'show listsize' to see or set the value.
     end
     last = first + listsize - 1 unless last
   
-    return filename, first, last
+    return container, first, last
   end
 
   def no_frame_msg
@@ -147,21 +147,21 @@ or 'show listsize' to see or set the value.
   end
     
   def run(args)
-    filename, first, last = parse_list_cmd(args[1..-1])
+    container, first, last = parse_list_cmd(args[1..-1])
     frame = @proc.frame
-    return unless filename
-    breaklist = [] # @core.get_file_breaks(filename)
+    return unless container
+    breaklist = @proc.brkpts.line_breaks(container)
 
     # We now have range information. Do the listing.
-    max_line = LineCache::size(filename)
+    max_line = LineCache::size(container[1])
     unless max_line 
-      errmsg('No file %s found' % filename)
+      errmsg('No file %s found' % container[1])
       return
     end
 
     if first > max_line
       errmsg('Bad line range [%d...%d]; file "%s" has only %d lines' %
-             [first, last, filename, max_line])
+             [first, last, container[1], max_line])
       return
     end
 
@@ -172,16 +172,23 @@ or 'show listsize' to see or set the value.
 
     begin
       first.upto(last+1).each do |lineno|
-        line = LineCache::getline(filename, lineno).chomp
+        line = LineCache::getline(container[1], lineno).chomp
         unless line
           msg('[EOF]')
           break
         end
         s = '%3d' % lineno
         s = s + ' ' if s.size < 4 
-        s += breaklist.member?(lineno) ? 'B' : ' '
+        s += if breaklist.member?(lineno)
+               bp = breaklist[lineno]
+               a_pad = '%02d' % bp.id
+               bp.enabled? ? 'B' : 'b'
+             else 
+               a_pad = '  '
+               ' ' 
+             end
         s += (frame && lineno == @proc.frame_line &&
-              filename == frame.source_container[1]) ? '->' : '  '
+              container == frame.source_container) ? '->' : a_pad
         msg(s + "\t" + line)
         @proc.line_no = lineno
       end
@@ -198,7 +205,6 @@ if __FILE__ == $0
   cmd.proc.instance_variable_set('@remap_container', {})
   LineCache::cache(__FILE__)
   cmd.run(['list'])
-  puts '--' * 10
   # require_relative %w(.. .. rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
@@ -218,10 +224,15 @@ if __FILE__ == $0
   def foo()
      return 'bar'
   end
-  puts '--' * 10
   cmd.run(['list', 'foo'])
-  # puts '--' * 10
-  # cmd.run(['list', 'os.path'])
+  puts '--' * 10
+
+  p = Proc.new do 
+    |x,y| x + y
+  end
+  cmd.run(['list', 'p'])
+  puts '--' * 10
+
   # puts '--' * 10
   # cmd.run(['list', 'os.path', '15'])
   # puts '--' * 10
@@ -233,4 +244,17 @@ if __FILE__ == $0
   # puts '--' * 10
   # cmd.run(['list', os.path.abspath(__file__)+':3', '12-10'])
   # cmd.run(['list', 'os.path:5'])
+
+  require 'thread_frame'
+  tf = RubyVM::ThreadFrame.current
+  cmd.proc.frame_setup(tf)
+  brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
+  brkpt_cmd.run(['break'])
+  line = __LINE__
+  cmd.run(['list', __LINE__.to_s])
+  puts '--' * 10
+  disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
+  disable_cmd.run(['disable', '1'])
+  cmd.run(['list', line.to_s])
+  # puts '--' * 10
 end

@@ -46,7 +46,9 @@ class TestCommandBreak < Test::Unit::TestCase
     ].each_with_index do |args, i|
       @my_cmd.run(args)
       assert_equal(true, @cmdproc.errmsgs.empty?)
-      assert_equal(0, @cmdproc.msgs[0] =~ /^Breakpoint #{i+1} set in file .*\n.* test_basic.$/)
+      assert_equal(0, 
+                   @cmdproc.msgs[0] =~ /^Breakpoint #{i+1} set at line \d+\n\tin file .*\n.* test_basic.$/,
+                   @cmdproc.msgs[0])
       reset_cmdproc_vars
     end
 
@@ -58,7 +60,8 @@ class TestCommandBreak < Test::Unit::TestCase
     ].each_with_index do |args, i|
       @my_cmd.run(args)
       assert_equal(true, @cmdproc.errmsgs.empty?)
-      assert_equal(0, @cmdproc.msgs[0] =~ /^Breakpoint #{i+4} set in file .*\n.* foo.$/)
+      assert_equal(0, 
+                   @cmdproc.msgs[0] =~ /^Breakpoint #{i+4} set at line \d+\n\tin file .*\n.* foo.$/)
       reset_cmdproc_vars
     end
   end
