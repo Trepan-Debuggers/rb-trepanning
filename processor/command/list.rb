@@ -42,18 +42,32 @@ Some examples:
 list 5            # List starting from line 5
 list 4+1          # Same as above.
 list foo.rb:5     # List starting from line 5 of foo.rb
-list os.path:5    # List starting from line 5 of os.path
-list os.path 5    # Same as above.
-list os.path 5 6  # list lines 5 and 6 of os.path
-list os.path 5 2  # Same as above, since 2 < 5.
-list foo.rb:5 2   # List two lines starting from line 5 of foo.rb
-list os.path.join # List lines around the os.join.path function.
+list foo.rb 5     # Same as above.
+list foo.rb  5 6  # list lines 5 and 6 of foo.rb
+list foo.rb  5 2  # Same as above, since 2 < 5.
+list foo.rb:5 2   # Same as above
+list FileUtils.cp # List lines around the FileUtils.cp function.
 list .            # List lines centered from where we currently are stopped
 list -            # List lines previous to those just shown
 
 LISTSIZE is the current debugger listsize setting. Use 'set listize'
 or 'show listsize' to see or set the value.
-"
+
+The output of the list command give a line number, and some status
+information about the line and the text of the line. Here is some 
+hypothetical list output modeled roughly around line 251 of one
+version of this code:
+
+  251    	  cmd.proc.frame_setup(tf)
+  252  ->	  brkpt_cmd.run(['break'])
+  253 B01   	  line = __LINE__
+  254 b02   	  cmd.run(['list', __LINE__.to_s])
+  255 t03   	  puts '--' * 10
+
+Line 251 has nothing special about it. Line 252 is where we are
+currently stopped. On line 253 there is a breakpoint 1 which is
+enabled, while at line 255 there is an breakpoint 2 which is
+disabled."
 
     ALIASES       = %w(l)
     CATEGORY      = 'files'
@@ -73,8 +87,8 @@ or 'show listsize' to see or set the value.
     
     frame = @proc.frame
     
-    source_container = @proc.frame_container(frame, false)
-    filename = source_container[1]
+    container = @proc.frame_container(frame, false)
+    filename = container[1]
     
     last = nil
     listsize = settings[:listsize]
@@ -182,7 +196,7 @@ or 'show listsize' to see or set the value.
         s += if breaklist.member?(lineno)
                bp = breaklist[lineno]
                a_pad = '%02d' % bp.id
-               bp.enabled? ? 'B' : 'b'
+               bp.icon_char
              else 
                a_pad = '  '
                ' ' 
