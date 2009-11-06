@@ -170,6 +170,12 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
   def obj_const(obj, name); obj.class.const_get(name) end
 
   def summary_help(subcmd)
+    c = subcmd.class.constants
+    if c.member?(:HELP) and !c.member?(:SHORT_HELP)
+      short_help = subcmd.class.const_get('HELP').split("\n")[0].chomp('.')
+      subcmd.class.const_set('SHORT_HELP', short_help)
+    end
+
     msg('%s (%d) -- %s' %
         [obj_const(subcmd, :NAME), 
          obj_const(subcmd, :MIN_ABBREV),

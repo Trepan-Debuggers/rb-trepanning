@@ -235,9 +235,9 @@ class TestStep < Test::Unit::TestCase
            "different is on.",
            'Trace events we may stop on:',
            "\tcall, class, insn, line, return",
-           '-- def foo',
-           '-- foo',
            '.. def foo',
+           '.. foo',
+           '-> def foo',
            '-- bar']
     compare_output(out, d, cmds)
   end

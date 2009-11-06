@@ -13,6 +13,7 @@ module MockDebugger
     attr_reader   :settings     # Hash[:symbol] of things you can configure
 
     def initialize(settings={})
+      @before_cmdloop_hooks = []
       @settings = DbgSettings::DEFAULT_SETTINGS.merge(settings)
       @intf     = [Debugger::UserInterface.new]
       @core     = Debugger::Core.new(self)

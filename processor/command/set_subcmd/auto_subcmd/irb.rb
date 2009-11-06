@@ -29,7 +29,8 @@ if __FILE__ == $0
   # require_relative %w(.. .. .. .. rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
-  autox_cmd.run([])
-  autox_cmd.run(['off'])
+  subcmd_name = Debugger::Subcommand::SetAutoIrb::PREFIX[1..-1].join('')
+  autox_cmd.run([subcmd_name])
+  autox_cmd.run([subcmd_name, 'off'])
 
 end
