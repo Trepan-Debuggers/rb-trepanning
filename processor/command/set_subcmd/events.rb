@@ -1,12 +1,27 @@
 # -*- coding: utf-8 -*-
 require 'trace'
+require 'columnize'
 require_relative %w(.. base subcmd)
 
 class Debugger::Subcommand::SetEvents < Debugger::Subcommand
   unless defined?(HELP)
-    HELP         = 'Set trace events we may stop on'
+    HELP         = "set events {event-name[,] ...}
+
+Set trace events that the debugger will stop on
+
+Valid event names come from the Trace module and include:
+#{Columnize::columnize(Trace.const_get('EVENTS'), 80, ' ' * 4, true, true, ' ' * 2)}
+
+Separate event names with space and an optional comma is also
+allowable after an event name.
+
+Examples:
+   set events call return
+   set ev call, c_call, return, c_return, c_return, insn
+"
     MIN_ABBREV   = 'ev'.size
     NAME         = File.basename(__FILE__, '.rb')
+    SHORT_HELP   = 'Set trace events we may stop on.'
   end
 
   def run(events)
