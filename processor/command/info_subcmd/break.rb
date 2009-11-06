@@ -11,24 +11,18 @@ class Debugger::Subcommand::InfoBreak < Debugger::Subcommand
   end
 
   def bpprint(bp, verbose=false)
-    if bp.temp?
-      disp = 'del  '
-    else
-      disp = 'keep '
-    end
-    if bp.enabled?
-      disp += 'y  '
-    else
-      disp += 'n  '
-    end
-    
+    disp  = bp.temp?    ? 'del  ' : 'keep '
+    disp += bp.enabled? ? 'y  '   : 'n  '
+
     iseq = bp.iseq
-    msg('%-4dbreakpoint    %s at %s:%d' %
-        [bp.id, disp, iseq.source_container.join(' '),
-         iseq.offset2lines(bp.offset).join(', ')])
+    mess = '%-4dbreakpoint    %s at %s:%d' %
+      [bp.id, disp, iseq.source_container.join(' '),
+         iseq.offset2lines(offset).join(', ')]
+
+    msg(mess)
     if verbose
-      msg("\tVM offset %d of instruction sequence %s#%x" % 
-          [bp.offset, iseq.name, iseq.object_id])
+      msg("\tVM offset %d of instruction sequence %s" % 
+          [bp.offset, iseq.name])
     end
     if bp.condition != 'true'
       msg("\tstop only if %s" % bp.condition)
