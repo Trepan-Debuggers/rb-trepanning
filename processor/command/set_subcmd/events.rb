@@ -24,8 +24,9 @@ Examples:
     SHORT_HELP   = 'Set trace events we may stop on.'
   end
 
-  def run(events)
-    unless events.empty?
+  def run(args)
+    unless args.size <= 2
+      events = args[2..-1]
       events.each {|event| event.chomp!(',')}
       bitmask, bad_events = Trace.events2bitmask(events)
       unless bad_events.empty?
@@ -53,7 +54,7 @@ if __FILE__ == $0
   puts
   subcommand.run([])
   [%w(call line foo), %w(insn, c_call, c_return,)].each do |events|
-    subcommand.run(events)
+    subcommand.run(%w(set events) + events)
     puts 'bitmask: %09b, events: %s ' % [dbgr.core.step_events, events.inspect]
   end
 end

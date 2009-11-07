@@ -12,7 +12,7 @@ end
 
 if __FILE__ == $0
   require_relative %w(.. .. mock)
-  dbgr = MockDebugger::MockDebugger.new
+  dbgr, cmd = MockDebugger::setup('set')
   cmds = dbgr.core.processor.commands
   set_cmd = cmds['set']
   command = Debugger::SubSubcommand::SetAuto.new(dbgr.core.processor, 

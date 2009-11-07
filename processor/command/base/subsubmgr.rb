@@ -141,7 +141,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
   end
 
   def run(args)
-    args = @parent.last_args
+    args = @parent.last_args if args.size == 0
     if args.size < 3
       # We were given cmd without a subcommand; cmd is something
       # like "show", "info" or "set". Generally this means list

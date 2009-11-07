@@ -155,7 +155,7 @@ class Debugger::SubcommandMgr < Debugger::Command
     # Run that.
     subcmd = @subcmds.lookup(subcmd_prefix)
     if subcmd
-      subcmd.run(args[2..-1])
+      subcmd.run(args)
     else
       undefined_subcmd(@name, subcmd_prefix)
     end

@@ -73,9 +73,9 @@ class Debugger
 
     # Set a Boolean-valued debugger setting. 
     def run_set_bool(args, default=true)
-      args = ['on'] if args.empty?
+      onoff_arg = args.size < 3 ? 'on' : args[2]
       begin
-        settings[@name] = @proc.get_onoff(args[0])
+        settings[@name] = @proc.get_onoff(onoff_arg)
         run_show_bool
       rescue NameError, TypeError
       end
