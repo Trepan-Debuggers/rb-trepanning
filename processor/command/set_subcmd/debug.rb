@@ -4,7 +4,7 @@ require_relative %w(.. base subsubmgr)
 
 class Debugger::SubSubcommand::SetDebug < Debugger::SubSubcommandMgr
   unless defined?(HELP)
-    HELP   = 'Set internal debugger settings.'
+    HELP   = 'Set internal debugger settings'
     NAME   = File.basename(__FILE__, '.rb')
     PREFIX = %w(set debug)
   end

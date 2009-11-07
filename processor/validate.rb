@@ -148,8 +148,9 @@ class Debugger
         end
         return default
       end
-      return true  if arg == '1' or arg == 'on'
-      return false if arg == '0' or arg =='off'
+      darg = arg.downcase
+      return true  if arg == '1' || darg == 'on'
+      return false if arg == '0' || darg =='off'
 
       errmsg("Expecting 'on', 1, 'off', or 0. Got: %s." % arg.to_s) if
         print_error

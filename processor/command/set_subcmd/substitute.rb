@@ -4,7 +4,7 @@ require_relative %w(.. base subsubmgr)
 
 class Debugger::SubSubcommand::SetSubstitute < Debugger::SubSubcommandMgr
   unless defined?(HELP)
-    HELP   = 'instruction sequence to filename mapping.'
+    HELP   = 'Set instruction sequence-to-filename mapping'
     NAME   = File.basename(__FILE__, '.rb')
     PREFIX = %w(set substitute)
   end

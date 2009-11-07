@@ -11,6 +11,10 @@ information about just that subcommand.
 
 Type "set" for a list of "set" subcommands and what they do.
 Type "help set *" for just the list of "set" subcommands.
+
+For compatability with older ruby-debug "set auto..." is the
+same as "set auto ...". For example "set autolist" is the same 
+as "set auto list".
 '
 
     CATEGORY      = 'data'
@@ -20,8 +24,11 @@ Type "help set *" for just the list of "set" subcommands.
   end
 
   def run(args)
-    if args.size > 1 && args[1] =~ /^auto./
-      args[1..1] = ['auto', args[1][4..-1]]
+    if args.size > 1 
+      first = args[1].downcase
+      alen = 'auto'.size
+      args[1..1] = ['auto', first[alen..-1]] if
+        first.start_with?('auto') && first.size > alen
     end
     super
   end

@@ -4,7 +4,7 @@ require_relative %w(.. .. base subsubcmd)
 class Debugger::SubSubcommand::ShowAutoList < Debugger::ShowBoolSubSubcommand
   unless defined?(HELP)
     HELP = "Show running a 'list' command each time we enter the debugger"
-    MIN_ABBREV   = 'li'.size
+    MIN_ABBREV   = 'l'.size
     NAME         = File.basename(__FILE__, '.rb')
     PREFIX       = %w(show auto list)
   end

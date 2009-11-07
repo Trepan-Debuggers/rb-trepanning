@@ -306,7 +306,7 @@ class Debugger
         begin
           break if process_command_and_quit?()
         rescue Exception => e
-          errmsg("INTERNAL DEBUGGER ERROR!")
+          errmsg("Internal debugger error!")
           exception_dump(e, @settings[:debugexcept], $!.backtrace)
         end
       end

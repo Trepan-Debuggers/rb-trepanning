@@ -48,6 +48,10 @@ class Debugger
       @proc.errmsg(message)
     end
 
+    def obj_const(obj, name)
+      obj.class.const_get(name) 
+    end
+
     def msg(message)
       @proc.msg(message)
     end
