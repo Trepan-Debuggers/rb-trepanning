@@ -62,6 +62,16 @@ class Debugger
     end
 
     def my_const(name)
+      # Set class constant SHORT_HELP to be the first line of HELP
+      # unless it has been defined in the class already.
+      # The below was the simplest way I could find to do this since
+      # we are the super class but want to set the subclass's constant.
+      # defined? didn't seem to work here.
+      c = self.class.constants
+      if c.member?(:HELP) and !c.member?(:SHORT_HELP)
+        short_help = self.class.const_get(:HELP).split("\n")[0].chomp('.')
+        self.class.const_set(:SHORT_HELP, short_help)
+      end
       self.class.const_get(name)
     end
 

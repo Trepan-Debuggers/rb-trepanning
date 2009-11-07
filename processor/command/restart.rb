@@ -20,15 +20,16 @@ class Debugger::Command::RestartCommand < Debugger::Command
 
     argv = @proc.core.dbgr.restart_argv
     if argv and argv.size > 0
+      unless File.executable?(argv[0])
+        msg(["File #{argv[0]} not executable.",
+             "Adding Ruby interpreter."])
+        argv.unshift Rbdbgr::ruby_path
+      end
+      msg("Restart args:\n\t#{argv.inspect}")
       if not confirm('Restart (exec)?', false)
         msg "Restart not confirmed"
       else
-        unless File.executable?(argv[0])
-          msg(["File #{argv[0]} not executable.",
-               "Adding Ruby interpreter."])
-          argv.unshift Rbdbgr::ruby_path
-        end
-        msg("Re exec'ing with args:\n\t#{argv.inspect}")
+        msg 'Restarting...'
         # FIXME: Run atexit finalize routines?
         exec(*argv)
       end

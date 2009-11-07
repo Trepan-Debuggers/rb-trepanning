@@ -52,18 +52,7 @@ class Debugger
       # a single file. So in those cases, one will have to set @name
       # accordingly by other means.
       @name  = my_const(:NAME).to_sym
-      
 
-      # Set class constant SHORT_HELP to be the first line of HELP
-      # unless it has been defined in the class already.
-      # The below was the simplest way I could find to do this since
-      # we are the super class but want to set the subclass's constant.
-      # defined? didn't seem to work here.
-      c = self.class.constants
-      if c.member?(:HELP) and !c.member?(:SHORT_HELP)
-        short_help = self.class.const_get('HELP').split("\n")[0].chomp('.')
-        self.class.const_set('SHORT_HELP', short_help)
-      end
     end
 
     # Convenience short-hand for @proc.confirm

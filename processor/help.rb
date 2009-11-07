@@ -14,7 +14,7 @@ class Debugger
       c = subcmd.class.constants
       if c.member?(:HELP) and !c.member?(:SHORT_HELP)
         short_help = subcmd.class.const_get('HELP').split("\n")[0].chomp('.')
-        subcmd.class.const_set('SHORT_HELP', short_help)
+        subcmd.class.const_set(:SHORT_HELP, short_help)
       end
       
       msg('  %-12s -- %s' %
@@ -31,7 +31,7 @@ class Debugger
       subcmds.list.each do |subcmd_name|
         # Some commands have lots of output.
         # they are excluded here because 'in_list' is false.
-        summary_help(subcmds.subcmds[subcmd_name])
+        msg summary_help(subcmds.subcmds[subcmd_name])
       end
     end
 
@@ -43,5 +43,29 @@ class Debugger
     end
 
   end
+end
 
+if __FILE__ == $0
+  class TestClass
+    include Debugger::Help
+    HELP       = 'TestClass HELP.
+
+Long description goes here.'
+    MIN_ABBREV = 1
+    NAME       = File.basename(__FILE__)
+    def obj_const(obj, name)
+      obj.class.const_get(name) 
+    end
+    def msg(mess)
+      puts mess
+    end
+    def errmsg(mess)
+      puts "***#{mess}"
+    end
+    def initialize
+      summary_help(self)
+      undefined_subcmd('foo', 'bar')
+    end
+  end
+  TestClass.new
 end
