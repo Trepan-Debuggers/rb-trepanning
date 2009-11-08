@@ -21,8 +21,8 @@ one.
 
 See the break command if you want to stop at a particular point in a
 program. In general, 'finish', 'step' and 'next' may slow a program down
-while 'break' will have less overhead."
-
+while 'break' will have less overhead.
+"
     ALIASES      = %w(fin)
     CATEGORY     = 'running'
     # execution_set = ['Running']

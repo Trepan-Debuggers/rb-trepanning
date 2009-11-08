@@ -71,6 +71,9 @@ Type "help" followed by command name for full documentation.
           cmd_obj.respond_to?(:help) ? cmd_obj.help(args) : 
           cmd_obj.class.const_get(:HELP)
         msg(help_text) if help_text
+        if cmd_obj.class.constants.member?(:ALIASES)
+          msg "Aliases: #{cmd_obj.class.const_get(:ALIASES).join(', ')}"
+        end
       else 
         matches = @proc.commands.keys.grep(/^#{cmd_name}/).sort
         if matches.empty?
