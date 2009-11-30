@@ -31,8 +31,8 @@ class Debugger
 
     # Closes all input and/or output.
     def close
-      @input.close
-      @output.close
+      @input.close  unless @input.closed?
+      @output.close unless @output.closed?
     end
 
     # Called when a dangerous action is about to be done to make sure

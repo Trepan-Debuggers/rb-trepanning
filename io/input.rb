@@ -17,6 +17,7 @@ class Debugger
       @eof       = false
     end
 
+    def closed?; @input.closed? end
     def eof?; @eof end
 
     def interactive? 

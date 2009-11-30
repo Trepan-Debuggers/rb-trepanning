@@ -30,7 +30,7 @@ class Debugger
     end
 
     def close
-      @input.close
+      @input.close unless @input.closed?
     end
 
     def eof? 

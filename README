@@ -1,1 +1,41 @@
 A modular, testable debugger for Ruby 1.9
+
+Some cryptic examples.
+
+Running if rbdbgr is installed:
+
+  rbdbgr ruby-program [program args]
+
+To call from inside a Ruby program, there is one-time setup that 
+needs to be done first:
+
+    require 'rbdbgr'
+    mydbg = Debugger.new()
+
+or if you haven't mucked around with $0 and ARGV, you might try:
+    mydbg = Debugger.new(:set_restart=>true))
+
+which will tell the debugger how to "restart" the program.
+
+If you want a synchronous stop in your program call to the
+debugger at the point of the call, set opts[:immediate]
+true. Example:
+
+
+  #    ... work, work, work
+      mydbg.debugger(:immediate=>true)   # enter debugger here
+  #    ... work, work, work
+
+However to enter the debugger on the next event after the 
+debugger() call:
+
+  #    ... work, work, work
+  mydbg.debugger  # Don't stop here...
+  work            # but stop here.
+
+And finally, if you want to debug just a block:
+  mydbg.debugger {
+  #     ... code you want to debug.
+  }
+
+

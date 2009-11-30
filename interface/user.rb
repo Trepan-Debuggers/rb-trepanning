@@ -2,8 +2,6 @@
 # Interface when communicating with the user in the same process as
 # the debugged program.
 
-## import atexit -- from python
-
 # Our local modules
 
 require_relative 'base_intf'
@@ -18,7 +16,7 @@ class Debugger::UserInterface < Debugger::Interface
   FILE_HISTORY = '.rbdbgr_hist' unless defined?(FILE_HISTORY)
 
   def initialize(inp=nil, out=nil, opts={})
-    # atexit.register(self.finalize)
+    at_exit { finalize }
     super(inp, out, opts)
     @input = if inp.class.ancestors.member?(Debugger::InputBase)
                inp
@@ -51,7 +49,7 @@ class Debugger::UserInterface < Debugger::Interface
     return YES.member?(response)
   end
 
-  def finalize(last_wishes=none)
+  def finalize(last_wishes=nil)
     # print exit annotation
     # save history
     super

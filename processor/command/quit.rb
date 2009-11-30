@@ -1,21 +1,21 @@
 require_relative %w(base cmd)
-class Debugger::Command::ExitCommand < Debugger::Command
+class Debugger::Command::QuitCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
-      'exit [exitcode] - hard exit of the debugged program.  
+      'quit [unconditionally] [exit code] - gentle termination
 
-The program being debugged is exited via exit!() which does not run
-the Kernel at_exit finalizers. If a return code is given, that is the
-return code passed to exit() - presumably the return code that will be
-passed back to the OS. If no exit code is given, 0 is used.
+The program being debugged is exited via exit() which runs the Kernel
+at_exit finalizers. If a return code is given, that is the return code
+passed to exit() - presumably the return code that will be passed back
+to the OS. If no exit code is given, 0 is used.
 
-See also the commands "quit" and "kill".'
+See also the commands "exit" and "kill".'
 
     CATEGORY     = 'support'
-    MAX_ARGS     = 2  # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
-    SHORT_HELP  = 'Exit program via "exit!"'
+    MAX_ARGS     = 2  # Need at most this many
+    SHORT_HELP  = 'Quit program - gently'
   end
 
   # FIXME: Combine 'quit' and 'exit'. The only difference is
@@ -34,10 +34,10 @@ See also the commands "quit" and "kill".'
       msg('Quit not confirmed.')
       return
     end
+
     exitrc = (args.size > 1) ? exitrc = Integer(args[1]) rescue 0 : 0
     # No graceful way to stop threads...
-    # A little harsh, but for now let's go with this.
-    exit! exitrc
+    exit exitrc
   end
 end
 
@@ -47,5 +47,5 @@ if __FILE__ == $0
   dbgr, cmd = MockDebugger::setup(name)
   name = File.basename(__FILE__, '.rb')
   fork { cmd.run([name]) }
-  cmd.run([name, '10'])
+  cmd.run([name, '5'])
 end

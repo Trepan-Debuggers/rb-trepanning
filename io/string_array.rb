@@ -17,6 +17,10 @@ class Debugger::StringArrayInput < Debugger::InputBase
     @closed = true 
   end
 
+  def closed?
+    @closed
+  end
+
   def eof?
     @closed || @input.empty?
   end
@@ -59,6 +63,10 @@ class Debugger::StringArrayOutput < Debugger::OutputBase
   # Nothing to do here. Interface is for compatibility
   def close
     @closed = true 
+  end
+
+  def closed?
+    @closed
   end
 
   def eof?
@@ -127,6 +135,7 @@ if __FILE__ == $0
 #     io.open_write(sys.stdout)
   out.flush_after_write = true
   out.write('Last hello')
+  puts "Output is closed? #{out.closed?}"
   out.close
   p out.output
   begin
@@ -136,6 +145,9 @@ if __FILE__ == $0
 
   # Closing after already closed is okay
   out.close
+  puts "Output is closed? #{out.closed?}"
+  puts "Input is closed? #{inp.closed?}"
   inp.close
+  puts "Input is closed? #{inp.closed?}"
 end
 

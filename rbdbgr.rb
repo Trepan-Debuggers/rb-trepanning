@@ -35,7 +35,8 @@ class Debugger
     @trace_filter << Kernel.method(:set_trace_func)
   end
 
-  # Enter the debugger. One-time step you need to do first:
+  # To call from inside a Ruby program, there is one-time setup that 
+  # needs to be done first:
   #    require 'rbdbgr'
   #    mydbg = Debugger.new()
   # or if you haven't mucked around with $0 and ARGV, you might try:

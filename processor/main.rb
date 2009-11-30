@@ -305,6 +305,9 @@ class Debugger
       while not @leave_cmd_loop do
         begin
           break if process_command_and_quit?()
+        rescue SystemExit
+          @dbgr.stop
+          raise
         rescue Exception => e
           errmsg("Internal debugger error!")
           exception_dump(e, @settings[:debugexcept], $!.backtrace)

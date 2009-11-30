@@ -12,9 +12,7 @@ class TestIOInput < Test::Unit::TestCase
     assert_equal '#!/usr/bin/env ruby', line
     assert_equal false, inp.eof?
     inp.close
-    assert_raises IOError do 
-      inp.close
-    end
+    assert_equal true, inp.closed?
     inp = Debugger::UserInput.open(__FILE__)
     while not inp.eof?
       begin

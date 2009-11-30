@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # Module for reading debugger scripts
 
-## import atexit -- from python
-
 # Our local modules
 require_relative 'base_intf'
 require_relative %w(.. io input)
@@ -21,7 +19,7 @@ class Debugger::ScriptInterface < Debugger::Interface
 
     @opts = DEFAULT_OPTS.merge(opts)
 
-    # atexit.register(self.finalize)
+    at_exit { finalize }
     @script_name     = script_name
     @input_lineno    = 0
     @input           = Debugger::UserInput.open(script_name,
