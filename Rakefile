@@ -73,6 +73,15 @@ task :'check:processor' do
   run_standalone_ruby_file(File.join(%W(#{rake_dir} processor)))
 end
 
+desc "Run each processor Ruby file in standalone mode."
+task :'check:unit' do
+  run_standalone_ruby_file(File.join(%W(#{rake_dir} test unit)))
+end
+
+task :'check:functional' do
+  run_standalone_ruby_file(File.join(%W(#{rake_dir} test functional)))
+end
+
 task :check => %w(check:lib check:processor check:commands).map{|c| c.to_sym}
 
 desc "Test everything - same as test."
