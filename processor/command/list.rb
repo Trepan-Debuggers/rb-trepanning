@@ -219,7 +219,7 @@ if __FILE__ == $0
   cmd.proc.instance_variable_set('@remap_container', {})
   LineCache::cache(__FILE__)
   cmd.run(['list'])
-  # require_relative %w(.. .. rbdbgr)
+  # require_relative %w(.. .. lib rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   cmd.run(['list', __FILE__ + ':10'])

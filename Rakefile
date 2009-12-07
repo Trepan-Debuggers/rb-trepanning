@@ -21,9 +21,9 @@ def run_standalone_ruby_file(directory)
   end
 end
 
-desc "Create a GNU-style ChangeLog via git2cl"
+desc 'Create a GNU-style ChangeLog via git2cl'
 task :ChangeLog do
-  system("git log --pretty --numstat --summary | git2cl > ChangeLog")
+  system('git log --pretty --numstat --summary | git2cl > ChangeLog')
 end
 
 desc 'Test units - the smaller tests'
@@ -95,15 +95,17 @@ FILES = FileList[
   'io/*',
   'lib/*',
   'processor/**/*.rb',
-  'rbdbgr.rb',
   # 'test/**/*.rb',
 ]                        
 
 spec = Gem::Specification.new do |spec|
-  spec.name = "rbdbgr"
-  spec.homepage = "http://github.com/rocky/rbdbgr/tree/master"
-  spec.summary = "Modular Ruby 1.9 Debugger"
-  spec.description = spec.summary
+  spec.name = 'rbdbgr'
+  spec.homepage = 'http://wiki.github.com/rocky/rbdbgr'
+  spec.summary = 'Modular Ruby 1.9 Debugger'
+
+  spec.description = "A modular, testable, Ruby debugger using some of the best ideas from ruby-debug, other debuggers and Ruby Rails. 
+Some of the core debugger concepts have been rethought. As a result perhaps there are some of this may be experimental."
+
   spec.version = '0.0.1'
   spec.author = "R. Bernstein"
   spec.email = "rockyb@rubyforge.org"

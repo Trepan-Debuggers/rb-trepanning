@@ -28,7 +28,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
-  # require_relative %w(.. .. .. rbdbgr)
+  # require_relative %w(.. .. .. lib rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
 

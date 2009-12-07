@@ -38,7 +38,7 @@ if __FILE__ == $0
   infox_cmd  = Debugger::SubSubcommand::InfoRegistersSp.new(info_cmd.proc,
                                                             info_cmd,
                                                             cmd_name)
-  # require_relative %w(.. .. .. .. rbdbgr)
+  # require_relative %w(.. .. .. .. lib rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   infox_cmd.run([])

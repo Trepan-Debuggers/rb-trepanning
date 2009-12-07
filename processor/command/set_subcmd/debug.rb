@@ -20,7 +20,7 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['set', name]
   set_cmd.instance_variable_set('@last_args', cmd_args)
-  # require_relative %w(.. .. .. rbdbgr)
+  # require_relative %w(.. .. .. lib rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   command.run(cmd_args)

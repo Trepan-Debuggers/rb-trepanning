@@ -27,7 +27,7 @@ if __FILE__ == $0
   cmd_name       = Debugger::SubSubcommand::ShowAutoList::PREFIX.join('')
   autox_cmd      = Debugger::SubSubcommand::ShowAutoList.new(show_cmd.proc, auto_cmd,
                                                              cmd_name)
-  # require_relative %w(.. .. .. .. rbdbgr)
+  # require_relative %w(.. .. .. .. lib rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   autox_cmd.run([])

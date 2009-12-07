@@ -364,7 +364,7 @@ end
 
 if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
-  require_relative %w(.. rbdbgr)
+  require_relative %w(.. lib rbdbgr)
   dbg =  Debugger.new
   dbg.core.processor.msg('I am main')
   dbg.core.processor.errmsg('Whoa!')

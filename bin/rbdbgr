@@ -2,7 +2,7 @@
 # -*- Ruby -*-
 # Invoke debugger from the command line. 
 require_relative %w(.. lib run)
-require_relative %w(.. rbdbgr)
+require_relative %w(.. lib rbdbgr)
 
 # FIXME: the figure out how to run via gem installation.
 if File.basename(__FILE__) == File.basename($0)

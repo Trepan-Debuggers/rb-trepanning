@@ -40,7 +40,7 @@ if __FILE__ == $0
                                                             info_cmd,
                                                             cmd_name)
   infox_cmd.summary_help(name)
-  # require_relative %w(.. .. .. .. rbdbgr)
+  # require_relative %w(.. .. .. .. lib rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   infox_cmd.run([])

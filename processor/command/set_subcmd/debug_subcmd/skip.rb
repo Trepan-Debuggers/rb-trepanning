@@ -25,7 +25,7 @@ if __FILE__ == $0
   debugx_cmd     = Debugger::SubSubcommand::SetDebugSkip.new(dbg_cmd.proc, 
                                                               debug_cmd,
                                                               cmd_name)
-  # require_relative %w(.. .. .. .. rbdbgr)
+  # require_relative %w(.. .. .. .. lib rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   debugx_cmd.run([name])

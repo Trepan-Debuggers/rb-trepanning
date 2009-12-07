@@ -135,7 +135,7 @@ class Debugger
   end
 end
 if __FILE__ == $0
-  require_relative %w(.. rbdbgr)
+  require_relative %w(rbdbgr)
   dbg = Debugger.new()
   if ARGV.size > 0
     def foo(dbg)

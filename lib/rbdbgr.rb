@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 require 'trace'                      # Trace filtering
 require 'thread_frame'
-require_relative %w(lib core)        # core event-handling mechanism
-require_relative %w(lib default)     # default debugger settings
-require_relative %w(interface user)  # user interface (includes I/O)
+require_relative %w(core)               # core event-handling mechanism
+require_relative %w(default)            # default debugger settings
+require_relative %w(.. interface user)  # user interface (includes I/O)
 class Debugger
 
   attr_accessor :core         # access to Debugger::Core instance

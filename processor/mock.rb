@@ -24,7 +24,7 @@ module MockDebugger
   # Common Mock debugger setup 
   def setup(name, show_constants=true)
     if ARGV.size > 0 && ARGV[0] == 'debug'
-      require_relative %w(.. rbdbgr)
+      require_relative %w(rbdbgr)
       dbgr = Debugger.new
       dbgr.debugger
     else
