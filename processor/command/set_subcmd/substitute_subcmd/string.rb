@@ -9,7 +9,9 @@ class Debugger::SubSubcommand::SetSubstituteString < Debugger::SubSubcommand
     HELP         = 
 'Add a substitution rule replacing FROM into TO in source file names.
 If a substitution rule was previously set for FROM, the old rule
-is replaced by the new one.'
+is replaced by the new one.
+
+If "." is given for FROM, the current instruction sequence name is used.'
     MIN_ABBREV   = 'st'.size  
     MAX_ARGS     = 2
     NAME         = File.basename(__FILE__, '.rb')
@@ -22,8 +24,12 @@ is replaced by the new one.'
       errmsg "This command needs 2 arguments, got #{args.size-1}."
       return
     end
-    from_path = args[1]
-    
+    from_path = 
+      if '.' == args[1]
+        @proc.frame.iseq.source_container[1]
+      else
+        from_path = args[1]
+      end
     
     to_str = args[2]
     val = @proc.debug_eval_no_errmsg(to_str)

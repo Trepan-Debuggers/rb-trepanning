@@ -67,7 +67,8 @@ class Debugger
     # FIXME: one option we may want to pass is the initial trace filter.
     if block
       start
-      block.call(self)
+      # I don't think yield or block.call is quite right.
+      yield   # Not: block.call(self) ? 
       stop
     elsif opts[:immediate]
       # Stop immediately, but don't show in the call stack the
