@@ -16,7 +16,7 @@ if __FILE__ == $0
   cmds = dbgr.core.processor.commands
   set_cmd = cmds['set']
   command = Debugger::SubSubcommand::SetAuto.new(dbgr.core.processor, 
-                                                  set_cmd)
+                                                 set_cmd)
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['set', name]
   set_cmd.instance_variable_set('@last_args', cmd_args)

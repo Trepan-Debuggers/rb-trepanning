@@ -10,9 +10,13 @@ class Debugger::Subcommand::SetWidth < Debugger::Subcommand
   end
 
   def run(args)
-    run_set_int(args.join(' '),
-                "The 'width' command requires a line width", 
-                0, nil)
+    if args.size >= 3 
+      run_set_int(args[2..-1].join(' '),
+                  "The 'width' command requires a line width", 
+                  0, nil)
+    else
+      errmsg "Too few arguments - the 'width' command requires a line width"
+    end
   end
 
 end

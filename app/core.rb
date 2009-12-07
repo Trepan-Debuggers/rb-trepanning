@@ -41,12 +41,14 @@ class Debugger
         RAISE_EVENT_MASK    | VM_EVENT_MASK       | SWITCH_EVENT_MASK
 
       DEFAULT_SETTINGS = {
-        :cmdproc_opts => {},
-        :hook_name    => :event_processor, # or :old_event_processor
-        :step_count   => 0,                # Stop at next event
-        :async_events => ASYNC_EVENT_MASK,
-        :step_events  => (DEFAULT_EVENT_MASK | INSN_EVENT_MASK) & 
-           ~(C_CALL_EVENT_MASK | C_RETURN_EVENT_MASK)
+        :cmdproc_opts      => {},
+        :debug_core_events => false,
+        :hook_name         => :event_processor, # or :old_event_processor
+        :step_count        => 0,                # Stop at next event
+        :async_events      => ASYNC_EVENT_MASK,
+        :step_events       =>  
+        (DEFAULT_EVENT_MASK | INSN_EVENT_MASK) & 
+        ~(C_CALL_EVENT_MASK | C_RETURN_EVENT_MASK)
       } 
 
     end
@@ -57,6 +59,7 @@ class Debugger
       @step_count   = @settings[:step_count]
       @step_events  = @settings[:step_events]
       @async_events = @settings[:async_events]
+      @debug_events = @settings[:debug_core_events]
 
       hook_name     = @settings[:hook_name]
       @event_proc   = self.method(hook_name).to_proc
@@ -83,6 +86,9 @@ class Debugger
         @frame = @frame.prev
       end
 
+      if @settings[:debug_core_events]
+        puts "event #{event} #{@frame.source_container.inspect} #{@frame.source_location.inspect}"
+      end
       @processor.process_commands(@frame)
 
       # FIXME: There should be a Trace.event_mask which should return the first
