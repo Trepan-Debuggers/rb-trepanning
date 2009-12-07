@@ -33,7 +33,6 @@ if File.basename(__FILE__) == File.basename($0)
     Debugger::RUBY_PATH    = ruby_path
     Debugger::RBDBGR_PATH  = rbdbgr_path
     Debugger::RBDBGR_FILE  = __FILE__
-    Debugger::INITIAL_DIR  = Dir.pwd
 
     program_to_debug = ARGV.shift
     program_to_debug = whence_file(program_to_debug) unless 
@@ -42,7 +41,9 @@ if File.basename(__FILE__) == File.basename($0)
 
     # Set global so others may use this debugger.
     $rbdbgr = Debugger.new(:restart_argv => 
-                           explicit_restart_argv(Debugger::ARGV))
+                           explicit_restart_argv(Debugger::ARGV),
+                           :initial_dir => Dir.pwd
+                           )
     debug_program($rbdbgr, Debugger::RUBY_PATH, 
                   File.expand_path(program_to_debug))
   end

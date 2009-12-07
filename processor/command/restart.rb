@@ -18,19 +18,21 @@ class Debugger::Command::RestartCommand < Debugger::Command
   # This method runs the command
   def run(args) # :nodoc
 
-    argv = @proc.core.dbgr.restart_argv
+    dbgr = @proc.core.dbgr
+    argv = dbgr.restart_argv
     if argv and argv.size > 0
       unless File.executable?(argv[0])
         msg(["File #{argv[0]} not executable.",
              "Adding Ruby interpreter."])
         argv.unshift Rbdbgr::ruby_path
       end
-      msg("Restart args:\n\t#{argv.inspect}")
+      @proc.commands['show'].run(%w(show args))
       if not confirm('Restart (exec)?', false)
         msg "Restart not confirmed"
       else
         msg 'Restarting...'
         # FIXME: Run atexit finalize routines?
+        Dir.chdir(dbgr.initial_dir) if dbgr.initial_dir
         exec(*argv)
       end
     else

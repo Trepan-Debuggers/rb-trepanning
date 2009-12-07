@@ -10,6 +10,8 @@ class Debugger
   attr_accessor :intf         # Array. The way the outside world
                               # interfaces with us.  An array, so that
                               # interfaces can be stacked.
+  attr_reader   :initial_dir  # String. Current directory when program
+                              # started. Used in restart program.
   attr_accessor :restart_argv # How to restart us, empty or nil. 
                               # Note restart[0] is typically $0.
   attr_reader   :settings     # Hash[:symbol] of things you can configure
@@ -21,13 +23,16 @@ class Debugger
     output      ||= @settings[:output]
     @intf         = [Debugger::UserInterface.new(input, output)]
     @core         = Core.new(self, @settings[:core_opts])
-    @restart_argv = if @settings[:set_restart]
-                      [File.expand_path($0)] + ARGV
-                    elsif @settings[:restart_argv]
-                      @settings[:restart_argv]
-                    else 
-                      nil
-                    end
+    @initial_dir  = @settings[:initial_dir]
+    @restart_argv = 
+      if @settings[:set_restart]
+        @initial_dir ||= Dir.pwd
+        [File.expand_path($0)] + ARGV
+      elsif @settings[:restart_argv]
+        @settings[:restart_argv]
+      else 
+        nil
+      end
     @trace_filter = TraceFilter.new
     [:debugger, :start, :stop].each {|m| @trace_filter << self.method(m)}
     [:debugger, :event_processor].each {|m| @trace_filter << @core.method(m)}

@@ -11,11 +11,6 @@ see. However if the string has an embedded newline then we will assume
 the output is intended to be formated as.'
     MIN_ABBREV   = 'maxs'.size
     NAME         = File.basename(__FILE__, '.rb')
-    PREFI        = %(show maxstring)
-  end
-
-  def run(args)
-      run_show_int(:maxstring)
   end
 
 end

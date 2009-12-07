@@ -8,8 +8,10 @@ module MockDebugger
   class MockDebugger
     attr_accessor :core         # access to Debugger::Core instance
     attr_accessor :intf         # The way the outside world interfaces with us.
+    attr_reader   :initial_dir  # String. Current directory when program
+                                # started. Used in restart program.
     attr_accessor :restart_argv # How to restart us, empty or nil. 
-    # Note restart[0] is typically $0.
+                                # Note restart[0] is typically $0.
     attr_reader   :settings     # Hash[:symbol] of things you can configure
 
     def initialize(settings={})

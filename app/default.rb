@@ -5,6 +5,7 @@ module DbgSettings
   DEFAULT_SETTINGS = {
     :cmdproc_opts => {},  # Default Debugger::CmdProcessor settings
     :core_opts    => {},  # Default Debugger::Core settings
+    :initial_dir  => nil, # Current directory run when "restart" is given
     :restart_argv => []   # Command run when "restart" is given
   }
 
