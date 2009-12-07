@@ -27,7 +27,7 @@ Examples:
     SHORT_HELP    = 'Print backtrace of stack frames'
   end
 
-  require_relative %w(.. .. lib frame)
+  require_relative %w(.. .. app frame)
   include Debugger::Frame
 
   # This method runs the command

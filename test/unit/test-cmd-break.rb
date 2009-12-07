@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. lib core)
-require_relative %w(.. .. lib mock)
+require_relative %w(.. .. app core)
+require_relative %w(.. .. app mock)
 require_relative %w(.. .. processor main) # Have to include before frame!
                                           # FIXME
 require_relative %w(.. .. processor frame) 

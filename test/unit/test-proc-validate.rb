@@ -3,7 +3,7 @@ require 'test/unit'
 require_relative %w(.. .. processor main) # Have to include before validate!
                                           # FIXME
 require_relative %w(.. .. processor validate)
-require_relative %w(.. .. lib mock)
+require_relative %w(.. .. app mock)
 
 $errors = []
 $msgs   = []

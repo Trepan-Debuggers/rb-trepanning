@@ -1,7 +1,7 @@
 # Mock setup for commands.
 require_relative 'main'
-require_relative %w(.. lib core)
-require_relative %w(.. lib default)
+require_relative %w(.. app core)
+require_relative %w(.. app default)
 require_relative %w(.. interface user)  # user interface (includes I/O)
 
 module MockDebugger

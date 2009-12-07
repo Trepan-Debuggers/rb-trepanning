@@ -1,6 +1,6 @@
 require_relative %w(base cmd)
 require_relative %w(.. running)
-require_relative %w(.. .. lib brkpt) # FIXME: possibly temporary
+require_relative %w(.. .. app brkpt) # FIXME: possibly temporary
 class Debugger::Command::ContinueCommand < Debugger::Command
 
   unless defined?(HELP)

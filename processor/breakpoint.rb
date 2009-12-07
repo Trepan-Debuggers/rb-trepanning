@@ -1,4 +1,4 @@
-require_relative %w(.. lib core)
+require_relative %w(.. app core)
 class Debugger
   class CmdProcessor
     # Does whatever needs to be done to set a breakpoint

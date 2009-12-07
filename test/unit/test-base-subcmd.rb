@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. lib core)
+require_relative %w(.. .. app core)
 require_relative %w(.. .. processor main)
 require_relative %w(.. .. processor command exit)
 require_relative %w(.. .. processor command base subcmd)

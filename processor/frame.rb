@@ -127,7 +127,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
-  require_relative %w(.. lib mock)
+  require_relative %w(.. app mock)
   require_relative %w(main) # Have to include before defining CmdProcessor!
                             # FIXME
   class Debugger::CmdProcessor

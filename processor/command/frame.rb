@@ -1,5 +1,5 @@
 require_relative %w(base cmd)
-require_relative %w(.. .. lib frame)
+require_relative %w(.. .. app frame)
 
 class Debugger::Command::FrameCommand < Debugger::Command
 

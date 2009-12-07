@@ -58,14 +58,14 @@ task :test do
   raise "Test failures" unless exceptions.empty?
 end
 
+desc "Run each library Ruby file in standalone mode."
+task :'check:app' do
+  run_standalone_ruby_file(File.join(%W(#{rake_dir} app)))
+end
+
 desc "Run each command in standalone mode."
 task :'check:commands' do
   run_standalone_ruby_file(File.join(%W(#{rake_dir} processor command)))
-end
-
-desc "Run each library Ruby file in standalone mode."
-task :'check:lib' do
-  run_standalone_ruby_file(File.join(%W(#{rake_dir} lib)))
 end
 
 desc "Run each processor Ruby file in standalone mode."
@@ -90,6 +90,7 @@ task :default => :test
 FILES = FileList[
   'README',
   'Rakefile',
+  'app/*',
   'bin/*',
   'interface/*',
   'io/*',

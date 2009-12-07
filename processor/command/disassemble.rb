@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require_relative %w(base cmd)
-require_relative %w(.. .. lib disassemble)
+require_relative %w(.. .. app disassemble)
 
 class Debugger::Command::DisassembleCommand < Debugger::Command
     include Debugger::Disassemble

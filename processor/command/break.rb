@@ -1,6 +1,6 @@
 require_relative %w(base cmd)
 require_relative %w(.. breakpoint)
-require_relative %w(.. .. lib brkpt)
+require_relative %w(.. .. app brkpt)
 class Debugger::Command::BreakCommand < Debugger::Command
 
   unless defined?(HELP)

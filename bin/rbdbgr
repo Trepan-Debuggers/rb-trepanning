@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # -*- Ruby -*-
 # Invoke debugger from the command line. 
-require_relative %w(.. lib run)
+require_relative %w(.. app run)
 require_relative %w(.. lib rbdbgr)
 
 # FIXME: the figure out how to run via gem installation.

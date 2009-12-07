@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. lib disassemble)
+require_relative %w(.. .. app disassemble)
 
 # Test Debugger:CmdProcessor
 class TestLibDisassemble < Test::Unit::TestCase

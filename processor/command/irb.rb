@@ -1,6 +1,6 @@
 require 'irb'
 require_relative %w(base cmd)
-require_relative %w(.. .. lib dbgr-irb)
+require_relative %w(.. .. app irb)
 class Debugger::Command::IRBCommand < Debugger::Command
 
   unless defined?(HELP)

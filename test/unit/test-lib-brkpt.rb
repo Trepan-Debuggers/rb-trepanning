@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. lib brkpt)
+require_relative %w(.. .. app brkpt)
 require 'thread_frame'
 
 class TestLibBrkpt < Test::Unit::TestCase

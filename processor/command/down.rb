@@ -21,7 +21,7 @@ See also 'up' and 'frame'.
     SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
   end
   
-  require_relative %w(.. .. lib frame)
+  require_relative %w(.. .. app frame)
   include Debugger::Frame
 
   # Run 'down' command. 

@@ -10,7 +10,7 @@ require_relative 'location' # Should come before frame
 require_relative 'frame'
 require_relative 'msg'
 require_relative 'validate'
-require_relative %w(.. lib brkptmgr)
+require_relative %w(.. app brkptmgr)
 
 class Debugger
   class CmdProcessor
