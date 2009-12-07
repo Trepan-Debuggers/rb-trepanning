@@ -21,10 +21,10 @@ Examples:
   end
 
   def run(args)
-    if args.empty? || '.' == args[0]
+    if args.empty? || '.' == args[2]
       iseq = frame = @proc.frame.iseq
-    elsif 
-      iseq = @proc.method_iseq(args[0])
+    else
+      iseq = @proc.method_iseq(args[2])
     end
     
     if iseq
