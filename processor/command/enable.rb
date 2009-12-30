@@ -40,5 +40,11 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
-  p cmd.run([name])
+  cmd.run([name])
+  cmd.run([name, '1'])
+  cmdproc = dbgr.core.processor
+  cmds = cmdproc.commands
+  break_cmd = cmds['break']
+  break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
+  cmd.run([name, '1'])
 end

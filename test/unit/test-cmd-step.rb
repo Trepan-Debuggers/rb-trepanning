@@ -1,29 +1,15 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. app core)
-require_relative %w(.. .. processor main)
-require_relative %w(.. .. processor command help)
-
-# Mock debugger stub. FIXME: put in comment helper routine.
-class Debugger
-end
+require_relative 'cmd-helper'
+require_relative %w(.. .. processor command step)
 
 class TestCommandStep < Test::Unit::TestCase
 
+  include UnitHelper
   def setup
-    @dbg      = Debugger.new
-    @core     = Debugger::Core.new(@dbg)
-    @cmdproc  = @core.processor = Debugger::CmdProcessor.new(@core)
-    @cmds     = @cmdproc.commands
+    common_setup
     @name     = File.basename(__FILE__, '.rb').split(/-/)[2]
     @my_cmd   = @cmds[@name]
-    def @cmdproc.msg(message)
-      @msgs << message
-    end
-    def @cmdproc.errmsg(message)
-      @errmsgs << message
-    end
-    reset_cmdproc_vars
   end
 
   def reset_cmdproc_vars

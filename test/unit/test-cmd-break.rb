@@ -1,40 +1,16 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. app core)
-require_relative %w(.. .. app mock)
-require_relative %w(.. .. processor main) # Have to include before frame!
-                                          # FIXME
-require_relative %w(.. .. processor frame) 
+require_relative 'cmd-helper'
 
 class TestCommandBreak < Test::Unit::TestCase
 
+  include UnitHelper
   def setup
-    @dbg      = Debugger.new
-    @core     = Debugger::Core.new(@dbg)
-    @cmdproc  = @core.processor = Debugger::CmdProcessor.new(@core)
-    @cmds     = @cmdproc.commands
-    @name     = File.basename(__FILE__, '.rb').split(/-/)[2]
-    @my_cmd   = @cmds[@name]
-    def @cmdproc.msg(message)
-      @msgs << message
-    end
-    def @cmdproc.errmsg(message)
-      @errmsgs << message
-    end
-    def @cmdproc.errmsgs
-      @errmsgs
-    end
-    def @cmdproc.msgs
-      @msgs
-    end
-    reset_cmdproc_vars
+    common_setup
+    @name   = File.basename(__FILE__, '.rb').split(/-/)[2]
+    @my_cmd = @cmds[@name]
   end
   
-  def reset_cmdproc_vars
-    @cmdproc.instance_variable_set('@msgs', [])
-    @cmdproc.instance_variable_set('@errmsgs', [])
-  end
-
   def test_basic
     require 'thread_frame'
     tf = RubyVM::ThreadFrame.current

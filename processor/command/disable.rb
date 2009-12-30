@@ -26,7 +26,7 @@ numbers. See also "info break" to get a list.
 #     display_enable(args[2:], 0)
 #   end
     first = args.shift
-      args.each do |num_str|
+    args.each do |num_str|
       i = @proc.get_an_int(num_str)
       success = @proc.en_disable_breakpoint_by_number(num_str.to_i, false) if i
       msg('Breakpoint %s disabled.' % i) if success
@@ -34,10 +34,18 @@ numbers. See also "info break" to get a list.
   end
 end
         
-
 if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
-  p cmd.run([name])
+  cmd.run([name])
+  cmd.run([name, '1'])
+  cmdproc = dbgr.core.processor
+  cmds = dbgr.core.processor.commands
+  break_cmd = cmds['break']
+  break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
+  # require_relative %w(.. .. lib rbdbgr)
+  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr.debugger
+  cmd.run([name, '1'])
 end

@@ -9,7 +9,7 @@ class Debugger
       end
       offset = iseq ? iseq.line2offsets(line_number)[1] : nil
       unless offset
-        errmsg("Line number #{line_number} not found for breakpoint")
+        errmsg("Line number #{line_number} not found for breakpoint.")
         return nil
       end
       @brkpts.add(temp, offset, iseq)
@@ -18,7 +18,7 @@ class Debugger
     def breakpoint_offset(offset, iseq, temp=false)
       # FIXME: handle breakpoint conditions.
       unless iseq.offsetlines.keys.member?(offset)
-        errmsg("Offset #{offset} not found in #{iseq.name} for breakpoint")
+        errmsg("Offset #{offset} not found in #{iseq.name} for breakpoint.")
         return nil
       end
       @brkpts.add(temp, offset, iseq)
@@ -28,17 +28,18 @@ class Debugger
     def en_disable_breakpoint_by_number(bpnum, do_enable=true)
       bp = @brkpts[bpnum]
       unless bp
-        msg('Breakpoint %d not found.' % bpnum)
+        errmsg('Breakpoint %d not found.' % bpnum)
         return false
       end
           
-      en = do_enable ? 'en' : 'dis'
+      enable_disable = do_enable ? 'en' : 'dis'
       if bp.enabled? == do_enable
-        msg('Breakpoint (%d) previously %sabled' % 
-            [bpnum, endis])
+        errmsg('Breakpoint %d previously %sabled.' % 
+               [bpnum, enable_disable])
         return false
       end
       bp.enabled = do_enable
+      return true
     end
   end
 end
