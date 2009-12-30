@@ -43,6 +43,12 @@ class TestCommandEnableDisable < Test::Unit::TestCase
     assert_equal(0, 
                  @cmdproc.msgs[0] =~ /^Breakpoint 1 disabled./,
                  @cmdproc.msgs)
+    reset_cmdproc_vars
+
+    @enable_cmd.run(['enable', '1'])
+    assert_equal(0, 
+                 @cmdproc.msgs[0] =~ /^Breakpoint 1 enabled./,
+                 @cmdproc.msgs)
   end
 
 end
