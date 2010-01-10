@@ -52,7 +52,7 @@ all   -- All of the above information.
       msg(m + ' not cached in debugger.')
       return
     end
-    args[1..-1].each do |arg|
+    args[2..-1].each do |arg|
       processed_arg = false
 
       if %w(all size).member?(arg)

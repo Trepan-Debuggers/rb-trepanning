@@ -17,7 +17,7 @@ class Debugger::Subcommand::InfoBreak < Debugger::Subcommand
     iseq = bp.iseq
     mess = '%-4dbreakpoint    %s at %s:%d' %
       [bp.id, disp, iseq.source_container.join(' '),
-         iseq.offset2lines(offset).join(', ')]
+         iseq.offset2lines(bp.offset).join(', ')]
 
     msg(mess)
     if verbose

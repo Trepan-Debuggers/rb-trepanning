@@ -10,15 +10,17 @@ class Breakpoint
                            # we want to (also) record hits independent
                            # of the condition?
   attr_reader   :id        # Fixnum. Name of breakpoint
-  attr_reader   :ignore    # Fixnum. Number of times encounterd to ignore
+  attr_reader   :ignore    # Fixnum. Number of times encountered to ignore
   attr_reader   :iseq      # Instruction sequence associated with this
                            # breakpoint. From this we can derive
                            # information such as source location.
   attr_reader   :offset    # Fixnum. Offset into an instruction
                            # sequence for the location of the
-                           # breakpont
+                           # breakpoint
   @@next_id = 1
 
+  # FIXME: redo as a hash. Allow id to be passed in (from breakpoint
+  # manager).
   def initialize(is_temporary, offset, iseq, condition = 'true',
                  enabled = 'true')
     @condition = condition
@@ -99,6 +101,11 @@ class Breakpoint
     @iseq.brkpt_unset(@offset)
   end
 
+  # Really shouldn't need this after next_id is removed.
+  def self.reset
+    @@next_id = 1
+  end
+
 end
 
 if __FILE__ == $0
@@ -124,4 +131,7 @@ if __FILE__ == $0
   rescue TypeError => e
     puts "TypeError (expected): #{e}"
   end
+  puts Breakpoint.class_variable_get('@@next_id')
+  Breakpoint.reset
+  puts Breakpoint.class_variable_get('@@next_id')
 end

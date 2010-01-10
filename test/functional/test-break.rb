@@ -2,10 +2,15 @@
 require 'test/unit'
 require 'trace'
 require_relative 'fn_helper'
+require_relative %w(.. .. app brkpt)
 
 class TestBreak < Test::Unit::TestCase
 
   include FnTestHelper
+
+  def setup
+    Breakpoint::reset
+  end
 
   def test_break_same_level
 
@@ -23,7 +28,7 @@ class TestBreak < Test::Unit::TestCase
     d.stop
     out = ['-- x = 5',
            'basename is on.',
-           "Breakpoint 1 set at line 21\n" + 
+           "Breakpoint 1 set at line 26\n" + 
            "\tin file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence test_break_same_level.",
            'xx z = 10']
@@ -45,12 +50,13 @@ class TestBreak < Test::Unit::TestCase
     d.stop
     out = ['-- x = 5',
            'basename is on.',
-           "Breakpoint 2 set at line 42\n" +
+           "Breakpoint 2 set at line 47\n" +
            "\tin file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence test_break_same_level.",
-           "Breakpoint 3 set at line 43\n" + 
+           "Breakpoint 3 set at line 48\n" + 
            "\tin file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence test_break_same_level.",
+           "Breakpoint 2 disabled.",
            'xx z = 10']
     compare_output(out, d, cmds)
   end
