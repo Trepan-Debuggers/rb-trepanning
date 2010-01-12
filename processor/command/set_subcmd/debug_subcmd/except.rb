@@ -3,7 +3,7 @@ require_relative %w(.. .. base subsubcmd)
 
 class Debugger::SubSubcommand::SetDebugExcept < Debugger::SetBoolSubSubcommand
   unless defined?(HELP)
-    HELP        = 'Set to show excecution traceback on debugger command exception'
+    HELP        = 'Set to show execution traceback on debugger command exception'
     MIN_ABBREV  = 'sk'.size
     NAME        = File.basename(__FILE__, '.rb')
     PREFIX      = %w(set debug except)
