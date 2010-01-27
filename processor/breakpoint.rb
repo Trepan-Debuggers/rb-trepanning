@@ -24,6 +24,18 @@ class Debugger
       @brkpts.add(temp, offset, iseq)
     end
 
+    # Delete a breakpoint given its breakpoint number.
+    def delete_breakpoint_by_number(bpnum, do_enable=true)
+      bp = @brkpts[bpnum]
+      unless bp
+        errmsg('Breakpoint %d not found.' % bpnum)
+        return false
+      end
+          
+      @brkpts.delete_by_brkpt(bp)
+      return true
+    end
+
     # Enable or disable a breakpoint given its breakpoint number.
     def en_disable_breakpoint_by_number(bpnum, do_enable=true)
       bp = @brkpts[bpnum]
