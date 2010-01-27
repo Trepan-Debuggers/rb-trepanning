@@ -215,7 +215,7 @@ class TestStep < Test::Unit::TestCase
     # call proper ('bar' below), and not getting a line number for it.
     # So a subsequent 'step' when 'set different' in effect was to stay
     # at the same place at the function call.
-    cmds = ['set different', 'set events insn call, class, line, return',
+    cmds = ['set different', 'set events call, class, line, return',
             'step', 'step', 'step', 'step', 'continue'] 
     d = strarray_setup(cmds)
     d.start
@@ -234,10 +234,10 @@ class TestStep < Test::Unit::TestCase
     out = ['-- def bar',
            "different is on.",
            'Trace events we may stop on:',
-           "\tcall, class, insn, line, return",
+           "\tcall, class, line, return",
            '-- def foo',
            '-- foo',
-           '.. def foo',
+           '-> def foo',
            '-- bar']
     compare_output(out, d, cmds)
   end
