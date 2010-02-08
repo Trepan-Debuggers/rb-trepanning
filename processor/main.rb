@@ -8,6 +8,7 @@ require 'pathname'  # For cleanpath
 require_relative 'default'  # Command Processor default settings
 require_relative 'location' # Should come before frame
 require_relative 'frame'
+require_relative 'hook'
 require_relative 'msg'
 require_relative 'validate'
 require_relative %w(.. app brkptmgr)
@@ -16,10 +17,6 @@ class Debugger
   class CmdProcessor
     attr_reader   :aliases         # Hash[String] of command names
                                    # indexed by alias name
-    attr_accessor :before_cmdloop_hooks # List of Triples of [name,
-                                   # Proc, args]. Each Proc of each
-                                   # triple in the list will be run
-                                   # with args.
     attr_reader   :brkpt           # Breakpoint. If we are stopped at a
                                    # breakpoint this is the one we
                                    # found.  (There may be other
@@ -90,7 +87,7 @@ class Debugger
     end
 
     def initialize(core, settings={})
-      @before_cmdloop_hooks = []
+      @before_cmdloop_hooks = Hook.new
       @brkpts          = BreakpointMgr.new
       @brkpt           = nil
       @core            = core
@@ -291,7 +288,7 @@ class Debugger
       frame_setup(frame)
       return if !breakpoint? && stepping_skip?
 
-      run_before_cmdloop_hooks
+      @before_cmdloop_hooks.run
 
       print_location
 
@@ -342,11 +339,6 @@ class Debugger
         @commands[cmd_name] = cmd
       end
     end
-
-    # Run each function in `hooks' with args
-    def run_before_cmdloop_hooks
-      @before_cmdloop_hooks.each { |name, hook, args| hook.call(*args) }
-   end
 
     # Error message when a command doesn't exist
     def undefined_command(cmd_name)
