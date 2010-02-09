@@ -5,25 +5,18 @@ require 'linecache'
 require 'set'
 require 'pathname'  # For cleanpath
 
-require_relative 'default'  # Command Processor default settings
-require_relative 'location' # Should come before frame
-require_relative 'frame'
-require_relative 'hook'
-require_relative 'msg'
-require_relative 'validate'
+%w(default location frame hook msg validate).each do |mod_str|
+    require_relative mod_str
+end
 require_relative %w(.. app brkptmgr)
 
 class Debugger
   class CmdProcessor
+
+    # SEE ALSO attr's in require_relative's of loop above.
+
     attr_reader   :aliases         # Hash[String] of command names
                                    # indexed by alias name
-    attr_reader   :brkpt           # Breakpoint. If we are stopped at a
-                                   # breakpoint this is the one we
-                                   # found.  (There may be other
-                                   # breakponts that would have caused a stop
-                                   # as well; this is just one of them).
-                                   # If no breakpoint stop this is nil.
-    attr_reader   :brkpts          # BreakpointManager. 
     attr_reader   :before_cmdloop_hooks
     attr_reader   :core            # Debugger core object
     attr_reader   :commands        # Hash[String] of command objects
@@ -118,8 +111,7 @@ class Debugger
                                            'command'))
       load_debugger_commands(cmd_dir)
 
-      irb_cmd = @commands['irb']
-      @autoirb_hook = ['autoirb', Proc.new{|*args| irb_cmd.run(['irb']) if irb_cmd}]
+      hook_initialize(commands)
     end
 
     def canonic_container(container)
@@ -237,12 +229,6 @@ class Debugger
       return false
     end
 
-    def breakpoint?
-      @brkpt = @brkpts.find(@frame.iseq, @frame.pc_offset, @frame.binding)
-      @brkpts.delete_by_brkpt(@brkpt) if @brkpt && @brkpt.temp?
-      return !!@brkpt
-    end
-
     def stepping_skip?
 
       return true if @core.step_count < 0
@@ -296,11 +282,6 @@ class Debugger
       print_location
 
       @before_cmdloop_hooks.run
-
-      # FIXME: do this as a pre-command hook -- which means *writing*
-      # pre-command hooks.
-      # irb_cmd = @commands['irb']
-      # irb_cmd.run(['irb']) if @settings[:autoirb] && irb_cmd
 
       while not @leave_cmd_loop do
         begin

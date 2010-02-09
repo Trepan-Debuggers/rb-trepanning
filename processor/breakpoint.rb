@@ -1,6 +1,23 @@
 require_relative %w(.. app core)
 class Debugger
+
   class CmdProcessor
+
+    attr_reader   :brkpts          # BreakpointManager. 
+
+    attr_reader   :brkpt           # Breakpoint. If we are stopped at a
+                                   # breakpoint this is the one we
+                                   # found.  (There may be other
+                                   # breakponts that would have caused a stop
+                                   # as well; this is just one of them).
+                                   # If no breakpoint stop this is nil.
+
+    def breakpoint?
+      @brkpt = @brkpts.find(@frame.iseq, @frame.pc_offset, @frame.binding)
+      @brkpts.delete_by_brkpt(@brkpt) if @brkpt && @brkpt.temp?
+      return !!@brkpt
+    end
+
     # Does whatever needs to be done to set a breakpoint
     def breakpoint_line(line_number, iseq, temp=false)
       # FIXME: handle breakpoint conditions.

@@ -1,5 +1,6 @@
 class Debugger
   class CmdProcessor
+
     DEFAULT_SETTINGS = {
       :autoeval      => true,  # Ruby eval non-debugger commands
       :autoirb       => false, # Go into IRB in debugger command loop

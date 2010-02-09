@@ -40,6 +40,13 @@ class Debugger
 
       # Could add delete_at and delete if necessary.
     end
+    
+    def hook_initialize(commands)
+      irb_cmd = commands['irb']
+      @autoirb_hook = ['autoirb', 
+                       Proc.new{|*args| irb_cmd.run(['irb']) if irb_cmd}]
+    end
+
   end
 end
 if __FILE__ == $0
