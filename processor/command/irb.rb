@@ -20,7 +20,7 @@ commands these commands don't allow command arguments.
     NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = 'Run interactive Ruby session irb as a command subshell'
   end
-    
+
   # This method runs the command
   def run(args) # :nodoc
     if args.size > 1

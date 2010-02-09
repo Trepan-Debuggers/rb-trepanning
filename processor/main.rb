@@ -24,6 +24,7 @@ class Debugger
                                    # as well; this is just one of them).
                                    # If no breakpoint stop this is nil.
     attr_reader   :brkpts          # BreakpointManager. 
+    attr_reader   :before_cmdloop_hooks
     attr_reader   :core            # Debugger core object
     attr_reader   :commands        # Hash[String] of command objects
                                    # indexed by name
@@ -116,6 +117,9 @@ class Debugger
       cmd_dir = File.expand_path(File.join(File.dirname(__FILE__),
                                            'command'))
       load_debugger_commands(cmd_dir)
+
+      irb_cmd = @commands['irb']
+      @autoirb_hook = ['autoirb', Proc.new{|*args| irb_cmd.run(['irb']) if irb_cmd}]
     end
 
     def canonic_container(container)
@@ -288,16 +292,15 @@ class Debugger
       frame_setup(frame)
       return if !breakpoint? && stepping_skip?
 
-      @before_cmdloop_hooks.run
-
+      @leave_cmd_loop = false
       print_location
 
-      @leave_cmd_loop = false
+      @before_cmdloop_hooks.run
 
       # FIXME: do this as a pre-command hook -- which means *writing*
       # pre-command hooks.
-      irb_cmd = @commands['irb']
-      irb_cmd.run(['irb']) if @settings[:autoirb] && irb_cmd
+      # irb_cmd = @commands['irb']
+      # irb_cmd.run(['irb']) if @settings[:autoirb] && irb_cmd
 
       while not @leave_cmd_loop do
         begin

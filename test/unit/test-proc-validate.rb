@@ -8,7 +8,7 @@ require_relative %w(.. .. app mock)
 $errors = []
 $msgs   = []
 
-# Test Debugger:CmdProcessor Frame portion
+# Test Debugger:CmdProcessor Validation portion
 class TestValidate < Test::Unit::TestCase
 
   def setup
