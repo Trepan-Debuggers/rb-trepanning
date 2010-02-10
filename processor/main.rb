@@ -17,7 +17,7 @@ class Debugger
 
     attr_reader   :aliases         # Hash[String] of command names
                                    # indexed by alias name
-    attr_reader   :before_cmdloop_hooks
+    attr_reader   :cmdloop_prehooks
     attr_reader   :core            # Debugger core object
     attr_reader   :commands        # Hash[String] of command objects
                                    # indexed by name
@@ -81,7 +81,6 @@ class Debugger
     end
 
     def initialize(core, settings={})
-      @before_cmdloop_hooks = Hook.new
       @brkpts          = BreakpointMgr.new
       @brkpt           = nil
       @core            = core
@@ -276,12 +275,14 @@ class Debugger
     def process_commands(frame)
 
       frame_setup(frame)
+
+      @unconditional_prehooks.run
       return if !breakpoint? && stepping_skip?
 
       @leave_cmd_loop = false
-      print_location
+      print_location unless @settings[:trace]
 
-      @before_cmdloop_hooks.run
+      @cmdloop_prehooks.run
 
       while not @leave_cmd_loop do
         begin

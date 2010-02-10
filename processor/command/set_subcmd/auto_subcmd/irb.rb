@@ -12,9 +12,9 @@ class Debugger::Subcommand::SetAutoIrb < Debugger::SetBoolSubSubcommand
   def run(args)
     super
     if @proc.settings[:autoirb]
-      @proc.before_cmdloop_hooks.insert_if_new(-1, *@proc.autoirb_hook)
+      @proc.cmdloop_prehooks.insert_if_new(-1, *@proc.autoirb_hook)
     else
-      @proc.before_cmdloop_hooks.delete_by_name('autoirb')
+      @proc.cmdloop_prehooks.delete_by_name('autoirb')
     end
   end
 
@@ -36,12 +36,10 @@ if __FILE__ == $0
   autox_cmd     = Debugger::SubSubcommand::SetAutoIrb.new(set_cmd.proc, 
                                                           auto_cmd,
                                                           cmd_name)
-#  require_relative %w(.. .. .. .. lib rbdbgr)
-#  dbgr = Debugger.new(:set_restart => true)
-#  dbgr.debugger
-  set_cmd.proc.instance_variable_set('@autoirb_hook', 
-                                     ['autoirb', Proc.new{|*args| puts args}])
-  set_cmd.proc.instance_variable_set('@before_cmdloop_hookirb_hook', [])
+  # require_relative %w(.. .. .. .. lib rbdbgr)
+  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr.debugger
+  set_cmd.proc.hook_initialize(set_cmd.proc.commands)
   subcmd_name = Debugger::Subcommand::SetAutoIrb::PREFIX[1..-1].join('')
   autox_cmd.run([subcmd_name])
   autox_cmd.run([subcmd_name, 'off'])
