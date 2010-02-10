@@ -17,10 +17,10 @@ class Debugger
         subcmd.class.const_set(:SHORT_HELP, short_help)
       end
       
-      msg('  %-12s -- %s' %
+      '  %-12s -- %s' %
           [abbrev_stringify(obj_const(subcmd, :NAME), 
                             obj_const(subcmd, :MIN_ABBREV)),
-           obj_const(subcmd, :SHORT_HELP)])
+           obj_const(subcmd, :SHORT_HELP)]
     end
 
     # We were given cmd without a subcommand; cmd is something
@@ -63,7 +63,7 @@ Long description goes here.'
       puts "***#{mess}"
     end
     def initialize
-      summary_help(self)
+      puts summary_help(self)
       undefined_subcmd('foo', 'bar')
     end
   end

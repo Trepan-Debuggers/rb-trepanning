@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. base subcmd)
 
-class Debugger::Subcommand::ShowBasename < Debugger::ShowBoolSubcommand
+class Debugger::Subcommand::ShowTrace < Debugger::ShowBoolSubcommand
   unless defined?(HELP)
-    HELP = "Show only file basename in showing file names"
-    MIN_ABBREV = 'ba'.size
+    HELP = "Show event tracing"
+    MIN_ABBREV = 'tr'.size
     NAME       = File.basename(__FILE__, '.rb')
   end
 
@@ -18,7 +18,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
-  subcommand = Debugger::Subcommand::ShowBasename.new(cmd)
+  subcommand = Debugger::Subcommand::ShowTrace.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)

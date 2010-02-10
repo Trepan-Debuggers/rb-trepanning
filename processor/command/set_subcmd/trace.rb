@@ -3,7 +3,22 @@ require_relative %w(.. base subcmd)
 
 class Debugger::Subcommand::SetTrace < Debugger::SetBoolSubcommand
   unless defined?(HELP)
-    HELP = "Set to display events"
+    HELP = "Set to display trace events as seen in the debugger.
+
+When 'set trace' is set, calls to the event command processor that are
+will be displayed. This is generally more than those events that one
+might stop at and go into a command loop. For example the 'next',
+'finish', or 'step+' (step different) commands may run several
+intermediate steps before stopping.
+
+However, sometimes full-speed running occurs such as one runs
+'continue'.  So these events will not be shown in tracing. Similarly,
+if the event mask is set not to trap certain events, those events will
+not be shown either.
+
+See also 'set events'.
+"
+
     IN_LIST    = true
     MIN_ABBREV = 'tr'.size
     NAME       = File.basename(__FILE__, '.rb')
