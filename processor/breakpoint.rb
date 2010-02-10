@@ -12,6 +12,11 @@ class Debugger
                                    # as well; this is just one of them).
                                    # If no breakpoint stop this is nil.
 
+    def breakpoint_initialize
+      @brkpts          = BreakpointMgr.new
+      @brkpt           = nil
+    end
+
     def breakpoint?
       @brkpt = @brkpts.find(@frame.iseq, @frame.pc_offset, @frame.binding)
       @brkpts.delete_by_brkpt(@brkpt) if @brkpt && @brkpt.temp?

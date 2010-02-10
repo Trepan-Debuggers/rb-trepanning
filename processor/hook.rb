@@ -4,6 +4,7 @@ class Debugger
     attr_reader :autoirb_hook
     attr_reader :trace_hook
     attr_reader :unconditional_prehooks
+    attr_reader   :cmdloop_prehooks
 
     class Hook
       attr_accessor :list

@@ -17,7 +17,6 @@ class Debugger
 
     attr_reader   :aliases         # Hash[String] of command names
                                    # indexed by alias name
-    attr_reader   :cmdloop_prehooks
     attr_reader   :core            # Debugger core object
     attr_reader   :commands        # Hash[String] of command objects
                                    # indexed by name
@@ -81,8 +80,6 @@ class Debugger
     end
 
     def initialize(core, settings={})
-      @brkpts          = BreakpointMgr.new
-      @brkpt           = nil
       @core            = core
       @dbgr            = core.dbgr
       @hidelevels      = {}
@@ -110,6 +107,7 @@ class Debugger
                                            'command'))
       load_debugger_commands(cmd_dir)
 
+      breakpoint_initialize
       hook_initialize(commands)
     end
 
