@@ -10,7 +10,7 @@ class Debugger::Command::IRBCommand < Debugger::Command
 If -d is added you can get access to debugger frame the global variable
 $rbdbgr_frame. 
 
-irb is extended with methods 'cont', 'n' and 'step' which 
+irb is extended with methods 'cont', 'n', and, 'q', 'step' which 
 run the corresponding debugger commands. In contrast to the real debugger
 commands these commands don't allow command arguments.
 "
@@ -53,6 +53,8 @@ commands these commands don't allow command arguments.
       @proc.step # (1, {})
     when :next
       @proc.next # (1, {})
+    when :quit
+      @proc.quit
     else
       @proc.print_location
     end

@@ -3,15 +3,23 @@ class Debugger::Command::QuitCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
-      'quit [unconditionally] [exit code] - gentle termination
+      'quit[!] [unconditionally] [exit code] - gentle termination
 
 The program being debugged is exited via exit() which runs the Kernel
 at_exit finalizers. If a return code is given, that is the return code
 passed to exit() - presumably the return code that will be passed back
 to the OS. If no exit code is given, 0 is used.
 
+Examples: 
+  quit                 # quit prompting if we are interactive
+  quit conditionally   # quit without prompting
+  quit!                # same as above
+  quit 0               # same as "quit"
+  quit! 1              # unconditional quit setting exit code 1
+
 See also the commands "exit" and "kill".'
 
+    ALIASES      = %w(quit! q q!)
     CATEGORY     = 'support'
     NAME         = File.basename(__FILE__, '.rb')
     MAX_ARGS     = 2  # Need at most this many
@@ -26,6 +34,8 @@ See also the commands "exit" and "kill".'
     unconditional = 
       if args.size > 1 && args[1] == 'unconditionally'
         args.shift
+        true
+      elsif args[0][-1] == '!'
         true
       else
         false

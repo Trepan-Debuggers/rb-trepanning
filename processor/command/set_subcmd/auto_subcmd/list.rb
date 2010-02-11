@@ -12,18 +12,9 @@ class Debugger::Subcommand::SetAutoList < Debugger::SetBoolSubSubcommand
   def run(args)
     super
     if @proc.settings[:autolist]
-      if @proc.before_cmdloop_hooks.select{|h|
-          h[0] == 'autolist'}.empty?
-        cmd = @proc.commands['list']
-        @proc.before_cmdloop_hooks << 
-          ['autolist', 
-           lambda{|*args| cmd.run(*args)}, 
-           [%w(list .)]]
-      end
+      @proc.cmdloop_prehooks.insert_if_new(0, *@proc.autolist_hook)
     else
-      @proc.before_cmdloop_hooks = 
-        @proc.before_cmdloop_hooks.reject{|h|
-          h[0] == 'autolist'}
+      @proc.cmdloop_prehooks.delete_by_name('autolist')
     end
   end
 
@@ -33,6 +24,7 @@ if __FILE__ == $0
   # Demo it.
   require_relative %w(.. .. .. mock)
   require_relative %w(.. .. .. subcmd)
+  require_relative %w(.. .. .. hook)
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
@@ -48,6 +40,7 @@ if __FILE__ == $0
   # require_relative %w(.. .. .. .. lib rbdbgr)
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
+  set_cmd.proc.hook_initialize(set_cmd.proc.commands)
   subcmd_name = Debugger::Subcommand::SetAutoList::PREFIX[1..-1].join('')
   autox_cmd.run([subcmd_name])
   autox_cmd.run([subcmd_name, 'off'])

@@ -25,12 +25,19 @@ module IRB # :nodoc:
         throw :IRB_EXIT, :step
       end
     end
-  end
 
+    # leave rbdbgr
+    class Quit
+      def self.execute(conf)
+        throw :IRB_EXIT, :quit
+      end
+    end
+  end
   if defined?(ExtendCommandBundle)
     ExtendCommandBundle.def_extend_command 'cont', :Continue
-    ExtendCommandBundle.def_extend_command 'n', :Next
+    ExtendCommandBundle.def_extend_command 'n',    :Next
     ExtendCommandBundle.def_extend_command 'step', :Step
+    ExtendCommandBundle.def_extend_command 'q',    :Quit
   end
   
   def self.start_session(binding)

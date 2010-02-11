@@ -40,6 +40,17 @@ class Debugger
         opts.keys.member?(:stop_events)
     end
 
+    def quit
+      @next_level      = 32000 # I'm guessing the stack size can't
+                               # ever reach this
+      @next_thread     = nil
+      @core.step_count = -1    # No more event stepping
+      @leave_cmd_loop  = true  # Break out of the processor command loop.
+      @settings[:autoirb] = false
+      @cmdloop_prehooks.delete_by_name('autoirb')
+      @commands['quit'].run(['quit'])
+    end
+
     def parse_next_step_suffix(step_cmd)
       opts = {}
       case step_cmd[-1..-1]

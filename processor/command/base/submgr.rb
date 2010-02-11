@@ -66,7 +66,11 @@ class Debugger::SubcommandMgr < Debugger::Command
     subcmd_names.each do |name|
       next unless Debugger::SubSubcommand.constants.member?(name.to_sym)
       subcmd_class = "Debugger::SubSubcommand::#{name}.new(self, parent)"
-      cmd = self.instance_eval(subcmd_class)
+      begin
+        cmd = self.instance_eval(subcmd_class)
+      rescue
+        p name
+      end
       cmd_name = cmd.name
       @subcmds.add(cmd)
     end
