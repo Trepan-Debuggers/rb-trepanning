@@ -4,6 +4,16 @@ require 'thread_frame'
 require_relative %w(.. app core)        # core event-handling mechanism
 require_relative %w(.. app default)     # default debugger settings
 require_relative %w(.. interface user)  # user interface (includes I/O)
+
+# SCRIPT_ISEQS__ is like SCRIPT_LINES__ in a patched Ruby 1.9. Setting
+# this variable to a hash causes instruction sequences to be added in
+# this has under their "filename" as a key. More accurately though,
+# the "filename" is instruction sequence name that was given as in the
+# "filename" parameter when the instruction sequence was
+# generated. Each value is an array of instruction sequences that
+# share that name.
+SCRIPT_ISEQS__ = {}
+
 class Debugger
 
   attr_accessor :core         # access to Debugger::Core instance
