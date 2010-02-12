@@ -40,7 +40,7 @@ class Debugger
         opts.keys.member?(:stop_events)
     end
 
-    def quit
+    def quit(cmd='quit')
       @next_level      = 32000 # I'm guessing the stack size can't
                                # ever reach this
       @next_thread     = nil
@@ -48,7 +48,7 @@ class Debugger
       @leave_cmd_loop  = true  # Break out of the processor command loop.
       @settings[:autoirb] = false
       @cmdloop_prehooks.delete_by_name('autoirb')
-      @commands['quit'].run(['quit'])
+      @commands['quit'].run([cmd])
     end
 
     def parse_next_step_suffix(step_cmd)

@@ -200,6 +200,8 @@ class Debugger
             print_location
           else
             msg "EOF - Leaving"
+            ## FIXME: think of something better.
+            quit('quit!')
             return true
           end
         end
