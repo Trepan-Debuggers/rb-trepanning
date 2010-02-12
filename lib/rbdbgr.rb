@@ -13,6 +13,7 @@ require_relative %w(.. interface user)  # user interface (includes I/O)
 # generated. Each value is an array of instruction sequences that
 # share that name.
 SCRIPT_ISEQS__ = {}
+ISEQS__        = {}
 
 class Debugger
 

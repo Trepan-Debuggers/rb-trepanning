@@ -212,6 +212,11 @@ disabled."
 end
 
 if __FILE__ == $0
+  if ARGV.size > 0
+    ISEQS__ = {}
+    ARGV = []
+    load(__FILE__)
+  end
   require_relative %w(.. location)
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
@@ -219,9 +224,6 @@ if __FILE__ == $0
   cmd.proc.instance_variable_set('@remap_container', {})
   LineCache::cache(__FILE__)
   cmd.run(['list'])
-  # require_relative %w(.. .. lib rbdbgr)
-  # dbgr = Debugger.new(:set_restart => true)
-  # dbgr.debugger
   cmd.run(['list', __FILE__ + ':10'])
   puts '--' * 10
   # cmd.run(['list', 'os', '10'])
@@ -270,5 +272,9 @@ if __FILE__ == $0
   disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
   disable_cmd.run(['disable', '1'])
   cmd.run(['list', line.to_s])
+  puts '--' * 10
+
+  ISEQS__['parse_list_cmd'].each{|i| p i.source_container}
+  cmd.run(['list', 'parse_list_cmd'])
   # puts '--' * 10
 end
