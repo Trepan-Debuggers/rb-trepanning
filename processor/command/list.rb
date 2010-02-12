@@ -39,10 +39,12 @@ just something that evaluates to a positive integer.
 
 Some examples:
 
-list 5            # List starting from line 5
+list 5            # List centered around line 5
 list 4+1          # Same as above.
-list foo.rb:5     # List starting from line 5 of foo.rb
+list 5>           # List starting at line 5
+list foo.rb:5     # List centered around line 5 of foo.rb
 list foo.rb 5     # Same as above.
+list foo.rb:5>    # List starting around line 5 of foo.rb
 list foo.rb  5 6  # list lines 5 and 6 of foo.rb
 list foo.rb  5 2  # Same as above, since 2 < 5.
 list foo.rb:5 2   # Same as above
@@ -50,8 +52,9 @@ list FileUtils.cp # List lines around the FileUtils.cp function.
 list .            # List lines centered from where we currently are stopped
 list -            # List lines previous to those just shown
 
-LISTSIZE is the current debugger listsize setting. Use 'set listize'
-or 'show listsize' to see or set the value.
+The number of line to show is controled by the debugger listsize
+setting. Use 'set listsize' or 'show listsize' to see or set the
+value.
 
 The output of the list command give a line number, and some status
 information about the line and the text of the line. Here is some 
@@ -69,7 +72,7 @@ currently stopped. On line 253 there is a breakpoint 1 which is
 enabled, while at line 255 there is an breakpoint 2 which is
 disabled."
 
-    ALIASES       = %w(l)
+    ALIASES       = %w(l list> l>)
     CATEGORY      = 'files'
     MAX_ARGS      = 3
     NAME          = File.basename(__FILE__, '.rb')
@@ -83,7 +86,7 @@ disabled."
   # Parses arguments for the "list" command and returns the tuple:
   # filename, start, last
   # or sets these to nil if there was some problem.
-  def parse_list_cmd(args)
+  def parse_list_cmd(args, listsize, center_correction)
     
     frame = @proc.frame
     
@@ -91,7 +94,6 @@ disabled."
     filename = container[1]
     
     last = nil
-    listsize = settings[:listsize]
     if args.empty? and not frame
       errmsg("No Ruby program loaded.")
       return nil, nil, nil
@@ -103,7 +105,7 @@ disabled."
         first = [1, @proc.line_no - 2*listsize - 1].max
       elsif args[0] == '.'
         return no_frame_msg unless @proc.line_no
-        first = [1, @proc.frame_line - listsize/2].max
+        first = [1, @proc.frame_line - center_correction].max
       else
         modfunc, container, first = @proc.parse_position(args[0])
         if first == nil and modfunc == nil
@@ -112,7 +114,7 @@ disabled."
         end
         if args.size == 1
           first = 1 if !first and modfunc
-          first = [1, first - (listsize/2)].max
+          first = [1, first - center_correction].max
         elsif args.size == 2 or (args.size == 3 and modfunc)
           msg = 'Starting line expected, got %s.' % args[-1]
           num = @proc.get_an_int(args[1], msg)
@@ -146,9 +148,9 @@ disabled."
         end
       end
     elsif !@proc.line_no and frame
-      first = [1, @proc.frame_line - listsize/2].max
+      first = [1, @proc.frame_line - center_correction].max
     else
-      first = @proc.line_no + 1
+      first = [1, @proc.line_no - center_correction].max + 1
     end
     last = first + listsize - 1 unless last
   
@@ -161,7 +163,16 @@ disabled."
   end
     
   def run(args)
-    container, first, last = parse_list_cmd(args[1..-1])
+    listsize = settings[:listsize]
+    center_correction = 
+      if args[0][-1..-1] == '>'
+        0
+      else
+        listsize / 2
+      end
+
+    container, first, last = 
+      parse_list_cmd(args[1..-1], listsize, center_correction)
     frame = @proc.frame
     return unless container
     breaklist = @proc.brkpts.line_breaks(container)
@@ -212,69 +223,74 @@ disabled."
 end
 
 if __FILE__ == $0
-  if ARGV.size > 0
+  if  not (ARGV.size == 1 && ARGV[0] == 'noload')
     ISEQS__ = {}
-    ARGV = []
+    ARGV[0..-1] = ['noload']
     load(__FILE__)
+  else    
+    require_relative %w(.. location)
+    require_relative %w(.. mock)
+    name = File.basename(__FILE__, '.rb')
+    dbgr, cmd = MockDebugger::setup(name)
+    cmd.proc.instance_variable_set('@remap_container', {})
+    LineCache::cache(__FILE__)
+    cmd.run(['list'])
+    cmd.run(['list', __FILE__ + ':10'])
+    puts '--' * 10
+    # cmd.run(['list', 'os', '10'])
+    # cmd.proc.frame = sys._getframe()
+    # cmd.proc.setup()
+    # puts '--' * 10
+    # cmd.run(['list'])
+    # puts '--' * 10
+    cmd.run(['list', '.'])
+    puts '--' * 10
+    cmd.run(['list', '10'])
+    puts '--' * 10
+    # cmd.run(['list', '9+1'])
+    # puts '--' * 10
+    cmd.run(['list', '10>'])
+    puts '--' * 10
+    cmd.run(['list', '1000'])
+    def foo()
+      return 'bar'
+    end
+    cmd.run(['list', 'foo'])
+    puts '--' * 10
+
+    p = Proc.new do 
+      |x,y| x + y
+    end
+    cmd.run(['list', 'p'])
+    puts '--' * 10
+
+    # puts '--' * 10
+    # cmd.run(['list', 'os.path', '15'])
+    # puts '--' * 10
+    # cmd.run(['list', 'os.path', '30', '3'])
+    # puts '--' * 10
+    # cmd.run(['list', 'os.path', '40', '50'])
+    # puts '--' * 10
+    # cmd.run(['list', os.path.abspath(__file__)+':3', '4'])
+    # puts '--' * 10
+    # cmd.run(['list', os.path.abspath(__file__)+':3', '12-10'])
+    # cmd.run(['list', 'os.path:5'])
+
+    require 'thread_frame'
+    tf = RubyVM::ThreadFrame.current
+    cmd.proc.frame_setup(tf)
+    brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
+    brkpt_cmd.run(['break'])
+    line = __LINE__
+    cmd.run(['list', __LINE__.to_s])
+    puts '--' * 10
+    disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
+    disable_cmd.run(['disable', '1'])
+    cmd.run(['list', line.to_s])
+    puts '--' * 10
+
+    ISEQS__['parse_list_cmd'].each{|i| p i.source_container}
+    cmd.run(['list', 'parse_list_cmd'])
+    # puts '--' * 10
   end
-  require_relative %w(.. location)
-  require_relative %w(.. mock)
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  cmd.proc.instance_variable_set('@remap_container', {})
-  LineCache::cache(__FILE__)
-  cmd.run(['list'])
-  cmd.run(['list', __FILE__ + ':10'])
-  puts '--' * 10
-  # cmd.run(['list', 'os', '10'])
-  # cmd.proc.frame = sys._getframe()
-  # cmd.proc.setup()
-  # puts '--' * 10
-  # cmd.run(['list'])
-  # puts '--' * 10
-  cmd.run(['list', '.'])
-  puts '--' * 10
-  cmd.run(['list', '10'])
-  puts '--' * 10
-  cmd.run(['list', '1000'])
-  def foo()
-     return 'bar'
-  end
-  cmd.run(['list', 'foo'])
-  puts '--' * 10
-
-  p = Proc.new do 
-    |x,y| x + y
-  end
-  cmd.run(['list', 'p'])
-  puts '--' * 10
-
-  # puts '--' * 10
-  # cmd.run(['list', 'os.path', '15'])
-  # puts '--' * 10
-  # cmd.run(['list', 'os.path', '30', '3'])
-  # puts '--' * 10
-  # cmd.run(['list', 'os.path', '40', '50'])
-  # puts '--' * 10
-  # cmd.run(['list', os.path.abspath(__file__)+':3', '4'])
-  # puts '--' * 10
-  # cmd.run(['list', os.path.abspath(__file__)+':3', '12-10'])
-  # cmd.run(['list', 'os.path:5'])
-
-  require 'thread_frame'
-  tf = RubyVM::ThreadFrame.current
-  cmd.proc.frame_setup(tf)
-  brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
-  brkpt_cmd.run(['break'])
-  line = __LINE__
-  cmd.run(['list', __LINE__.to_s])
-  puts '--' * 10
-  disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
-  disable_cmd.run(['disable', '1'])
-  cmd.run(['list', line.to_s])
-  puts '--' * 10
-
-  ISEQS__['parse_list_cmd'].each{|i| p i.source_container}
-  cmd.run(['list', 'parse_list_cmd'])
-  # puts '--' * 10
 end

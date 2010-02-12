@@ -35,7 +35,8 @@ class TestCommandBreak < Test::Unit::TestCase
      [@name, 'foo', (__LINE__-3).to_s]
     ].each_with_index do |args, i|
       @my_cmd.run(args)
-      assert_equal(true, @cmdproc.errmsgs.empty?)
+      assert_equal(true, @cmdproc.errmsgs.empty?,
+                   @cmdproc.errmsgs)
       assert_equal(0, 
                    @cmdproc.msgs[0] =~ /^Breakpoint #{i+4} set at line \d+\n\tin file .*\n.* foo.$/)
       reset_cmdproc_vars
