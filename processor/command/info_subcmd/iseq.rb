@@ -21,10 +21,14 @@ Examples:
   end
 
   def run(args)
-    if args.empty? || '.' == args[2]
+    iseq_name = args[2]
+    if args.empty? || '.' == iseq_name
       iseq = frame = @proc.frame.iseq
+    elsif ISEQS__.member?(iseq_name)
+      # FIXME: do something if there is more than one
+      iseq = ISEQS__[iseq_name][0]
     else
-      iseq = @proc.method_iseq(args[2])
+      iseq = @proc.method_iseq(iseq_name)
     end
     
     if iseq
@@ -32,7 +36,7 @@ Examples:
       %w(name arg_block arg_opts arg_post_len arg_rest arg_simple
          argc arity iseq_size local_size orig
          source_container).each do |field|
-        msg("\t#{field}: %s" % iseq.send(field))
+        msg("\t#{field}: %s" % iseq.send(field).inspect)
       end
       if iseq.brkpts
         if iseq.brkpts.empty?
