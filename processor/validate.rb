@@ -93,10 +93,9 @@ class Debugger
     end
 
     def object_iseq(object_string)
-      # if ISEQS__.member?(object_string)
-      #   ISEQS__[object_string].detect{|iseq| 'file' == iseq.source_container[0]}
-      # elsif debug_eval_no_errmsg("#{object_string}.respond_to?('iseq')")
-      if debug_eval_no_errmsg("#{object_string}.respond_to?('iseq')")
+      if 1 == ISEQS__[object_string].size
+         ISEQS__[object_string][0]
+      elsif debug_eval_no_errmsg("#{object_string}.respond_to?('iseq')")
         debug_eval_no_errmsg("#{object_string}.iseq")
       else
         parts = object_string.split(/[.]/)

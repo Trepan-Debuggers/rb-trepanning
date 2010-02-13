@@ -65,17 +65,25 @@ Type "help" followed by command name for full documentation.
         msg columnize_commands(@proc.commands.keys.sort)
       elsif CATEGORIES.member?(cmd_name)
         show_category(args[1], args[2..-1])
-      elsif @proc.commands.member?(cmd_name)
-        cmd_obj = @proc.commands[cmd_name]
+      elsif @proc.commands.member?(cmd_name) or @proc.aliases.member?(cmd_name)
+        real_name = 
+          if @proc.commands.member?(cmd_name) 
+            cmd_name
+          else
+            @proc.aliases[cmd_name]
+          end
+        cmd_obj = @proc.commands[real_name]
         help_text = 
           cmd_obj.respond_to?(:help) ? cmd_obj.help(args) : 
           cmd_obj.class.const_get(:HELP)
-        msg(help_text) if help_text
-        if cmd_obj.class.constants.member?(:ALIASES)
-          msg "Aliases: #{cmd_obj.class.const_get(:ALIASES).join(', ')}"
+        if help_text
+          msg(help_text) 
+          if cmd_obj.class.constants.member?(:ALIASES)
+            msg "Aliases: #{cmd_obj.class.const_get(:ALIASES).join(', ')}"
+          end
         end
       else 
-        matches = @proc.commands.keys.grep(/^#{cmd_name}/).sort
+        matches = @proc.commands.keys.grep(/^#{cmd_name}/).sort rescue []
         if matches.empty?
           errmsg("No commands found matching /^#{cmd_name}/. Try \"help\".")
         else
@@ -132,4 +140,6 @@ if __FILE__ == $0
 
   puts '=' * 40
   cmd.run %w(help s.*)
+  puts '=' * 40
+  cmd.run %w(help s<>)
 end
