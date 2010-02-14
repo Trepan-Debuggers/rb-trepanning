@@ -34,7 +34,7 @@ class Debugger
     def columnize_numbers(commands)
       width = settings[:width]
       Columnize::columnize(commands, width, ', ',
-                           true, false, ' ' * 2).chomp
+                           false, false, ' ' * 2).chomp
     end
 
     # FIXME: probably there is a way to do the delegation to proc methods

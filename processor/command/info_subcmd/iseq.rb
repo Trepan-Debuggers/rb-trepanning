@@ -59,6 +59,8 @@ end
 
 if __FILE__ == $0
   # Demo it.
+  ISEQS__ = {}
+  ISEQS__ = {}
   require_relative %w(.. .. mock)
   require_relative %w(.. .. subcmd)
   name = File.basename(__FILE__, '.rb')
