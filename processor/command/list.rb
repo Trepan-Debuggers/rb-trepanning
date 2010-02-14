@@ -5,19 +5,26 @@ require_relative %w(base cmd)
 class Debugger::Command::ListCommand < Debugger::Command
   unless defined?(HELP)
     HELP = 
-"list [MODULE] [FIRST [NUM]]
-list LOCATION [NUM]
+"list[>] [MODULE] [FIRST [NUM]]
+list[>] LOCATION [NUM]
 
 List source code. 
 
-Without arguments, print LISTSIZE lines centered around the current
+Without arguments, prints lines centered around the current
 line. If this is the first list command issued since the debugger
 command loop was entered, then the current line is the current
 frame. If a subsequent list command was issued with no intervening
 frame changing, then that is start the line after we last one
 previously shown.
 
-\"list -\" shows LISTSIZE lines before a previous listing. 
+If the command has a '>' suffix, then lines centering is disabled and
+listing begins at the specificed location.
+
+The number of line to show is controled by the debugger listsize
+setting. Use 'set listsize' or 'show listsize' to see or set the
+value.
+
+\"list -\" shows lines before a previous listing. 
 
 A LOCATION is a either 
   - number, e.g. 5, 
@@ -29,10 +36,10 @@ A LOCATION is a either
   - a '-' for the lines before the current line number
 
 If the location form is used with a subsequent parameter, the
-parameter is the starting line number and LISTSIZE lines are
-used. When there two numbers are given, the last number value is
-treated as a stopping line unless it is less than the start line, in
-which case it is taken to mean the number of lines to list instead.
+parameter is the starting line number.  When there two numbers are
+given, the last number value is treated as a stopping line unless it
+is less than the start line, in which case it is taken to mean the
+number of lines to list instead.
 
 Wherever a number is expected, it does not need to be a constant --
 just something that evaluates to a positive integer.
@@ -51,10 +58,6 @@ list foo.rb:5 2   # Same as above
 list FileUtils.cp # List lines around the FileUtils.cp function.
 list .            # List lines centered from where we currently are stopped
 list -            # List lines previous to those just shown
-
-The number of line to show is controled by the debugger listsize
-setting. Use 'set listsize' or 'show listsize' to see or set the
-value.
 
 The output of the list command give a line number, and some status
 information about the line and the text of the line. Here is some 
