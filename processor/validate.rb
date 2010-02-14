@@ -1,5 +1,7 @@
 # Debugger command input validation routines.
 # A String is usually passed in.
+
+require_relative %w(.. app file)
 class Debugger
   class CmdProcessor
 
@@ -203,25 +205,12 @@ class Debugger
       if LineCache::cached?(arg)
         return nil, [container && container[0], canonic_file(arg)], 1 
       else
-        # Is it found in SCRIPT_ISEQS? 
-        filename_pat = Regexp.escape(arg)
-        if filename_pat[0..0] == File::SEPARATOR
-          # An absolute filename has to match at the beginning and
-          # the end.
-          filename_pat = "^#{filename_pat}$"
-        else
-          # An nonabsolute filename has to match either at the
-          # beginning of the file name or have a path separator before
-          # the supplied part, e.g. "file.rb" does not match "myfile.rb"
-          # but matches "my/file.rb"
-          filename_pat = "(?:^|[/])#{filename_pat}$"
-        end
-        matches = SCRIPT_ISEQS__.keys.grep(/#{filename_pat}/)
+        matches = find_scripts(arg)
         if matches.size > 1
           if show_errmsg
             errmsg "#{arg} is matches several files:"
             errmsg Columnize::columnize(matches.sort, 
-                                        @settings[width], ' ' * 4, 
+                                        @settings[:width], ' ' * 4, 
                                         true, true, ' ' * 2).chomp
           end
           return nil, nil, nil

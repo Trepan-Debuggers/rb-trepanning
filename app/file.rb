@@ -1,30 +1,20 @@
 # -*- coding: utf-8 -*-
 # Things related to file/module status
 
-# lookupmodule()->(module, file) translates a possibly incomplete
-# file or module name into an absolute file name. nil can be
-# returned for either of the values positions of module or file when
-#  no or module or file is found.
-def lookupmodule(name)
-  if sys.modules.get(name)
-    return sys.modules[name], sys.modules[name].__FILE__
+def find_scripts(filename)
+  filename_pat = Regexp.escape(filename)
+  if filename_pat[0..0] == File::SEPARATOR
+    # An absolute filename has to match at the beginning and
+    # the end.
+    filename_pat = "^#{filename_pat}$"
+  else
+    # An nonabsolute filename has to match either at the
+    # beginning of the file name or have a path separator before
+    # the supplied part, e.g. "file.rb" does not match "myfile.rb"
+    # but matches "my/file.rb"
+    filename_pat = "(?:^|[/])#{filename_pat}$"
   end
-  return nil, name if os.path.isabs(name) && File.readable?(name)
-  f = File.join(sys.path[0], name)
-  return nil, f if File.readable?(f)
-  root, ext = os.path.splitext(name)
-  if ext == ''
-    name += '.rb'
-  end
-  return nil, name if os.path.isabs(name)
-  sys.path.each do |dirname| 
-    while os.path.islink(dirname)
-      dirname = os.readlink(dirname)
-    end
-    fullname = File.join(dirname, name)
-    return nil, fullname if File.readable?(fullname)
-  end
-  return nil, nil
+  return SCRIPT_ISEQS__.keys.grep(/#{filename_pat}/)
 end
 
 # parse_position(errmsg, arg)->(fn, name, lineno)
@@ -57,7 +47,16 @@ end
 
 # Demo it
 if __FILE__ == $0
-  # print "lookupmodule('os.path'): ", lookupmodule('os.path')
-  # print "lookupmodule(__FILE__): ", lookupmodule(__FILE__)
-  # print "lookupmodule('fafdsadsa'): ", lookupmodule('fafdsafdsa')
+  if  not (ARGV.size == 1 && ARGV[0] == 'noload')
+    ISEQS__        = {}
+    SCRIPT_ISEQS__ = {}
+    ARGV[0..-1]    = ['noload']
+    load(__FILE__)
+  else    
+    load 'tmpdir.rb'
+    %w(tmpdir.rb /tmpdir.rb sometmpdir.rb).each do |filename|
+      p find_scripts(filename)
+    end
+    p find_scripts(__FILE__)
+  end
 end

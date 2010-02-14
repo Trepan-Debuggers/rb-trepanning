@@ -4,8 +4,10 @@ require_relative %w(.. base subcmd)
 
 class Debugger::Subcommand::InfoFile < Debugger::Subcommand
   unless defined?(HELP)
+    DEFAULT_FILE_ARGS = %w(size sha1)
+
     HELP =
-'info file [{FILENAME|.} [all | brkpts | iseq | sha1 | size | stat]]
+"info file [{FILENAME|.} [all | brkpts | iseq | sha1 | size | stat]]
 
 Show information about the current file. If no filename is given and
 the program is running then the current file associated with the
@@ -20,7 +22,9 @@ size   -- The number of lines in the file.
 stat   -- File.stat information
 
 all    -- All of the above information.
-'
+
+If no sub-options are given #{DEFAULT_FILE_ARGS.join(' ')} are assumed.
+"
     MIN_ABBREV   = 'fi'.size  # Note we have "info frame"
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = false
@@ -30,7 +34,7 @@ all    -- All of the above information.
   # Get file information
   def run(args)
     return if args.size < 2
-    args += %w(. size sha1) if args.size == 2
+    args << '.' if 2 == args.size 
     filename = 
       if '.' == args[2]
         if not @proc.frame
@@ -38,11 +42,12 @@ all    -- All of the above information.
           return false
           nil
         else
-          @proc.frame.source_container[1]
+          File.expand_path(@proc.frame.source_container[1])
         end
       else
         args[2]
       end
+    args += DEFAULT_FILE_ARGS if args.size == 3
 
     m = filename + ' is'
     canonic_name = LineCache::map_file(filename)
@@ -53,11 +58,17 @@ all    -- All of the above information.
       end
       m += '.'
       msg(m)
-    elsif SCRIPT_ISEQS__.member?(filename)
-      msg(m + ' not previously cached in debugger.')
-      msg('Instruction sequence for file found; now cached.')
-      LineCache::cache(filename)
-      canonic_name = filename
+    elsif !(matches = find_scripts(filename)).empty?
+      if (matches.size > 1)
+        msg("Multiple files found:")
+        matches.each { |filename| msg("\t%s" % filename) }
+        return
+      else
+        msg('File "%s" just now cached.' % filename)
+        LineCache::cache(matches[0])
+        LineCache::remap_file(matches[0], filename)
+        canonic_name = matches[0]
+      end
     else
       msg(m + ' not cached in debugger.')
       return
@@ -68,7 +79,7 @@ all    -- All of the above information.
 
       if %w(all size).member?(arg) 
         unless seen[:size]
-          max_line = LineCache::size(filename)
+          max_line = LineCache::size(canonic_name)
           msg "File has %d lines." % max_line if max_line
         end
         processed_arg = seen[:size] = true
@@ -94,7 +105,7 @@ all    -- All of the above information.
       if %w(all iseq).member?(arg) 
         unless seen[:iseq]
           if SCRIPT_ISEQS__.member?(canonic_name)
-            msg("Instruction sequences inside file:")
+            msg("File contains instruction sequences:")
             SCRIPT_ISEQS__[canonic_name].each do |iseq|
               msg("\t %s %s" % [iseq, iseq.name.inspect])
             end 
@@ -134,14 +145,13 @@ if __FILE__ == $0
     subcommand = Debugger::Subcommand::InfoFile.new(cmd)
     testcmdMgr = Debugger::Subcmd.new(subcommand)
     
-
-    subcommand.run(%w(info file nothere))
-    puts '-' * 40
-#    require_relative %w(.. .. .. lib rbdbgr)
-#    dbgr = Debugger.new(:set_restart => true)
-#    dbgr.debugger
-    subcommand.run(%w(info file . all))
-    puts '-' * 40
-    subcommand.run(%w(info file . lines sha1 sha1))
+    [%w(info file nothere),
+     %w(info file .),
+     %w(info file),
+     %w(info file file.rb),
+     %w(info file . lines sha1 sha1)].each do |args|
+      subcommand.run(args)
+      puts '-' * 40
+    end
   end
 end
