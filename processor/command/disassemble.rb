@@ -66,8 +66,13 @@ Examples:
         marked_disassemble(@proc.frame.iseq, include_children)
         return
       end
-    else
-      iseq = @proc.object_iseq(args[1])
+    else 
+      if !(matches = find_iseqs(args[1])).empty?
+        # FIXME: do something if there is more than one
+        iseq = matches[0]
+      else        
+        iseq = @proc.object_iseq(args[1])
+      end
       marked_disassemble(iseq, include_children) if iseq
       return
     end

@@ -17,6 +17,10 @@ def find_scripts(filename)
   return SCRIPT_ISEQS__.keys.grep(/#{filename_pat}/)
 end
 
+def find_iseqs(name)
+  ISEQS__[name]
+end
+
 # parse_position(errmsg, arg)->(fn, name, lineno)
 #    
 #  Parse arg as [filename|module:]lineno

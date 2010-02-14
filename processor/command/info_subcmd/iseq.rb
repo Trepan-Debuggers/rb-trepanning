@@ -24,9 +24,9 @@ Examples:
     iseq_name = args[2]
     if args.empty? || '.' == iseq_name
       iseq = frame = @proc.frame.iseq
-    elsif ISEQS__.member?(iseq_name)
+    elsif !(matches = find_iseqs(iseq_name)).empty?
       # FIXME: do something if there is more than one
-      iseq = ISEQS__[iseq_name][0]
+      iseq = matches[0]
     else
       iseq = @proc.method_iseq(iseq_name)
     end
@@ -60,7 +60,7 @@ end
 if __FILE__ == $0
   # Demo it.
   ISEQS__ = {}
-  ISEQS__ = {}
+
   require_relative %w(.. .. mock)
   require_relative %w(.. .. subcmd)
   name = File.basename(__FILE__, '.rb')
