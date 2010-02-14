@@ -12,8 +12,10 @@ require_relative %w(.. interface user)  # user interface (includes I/O)
 # "filename" parameter when the instruction sequence was
 # generated. Each value is an array of instruction sequences that
 # share that name.
-SCRIPT_ISEQS__ = {}
-ISEQS__        = {}
+SCRIPT_ISEQS__ = {} unless 
+  defined?(SCRIPT_ISEQS__) && SCRIPT_ISEQS__.is_a?(Hash)
+ISEQS__        = {} unless 
+  defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
 class Debugger
 

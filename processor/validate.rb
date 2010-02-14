@@ -187,7 +187,7 @@ class Debugger
     # See if arg is a line number, function name, or module name.
     # Return what we've found. nil can be returned as a value in
     # the triple.
-    def parse_position_one_arg(arg, old_mod=nil, show_errmsg)
+    def parse_position_one_arg(arg, old_mod=nil, show_errmsg=true)
       modfunc, filename = nil, nil, nil
       begin
         # First see if argument is an integer
@@ -200,8 +200,36 @@ class Debugger
       end
 
       # Next see if argument is a file name 
-      return nil, [container && container[0], canonic_file(arg)], 1 if 
-        LineCache::cached?(arg)
+      if LineCache::cached?(arg)
+        return nil, [container && container[0], canonic_file(arg)], 1 
+      else
+        # Is it found in SCRIPT_ISEQS? 
+        filename_pat = Regexp.escape(arg)
+        if filename_pat[0..0] == File::SEPARATOR
+          # An absolute filename has to match at the beginning and
+          # the end.
+          filename_pat = "^#{filename_pat}$"
+        else
+          # An nonabsolute filename has to match either at the
+          # beginning of the file name or have a path separator before
+          # the supplied part, e.g. "file.rb" does not match "myfile.rb"
+          # but matches "my/file.rb"
+          filename_pat = "(?:^|[/])#{filename_pat}$"
+        end
+        matches = SCRIPT_ISEQS__.keys.grep(/#{filename_pat}/)
+        if matches.size > 1
+          if show_errmsg
+            errmsg "#{arg} is matches several files:"
+            errmsg Columnize::columnize(matches.sort, 
+                                        @settings[width], ' ' * 4, 
+                                        true, true, ' ' * 2).chomp
+          end
+          return nil, nil, nil
+        elsif matches.size == 1
+          LineCache::cache(matches[0])
+          return nil, ['file', matches[0]], 1
+        end
+      end
 
       # How about a method name with an instruction sequence?
       iseq = object_iseq(arg)
@@ -211,7 +239,10 @@ class Debugger
         return arg, ['file', canonic_file(filename)], line_no
       end
 
-      errmsg("#{arg} is not a line number, read-in filename or method that we can get location information about")
+      if show_errmsg
+        errmsg("#{arg} is not a line number, read-in filename or method " +
+               "we can get location information about")
+      end
       return nil, nil, nil
     end
   end
@@ -219,20 +250,32 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require 'thread_frame'
-  require_relative %w(.. lib mock)
-  require_relative %w(main) # Have to include before defining CmdProcessor!
-                            # FIXME
+  if  not (ARGV.size == 1 && ARGV[0] == 'noload')
+    ISEQS__        = {}
+    SCRIPT_ISEQS__ = {}
+    ARGV[0..-1]    = ['noload']
+    load(__FILE__)
+  else    
+    require 'thread_frame'
+    require_relative %w(.. app mock)
+    require_relative %w(main) # Have to include before defining CmdProcessor!
+                              # FIXME
 
-  proc = Debugger::CmdProcessor.new(Debugger::MockCore.new())
-  proc.frame_setup(RubyVM::ThreadFrame.current)
-  onoff = %w(1 0 on off)
-  onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }
-  %w(1 1E bad 1+1 -5).each do |val| 
-    puts "get_int_noerr(#{val}) = #{proc.get_int_noerr(val).inspect}" 
+    proc = Debugger::CmdProcessor.new(Debugger::MockCore.new())
+    proc.frame_setup(RubyVM::ThreadFrame.current)
+    onoff = %w(1 0 on off)
+    onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }
+    %w(1 1E bad 1+1 -5).each do |val| 
+      puts "get_int_noerr(#{val}) = #{proc.get_int_noerr(val).inspect}" 
+    end
+    def foo; 5 end
+    puts proc.object_iseq('food').inspect
+    puts proc.object_iseq('foo').inspect
+    puts proc.object_iseq('proc.method_iseq').inspect
+    
+    # require_relative %w(.. lib rbdbgr)
+    # dbgr = Debugger.new(:set_restart => true)
+    # dbgr.debugger
+    puts proc.parse_position_one_arg('tmpdir.rb').inspect
   end
-  def foo; 5 end
-  puts proc.object_iseq('food').inspect
-  puts proc.object_iseq('foo').inspect
-  puts proc.object_iseq('proc.method_iseq').inspect
 end

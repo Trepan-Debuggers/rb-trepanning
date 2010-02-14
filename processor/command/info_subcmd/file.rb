@@ -121,9 +121,9 @@ end
 
 if __FILE__ == $0
   if  not (ARGV.size == 1 && ARGV[0] == 'noload')
-    ISEQS__     = {}
+    ISEQS__        = {}
     SCRIPT_ISEQS__ = {}
-    ARGV[0..-1] = ['noload']
+    ARGV[0..-1]    = ['noload']
     load(__FILE__)
   else    
     require_relative %w(.. .. mock)

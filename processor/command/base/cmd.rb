@@ -2,6 +2,7 @@
 # Base class of all commands. Code common to all commands is here.
 # Note: don't end classname with Command (capital C) since main
 # will think this a command name like QuitCommand 
+require 'columnize'
 
 class Debugger
   class Command

@@ -119,22 +119,26 @@ disabled."
           first = 1 if !first and modfunc
           first = [1, first - center_correction].max
         elsif args.size == 2 or (args.size == 3 and modfunc)
-          msg = 'Starting line expected, got %s.' % args[-1]
-          num = @proc.get_an_int(args[1], msg)
-          return nil, nil, nil if num is nil
+          opts = {
+            :msg_on_error => 
+            'Starting line expected, got %s.' % args[-1]
+          }
+          num = @proc.get_an_int(args[1], opts)
+
+          return nil, nil, nil unless num 
           if modfunc
             if first
               first = num
               if args.size == 3 and modfunc
-                msg = ('last or count parameter expected, ' +
-                       'got: %s.' % args[2])
-                last = @proc.get_an_int(args[2], msg)
+                opts[:msg_on_error] = ('last or count parameter expected, ' +
+                                       'got: %s.' % args[2])
+                last = @proc.get_an_int(args[2], opts)
               end
             else
               last = num
             end
           else
-            last = num
+            first = num - center_correction
           end
           if last and last < first
             # Assume last is a count rather than an end line number
@@ -183,7 +187,7 @@ disabled."
     # We now have range information. Do the listing.
     max_line = LineCache::size(container[1])
     unless max_line 
-      errmsg('No file %s found' % container[1])
+      errmsg('File "%s" not found.' % container[1])
       return
     end
 
@@ -227,8 +231,9 @@ end
 
 if __FILE__ == $0
   if  not (ARGV.size == 1 && ARGV[0] == 'noload')
-    ISEQS__ = {}
-    ARGV[0..-1] = ['noload']
+    ISEQS__        = {}
+    SCRIPT_ISEQS__ = {}
+    ARGV[0..-1]    = ['noload']
     load(__FILE__)
   else    
     require_relative %w(.. location)
@@ -239,33 +244,35 @@ if __FILE__ == $0
     LineCache::cache(__FILE__)
     cmd.run(['list'])
     cmd.run(['list', __FILE__ + ':10'])
-    puts '--' * 10
-    # cmd.run(['list', 'os', '10'])
+
+    def run_cmd(cmd, args)
+      seps = '--' * 10
+      puts "%s %s %s" % [seps, args.join(' '), seps]
+      cmd.run(args)
+    end
+      
+
+    load 'tmpdir.rb'
+    run_cmd(cmd, %w(list tmpdir.rb 10))
+    run_cmd(cmd, %w(list tmpdir.rb))
+
     # cmd.proc.frame = sys._getframe()
     # cmd.proc.setup()
-    # puts '--' * 10
     # cmd.run(['list'])
-    # puts '--' * 10
-    cmd.run(['list', '.'])
-    puts '--' * 10
-    cmd.run(['list', '10'])
-    puts '--' * 10
+
+    run_cmd(cmd, %w(list .))
+    run_cmd(cmd, %w(list 30))
+
     # cmd.run(['list', '9+1'])
-    # puts '--' * 10
-    cmd.run(['list', '10>'])
-    puts '--' * 10
-    cmd.run(['list', '1000'])
-    def foo()
-      return 'bar'
-    end
-    cmd.run(['list', 'foo'])
-    puts '--' * 10
+
+    run_cmd(cmd, %w(list> 10))
+    run_cmd(cmd, %w(list 3000))
+    run_cmd(cmd, %w(list run_cmd))
 
     p = Proc.new do 
       |x,y| x + y
     end
-    cmd.run(['list', 'p'])
-    puts '--' * 10
+    run_cmd(cmd, %w(list p))
 
     # puts '--' * 10
     # cmd.run(['list', 'os.path', '15'])
