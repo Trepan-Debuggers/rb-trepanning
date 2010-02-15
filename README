@@ -6,7 +6,7 @@ Running if rbdbgr is installed:
 
   rbdbgr ruby-program [program args]
 
-Runing from inside irb:
+Running from inside irb:
   require 'rbdbgr'
   Debugger.debug { your code }
 
