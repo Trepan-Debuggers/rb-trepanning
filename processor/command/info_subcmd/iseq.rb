@@ -28,7 +28,7 @@ Examples:
       # FIXME: do something if there is more than one
       iseq = matches[0]
     else
-      iseq = @proc.method_iseq(iseq_name)
+      iseq = nil
     end
     
     if iseq

@@ -276,7 +276,7 @@ if __FILE__ == $0
     puts proc.object_iseq('foo').inspect
 
     puts proc.object_iseq('foo@validate.rb').inspect
-    puts proc.object_iseq('proc.method_iseq').inspect
+    puts proc.object_iseq('proc.object_iseq').inspect
     
     puts proc.parse_position_one_arg('tmpdir.rb').inspect
   end
