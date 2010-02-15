@@ -6,6 +6,10 @@ Running if rbdbgr is installed:
 
   rbdbgr ruby-program [program args]
 
+Runing from inside irb:
+  require 'rbdbgr'
+  Debugger.debug { your code }
+
 To call from inside a Ruby program, there is one-time setup that 
 needs to be done first:
 

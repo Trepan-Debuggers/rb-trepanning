@@ -157,7 +157,7 @@ disabled."
     elsif !@proc.line_no and frame
       first = [1, @proc.frame_line - center_correction].max
     else
-      first = [1, @proc.line_no - center_correction].max + 1
+      first = [1, @proc.line_no - center_correction].max 
     end
     last = first + listsize - 1 unless last
   

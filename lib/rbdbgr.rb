@@ -86,8 +86,9 @@ class Debugger
     if block
       start
       # I don't think yield or block.call is quite right.
-      yield   # Not: block.call(self) ? 
+      ret = yield   # Not: block.call(self) ? 
       stop
+      return ret
     elsif opts[:immediate]
       # Stop immediately, but don't show in the call stack the
       # the position of the call we make below, i.e. set the frame
@@ -111,6 +112,11 @@ class Debugger
   # Remove all of our trace events
   def stop(opts={})
     @trace_filter.set_trace_func(nil)
+  end
+
+  def self.debug(opts={}, &block)
+    mydbg = Debugger.new()
+    mydbg.debugger(opts, &block)
   end
 end
 
