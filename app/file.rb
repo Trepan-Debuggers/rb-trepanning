@@ -1,24 +1,39 @@
 # -*- coding: utf-8 -*-
 # Things related to file/module status
+require 'thread_frame'
+
+def file_match_pat(filename)
+  prefix = 
+    if filename[0..0] == File::SEPARATOR
+      # An absolute filename has to match at the beginning and
+      # the end.
+      '^'
+    else
+      # An nonabsolute filename has to match either at the
+      # beginning of the file name or have a path separator before
+      # the supplied part, e.g. "file.rb" does not match "myfile.rb"
+      # but matches "my/file.rb"
+      '(?:^|[/])'
+    end
+  "#{prefix}#{Regexp.escape(filename)}$"
+end
 
 def find_scripts(filename)
-  filename_pat = Regexp.escape(filename)
-  if filename_pat[0..0] == File::SEPARATOR
-    # An absolute filename has to match at the beginning and
-    # the end.
-    filename_pat = "^#{filename_pat}$"
-  else
-    # An nonabsolute filename has to match either at the
-    # beginning of the file name or have a path separator before
-    # the supplied part, e.g. "file.rb" does not match "myfile.rb"
-    # but matches "my/file.rb"
-    filename_pat = "(?:^|[/])#{filename_pat}$"
-  end
+  filename_pat = file_match_pat(filename)
   return SCRIPT_ISEQS__.keys.grep(/#{filename_pat}/)
 end
 
 def find_iseqs(name)
-  ISEQS__[name]
+  iseq_name, filename = name.split(/@/)
+  return [] unless ISEQS__.member?(iseq_name)
+  iseqs = ISEQS__[iseq_name]
+  # FIXME: filter out debugger iseqs
+  if filename
+    filename_pat = file_match_pat(filename)
+    iseqs.select{|iseq| iseq.source_container[1] =~ /#{filename_pat}/}
+  else
+    return iseqs 
+  end
 end
 
 # parse_position(errmsg, arg)->(fn, name, lineno)
@@ -62,5 +77,9 @@ if __FILE__ == $0
       p find_scripts(filename)
     end
     p find_scripts(__FILE__)
+    def tmpdir
+      'to conflict with the other tmpdir'
+    end
+    p find_iseqs("tmpdir@#{__FILE__}")
   end
 end

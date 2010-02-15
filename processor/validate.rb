@@ -95,8 +95,10 @@ class Debugger
     end
 
     def object_iseq(object_string)
-      if 1 == ISEQS__[object_string].size
-         ISEQS__[object_string][0]
+      iseqs = find_iseqs(object_string)
+      # FIXME: do something if there is more than one.
+      if iseqs.size == 1
+         iseqs[-1]
       elsif debug_eval_no_errmsg("#{object_string}.respond_to?('iseq')")
         debug_eval_no_errmsg("#{object_string}.iseq")
       else
@@ -258,13 +260,15 @@ if __FILE__ == $0
       puts "get_int_noerr(#{val}) = #{proc.get_int_noerr(val).inspect}" 
     end
     def foo; 5 end
+    def proc.errmsg(msg)
+      puts msg
+    end
     puts proc.object_iseq('food').inspect
     puts proc.object_iseq('foo').inspect
+
+    puts proc.object_iseq('foo@validate.rb').inspect
     puts proc.object_iseq('proc.method_iseq').inspect
     
-    # require_relative %w(.. lib rbdbgr)
-    # dbgr = Debugger.new(:set_restart => true)
-    # dbgr.debugger
     puts proc.parse_position_one_arg('tmpdir.rb').inspect
   end
 end

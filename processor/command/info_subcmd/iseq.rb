@@ -32,10 +32,10 @@ Examples:
     end
     
     if iseq
-      msg('Instruction sequence: %s' %  iseq)
-      %w(name arg_block arg_opts arg_post_len arg_rest arg_simple
-         argc arity iseq_size local_size orig
-         source_container).each do |field|
+      msg('Instruction sequence:')
+      %w(name source_container arg_block arg_opts arg_post_len arg_rest 
+         arg_simple argc arity iseq_size local_size orig
+         ).each do |field|
         msg("\t#{field}: %s" % iseq.send(field).inspect)
       end
       if iseq.brkpts
