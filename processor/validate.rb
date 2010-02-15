@@ -120,7 +120,16 @@ class Debugger
       iseq = object_iseq(first)
       position_str = 
         if iseq
-          args.empty? ? 'O0' : args.shift
+          # FIXME: we have trouble stopping at offset 0. 
+          if args.empty? 
+            offsets = iseq.offsetlines.keys
+            if offsets[0] == 0 && offsets.size > 1
+              "O#{offsets[1]}"
+            else
+              "O0"
+            end
+          else args.shift
+          end
         else
           iseq = @frame.iseq 
           first
