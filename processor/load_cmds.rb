@@ -1,5 +1,9 @@
 class Debugger
   class CmdProcessor
+
+    attr_reader   :commands        # Hash[String] of command objects
+                                   # indexed by name
+
     # Loads in debugger commands by require'ing each ruby file in the
     # 'command' directory. Then a new instance of each class of the 
     # form Debugger::xxCommand is added to @commands and that array
@@ -33,4 +37,5 @@ if __FILE__ == $0
   cmdproc = Debugger::CmdProcessor.new
   cmddir = File.join(File.dirname(__FILE__), 'command')
   cmdproc.load_debugger_commands(cmddir)
+  puts cmdproc.commands.keys.sort.join("\n")
 end

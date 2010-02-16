@@ -29,7 +29,7 @@ numbers. See also "info break" to get a list.
     first = args.shift
       args.each do |num_str|
       i = @proc.get_an_int(num_str)
-      success = @proc.en_disable_breakpoint_by_number(num_str.to_i, true) if i
+      success = @proc.en_disable_breakpoint_by_number(i, true) if i
       msg('Breakpoint %s enabled.' % i) if success
     end
   end
