@@ -40,4 +40,22 @@ class TestValidate < Test::Unit::TestCase
       assert_equal(expected, @proc.get_int_noerr(arg))
     end
   end
+
+  def test_breakpoint_position
+    require 'thread_frame'
+    tf = RubyVM::ThreadFrame.current
+    @proc.frame_setup(tf)
+
+    def munge(args)
+      args[1] = 'bogus'
+      args
+    end
+
+    assert_equal([0, 'bogus', true, 'true'],
+                 munge(@proc.breakpoint_position(%w(O0))))
+    assert_equal([1, 'bogus', false, 'true'], 
+                 munge(@proc.breakpoint_position(%w(1))))
+    assert_equal([2, 'bogus', false, 'a > b'],
+                 munge(@proc.breakpoint_position(%w(2 if a > b))))
+  end
 end

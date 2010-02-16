@@ -12,52 +12,48 @@ class TestBreak < Test::Unit::TestCase
     Breakpoint::reset
   end
 
-  def test_break_same_level
+  def test_condition
 
-    # See that we can stop at a breakpoint
+    # See that we can next with parameter which is the same as 'next 1'
     cmds = ['set basename on',
             'break ' + (__LINE__ + 7).to_s, 
+            'condition 1 x < 5',
             'continue']
     d = strarray_setup(cmds)
     d.start
     ########### b1 ###############
-    x = 5
-    y = 6
-    z = 7
+    x = 6
+    y = 7
+    z = 8
     ##############################
     d.stop
-    out = ['-- x = 5',
+    out = ['-- x = 6',
            'basename is on.',
            "Breakpoint 1 set at line 26\n" + 
-           "\tin file test-break.rb,\n" + 
-           "\tVM offset 55 of instruction sequence test_break_same_level.",
-           'xx z = 7']
+           "\tin file test-condition.rb,\n" + 
+           "\tVM offset 55 of instruction sequence test_condition."
+          ]
     compare_output(out, d, cmds)
 
-    # Try a disabling the breakpoint
+    # Try a condition that fails
     cmds = ['set basename on',
-            'break ' + (__LINE__ + 8).to_s, 
-            'break ' + (__LINE__ + 8).to_s, 
-            'disable 2',
+            'break ' + (__LINE__ + 7).to_s, 
+            'condition 2 x > 5',
             'continue']
     d = strarray_setup(cmds)
     d.start
     ########### b2 ###############
-    x = 7
-    y = 8
-    z = 8+1
+    x = 6
+    y = 7
+    z = 8
     ##############################
     d.stop
-    out = ['-- x = 7',
+    out = ['-- x = 6',
            'basename is on.',
            "Breakpoint 2 set at line 47\n" +
-           "\tin file test-break.rb,\n" + 
-           "\tVM offset 55 of instruction sequence test_break_same_level.",
-           "Breakpoint 3 set at line 48\n" + 
-           "\tin file test-break.rb,\n" + 
-           "\tVM offset 55 of instruction sequence test_break_same_level.",
-           "Breakpoint 2 disabled.",
-           'xx z = 8+1']
+           "\tin file test-condition.rb,\n" + 
+           "\tVM offset 55 of instruction sequence test_condition.",
+           'xx y = 7']
     compare_output(out, d, cmds)
   end
     

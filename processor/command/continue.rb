@@ -37,7 +37,8 @@ Examples:
     else
       # FIXME: handle more general condition parameter rather than just
       # a line number
-      position, iseq, use_offset = @proc.breakpoint_position(args[1..-1])
+      position, iseq, use_offset, condition = 
+        @proc.breakpoint_position(args[1..-1])
       return false unless position && iseq
       bp = 
         if use_offset

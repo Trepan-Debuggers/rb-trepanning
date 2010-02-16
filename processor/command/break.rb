@@ -33,7 +33,8 @@ Examples:
       bp = @proc.breakpoint_offset(@proc.frame.pc_offset, 
                                    @proc.frame.iseq) 
     else
-      position, iseq, use_offset = @proc.breakpoint_position(args[1..-1])
+      position, iseq, use_offset, condition = 
+        @proc.breakpoint_position(args[1..-1])
       return false unless position && iseq
       bp = 
         if use_offset
@@ -43,6 +44,7 @@ Examples:
         end
     end
     if bp
+      bp.condition = condition
       msg(("Breakpoint %d set at line %s\n" + 
           "\tin %s,\n\tVM offset %d of instruction sequence %s.") %
           [bp.id, 

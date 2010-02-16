@@ -2,6 +2,7 @@
 # A String is usually passed in.
 
 require_relative %w(.. app file)
+require_relative %w(.. app condition)
 class Debugger
   class CmdProcessor
     include Rbdbgr
@@ -148,8 +149,13 @@ class Debugger
          position_str),
         :min_value => 0
       }
-      position = get_an_int(position_str, opts)
-      return [position, iseq, use_offset]
+      position  = get_an_int(position_str, opts)
+      condition = 'true'
+      if args.size > 0 && 'if' == args[0] 
+        condition_try = args[1..-1].join(' ')
+        condition = condition_try if valid_condition?(condition_try)
+      end
+      return [position, iseq, use_offset, condition]
     end
 
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.
@@ -280,6 +286,8 @@ if __FILE__ == $0
     puts proc.object_iseq('proc.object_iseq').inspect
     
     puts proc.parse_position_one_arg('tmpdir.rb').inspect
-    
+    p proc.breakpoint_position(%w(O0))
+    p proc.breakpoint_position(%w(1))
+    p proc.breakpoint_position(%w(2 if a > b))
   end
 end

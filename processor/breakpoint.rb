@@ -27,9 +27,9 @@ class Debugger
       if 0 == @brkpts.size 
         errmsg('No breakpoints set.') if show_errmsg
         return nil
-      elsif bpnum > @brkpts.size || bpnum < 1
+      elsif bpnum > @brkpts.max || bpnum < 1
         errmsg('Breakpoint number %d is out of range 1..%d' %
-               [bpnum, @brkpts.size]) if show_errmsg
+               [bpnum, @brkpts.max]) if show_errmsg
         return nil
       end
       bp = @brkpts[bpnum]

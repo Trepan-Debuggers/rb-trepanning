@@ -287,11 +287,6 @@ class Debugger
 
       @unconditional_prehooks.run
       return if !breakpoint? && stepping_skip?
-      # if breakpoint? 
-      #   return unless debug_eval_no_errmsg(@brkpt.condition)
-      # else
-      #   return if stepping_skip
-      # end
 
       @leave_cmd_loop = false
       print_location unless @settings[:trace]

@@ -28,6 +28,8 @@ Examples:
     SHORT_HELP    = 'Specify breakpoint number N to break only if COND is true'
   end
 
+  include Rbdbgr
+
   def run(args)
     bpnum = @proc.get_an_int(args[1])
     bp = @proc.breakpoint_find(bpnum)

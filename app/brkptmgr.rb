@@ -75,6 +75,10 @@ class BreakpointMgr
     end
   end
 
+  def max
+    @list.map{|bp| bp.id}.max
+  end
+
   # Key used in @set to list unique instruction-sequence offsets.
   def set_key(bp)
     [bp.iseq, bp.offset]
@@ -95,6 +99,7 @@ if __FILE__ == $0
   def bp_status(brkpts, i)
     puts "list size: #{brkpts.list.size}"
     puts "set size: #{brkpts.set.size}"
+    puts "max: #{brkpts.max}"
     p brkpts
     puts "--- #{i} ---"
   end
