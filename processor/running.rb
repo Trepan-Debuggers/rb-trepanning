@@ -31,11 +31,12 @@ class Debugger
 
     # Does whatever needs to be done to set to step program
     # execution.
-    def step(step_count=1, opts={})
+    def step(step_count=1, opts={}, condition=nil)
       continue
       @core.step_count = step_count
       @different_pos   = opts[:different_pos] if 
         opts.keys.member?(:different_pos)
+      @stop_condition  = condition
       @stop_events     = opts[:stop_events]   if 
         opts.keys.member?(:stop_events)
     end

@@ -17,6 +17,7 @@ end
 load 'tmpdir.rb'
 
 class TestLibBrkpt < Test::Unit::TestCase
+  include Rbdbgr
 
   def test_file_match_pat
     assert_equal('(?:^|[/])abc\.rb$', file_match_pat('abc.rb'))

@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 require_relative %w(base cmd)
+require_relative %w(.. .. app condition)
 class Debugger::Command::StepCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
 "step[+|-|<|>|!|<>] [EVENT-NAME...] [count]
-Execute the current line, stopping at the next event.
-Sometimes this is called 'step into'.
+step until expression
 
-With an integer argument, step that many times.
+Execute the current line, stopping at the next event.  Sometimes this
+is called 'step into'.
+
+With an integer argument, step that many times.  With an 'until'
+expression that expression is evaluated and we stop the first time
+it is true.
 
 EVENT-NAME... is list of an event name which is one on 'call',
 'return', 'line', 'exception' 'c-call', 'c-return' or 'c-exception'.
@@ -37,6 +42,7 @@ Examples:
   step call line   # Step line *and* call events
   step<>      # same as step call c-call return c-return 
 
+  step until a > b
 
 Related and similar is the 'next' command.  See also the commands:
 'skip', 'jump' (there's no 'hop' yet), 'continue', 'return' and
@@ -44,7 +50,6 @@ Related and similar is the 'next' command.  See also the commands:
 
     ALIASES      = %w(s step+ step- step< step> step<> step! s> s< s+ s- s<> s!)
     CATEGORY     = 'running'
-    MAX_ARGS     = 1   # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
     NEED_RUNNING = true
     SHORT_HELP   = 'Step program (possibly entering called functions)'
@@ -53,23 +58,30 @@ Related and similar is the 'next' command.  See also the commands:
   # This method runs the command
   def run(args) # :nodoc
     opts = @proc.parse_next_step_suffix(args[0])
+    condition = nil
     if args.size == 1
       # Form is: "step" which means "step 1"
       step_count = 0
     else
-      count_str = args[1]
-      opts = {
-        :msg_on_error => 
-        "The 'step' command argument must eval to an integer. Got: %s" % 
-        count_str,
-        :min_value => 1
-      }.merge(opts)
-      count = @proc.get_an_int(count_str, opts)
-      return unless count
-      # step 1 is core.step_count = 0 or "stop next event"
-      step_count = count - 1  
+      if 'until' == args[1]
+        condition = args[2..-1].join(' ')
+        condition = nil unless valid_condition?(condition)
+        step_count = 0
+      else
+        count_str = args[1]
+        opts = {
+          :msg_on_error => 
+          "The 'step' command argument must eval to an integer. Got: %s" % 
+          count_str,
+          :min_value => 1
+        }.merge(opts)
+        count = @proc.get_an_int(count_str, opts)
+        return unless count
+        # step 1 is core.step_count = 0 or "stop next event"
+        step_count = count - 1  
+      end
     end
-    @proc.step(step_count, opts)
+    @proc.step(step_count, opts, condition)
   end
 end
 

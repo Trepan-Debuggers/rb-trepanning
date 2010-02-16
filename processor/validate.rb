@@ -4,6 +4,7 @@
 require_relative %w(.. app file)
 class Debugger
   class CmdProcessor
+    include Rbdbgr
 
     def confirm(msg, default)
       @dbgr.intf[-1].confirm(msg, default)
@@ -279,5 +280,6 @@ if __FILE__ == $0
     puts proc.object_iseq('proc.object_iseq').inspect
     
     puts proc.parse_position_one_arg('tmpdir.rb').inspect
+    
   end
 end
