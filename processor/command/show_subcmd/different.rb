@@ -8,6 +8,15 @@ class Debugger::Subcommand::ShowDifferent < Debugger::ShowBoolSubcommand
     NAME         = File.basename(__FILE__, '.rb')
   end
 
+  def run(args)
+    if 'nostack' == @proc.settings[:different]
+      msg("different is nostack.")
+    else
+      super
+    end
+  end
+
+
 end
 
 if __FILE__ == $0
