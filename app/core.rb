@@ -47,8 +47,7 @@ class Debugger
         :step_count        => 0,                # Stop at next event
         :async_events      => ASYNC_EVENT_MASK,
         :step_events       =>  
-        (DEFAULT_EVENT_MASK | INSN_EVENT_MASK) & 
-        ~(C_CALL_EVENT_MASK | C_RETURN_EVENT_MASK)
+        (DEFAULT_EVENT_MASK | INSN_EVENT_MASK)
       } 
 
     end
