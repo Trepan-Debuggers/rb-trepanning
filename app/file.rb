@@ -19,15 +19,31 @@ module Rbdbgr
     "#{prefix}#{Regexp.escape(filename)}$"
   end
 
+  def filter_scripts(dirname)
+    match_block = Proc.new{|filename, iseq| filename =~ /^#{dirname}/}
+    scripts = SCRIPT_ISEQS__.select &match_block
+    SCRIPT_ISEQS__.delete_if &match_block
+    match_block = Proc.new{|iseq| 
+      iseq.source_container[1] =~ /^#{dirname}/
+    }
+    rejected = {}
+    ISEQS__.each do |name, iseqs|
+      ary = iseqs.select &match_block
+      rejected[name] = ary unless ary.empty?
+      iseqs.delete_if &match_block
+    end
+    return [scripts, rejected]
+  end
+
   def find_scripts(filename)
     filename_pat = file_match_pat(filename)
     return SCRIPT_ISEQS__.keys.grep(/#{filename_pat}/)
   end
 
-  def find_iseqs(name)
+  def find_iseqs(iseqs_hash, name)
     iseq_name, filename = name.split(/@/)
-    return [] unless ISEQS__.member?(iseq_name)
-    iseqs = ISEQS__[iseq_name]
+    return [] unless iseqs_hash.member?(iseq_name)
+    iseqs = iseqs_hash[iseq_name]
     # FIXME: filter out debugger iseqs
     if filename
       filename_pat = file_match_pat(filename)
@@ -75,6 +91,8 @@ if __FILE__ == $0
     load(__FILE__)
   else    
     load 'tmpdir.rb'
+    tmpdir_dir = File.dirname(find_scripts('tmpdir.rb')[0])
+    p tmpdir_dir
     %w(tmpdir.rb /tmpdir.rb sometmpdir.rb).each do |filename|
       p find_scripts(filename)
     end
@@ -82,6 +100,14 @@ if __FILE__ == $0
     def tmpdir
       'to conflict with the other tmpdir'
     end
-    p find_iseqs("tmpdir@#{__FILE__}")
+    p find_iseqs(ISEQS__, "tmpdir@#{__FILE__}")
+    puts '-' * 20
+    p SCRIPT_ISEQS__.keys
+    puts '-' * 20
+    scripts, rejected = filter_scripts(tmpdir_dir)
+    p scripts.keys
+    p rejected.keys
+    puts '-' * 20
+    p SCRIPT_ISEQS__.keys
   end
 end

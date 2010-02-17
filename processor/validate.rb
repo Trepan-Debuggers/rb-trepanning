@@ -5,6 +5,10 @@ require_relative %w(.. app file)
 require_relative %w(.. app condition)
 class Debugger
   class CmdProcessor
+
+    attr_reader :dbgr_script_iseqs
+    attr_reader :dbgr_iseqs
+
     include Rbdbgr
 
     def confirm(msg, default)
@@ -97,7 +101,7 @@ class Debugger
     end
 
     def object_iseq(object_string)
-      iseqs = find_iseqs(object_string)
+      iseqs = find_iseqs(ISEQS__, object_string)
       # FIXME: do something if there is more than one.
       if iseqs.size == 1
          iseqs[-1]
@@ -251,6 +255,11 @@ class Debugger
                "we can get location information about")
       end
       return nil, nil, nil
+    end
+    
+    def validate_initialize
+      top_srcdir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+      @dbgr_script_iseqs, @dbgr_iseqs = filter_scripts(top_srcdir)
     end
   end
 end

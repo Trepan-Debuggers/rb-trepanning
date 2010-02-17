@@ -67,7 +67,7 @@ Examples:
         return
       end
     else 
-      if !(matches = find_iseqs(args[1])).empty?
+      if !(matches = find_iseqs(ISEQS__, args[1])).empty?
         # FIXME: do something if there is more than one
         iseq = matches[0]
       else        

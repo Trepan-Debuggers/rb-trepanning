@@ -24,7 +24,7 @@ Examples:
     iseq_name = args[2]
     if args.empty? || '.' == iseq_name
       iseq = frame = @proc.frame.iseq
-    elsif !(matches = find_iseqs(iseq_name)).empty?
+    elsif !(matches = find_iseqs(ISEQS__, iseq_name)).empty?
       # FIXME: do something if there is more than one
       iseq = matches[0]
     else

@@ -25,11 +25,11 @@ class TestLibBrkpt < Test::Unit::TestCase
   end
 
   def test_find_iseqs
-    iseqs = find_iseqs("tmpdir")
+    iseqs = find_iseqs(ISEQS__, "tmpdir")
     assert_equal(false, iseqs.empty?)
-    iseqs = find_iseqs("tmpdir@#{__FILE__}")
+    iseqs = find_iseqs(ISEQS__, "tmpdir@#{__FILE__}")
     assert_equal(true, iseqs.empty?)
-    iseqs = find_iseqs("tmpdir@tmpdir.rb")
+    iseqs = find_iseqs(ISEQS__, "tmpdir@tmpdir.rb")
     assert_equal(false, iseqs.empty?)
   end
 

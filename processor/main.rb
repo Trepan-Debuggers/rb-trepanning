@@ -112,6 +112,7 @@ class Debugger
 
       breakpoint_initialize
       hook_initialize(commands)
+      validate_initialize
     end
 
     def canonic_container(container)
