@@ -161,6 +161,8 @@ disabled."
     end
     last = first + listsize - 1 unless last
   
+    LineCache::cache(container[1]) unless 
+        'file' != container[0] || LineCache::cached?(container[1])
     return container, first, last
   end
 
@@ -175,7 +177,7 @@ disabled."
       if args[0][-1..-1] == '>'
         0
       else
-        listsize / 2
+        (listsize-1) / 2
       end
 
     container, first, last = 
@@ -203,7 +205,7 @@ disabled."
     end
 
     begin
-      first.upto(last+1).each do |lineno|
+      first.upto(last).each do |lineno|
         line = LineCache::getline(container[1], lineno).chomp
         unless line
           msg('[EOF]')
@@ -274,12 +276,18 @@ if __FILE__ == $0
     end
     run_cmd(cmd, %w(list p))
 
-    # puts '--' * 10
-    # cmd.run(['list', 'os.path', '15'])
-    # puts '--' * 10
-    # cmd.run(['list', 'os.path', '30', '3'])
-    # puts '--' * 10
-    # cmd.run(['list', 'os.path', '40', '50'])
+    # Function from a file found via an instruction sequence
+    run_cmd(cmd, %w(list Columnize.columnize))
+
+    # Use Class/method name. 15 isn't in the function - should this be okay?
+    run_cmd(cmd, %w(list Columnize.columnize 15))
+
+    # Start line and count, since 3 < 30
+    run_cmd(cmd, %w(list Columnize.columnize 30 3))
+
+    # Start line finish line 
+    run_cmd(cmd, %w(list Columnize.columnize 40 50))
+
     # puts '--' * 10
     # cmd.run(['list', os.path.abspath(__file__)+':3', '4'])
     # puts '--' * 10
@@ -292,15 +300,12 @@ if __FILE__ == $0
     brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
     brkpt_cmd.run(['break'])
     line = __LINE__
-    cmd.run(['list', __LINE__.to_s])
-    puts '--' * 10
+    run_cmd(cmd, ['list', __LINE__.to_s])
+
     disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
     disable_cmd.run(['disable', '1'])
-    cmd.run(['list', line.to_s])
-    puts '--' * 10
 
-    ISEQS__['parse_list_cmd'].each{|i| p i.source_container}
-    cmd.run(['list', 'parse_list_cmd'])
-    # puts '--' * 10
+    run_cmd(cmd, ['list', line.to_s])
+    run_cmd(cmd, %w(list parse_list_cmd))
   end
 end
