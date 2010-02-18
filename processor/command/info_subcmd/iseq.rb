@@ -21,8 +21,12 @@ Examples:
   end
 
   def run(args)
-    iseq_name = args[2]
-    if args.empty? || '.' == iseq_name
+    if 2 == args.size
+      iseq_name = '.'
+    else
+      iseq_name = args[2]
+    end
+    if '.' == iseq_name
       iseq = frame = @proc.frame.iseq
     elsif !(matches = find_iseqs(ISEQS__, iseq_name)).empty?
       # FIXME: do something if there is more than one
@@ -59,7 +63,8 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  ISEQS__ = {}
+  ISEQS__        = {}
+  SCRIPT_ISEQS__ = {} 
 
   require_relative %w(.. .. mock)
   require_relative %w(.. .. subcmd)
