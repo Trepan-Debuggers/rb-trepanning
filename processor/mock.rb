@@ -4,6 +4,11 @@ require_relative %w(.. app core)
 require_relative %w(.. app default)
 require_relative %w(.. interface user)  # user interface (includes I/O)
 
+SCRIPT_ISEQS__ = {} unless 
+  defined?(SCRIPT_ISEQS__) && SCRIPT_ISEQS__.is_a?(Hash)
+ISEQS__        = {} unless 
+  defined?(ISEQS__) && ISEQS__.is_a?(Hash)
+
 module MockDebugger
   class MockDebugger
     attr_accessor :core         # access to Debugger::Core instance

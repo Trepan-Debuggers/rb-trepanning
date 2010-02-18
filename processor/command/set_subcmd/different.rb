@@ -3,7 +3,10 @@ require_relative %w(.. base subcmd)
 
 class Debugger::Subcommand::SetDifferent < Debugger::SetBoolSubcommand
   unless defined?(HELP)
-    HELP = "Set to make sure 'next/step' move to a new position.
+    HELP = "
+set different [on|off|nostack]
+
+Set to make sure 'next/step' move to a new position.
 
 Due to the interpretive, expression-oriented nature of the Ruby
 Language and implementation, each line often may contain many possible
@@ -29,6 +32,7 @@ override this setting."
     IN_LIST      = true
     MIN_ABBREV   = 'dif'.size
     NAME         = File.basename(__FILE__, '.rb')
+    SHORT_HELP   = "Set to make sure 'next/step' move to a new position."
   end
 
   def run(args)
