@@ -12,7 +12,7 @@ class Debugger::Subcommand::SetAutoList < Debugger::SetBoolSubSubcommand
   def run(args)
     super
     if @proc.settings[:autolist]
-      @proc.cmdloop_prehooks.insert_if_new(0, *@proc.autolist_hook)
+      @proc.cmdloop_prehooks.insert_if_new(10, *@proc.autolist_hook)
     else
       @proc.cmdloop_prehooks.delete_by_name('autolist')
     end

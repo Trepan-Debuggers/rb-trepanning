@@ -14,30 +14,33 @@ class Debugger
         @list = list
       end
 
-      def <<(name, hook)
-        @list << [name, hook]
-      end
-
       def delete_by_name(delete_name)
-        @list.delete_if {|hook_name, hook| hook_name == delete_name}
+        @list.delete_if {|hook_name, priority, hook| hook_name == delete_name}
       end
 
       def empty?
         @list.empty?
       end
 
-      def insert(index, name, hook)
-        @list.insert(index, [name, hook])
+      def insert(priority, name, hook)
+        insert_loc = @list.size  # at end
+        @list.each_with_index do |n, p, h, index|
+          if priority > p 
+            insert_loc = index
+            break
+          end
+        end
+        @list.insert(insert_loc, [name, priority, hook])
       end
 
-      def insert_if_new(index, name, hook)
-        @list.insert(index, [name, hook]) unless
-          @list.find {|try_name, hook| try_name == name}
+      def insert_if_new(priority, name, hook)
+        insert(priority, name, hook) unless
+          @list.find {|try_name, priority, hook| try_name == name}
       end
 
       # Run each function in `hooks' with args
       def run(*args)
-        @list.each do |name, hook| 
+        @list.each do |name, priority, hook| 
           hook.call(name, *args) 
         end
       end
