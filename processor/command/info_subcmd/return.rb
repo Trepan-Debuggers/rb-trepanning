@@ -11,8 +11,7 @@ class Debugger::Subcommand::InfoReturn < Debugger::Subcommand
   end
 
   def run(args)
-    # FIXME: %w(return, c-return)
-    if %w(return).member?(@proc.core.event)
+    if %w(return c-return).member?(@proc.core.event)
       msg("Return value: %s" % @proc.frame.sp(1).inspect)
     else
       errmsg("You need to be in a return event to do this. Event is %s" % 
