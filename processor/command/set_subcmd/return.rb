@@ -10,7 +10,9 @@ class Debugger::Subcommand::SetReturn < Debugger::Subcommand
   end
 
   def run(args)
-    unless %w(return c-return).member?(@proc.core.event)
+    # FIXME handle c-return
+    # unless %w(return c-return).member?(@proc.core.event)
+    unless %w(return).member?(@proc.core.event)
       errmsg("You need to be in a return event to do this. Event is %s" % 
              @proc.core.event)
       return

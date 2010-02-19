@@ -12,8 +12,15 @@ class Debugger::Subcommand::InfoProgram < Debugger::Subcommand
 
   def run(args)
     frame = @proc.frame
-    msg('Program stop event: %s; PC offset %d of instruction sequence: %s' % 
-        [@proc.core.event, frame.pc_offset, frame.iseq.name])
+    m = 'Program stop event: %s' % @proc.core.event
+    m += 
+      if frame.iseq
+        '; PC offset %d of instruction sequence: %s' % 
+          [frame.pc_offset, frame.iseq.name]
+      else
+        '.'
+      end
+    msg m
     if @proc.brkpt
       msg('It is stopped at %sbreakpoint %d.' %
           [@proc.brkpt.temp? ? 'temporary ' : '',
