@@ -58,6 +58,8 @@ class Debugger
       when '-'
         opts[:different_pos] = false
       when '+'
+        opts[:different_pos] = 'nostack'
+      when '='
         opts[:different_pos] = true
       when '!'
         opts[:stop_events] = Set.new(%w(raise))

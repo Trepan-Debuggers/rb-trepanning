@@ -5,8 +5,8 @@ require_relative 'frame'
 
 # return suitable frame signature to key display expressions off of.
 def display_signature(frame)
-    return nil unless frame
-    frame.iseq.object_id
+  return nil unless frame
+  frame.iseq.object_id
 end
 
 # Manage a list of display expressions.
@@ -25,9 +25,9 @@ class DisplayMgr
       return nil
     end
     @next += 1
-    display = Display.new(frame, arg, fmt, @next)
-    @list << display
-    display
+    d = Display.new(frame, arg, fmt, @next)
+    @list << d
+    d
   end
 
   # List all display items; return 0 if none
@@ -65,7 +65,7 @@ Num Enb Expression"
     s = []
     sig = display_signature(frame)
     @list.each do |display|
-      if display.signature == sig and display.enabled
+      if display.enabled # && display.signature == sig
         s << display.to_s(frame)
       end
     end

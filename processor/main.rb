@@ -268,8 +268,11 @@ class Debugger
 
       @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
       unless skip_val
-        condition_met = !@stop_condition || debug_eval_no_errmsg(@stop_condition)
-        puts "conditon_met: #{condition_met}" if @settings[:'debugskip']
+        condition_met = !@stop_condition || 
+          debug_eval_no_errmsg(@stop_condition)
+        puts("condition_met: #{condition_met}, last: #{@last_pos}, " +
+             "new: #{new_pos}, different #{@different_pos.inspect}") if 
+          @settings[:'debugskip']
         skip_val = (@last_pos == new_pos) && @different_pos || !condition_met
       end
 

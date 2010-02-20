@@ -64,11 +64,17 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
 
+  def run_cmd(cmd, args)
+    cmd.run(args)
+    puts '==' * 10
+  end
+
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
 
-  cmd.run([name])
-  cmd.run([name, '/x', '10'])
-  cmd.run([name, 'd'])
-  print '==' * 10
-  cmd.run([name])
+  run_cmd(cmd, [name])
+  run_cmd(cmd, [name, '/x', '10'])
+  run_cmd(cmd, [name, 'd'])
+  run_cmd(cmd, [name])
+  e = 5
+  run_cmd(cmd, [name, 'e'])
 end

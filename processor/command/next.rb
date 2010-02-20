@@ -5,7 +5,7 @@ class Debugger::Command::NextCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP = 
-"next[+|-|<|>|!|<>] [EVENT-NAME...] [count]
+"next[+|=|-|<|>|!|<>] [EVENT-NAME...] [count]
 
 Step one statement ignoring steps into function calls at this level.
 Sometimes this is called 'step over'.
@@ -25,13 +25,17 @@ determines this behavior.
 Examples: 
   next        # next 1 event, *any* event 
   next 1      # same as above
+  next+       # same but force stopping on a new line
+  next=       # same but force stopping on a new line a new frame added
+  next-       # same but force stopping on a new line a new frame added
   next 5/5+0  # same as above
   next line   # next using only line events
   next call   # next using only call call events
   next<>      # next using call return events at this level or below
 "
 
-    ALIASES      = %w(n next+ next- next< next> next<> next! n> n< n! n+ n- n<>)
+    ALIASES      = %w(n next+ next- next< next> next<> next! n> n< n! n+ n- 
+                      n<> n=)
     CATEGORY     = 'running'
     # execution_set = ['Running']
     MAX_ARGS     = 1   # Need at most this many. FIXME: will be eventually 2
