@@ -134,7 +134,6 @@ class Debugger
         b ||= binding
         eval(str, b)
       rescue StandardError, ScriptError => e
-        p "foo! str: #{str} #{b}"
         exception_dump(e, settings[:stack_trace_on_error], $!.backtrace)
       end
     end

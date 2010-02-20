@@ -25,8 +25,10 @@ Examples:
   def run(args)
 
     args = @parent.last_args
-    all_regs = @subcmds.subcmds.keys
-
+    all_regs = @subcmds.subcmds.keys.sort
+    all_regs -= %w(inforegisterslfp inforegisterspc) if 
+      'CFUNC' == @proc.frame.type
+      
     if args.size == 2
       # Form is: "info registers"
       all_regs.sort.each do |subcmd_name|
@@ -43,7 +45,6 @@ Examples:
         nil
       end
     end
-
   end
 end
 

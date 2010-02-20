@@ -19,9 +19,14 @@ See also "info register sp".'
 
   include Registers
   def run(args)
-    iseq = frame = @proc.frame.iseq
-    index = register_array_index(PREFIX[-1], args, iseq.local_size-1)
-    msg("local_name(%d)=%s" % [index, iseq.local_name(index)]) if index
+    frame = @proc.frame
+    if 'CFUNC' == frame.type
+      msg "local_name not available for C function"
+    else
+      iseq = frame.iseq
+      index = register_array_index(PREFIX[-1], args, iseq.local_size-1)
+      msg("local_name(%d)=%s" % [index, iseq.local_name(index)]) if index
+    end
   end
 end
 

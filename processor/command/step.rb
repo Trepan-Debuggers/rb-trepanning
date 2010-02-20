@@ -69,9 +69,12 @@ EOH
       step_count = 0
     else
       if 'until' == args[1]
-        condition = args[2..-1].join(' ')
-        condition = nil unless valid_condition?(condition)
-        step_count = 0
+        try_condition = args[2..-1].join(' ')
+        if valid_condition?(try_condition)
+          condition = try_condition
+          opts[:different_pos] = false
+          step_count = 0
+        end
       else
         count_str = args[1]
         opts = {

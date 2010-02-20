@@ -22,13 +22,14 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
   # Initialize show subcommands. Note: instance variable name
   # has to be setcmds ('set' + 'cmds') for subcommand completion
   # to work.
+  # FIXME: do we need proc still? 
   def initialize(proc, parent)
     name     = obj_const(self, :NAME)
     @name    = name.to_sym
     @subcmds = Debugger::Subcmd.new(self)
     @parent  = parent
     @pname   = parent.name
-    @proc    = proc
+    @proc    = parent.proc
 
     # Set class constant SHORT_HELP to be the first line of HELP
     # unless it has been defined in the class already.
