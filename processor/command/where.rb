@@ -47,7 +47,13 @@ Examples:
       count = stack_size
     end
     if @proc.frame
-      print_stack_trace(@proc.top_frame, count, @proc.frame_index)
+      opts = 
+        if 'CFUNC' == @proc.frame.type && @proc.core.hook_arg
+          {:class => @proc.core.hook_arg}
+        else
+          {}
+        end
+      print_stack_trace(@proc.top_frame, count, @proc.frame_index, opts)
     else
       errmsg 'No frame.'
     end
@@ -62,13 +68,18 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
 
-  def sep ; puts '=' * 40 end
-  cmd.run [name]
-  sep
-  %w(1 100).each {|count| cmd.run(count); sep }
+  def run_cmd(cmd, args)
+    cmd.run(args)
+    puts '=' * 40
+  end
+
+  run_cmd(cmd, [name])
+
+  %w(1 100).each {|count| run_cmd(cmd, [name, count])}
   def foo(cmd, name)
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
-    cmd.run([name])
+    run_cmd(cmd, [name])
   end
   foo(cmd, name)
+  1.times {run_cmd(cmd, [name])}
 end

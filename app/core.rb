@@ -17,6 +17,7 @@ class Debugger
                                 # processor
     attr_reader   :event_proc   # Proc of method event_processor
     attr_reader   :frame        # ThreadFrame instance
+    attr_reader   :hook_arg     # 'arg' passed from trace hook
     attr_accessor :processor    # Debugger::CmdProc instance
     attr_reader   :settings     # Hash of things you can configure
     attr_accessor :step_count   # Fixnum. Negative means no tracing,
@@ -78,9 +79,9 @@ class Debugger
         return
       end
 
-      @arg   = arg
-      @event = event
-      @frame = frame
+      @event    = event
+      @frame    = frame
+      @hook_arg = arg
       while @frame.type == 'IFUNC'
         @frame = @frame.prev
       end

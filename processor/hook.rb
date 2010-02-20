@@ -3,9 +3,10 @@ class Debugger
     # Command processor hooks.
     attr_reader :autoirb_hook
     attr_reader :autolist_hook
+    attr_reader :display_hook
     attr_reader :trace_hook
     attr_reader :unconditional_prehooks
-    attr_reader   :cmdloop_prehooks
+    attr_reader :cmdloop_prehooks
 
     class Hook
       attr_accessor :list
@@ -51,14 +52,21 @@ class Debugger
     def hook_initialize(commands)
       @cmdloop_prehooks = Hook.new
       @unconditional_prehooks = Hook.new
+
       irb_cmd = commands['irb']
       @autoirb_hook = ['autoirb', 
                        Proc.new{|*args| irb_cmd.run(['irb']) if irb_cmd}]
-      @trace_hook   = ['trace', 
-                       Proc.new{|*args| print_location}]
+
+      display_cmd = commands['display']
+      @display_hook = ['display', 
+                       Proc.new{|*args| display_cmd.run(['display']) if display_cmd}]
+
       list_cmd = commands['list']
       @autolist_hook = ['autolist', 
                        Proc.new{|*args| list_cmd.run(['list']) if list_cmd}]
+
+      @trace_hook   = ['trace', 
+                       Proc.new{|*args| print_location}]
     end
 
   end

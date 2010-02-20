@@ -38,7 +38,11 @@ class Debugger
       return 'invalid frame' if frame.invalid?
       # FIXME: prettify 
       s = "#{frame.type} "
-      s += "#{eval('self.class', frame.binding)}#" 
+      s += if opts[:class]
+             "#{opts[:class]}#"
+           else
+             "#{eval('self.class', frame.binding)}#" 
+           end
       if frame.method and frame.type != 'IFUNC'
         iseq = frame.iseq
         args = if 'CFUNC' == frame.type
@@ -68,18 +72,19 @@ class Debugger
       return s
     end
 
-    def print_stack_entry(frame, i, prefix='    ')
-      msg "%s%s" % [prefix, format_stack_entry(frame)]
+    def print_stack_entry(frame, i, prefix='    ', opts={})
+      opts = {} unless 0 == 0
+      msg "%s%s" % [prefix, format_stack_entry(frame, opts)]
     end
 
     # Print `count' frame entries
-    def print_stack_trace(frame, count=nil, current_pos=0)
+    def print_stack_trace(frame, count=nil, current_pos=0, opts={})
       n = frame.stack_size
       n = [n, count].min if count
       0.upto(n-1) do |i|
         prefix = (i == current_pos) ? '-->' : '   '
         prefix += ' #%d ' % [i]
-        print_stack_entry(frame, i, prefix)
+        print_stack_entry(frame, i, prefix, opts)
         frame = frame.prev
       end
     end

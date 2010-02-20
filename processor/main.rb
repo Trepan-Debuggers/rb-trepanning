@@ -5,7 +5,7 @@ require 'linecache'
 require 'set'
 require 'pathname'  # For cleanpath
 
-%w(default load_cmds location frame hook msg validate).each do 
+%w(default display load_cmds location frame hook msg validate).each do 
   |mod_str|
   require_relative mod_str
 end
@@ -110,9 +110,11 @@ class Debugger
                                            'command'))
       load_debugger_commands(cmd_dir)
 
-      breakpoint_initialize
+      # Run initialization routines for each of the "submodule"s.
+      %w(breakpoint display validate).each do |submod|
+        self.send("#{submod}_initialize")
+      end
       hook_initialize(commands)
-      validate_initialize
     end
 
     def canonic_container(container)
@@ -132,6 +134,7 @@ class Debugger
         b ||= binding
         eval(str, b)
       rescue StandardError, ScriptError => e
+        p "foo! str: #{str} #{b}"
         exception_dump(e, settings[:stack_trace_on_error], $!.backtrace)
       end
     end
