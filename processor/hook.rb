@@ -25,7 +25,8 @@ class Debugger
 
       def insert(priority, name, hook)
         insert_loc = @list.size  # at end
-        @list.each_with_index do |n, p, h, index|
+        @list.each_with_index do |entry, index|
+          n, p, h = entry
           if priority > p 
             insert_loc = index
             break
@@ -36,7 +37,7 @@ class Debugger
 
       def insert_if_new(priority, name, hook)
         insert(priority, name, hook) unless
-          @list.find {|try_name, priority, hook| try_name == name}
+          @list.find {|try_name, try_priority, hook| try_name == name}
       end
 
       # Run each function in `hooks' with args
