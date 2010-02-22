@@ -23,7 +23,7 @@ class TestCommandBreak < Test::Unit::TestCase
       @my_cmd.run(args)
       assert_equal(true, @cmdproc.errmsgs.empty?)
       assert_equal(0, 
-                   @cmdproc.msgs[0] =~ /^Breakpoint #{i+1} set at line \d+\n\tin file .*\n.* test_basic.$/,
+                   @cmdproc.msgs[0] =~ /^Breakpoint #{i+1} set at line \d+\n\tin file .*\n\tVM offset \d+ of instruction sequence \"test_basic\"\.$/,
                    @cmdproc.msgs[0])
       reset_cmdproc_vars
     end
@@ -38,7 +38,8 @@ class TestCommandBreak < Test::Unit::TestCase
       assert_equal(true, @cmdproc.errmsgs.empty?,
                    @cmdproc.errmsgs)
       assert_equal(0, 
-                   @cmdproc.msgs[0] =~ /^Breakpoint #{i+4} set at line \d+\n\tin file .*\n.* foo.$/)
+                   @cmdproc.msgs[0] =~ /^Breakpoint #{i+4} set at line \d+\n\tin file .*\n\tVM offset \d+ of instruction sequence \"foo\"\.$/,
+                   @cmdproc.msgs[0])
       reset_cmdproc_vars
     end
   end

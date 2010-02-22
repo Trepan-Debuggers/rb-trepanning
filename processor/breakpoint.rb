@@ -50,7 +50,8 @@ class Debugger
       end
       offset = iseq ? iseq.line2offsets(line_number)[1] : nil
       unless offset
-        errmsg("Line number #{line_number} not found for breakpoint.")
+        place = "in #{iseq.source_container.join(' ')} " if iseq 
+        errmsg("No line #{line_number} found #{place}for breakpoint.")
         return nil
       end
       @brkpts.add(temp, offset, iseq)

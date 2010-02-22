@@ -3,6 +3,8 @@ require_relative %w(.. .. app mock)
 require_relative %w(.. .. processor main) # Have to include before frame!
                                           # FIXME
 require_relative %w(.. .. processor frame) 
+
+
 module UnitHelper
 
   def common_setup

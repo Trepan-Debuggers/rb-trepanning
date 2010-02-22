@@ -37,7 +37,7 @@ class Debugger
 
       def insert_if_new(priority, name, hook)
         insert(priority, name, hook) unless
-          @list.find {|try_name, try_priority, hook| try_name == name}
+          @list.find {|try_name, try_priority, try_hook| try_name == name}
       end
 
       # Run each function in `hooks' with args

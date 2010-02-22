@@ -34,7 +34,7 @@ class TestDelete < Test::Unit::TestCase
            'basename is on.',
            'Breakpoint 1 set at line 28
 	in file test-delete.rb,
-	VM offset 55 of instruction sequence test_delete.',
+	VM offset 55 of instruction sequence "test_delete".',
            'Deleted breakpoint 1',
           ]
     compare_output(out, d, cmds)
@@ -64,10 +64,10 @@ class TestDelete < Test::Unit::TestCase
            'autoeval is on.',
            'Breakpoint 2 set at line 56
 	in file test-delete.rb,
-	VM offset 55 of instruction sequence test_delete.',
+	VM offset 55 of instruction sequence "test_delete".',
            'Breakpoint 3 set at line 58
 	in file test-delete.rb,
-	VM offset 55 of instruction sequence test_delete.',
+	VM offset 55 of instruction sequence "test_delete".',
            'Deleted breakpoint 2',
            'xx vd = 4',
            '3'

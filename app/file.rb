@@ -2,6 +2,11 @@
 # Things related to file/module status
 require 'thread_frame'
 
+SCRIPT_ISEQS__ = {} unless 
+  defined?(SCRIPT_ISEQS__) && SCRIPT_ISEQS__.is_a?(Hash)
+ISEQS__        = {} unless 
+  defined?(ISEQS__) && ISEQS__.is_a?(Hash)
+
 module Rbdbgr
   def file_match_pat(filename)
     prefix = 
@@ -84,7 +89,7 @@ end
 # Demo it
 if __FILE__ == $0
   include Rbdbgr
-  if  not (ARGV.size == 1 && ARGV[0] == 'noload')
+  if !(ARGV.size == 1 && ARGV[0] == 'noload')
     ISEQS__        = {}
     SCRIPT_ISEQS__ = {}
     ARGV[0..-1]    = ['noload']

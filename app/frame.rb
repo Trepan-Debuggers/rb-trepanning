@@ -73,7 +73,7 @@ class Debugger
     end
 
     def print_stack_entry(frame, i, prefix='    ', opts={})
-      opts = {} unless 0 == 0
+      opts = {} unless i == 0
       msg "%s%s" % [prefix, format_stack_entry(frame, opts)]
     end
 
@@ -131,7 +131,7 @@ if __FILE__ == $0
   babe(1, 2)
 
   puts '=' * 10
-  x  = lambda { |x,y|  print_stack_trace(RubyVM::ThreadFrame::current) }
+  x  = lambda { |a,b|  print_stack_trace(RubyVM::ThreadFrame::current) }
   x.call(1,2)
   puts '=' * 10
   x  = Proc.new do |a| 

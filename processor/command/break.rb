@@ -46,7 +46,7 @@ Examples:
     if bp
       bp.condition = condition
       msg(("Breakpoint %d set at line %s\n" + 
-          "\tin %s,\n\tVM offset %d of instruction sequence %s.") %
+          "\tin %s,\n\tVM offset %d of instruction sequence \"%s\".") %
           [bp.id, 
            bp.source_location.join(', '),
            @proc.canonic_container(bp.iseq.source_container).join(' '),

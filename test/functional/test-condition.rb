@@ -31,7 +31,7 @@ class TestBreak < Test::Unit::TestCase
            'basename is on.',
            "Breakpoint 1 set at line 26\n" + 
            "\tin file test-condition.rb,\n" + 
-           "\tVM offset 55 of instruction sequence test_condition."
+           "\tVM offset 55 of instruction sequence \"test_condition\"."
           ]
     compare_output(out, d, cmds)
 
@@ -52,7 +52,7 @@ class TestBreak < Test::Unit::TestCase
            'basename is on.',
            "Breakpoint 2 set at line 47\n" +
            "\tin file test-condition.rb,\n" + 
-           "\tVM offset 55 of instruction sequence test_condition.",
+           "\tVM offset 55 of instruction sequence \"test_condition\".",
            'xx y = 7']
     compare_output(out, d, cmds)
   end
