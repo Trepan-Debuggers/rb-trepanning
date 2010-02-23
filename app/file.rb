@@ -26,16 +26,16 @@ module Rbdbgr
 
   def filter_scripts(dirname)
     match_block = Proc.new{|filename, iseq| filename =~ /^#{dirname}/}
-    scripts = SCRIPT_ISEQS__.select &match_block
-    SCRIPT_ISEQS__.delete_if &match_block
+    scripts = SCRIPT_ISEQS__.select(&match_block)
+    SCRIPT_ISEQS__.delete_if(&match_block)
     match_block = Proc.new{|iseq| 
       iseq.source_container[1] =~ /^#{dirname}/
     }
     rejected = {}
     ISEQS__.each do |name, iseqs|
-      ary = iseqs.select &match_block
+      ary = iseqs.select(&match_block)
       rejected[name] = ary unless ary.empty?
-      iseqs.delete_if &match_block
+      iseqs.delete_if(&match_block)
     end
     return [scripts, rejected]
   end

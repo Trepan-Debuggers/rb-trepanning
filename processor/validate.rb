@@ -89,6 +89,10 @@ class Debugger
       return val
     end
 
+    def get_int_list(args, opts={})
+      args.map{|arg| get_an_int(arg, opts)}.compact
+    end
+    
     # Eval arg and it is an integer return the value. Otherwise
     # return nil
     def get_int_noerr(arg)
@@ -267,8 +271,6 @@ end
 if __FILE__ == $0
   # Demo it.
   if !(ARGV.size == 1 && ARGV[0] == 'noload')
-    ISEQS__        = {}
-    SCRIPT_ISEQS__ = {}
     ARGV[0..-1]    = ['noload']
     load(__FILE__)
   else    
@@ -298,5 +300,7 @@ if __FILE__ == $0
     p proc.breakpoint_position(%w(O0))
     p proc.breakpoint_position(%w(1))
     p proc.breakpoint_position(%w(2 if a > b))
+    p proc.get_int_list(%w(1+0 3-1 3))
+    p proc.get_int_list(%w(a 2 3))
   end
 end
