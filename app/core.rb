@@ -47,8 +47,18 @@ class Debugger
         :hook_name         => :event_processor, # or :old_event_processor
         :step_count        => 0,                # Stop at next event
         :async_events      => ASYNC_EVENT_MASK,
+
+        # FIXME:
+        # Somewhere inside the VM we allow I guess nested tracing which is messing
+        # up ThreadFrame pointers and information. When this is fixed we can do the below.
+        # Until then we need to at least remove C calls and returns and possibly other
+        # events as well.
+        # :step_events       =>  
+	# (DEFAULT_EVENT_MASK | INSN_EVENT_MASK)
+
         :step_events       =>  
-        (DEFAULT_EVENT_MASK | INSN_EVENT_MASK)
+	(DEFAULT_EVENT_MASK | INSN_EVENT_MASK) &
+	~(C_CALL_EVENT_MASK | C_RETURN_EVENT_MASK)
       } 
 
     end
