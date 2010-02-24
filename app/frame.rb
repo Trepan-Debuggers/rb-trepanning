@@ -1,4 +1,8 @@
+require_relative 'util'
+
+include Rbdbgr
 class Debugger
+
   module Frame
     def param_names(iseq, start, stop, prefix='')
       start.upto(stop).map do |i| 
@@ -8,6 +12,18 @@ class Debugger
           nil
         end
       end.compact
+    end
+
+    def c_params(arity, frame, maxstring=20)
+      args = 
+        if 0 == arity
+          ''
+        elsif 0 < arity && frame
+          [1..arity].map{|i| frame.sp(i+2).inspect}.join(', ')
+        else
+          "#{frame.arity} args"
+        end
+      safe_repr(args, maxstring)
     end
 
     def all_param_names(iseq)
@@ -46,14 +62,14 @@ class Debugger
       if frame.method and frame.type != 'IFUNC'
         iseq = frame.iseq
         args = if 'CFUNC' == frame.type
-                 "(#{frame.arity} args)"
+                 c_params(frame.arity, frame)
                else
                  all_param_names(iseq)
                end
         s += frame.method
-        if frame.type == 'METHOD'
+        if %w(CFUNC METHOD).member?(frame.type)
           s += "(#{args})"
-        elsif ['BLOCK', 'METHOD', 'LAMBDA', 'TOP', 'EVAL'].member?(frame.type)
+        elsif %w(BLOCK LAMBDA TOP EVAL).member?(frame.type)
           s += " |#{args}|" unless args.empty?
         else
           s += "(#{all_param_names(iseq)})" 
@@ -148,7 +164,7 @@ if __FILE__ == $0
   puts '=' * 30
   eval("print_stack_trace(RubyVM::ThreadFrame.current)")
   puts '=' * 30
-  [1].each do |a; b|
+  1.times do |a; b|
     print_stack_trace(RubyVM::ThreadFrame::current)
-    end      
+  end
 end

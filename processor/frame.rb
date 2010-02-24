@@ -24,7 +24,12 @@ class Debugger
     
 
     def adjust_frame(frame_num, absolute_pos)
-      hide_level  = @hidelevels[Thread.current] || 0
+      hide_level  = 
+        if @settings[:debugstack]
+          0
+        else
+          @hidelevels[Thread.current] || 0
+        end
       stack_size = @top_frame.stack_size - hide_level
 
       if absolute_pos

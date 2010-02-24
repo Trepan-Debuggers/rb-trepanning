@@ -16,7 +16,7 @@ end
 # To have something to work with.
 load 'tmpdir.rb'
 
-class TestLibBrkpt < Test::Unit::TestCase
+class TestAppFile < Test::Unit::TestCase
   include Rbdbgr
 
   def test_file_match_pat

@@ -15,8 +15,19 @@ module Registers
       return nil unless position
     end
     lookup_pos = 
-      if name == 'lfp' 
+      if 'lfp' == name
         max_value + 1 - position 
+      elsif 'sp' == name && 'CFUNC' == @proc.frame.type 
+        # && @proc.frame.next.type == 'IFUNC" # ? 
+
+        # FIXME: In C frames there seems to be some vm_push_frame's
+        # via perhaps vm_yield_with_cfunc along with sp adjustments.
+        # I am not sure if this is under what conditions this
+        # *doesn't* happen so until I can figure out the better thing
+        # to do, possibly in the Ruby 1.9 interpeter, we'll handle
+        # this here.  It is also conceivable to handle this in
+        # thread_frame's sp handling.
+        position + 2
       else
         position
       end
