@@ -37,11 +37,12 @@ module DiffFile
     # puts '-' * 40
     started = false
     result = []
-    n = i = 0
+    i = 0
+    n = -(context+1)
     while true do
       i = find_next(sdiff, i)
       break if i >= sdiff.size
-      if n >= i
+      if n < i-context
         if started
           result << '***************'
         else
