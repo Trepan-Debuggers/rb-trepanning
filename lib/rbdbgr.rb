@@ -31,7 +31,7 @@ class Debugger
   attr_accessor :trace_filter # Procs/Methods we ignore.
 
   def initialize(settings={})
-    @settings     = DbgSettings::DEFAULT_SETTINGS.merge(settings)
+    @settings     = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
     input       ||= @settings[:input]
     output      ||= @settings[:output]
     @intf         = [Debugger::UserInterface.new(input, output)]
@@ -114,9 +114,29 @@ class Debugger
     @trace_filter.set_trace_func(nil)
   end
 
+  # As a simplification for creating a debugger object, and then
+  # calling using the object to invoke the debugger, we allow this
+  # two-step process in one step. That is, instead of
+  #  
+  #  require 'rbdbgr'
+  #  mydbg = Debugger.new()
+  #  ... 
+  #  mydbg.debugger
+
+  # You can run:
+  #  require 'rbdbgr'
+  # ...
+  #  mydbg = Debugger.debug
+  # 
+  #  Or if you don't want the save the newly-created debugger object, just
+  #  Debugger.debug
+  # 
+  # Likewise for mydbg.debugger{ ... }
+
   def self.debug(opts={}, &block)
     mydbg = Debugger.new()
     mydbg.debugger(opts, &block)
+    return mydbg
   end
 end
 
