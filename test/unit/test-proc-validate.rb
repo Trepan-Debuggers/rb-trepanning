@@ -41,13 +41,6 @@ class TestValidate < Test::Unit::TestCase
     end
   end
 
-  def test_int_list
-    assert_equal([1,2,3], @proc.get_int_list(%w(1+0 3-1 3)))
-    assert_equal(0, $errors.size)
-    assert_equal([2,3], @proc.get_int_list(%w(a 2 3)))
-    assert_equal(1, $errors.size)
-  end
-
   def test_breakpoint_position
     require 'thread_frame'
     tf = RubyVM::ThreadFrame.current
@@ -65,4 +58,33 @@ class TestValidate < Test::Unit::TestCase
     assert_equal([2, 'bogus', false, 'a > b'],
                  munge(@proc.breakpoint_position(%w(2 if a > b))))
   end
+
+  def test_int_list
+    assert_equal([1,2,3], @proc.get_int_list(%w(1+0 3-1 3)))
+    assert_equal(0, $errors.size)
+    assert_equal([2,3], @proc.get_int_list(%w(a 2 3)))
+    assert_equal(1, $errors.size)
+  end
+
+  def test_method?
+    def foo; 5 end
+    
+    # require_relative %w(.. .. lib rbdbgr)
+    # dbgr = Debugger.new(:set_restart => true)
+    # FIXME: 'foo', 'errmsg'
+    ['Array#map', 'Debugger::CmdProcessor.new'
+    ].each do |str|
+      # dbgr.debugger if 'foo' == str
+      assert_equal(true, @proc.method?(str),
+                   "#{str} should be known as a method")
+    end
+    ['food', '.errmsg'
+    ].each do |str|
+      # dbgr.debugger if 'foo' == str
+      assert_equal(false, @proc.method?(str),
+                   "#{str} should be known as a method")
+    end
+
+  end
+
 end
