@@ -4,9 +4,10 @@ require_relative %w(.. .. app condition)
 class Debugger::Command::StepCommand < Debugger::Command
 
   unless defined?(HELP)
-    HELP = <<EOH
-step[+|=|-|<|>|!|<>] [EVENT-NAME...] [count]
-step until expression
+    HELP =
+"step[+|=|-|<|>|!|<>] [EVENT-NAME...] [count]
+step until EXPRESSION
+step to METHOD-NAME
 
 Execute the current line, stopping at the next event.  Sometimes this
 is called 'step into'.
@@ -50,7 +51,7 @@ Examples:
 Related and similar is the 'next' command.  See also the commands:
 'skip', 'jump' (there's no 'hop' yet), 'continue', 'return' and
 'finish' for other ways to progress execution.
-EOH
+"
 
     ALIASES      = %w(s step+ step- step< step> step<> step! s> s< s+ s- 
                       s<> s! s=)
@@ -74,6 +75,14 @@ EOH
           condition = try_condition
           opts[:different_pos] = false
           step_count = 0
+        end
+      elsif 'to' == args[1]
+        if args.size != 3
+          errmsg('Expecting a method name after "to"')
+        elsif !@proc.method?(args[2])
+          errmsg("#{args[2]} doesn't seem to be a method name")
+        else
+          opts[:to_method] = args[2]
         end
       else
         count_str = args[1]

@@ -187,6 +187,19 @@ class Debugger
       raise TypeError
     end
 
+    def method?(method_string)
+      obj, type, meth = 
+        if method_string =~ /(.+)(#|::|\.)(.+)/
+          [$1, $2, $3]
+        else
+          ['self', '.', method_string]
+        end
+      ret = debug_eval_no_errmsg("#{obj}.method(#{meth.inspect})")
+      return true if ret 
+      return debug_eval_no_errmsg("#{obj}.is_a?(Class)") &&
+        debug_eval_no_errmsg("#{obj}.method_defined?(#{meth.inspect})")
+    end
+
     # parse_position(self, arg)->(fn, container, lineno)
     # 
     # Parse arg as [filename:]lineno | function | module
@@ -297,6 +310,25 @@ if __FILE__ == $0
     puts proc.object_iseq('proc.object_iseq').inspect
     
     puts proc.parse_position_one_arg('tmpdir.rb').inspect
+
+    puts '=' * 40
+    ['Array#map', 'Debugger::CmdProcessor.new',
+     'foo', 'proc.errmsg'].each do |str|
+      puts "#{str} should be true: #{proc.method?(str).inspect}"
+    end
+    puts '=' * 40
+    # require_relative %w(.. lib rbdbgr)
+    # dbgr = Debugger.new(:set_restart => true)
+    # dbgr.debugger
+
+    # FIXME:
+    # Array#foo should be false: true
+    # Debugger::CmdProcessor.allocate should be false: true
+
+    ['food', '.errmsg'].each do |str|
+      puts "#{str} should be false: #{proc.method?(str).inspect}"
+    end
+    puts '-' * 20
     p proc.breakpoint_position(%w(O0))
     p proc.breakpoint_position(%w(1))
     p proc.breakpoint_position(%w(2 if a > b))
