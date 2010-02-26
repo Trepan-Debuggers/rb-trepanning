@@ -19,7 +19,7 @@ class Debugger
         if 0 == arity
           ''
         elsif 0 < arity && frame
-          [1..arity].map{|i| frame.sp(i+2).inspect}.join(', ')
+          (1..arity).map{|i| frame.sp(i+2).inspect}.join(', ')
         else
           "#{frame.arity} args"
         end
