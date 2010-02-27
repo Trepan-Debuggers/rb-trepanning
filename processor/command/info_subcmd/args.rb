@@ -13,28 +13,31 @@ class Debugger::Subcommand::InfoArgs < Debugger::Subcommand
 
   include Debugger::Frame
   def run(args)
-    argc = @proc.frame.argc
-    if argc > 0 
-      if 'CFUNC' == @proc.frame.type
-      (1..argc).each do |i| 
+    if 'CFUNC' == @proc.frame.type
+      argc = @proc.frame.argc
+      if argc > 0 
+        (1..argc).each do |i| 
           msg "#{i}: #{@proc.frame.sp(i+2).inspect}"
-        end
-      else
-        param_names = all_param_names(@proc.frame.iseq, false)
-        (0..argc-1).each do |i|
-          var_name = param_names[i]
-          var_value = @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
-          msg("#{var_name} = #{var_value}")
         end
       end
       unless %w(call c_call c_return).member?(@proc.core.event)
         msg("Values may have change from the initial call values.")
+        return
+      else
+        msg("No parameters in call.")
       end
     else
-      msg("No parameters in call.")
+      param_names = all_param_names(@proc.frame.iseq, false)
+      if param_names.empty?
+        msg("No parameters in call.")
+      else
+        param_names.each_with_index do |var_name, i|
+          var_value = @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
+          msg("#{var_name} = #{var_value}")
+        end
+      end
     end
   end
-
 end
 
 if __FILE__ == $0
