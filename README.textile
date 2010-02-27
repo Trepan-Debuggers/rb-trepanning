@@ -15,7 +15,9 @@ Running from inside irb:
 bc.  require 'rbdbgr' 
  Debugger.debug { your code }
 
-You can do the same thing inside your Ruby program, but probably you don't want to give a block. Instead, you may want to have debugging start on the next statement in the code:
+The return value from Debugger is the return value of the block, i.e. the final value in the block.
+
+You can run the same thing inside your Ruby program, but probably you don't want to give a block. Instead, you may want to have debugging start on the next statement in the code:
 
 bc.  require 'rbdbgr' 
  Debugger.debug # Don't stop here...
@@ -32,9 +34,9 @@ The above is really shorthand for something like:
 bc.  mydbg = Debugger.new(:set_restart=>true) 
  mydbg.debugger
 
-Debugger.debug returns a debugger object (mydbg above) which can then be used over again. The debugger object holds debugger settings.
+Debugger.debug returns a debugger object (akin to mydbg above) which can then be used over again. The debugger object holds debugger settings, such as "autolist" or "autoeval" settings and breakpoint information.
 
-If for some reason you want a synchronous stop in your program call to the debugger at the point of the call, set opts[:immediate] to true. Example:
+Due to the line-event orientation in ruby-debug, it occasionally it was convenient to add a synchronous stop in your program. I don't think that will generally be necessary here, but if you do call to the debugger at the point of the call rather than the subsequent stopping point, set opts[:immediate] to true. Example:
 
 bc.  # ... work, work, work 
  mydbg.debugger(:immediate=>true) # enter debugger here 
