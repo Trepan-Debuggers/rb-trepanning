@@ -170,8 +170,7 @@ if __FILE__ == $0
   puts cmd.help(%w(help set))
   puts '=' * 40
   # require_relative %w(.. .. .. lib rbdbgr)
-  # dbgr = Debugger.new(:set_restart => true)
-  # dbgr.debugger
+  # Debugger.debug(:set_restart => true)
   puts cmd.help(%w(help set *))
   puts '=' * 40
   puts cmd.help(%w(help set d.*))

@@ -48,7 +48,6 @@ if __FILE__ == $0
   break_cmd = cmds['break']
   break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
   # require_relative %w(.. .. lib rbdbgr)
-  # dbgr = Debugger.new(:set_restart => true)
-  # dbgr.debugger
+  # Debugger.debug(:set_restart => true)
   cmd.run([name, '1'])
 end

@@ -135,6 +135,7 @@ class Debugger
 
   def self.debug(opts={}, &block)
     mydbg = Debugger.new()
+    mydbg.trace_filter << self.method(:debug)
     mydbg.debugger(opts, &block)
     return mydbg
   end
@@ -144,12 +145,10 @@ if __FILE__ == $0
   def square(x) 
     x * x
   end
+  puts 'block debugging...'
   # It is imagined that there are all sorts of command-line options here.
   # (I have a good imagination.)
-  dc = Debugger.new(:set_restart=>true)
-
-  puts 'block debugging...'
-  dc.debugger {
+  dc = Debugger.debug(:set_restart=>true) {
     a = 2
     b = square(a)
     p "square of #{a} is #{b}"

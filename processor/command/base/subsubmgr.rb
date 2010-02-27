@@ -177,7 +177,6 @@ if __FILE__ == $0
   puts '=' * 40
   # FIXME
   # require_relative %w(.. .. lib rbdbgr)
-  # dbgr = Debugger.new(:set_restart => true)
-  # dbgr.debugger
+  # Debugger.debug(:set_restart => true)
   # puts cmd.help(%w(help info registers p.*))
 end

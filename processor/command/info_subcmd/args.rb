@@ -16,13 +16,9 @@ class Debugger::Subcommand::InfoArgs < Debugger::Subcommand
     if 'CFUNC' == @proc.frame.type
       argc = @proc.frame.argc
       if argc > 0 
-        (1..argc).each do |i| 
-          msg "#{i}: #{@proc.frame.sp(i+2).inspect}"
+        1.upto(argc).each do |i| 
+          msg "#{i}: #{@proc.frame.sp(argc-i+3).inspect}"
         end
-      end
-      unless %w(call c_call c_return).member?(@proc.core.event)
-        msg("Values may have change from the initial call values.")
-        return
       else
         msg("No parameters in call.")
       end
@@ -34,6 +30,9 @@ class Debugger::Subcommand::InfoArgs < Debugger::Subcommand
         param_names.each_with_index do |var_name, i|
           var_value = @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
           msg("#{var_name} = #{var_value}")
+        end
+        unless 'call' == @proc.core.event and 0 == @proc.frame_index
+          msg("Values may have change from the initial call values.")
         end
       end
     end

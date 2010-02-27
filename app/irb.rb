@@ -45,7 +45,7 @@ module IRB # :nodoc:
 
       # Set to run the standard rbdbgr IRB profile
       irbrc = File.expand_path(File.join(File.dirname(__FILE__), 
-                                         %w(.. profile irbrc)))
+                                         %w(.. data irbrc)))
       ENV['IRBRC'] = irbrc
 
       args = ARGV.dup

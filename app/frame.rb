@@ -15,11 +15,15 @@ class Debugger
     end
 
     def c_params(frame, maxstring=20)
+      argc = frame.argc
       args = 
-        if 0 == frame.argc
+        if 0 == argc
           ''
         elsif frame 
-          (1..frame.argc).map{|i| frame.sp(i+2).inspect}.join(', ')
+          1.upto(argc).map do 
+            |i| 
+            safe_repr(frame.sp(argc-i+3).inspect, 10)
+          end.join(', ')
         else
           '??'
         end
@@ -31,7 +35,7 @@ class Debugger
       params = param_names(iseq, 0, iseq.argc-1, '')
       if iseq.arg_opts > 0
         opt_params = param_names(iseq, iseq.argc, 
-                                 iseq.argc + iseq.arg_opts-1, '')
+                                 iseq.argc + iseq.arg_opts-2, '')
         opt_params[0] = "optional: #{opt_params[0]}" if delineate
         params += opt_params
       end

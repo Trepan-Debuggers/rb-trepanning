@@ -92,6 +92,7 @@ FILES = FileList[
   'Rakefile',
   'app/*',
   'bin/*',
+  'data/*',
   'interface/*',
   'io/*',
   'lib/*',
