@@ -14,14 +14,14 @@ class Debugger
       end.compact
     end
 
-    def c_params(arity, frame, maxstring=20)
+    def c_params(frame, maxstring=20)
       args = 
-        if 0 == arity
+        if 0 == frame.argc
           ''
-        elsif 0 < arity && frame
-          (1..arity).map{|i| frame.sp(i+2).inspect}.join(', ')
+        elsif frame 
+          (1..frame.argc).map{|i| frame.sp(i+2).inspect}.join(', ')
         else
-          "#{frame.arity} args"
+          '??'
         end
       safe_repr(args, maxstring)
     end
@@ -62,7 +62,7 @@ class Debugger
       if frame.method and frame.type != 'IFUNC'
         iseq = frame.iseq
         args = if 'CFUNC' == frame.type
-                 c_params(frame.arity, frame)
+                 c_params(frame)
                else
                  all_param_names(iseq)
                end

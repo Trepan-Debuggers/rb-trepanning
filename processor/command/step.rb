@@ -79,10 +79,14 @@ Related and similar is the 'next' command.  See also the commands:
       elsif 'to' == args[1]
         if args.size != 3
           errmsg('Expecting a method name after "to"')
+          return
         elsif !@proc.method?(args[2])
           errmsg("#{args[2]} doesn't seem to be a method name")
+          return
         else
           opts[:to_method] = args[2]
+          opts[:different_pos] = false
+          step_count = 0
         end
       else
         count_str = args[1]
