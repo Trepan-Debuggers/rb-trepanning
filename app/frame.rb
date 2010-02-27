@@ -26,13 +26,13 @@ class Debugger
       safe_repr(args, maxstring)
     end
 
-    def all_param_names(iseq)
+    def all_param_names(iseq, delineate=true)
       return '' unless iseq
       params = param_names(iseq, 0, iseq.argc-1, '')
       if iseq.arg_opts > 0
         opt_params = param_names(iseq, iseq.argc, 
                                  iseq.argc + iseq.arg_opts-1, '')
-        opt_params[0] = "optional: #{opt_params[0]}"
+        opt_params[0] = "optional: #{opt_params[0]}" if delineate
         params += opt_params
       end
       params += param_names(iseq, iseq.arg_rest, iseq.arg_rest, '*') if 
@@ -41,13 +41,13 @@ class Debugger
         # Manditory arguments after optional ones - new in Ruby 1.9
         post_params = param_names(iseq, iseq.arg_post_start, 
                                   iseq.post_start + iseq.arg_post_len, '')
-        post_params[0] = "post: #{post_params[0]}"
+        post_params[0] = "post: #{post_params[0]}" if delineate
         params += post_params
       end
       params += param_names(iseq, iseq.arg_block, iseq.arg_block, '&') if 
         iseq.arg_block != -1
 
-      return params.join(', ')
+      return params
     end
 
     def format_stack_entry(frame, opts={})
@@ -64,7 +64,7 @@ class Debugger
         args = if 'CFUNC' == frame.type
                  c_params(frame)
                else
-                 all_param_names(iseq)
+                 all_param_names(iseq).join(', ')
                end
         s += frame.method
         if %w(CFUNC METHOD).member?(frame.type)
