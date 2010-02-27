@@ -8,7 +8,7 @@ bc.  rbdbgr ruby-program [program]
 
 If your program needs options of its own:
 
-bc. rbdbgr -- ruby-program [program args...]
+bc.  rbdbgr -- ruby-program [program args...]
 
 Running from inside irb:
 
