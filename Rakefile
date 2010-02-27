@@ -88,7 +88,7 @@ desc "Test everything - same as test."
 task :default => :test
 
 FILES = FileList[
-  'README',
+  'README.md',
   'Rakefile',
   'app/*',
   'bin/*',
