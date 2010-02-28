@@ -1,8 +1,8 @@
-A modular, testable debugger for Ruby 1.9. Think _ruby-debug_ on steroids.
+A modular, testable debugger for Ruby 1.9. A total rewrite of _ruby-debug_.
 
 __In order to use this debugger, you'll need a patched Ruby 1.9 and some additional packages.__
 
-Apply ["threadframe-ruby-1.9.patch":http://github.com/rocky/rb-threadframe/blob/master/threadframe-ruby-1.9.patch] to the Ruby 1.9 source. Build Ruby 1.9 and install that. Next build and install ["rb-threadframe":http://github.com/rocky/rb-threadframe], which gives access stack frame. It has a number of other cool extensions to the Thread, RubyVM:InstructionSequence, Proc, and Module classes.
+Apply ["threadframe-ruby-1.9.patch":http://github.com/rocky/rb-threadframe/blob/master/threadframe-ruby-1.9.patch] to the Ruby 1.9 source. Build Ruby 1.9 and install that. Next build and install ["rb-threadframe":http://github.com/rocky/rb-threadframe], which gives access to stack frames. It has a number of other cool extensions to the _Thread_, _RubyVM:InstructionSequence_, _Proc_, and _Method_ classes.
 
 Also, you need columnize which should be gem installable:
 
