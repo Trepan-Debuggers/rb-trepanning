@@ -1,8 +1,24 @@
-A modular, testable debugger for Ruby 1.9
+A modular, testable debugger for Ruby 1.9. Think _ruby-debug_ on steroids.
 
-Some cryptic examples.
+__In order to use this debugger, you'll need a patched Ruby 1.9 and some additional packages.__
 
-Running if rbdbgr is installed:
+Apply ["threadframe-ruby-1.9.patch":http://github.com/rocky/rb-threadframe/blob/master/threadframe-ruby-1.9.patch] to the Ruby 1.9 source. Build Ruby 1.9 and install that. Next build and install ["rb-threadframe":http://github.com/rocky/rb-threadframe], which gives access stack frame. It has a number of other cool extensions to the Thread, RubyVM:InstructionSequence, Proc, and Module classes.
+
+Also, you need columnize which should be gem installable:
+
+bc. gem install columnize
+
+Also you need linecache for Ruby 1.9. Unfortunately there are several out there. Use the _ruby-1.9_ branch from _linecache_: 
+
+bc. svn co svn://rubyforge.org/var/svn/rocky-hacks/linecache/branches/ruby-1.9
+
+Finally you need ["rb-trace":http://github.com/rocky/rb-trace].
+
+I realize this is a bit of work to do. Right now this debugger is geared more for those who are willing to roll up their sleeves and help out than for novices.
+
+Assuming the above checks out... 
+
+Running if the rbdbgr gem is installed:
 
 bc.  rbdbgr ruby-program [program]
 
@@ -10,7 +26,12 @@ If your program needs options of its own:
 
 bc.  rbdbgr -- ruby-program [program args...]
 
-Running from inside irb:
+If you want to run from the source tree you can do that too:
+
+bc.  cd place-where-rbdbgr-is-installed:
+ ./bin/rbdbgr -- ruby-program [program args...]
+
+Running from inside _irb_:
 
 bc.  require 'rbdbgr' 
  Debugger.debug { your code }
