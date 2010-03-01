@@ -122,7 +122,7 @@ Some of the core debugger concepts have been rethought. As a result perhaps ther
   spec.add_dependency('linecache')
   
   spec.has_rdoc = true
-  spec.extra_rdoc_files = ['README']
+  spec.extra_rdoc_files = ['README.textile']
 end
 
 # Rake task to build the default package
