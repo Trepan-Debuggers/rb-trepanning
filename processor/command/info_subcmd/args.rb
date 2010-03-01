@@ -20,7 +20,7 @@ class Debugger::Subcommand::InfoArgs < Debugger::Subcommand
           msg "#{i}: #{@proc.frame.sp(argc-i+3).inspect}"
         end
       else
-        msg("No parameters in call.")
+        msg("No parameters in C call.")
       end
     else
       param_names = all_param_names(@proc.frame.iseq, false)
