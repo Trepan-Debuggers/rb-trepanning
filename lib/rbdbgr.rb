@@ -137,7 +137,13 @@ class Debugger
     mydbg = Debugger.new()
     mydbg.trace_filter << self.method(:debug)
     mydbg.debugger(opts, &block)
-    return mydbg
+  end
+
+  def self.debug_str(opts={}, string)
+    mydbg = Debugger.new()
+    mydbg.trace_filter << self.method(:debug_str)
+    frame = RubyVM::Threadframe.current
+    eval(string, frame.prev.binding)
   end
 end
 

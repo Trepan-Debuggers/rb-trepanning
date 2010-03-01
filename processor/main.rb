@@ -76,6 +76,10 @@ class Debugger
       @last_pos        = [nil, nil, nil, nil]
       @next_level      = 32000
       @next_thread     = nil
+
+      start_cmds       = settings.delete(:start_cmds)
+      start_file       = settings.delete(:start_file)
+
       @settings        = settings.merge(DEFAULT_SETTINGS)
       @different_pos   = @settings[:different]
       @remap_container = {}  # See location.rb
@@ -100,6 +104,8 @@ class Debugger
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
+
+      # FIXME: run start file and start commands.
     end
 
     def canonic_container(container)

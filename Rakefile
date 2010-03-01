@@ -129,3 +129,21 @@ end
 Rake::GemPackageTask.new(spec) do |pkg|
   pkg.need_tar = true
 end
+
+def install(spec, *opts)
+  system('gem', 'install', "pkg/#{spec.name}-#{spec.version}.gem", *opts)
+end
+
+desc 'Install locally'
+task :install => :package do
+  Dir.chdir(File::dirname(__FILE__)) do
+    # ri and rdoc take lots of time
+    install(spec, '--no-ri', '--no-rdoc')
+  end
+end    
+
+task :install_full => :package do
+  Dir.chdir(File::dirname(__FILE__)) do
+    install(spec)
+  end
+end    
