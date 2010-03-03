@@ -36,10 +36,15 @@ class Debugger
     output      ||= @settings[:output]
     @intf         = [Debugger::UserInterface.new(input, output)]
     @core         = Core.new(self, @settings[:core_opts])
+
+    if @settings[:initial_dir]
+      Dir.chdir(@settings[:initial_dir])
+    else
+      @settings[:initial_dir] = Dir.pwd
+    end
     @initial_dir  = @settings[:initial_dir]
     @restart_argv = 
       if @settings[:set_restart]
-        @initial_dir ||= Dir.pwd
         [File.expand_path($0)] + ARGV
       elsif @settings[:restart_argv]
         @settings[:restart_argv]

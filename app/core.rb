@@ -31,7 +31,7 @@ class Debugger
 
     include Trace
 
-    unless defined?(DEFAULT_SETTINGS)
+    unless defined?(CORE_DEFAULT_SETTINGS)
       # Synchronous events
       STEPPING_EVENT_MASK = 
         LINE_EVENT_MASK     | CLASS_EVENT_MASK    | CALL_EVENT_MASK     |
@@ -41,7 +41,7 @@ class Debugger
       ASYNC_EVENT_MASK = 
         RAISE_EVENT_MASK    | VM_EVENT_MASK       | SWITCH_EVENT_MASK
 
-      DEFAULT_SETTINGS = {
+      CORE_DEFAULT_SETTINGS = {
         :cmdproc_opts      => {},
         :debug_core_events => false,
         :hook_name         => :event_processor, # or :old_event_processor
@@ -65,7 +65,7 @@ class Debugger
 
     def initialize(debugger, settings={})
       @dbgr         = debugger
-      @settings     = DEFAULT_SETTINGS.merge(settings)
+      @settings     = CORE_DEFAULT_SETTINGS.merge(settings)
       @step_count   = @settings[:step_count]
       @step_events  = @settings[:step_events]
       @async_events = @settings[:async_events]
