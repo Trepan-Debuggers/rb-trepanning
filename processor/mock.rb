@@ -11,6 +11,8 @@ ISEQS__        = {} unless
 
 module MockDebugger
   class MockDebugger
+    attr_accessor :trace_filter # Procs/Methods we ignore.
+
     attr_accessor :core         # access to Debugger::Core instance
     attr_accessor :intf         # The way the outside world interfaces with us.
     attr_reader   :initial_dir  # String. Current directory when program
@@ -21,9 +23,10 @@ module MockDebugger
 
     def initialize(settings={})
       @before_cmdloop_hooks = []
-      @settings = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
-      @intf     = [Debugger::UserInterface.new]
-      @core     = Debugger::Core.new(self)
+      @settings             = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
+      @intf                 = [Debugger::UserInterface.new]
+      @core                 = Debugger::Core.new(self)
+      @trace_filter         = []
     end
 
   end
