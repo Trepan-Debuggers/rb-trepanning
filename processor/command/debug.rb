@@ -4,9 +4,9 @@ require_relative %w(base cmd)
 class Debugger::Command::DebugCommand < Debugger::Command
   unless defined?(HELP)
     HELP =
-"debug EXPRESSION
+"debug RUBY-CODE
 
-Enter the debugger recursively on EXPRESSION."
+Enter the debugger recursively on RUBY-CODE."
 
     CATEGORY      = 'data'
     MIN_ARGS      = 1
@@ -18,7 +18,14 @@ Enter the debugger recursively on EXPRESSION."
 
   def run(args)
     old_tracing = Thread.current.tracing
-    arg_str = args[1..-1].join(' ')
+    frame       = @proc.frame  # gets messed up in recursive call
+    arg_str     = args[1..-1].join(' ')
+    hidelevels  = @proc.hidelevels[Thread.current]
+
+    # FIXME save/restore hidelevels so "where" doesn't show debugger
+    stack_diff = RubyVM::ThreadFrame.current.stack_size - frame.stack_size 
+    p stack_diff
+    @proc.hidelevels[Thread.current] += stack_diff + 1
 
     # Ignore tracing in support routines:
     # this method and debug_eval.
@@ -36,6 +43,9 @@ Enter the debugger recursively on EXPRESSION."
     @proc.debug_eval(arg_str)
     Thread.current.tracing = old_tracing
     msg 'LEAVING RECURSIVE DEBUGGER'
+    @proc.frame_setup(frame)
+    @proc.hidelevels[Thread.current] = hidelevels
+    @proc.print_location
   end
 end
 
