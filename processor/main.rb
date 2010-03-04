@@ -5,7 +5,7 @@ require 'linecache'
 require 'set'
 require 'pathname'  # For cleanpath
 
-%w(default display load_cmds location frame hook msg validate).each do 
+%w(default display eval load_cmds location frame hook msg validate).each do
   |mod_str|
   require_relative mod_str
 end
@@ -117,36 +117,6 @@ class Debugger
       @settings[:basename] ? File.basename(filename) : 
         # Cache this?
         Pathname.new(filename).cleanpath.to_s
-    end
-
-    def debug_eval(str)
-      begin
-        b = @frame.binding if @frame 
-        b ||= binding
-        eval(str, b)
-      rescue StandardError, ScriptError => e
-        exception_dump(e, settings[:stack_trace_on_error], $!.backtrace)
-      end
-    end
-
-    def debug_eval_no_errmsg(str)
-      begin
-        b = @frame.binding if @frame 
-        b ||= binding
-        eval(str, b)
-      rescue StandardError, ScriptError => e
-        nil
-      end
-    end
-
-
-    def exception_dump(e, stack_trace, backtrace)
-      str = "#{e.class} Exception: #{e.message}"
-      if stack_trace
-        str += "\n" + backtrace.map{|l| "\t#{l}"}.join("\n") rescue nil
-      end
-      errmsg str
-      # throw :debug_error
     end
 
     # Check that we meed the criteria that cmd specifies it needs

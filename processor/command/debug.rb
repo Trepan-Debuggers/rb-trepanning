@@ -31,10 +31,11 @@ Enter the debugger recursively on EXPRESSION."
       tf << m unless tf.member?(m)
     end
 
-    self.msg("ENTERING RECURSIVE DEBUGGER")
+    msg 'ENTERING RECURSIVE DEBUGGER'
     Thread.current.tracing = false
     @proc.debug_eval(arg_str)
     Thread.current.tracing = old_tracing
+    msg 'LEAVING RECURSIVE DEBUGGER'
   end
 end
 
