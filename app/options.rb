@@ -7,7 +7,7 @@ module Rbdbgr
   PROGRAM = 'rbdbgr'
 
   def show_version
-    #{PROGRAM} version #{VERSION}
+    "#{PROGRAM} version #{VERSION}"
   end
 
   def setup_options(options, stdout=$stdout, stderr=$stderr)
@@ -16,15 +16,19 @@ module Rbdbgr
 #{show_version}
 Usage: #{PROGRAM} [options] <script.rb> -- <script.rb parameters>
 EOB
-      opts.on("--script FILE", String, "Name of the script file to run") do |script| 
-        unless File.exists?(script)
-          stderr.puts "Script file '#{script}' is not found."
-          exit
+      opts.on("--command FILE", String, 
+              "Execute debugger commnds from FILE") do |cmdfile| 
+        unless File.readable?(cmdfile)
+          if File.exists?
+            stderr.puts "Command file '#{cmdfile}' is not readable."
+          else
+            stderr.puts "Command file '#{cmdfile}' does not exist."
+          end
         end
-        options[:script] = script
+        options[:cmdfiles] << cmdfile
       end
       opts.on("--output FILE", String, "Name of file to record output") do |outfile| 
-        options[:outtfile] = outfile
+        options[:outfile] = outfile
       end
       opts.on("--cd DIR", String, "Change current directory to DIR") do |dir| 
         if File.directory?(dir)
@@ -38,13 +42,13 @@ EOB
         end
       end
       opts.on_tail("--help", "Show this message") do
-        output.puts opts
-        exit
+        options[:help] = true
+        stdout.puts opts
       end
       opts.on_tail("--version", 
                    "print the version") do
-        output.puts show_version
-        exit
+        options[:version] = true
+        stdout.puts show_version
       end
     end
   end
@@ -52,11 +56,25 @@ end
 
 if __FILE__ == $0
   require_relative 'default'
-  options = Rbdbgr::DEFAULT_CMDLINE_SETTINGS.clone
   include Rbdbgr
-  opts = setup_options(options)
+  opts = {}
+  options ={}
+  # options = DEFAULT_CMDLINE_SETTINGS.merge({})
+  [%w(--help), %w(--version)].each do |o|
+    options ={}
+    DEFAULT_CMDLINE_SETTINGS.each do |key, value|
+      options[key] = value.clone if
+        !value.nil? && value.respond_to?(:clone)
+    end
+    opts = setup_options(options)
+    rest = opts.parse o
+    puts options
+    puts '=' * 10
+  end
   rest = opts.parse! ARGV
   puts opts.to_s
-  puts Rbdbgr::DEFAULT_CMDLINE_SETTINGS
+  puts '=' * 10
   puts options
+  puts '=' * 10
+  puts Rbdbgr::DEFAULT_CMDLINE_SETTINGS
 end

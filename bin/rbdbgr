@@ -21,8 +21,16 @@ if File.basename(__FILE__) == File.basename($0)
       STDERR.puts 'Sorry - for now you must specify a Ruby script to debug.'
       exit(-1)
     end
-    
-    options = Rbdbgr::DEFAULT_CMDLINE_SETTINGS.clone
+
+    # options = DEFAULT_CMDLINE_SETTINGS.merge({}) seems to change up
+    # DEFAULT_CMDLINE_SETTINGS when options[:key] is changed. The
+    # below is the simplest thing I can come up with so far.
+    options = {}
+    DEFAULT_CMDLINE_SETTINGS.each do |key, value|
+      options[key] = value.clone if
+        !value.nil? && value.respond_to?(:clone)
+    end
+
     opts = setup_options(options)
     Debugger::ARGV = ARGV.clone
     rest = opts.parse! ARGV

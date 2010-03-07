@@ -32,9 +32,14 @@ class Debugger
 
   def initialize(settings={})
     @settings     = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
-    input       ||= @settings[:input]
-    output      ||= @settings[:output]
-    @intf         = [Debugger::UserInterface.new(input, output)]
+    @input       ||= @settings[:input]
+    @output      ||= @settings[:output]
+
+    @intf         = []
+    @settings[:cmdfiles].each do |cmdfile|
+        add_command(cmdfile)
+    end if @settings.member?(:cmdfile)
+    @intf         = [Debugger::UserInterface.new(@input, @output)]
     @core         = Core.new(self, @settings[:core_opts])
 
     if @settings[:initial_dir]
@@ -117,6 +122,17 @@ class Debugger
   # Remove all of our trace events
   def stop(opts={})
     @trace_filter.set_trace_func(nil)
+  end
+
+  def add_command_file(cmdfile)
+    unless File.readable?(cmdfile)
+      if File.exists?
+        stderr.puts "Command file '#{cmdfile}' is not readable."
+      else
+        stderr.puts "Command file '#{cmdfile}' does not exist."
+      end
+    end
+    @intf << Debugger::UserInterface.new(cmdfile, @output)
   end
 
   # As a simplification for creating a debugger object, and then

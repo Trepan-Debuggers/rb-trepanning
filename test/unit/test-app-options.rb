@@ -15,7 +15,11 @@ class TestAppStringIO < Test::Unit::TestCase
     @options = DEFAULT_CMDLINE_SETTINGS.clone
     @stderr  = StringIO.new
     @stdout  = StringIO.new
-    @opts    = setup_options(@options, @stout, @stderr)
+    DEFAULT_CMDLINE_SETTINGS.each do |key, value|
+      @options[key] = value.clone if
+        !value.nil? && value.respond_to?(:clone)
+      end
+    @opts = setup_options(@options, @stdout, @stderr)
   end
 
   def test_cd
@@ -32,6 +36,19 @@ class TestAppStringIO < Test::Unit::TestCase
     assert_not_equal('', @stderr.string)
     assert_equal('', @stdout.string)
     # FIXME: add test where directory isn't executable.
+  end
+
+  def test_help_and_version_opts
+    %w(help version).each do |name|
+      setup
+      o    = ["--#{name}"]
+      rest = @opts.parse o
+      assert_not_equal('', @stdout.string)
+      assert_equal('', @stderr.string)
+      assert_equal(true, @options[name.to_sym])
+      other_sym = 'help' == name ? :version : :help
+      assert_equal(false, @options.member?(other_sym))
+    end
   end
 
 end

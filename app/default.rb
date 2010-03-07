@@ -16,8 +16,8 @@ module Rbdbgr
 
   # Default settings for Debugger run from the command line.
   DEFAULT_CMDLINE_SETTINGS = {
-    :script => nil,
-    :output => nil,
+    :cmdfiles => [],  # Initialization command files to run
+    :output   => nil,
   }
 
 end
