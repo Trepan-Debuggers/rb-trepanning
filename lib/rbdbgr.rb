@@ -31,16 +31,15 @@ class Debugger
   attr_accessor :trace_filter # Procs/Methods we ignore.
 
   def initialize(settings={})
-    @settings     = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
-    @input       ||= @settings[:input]
-    @output      ||= @settings[:output]
+    @settings = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
+    @input  ||= @settings[:input]
+    @output ||= @settings[:output]
 
-    @intf         = []
+    @intf     = [Debugger::UserInterface.new(@input, @output)]
     @settings[:cmdfiles].each do |cmdfile|
-        add_command(cmdfile)
-    end if @settings.member?(:cmdfile)
-    @intf         = [Debugger::UserInterface.new(@input, @output)]
-    @core         = Core.new(self, @settings[:core_opts])
+      add_command_file(cmdfile)
+    end if @settings.member?(:cmdfiles)
+    @core     = Core.new(self, @settings[:core_opts])
 
     if @settings[:initial_dir]
       Dir.chdir(@settings[:initial_dir])

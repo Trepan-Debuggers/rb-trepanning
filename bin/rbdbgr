@@ -17,11 +17,6 @@ if File.basename(__FILE__) == File.basename($0)
   # constants dynamically.
   1.times do 
     | ; rbdbgr_path, program_to_debug |
-    if ARGV.empty?
-      STDERR.puts 'Sorry - for now you must specify a Ruby script to debug.'
-      exit(-1)
-    end
-
     # options = DEFAULT_CMDLINE_SETTINGS.merge({}) seems to change up
     # DEFAULT_CMDLINE_SETTINGS when options[:key] is changed. The
     # below is the simplest thing I can come up with so far.
@@ -46,6 +41,15 @@ if File.basename(__FILE__) == File.basename($0)
     Debugger::RBDBGR_PATH  = rbdbgr_path
     Debugger::RBDBGR_FILE  = __FILE__
 
+    if ARGV.empty?
+      if options[:version] || options[:help]
+        exit 100
+      else
+        STDERR.puts 'Sorry - for now you must specify a Ruby script to debug.'
+        exit(1)
+      end
+    end
+
     program_to_debug = ARGV.shift
     program_to_debug = whence_file(program_to_debug) unless 
       File.exist?(program_to_debug)
@@ -54,7 +58,8 @@ if File.basename(__FILE__) == File.basename($0)
     # Set global so others may use this debugger.
     $rbdbgr = Debugger.new(:restart_argv => 
                            explicit_restart_argv(Debugger::ARGV),
-                           :initial_dir => options[:chdir]
+                           :cmdfiles    => options[:cmdfiles],
+                           :initial_dir => options[:chdir],
                            )
     debug_program($rbdbgr, Debugger::RUBY_PATH, 
                   File.expand_path(program_to_debug))
