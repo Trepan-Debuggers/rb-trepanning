@@ -2,7 +2,6 @@
 require 'test/unit'
 require 'stringio'
 require 'tempfile'
-require_relative %w(.. .. app default)
 require_relative %w(.. .. app options)
 
 # To have something to work with.
@@ -15,10 +14,7 @@ class TestAppStringIO < Test::Unit::TestCase
     @options = DEFAULT_CMDLINE_SETTINGS.clone
     @stderr  = StringIO.new
     @stdout  = StringIO.new
-    DEFAULT_CMDLINE_SETTINGS.each do |key, value|
-      @options[key] = value.clone if
-        !value.nil? && value.respond_to?(:clone)
-      end
+    @options = copy_default_options
     @opts = setup_options(@options, @stdout, @stderr)
   end
 
@@ -36,6 +32,16 @@ class TestAppStringIO < Test::Unit::TestCase
     assert_not_equal('', @stderr.string)
     assert_equal('', @stdout.string)
     # FIXME: add test where directory isn't executable.
+  end
+
+  def test_binary_opts
+    %w(nx).each do |name|
+      setup
+      o    = ["--#{name}"]
+      rest = @opts.parse o
+      assert_equal('', @stderr.string)
+      assert_equal(true, @options[name.to_sym])
+    end
   end
 
   def test_help_and_version_opts

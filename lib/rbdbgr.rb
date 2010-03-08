@@ -61,6 +61,14 @@ class Debugger
     [:debugger, :event_processor].each {|m| @trace_filter << @core.method(m)}
     @trace_filter << @trace_filter.method(:set_trace_func)
     @trace_filter << Kernel.method(:set_trace_func)
+
+    # Run user debugger command startup files.
+    unless @settings[:nx]
+      cwd_initfile = File.join('.', CMD_INITFILE_BASE)
+      [cwd_initfile, CMD_INITFILE].each do |initfile|
+        add_command_file(initfile) if File.readable?(initfile)
+      end
+    end
   end
 
   # To call from inside a Ruby program, there is one-time setup that 
@@ -175,14 +183,14 @@ if __FILE__ == $0
   puts 'block debugging...'
   # It is imagined that there are all sorts of command-line options here.
   # (I have a good imagination.)
-  dc = Debugger.debug(:set_restart=>true) {
+  Debugger.debug(:set_restart=>true) {
     a = 2
     b = square(a)
     p "square of #{a} is #{b}"
   }
 
   puts 'immediate debugging...'
-  dc.debugger(:immediate => true)
+  $rbdbgr.debugger(:immediate => true)
   puts 'line after immediate'
   a = 3
   square(a)
@@ -192,7 +200,7 @@ if __FILE__ == $0
       @x = x
     end
   end
-  dc.debugger
+  $rbdbgr.debugger
   m = MyClass.new(5)
   raise RuntimeError # To see how we handle post-mortem debugging.
 end

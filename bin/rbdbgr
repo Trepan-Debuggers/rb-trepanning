@@ -20,13 +20,8 @@ if File.basename(__FILE__) == File.basename($0)
     # options = DEFAULT_CMDLINE_SETTINGS.merge({}) seems to change up
     # DEFAULT_CMDLINE_SETTINGS when options[:key] is changed. The
     # below is the simplest thing I can come up with so far.
-    options = {}
-    DEFAULT_CMDLINE_SETTINGS.each do |key, value|
-      options[key] = value.clone if
-        !value.nil? && value.respond_to?(:clone)
-    end
-
-    opts = setup_options(options)
+    options = copy_default_options
+    opts    = setup_options(options)
     Debugger::ARGV = ARGV.clone
     rest = opts.parse! ARGV
 
@@ -60,6 +55,7 @@ if File.basename(__FILE__) == File.basename($0)
                            explicit_restart_argv(Debugger::ARGV),
                            :cmdfiles    => options[:cmdfiles],
                            :initial_dir => options[:chdir],
+                           :nx          => options[:nx],
                            )
     debug_program($rbdbgr, Debugger::RUBY_PATH, 
                   File.expand_path(program_to_debug))

@@ -1,7 +1,28 @@
 #!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
+#=== Summary
 # Parses command-line options. 
+#=== Options
+#
+#<tt>--cd=DIR</tt>
+#      Change current directory to DIR.
+#
+#<tt>--command</tt> <i>file</i>::
+#      Run debugger command file <i>file</i>
+#
+#<tt>--nx</tt>::
+#      Don’t execute commands  found in any initialization
+#      files, e.g. <tt>.rdebugrc</tt>.
+#
+#<tt>--version</tt>::
+#      Show the version number.
+#
+#<tt>--help</tt>::
+#      Show invocation help and exit.
+
 require 'optparse'
 module Rbdbgr
+  require_relative 'default'
 
   VERSION = '0.01'
   PROGRAM = 'rbdbgr'
@@ -10,13 +31,25 @@ module Rbdbgr
     "#{PROGRAM} version #{VERSION}"
   end
 
+  def copy_default_options
+    options = {}
+    DEFAULT_CMDLINE_SETTINGS.each do |key, value|
+      begin 
+        options[key] = value.clone
+      rescue TypeError
+        options[key] = value
+      end
+    end
+    options
+  end
+
   def setup_options(options, stdout=$stdout, stderr=$stderr)
     OptionParser.new do |opts|
       opts.banner = <<EOB
 #{show_version}
 Usage: #{PROGRAM} [options] <script.rb> -- <script.rb parameters>
 EOB
-      opts.on("--command FILE", String, 
+      opts.on('--command FILE', String, 
               "Execute debugger commnds from FILE") do |cmdfile| 
         unless File.readable?(cmdfile)
           if File.exists?
@@ -27,9 +60,13 @@ EOB
         end
         options[:cmdfiles] << cmdfile
       end
-      opts.on("--output FILE", String, "Name of file to record output") do |outfile| 
-        options[:outfile] = outfile
+      opts.on('--nx',
+              'Not run debugger initialization files (e.g. .rbdbgrc') do
+        options[:nx] = true
       end
+      # opts.on('--output FILE', String, "Name of file to record output") do |outfile| 
+      #   options[:outfile] = outfile
+      # end
       opts.on("--cd DIR", String, "Change current directory to DIR") do |dir| 
         if File.directory?(dir)
           if File.executable?(dir)
@@ -55,19 +92,13 @@ EOB
 end
 
 if __FILE__ == $0
-  require_relative 'default'
   include Rbdbgr
   opts = {}
   options ={}
-  # options = DEFAULT_CMDLINE_SETTINGS.merge({})
   [%w(--help), %w(--version)].each do |o|
-    options ={}
-    DEFAULT_CMDLINE_SETTINGS.each do |key, value|
-      options[key] = value.clone if
-        !value.nil? && value.respond_to?(:clone)
-    end
-    opts = setup_options(options)
-    rest = opts.parse o
+    options = copy_default_options
+    opts    = setup_options(options)
+    rest    = opts.parse o
     puts options
     puts '=' * 10
   end
