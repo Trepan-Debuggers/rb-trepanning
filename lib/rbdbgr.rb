@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
-require 'trace'                         # Trace filtering
+require 'trace'                          # Trace filtering
 require 'thread_frame'
-require_relative %w(.. app core)        # core event-handling mechanism
-require_relative %w(.. app default)     # default debugger settings
-require_relative %w(.. interface user)  # user interface (includes I/O)
+require_relative %w(.. app core)         # core event-handling mechanism
+require_relative %w(.. app default)      # default debugger settings
+require_relative %w(.. interface user)   # user interface (includes I/O)
+require_relative %w(.. interface script) # --command interface (includes I/O)
 
 # SCRIPT_ISEQS__ is like SCRIPT_LINES__ in a patched Ruby 1.9. Setting
 # this variable to a hash causes instruction sequences to be added in
@@ -131,7 +132,7 @@ class Debugger
         stderr.puts "Command file '#{cmdfile}' does not exist."
       end
     end
-    @intf << Debugger::UserInterface.new(cmdfile, @output)
+    @intf << Debugger::ScriptInterface.new(cmdfile, @output)
   end
 
   # As a simplification for creating a debugger object, and then
@@ -154,15 +155,15 @@ class Debugger
   # Likewise for mydbg.debugger{ ... }
 
   def self.debug(opts={}, &block)
-    mydbg = Debugger.new()
-    mydbg.trace_filter << self.method(:debug)
-    mydbg.debugger(opts, &block)
+    $rbdbgr = Debugger.new(opts)
+    $rbdbgr.trace_filter << self.method(:debug)
+    $rbdbgr.debugger(opts, &block)
   end
 
-  def self.debug_str(opts={}, string)
-    mydbg = Debugger.new()
-    mydbg.trace_filter << self.method(:debug_str)
-    frame = RubyVM::Threadframe.current
+  def self.debug_str(string, opts={:core_opts => {:different => false}})
+    $rbdbgr = Debugger.new(opts)
+    $rbdbgr.trace_filter << self.method(:debug_str)
+    frame = RubyVM::ThreadFrame.current
     eval(string, frame.prev.binding)
   end
 end

@@ -4,7 +4,6 @@
 # Our local modules
 require_relative 'base_intf'
 require_relative %w(.. io input)
-## require_relative %w(.. io dbg_output)
 
 # Interface when reading debugger scripts
 class Debugger::ScriptInterface < Debugger::Interface
