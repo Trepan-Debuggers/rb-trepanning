@@ -8,7 +8,7 @@ require_relative %w(.. .. processor frame)
 module UnitHelper
 
   def common_setup
-    @dbg      = Debugger.new
+    @dbg      = Debugger.new(:nx => true)
     @core     = Debugger::Core.new(@dbg)
     @cmdproc  = @core.processor = Debugger::CmdProcessor.new(@core)
     @cmds     = @cmdproc.commands

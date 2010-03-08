@@ -14,7 +14,8 @@ module FnTestHelper
   def strarray_setup(debugger_cmds, insn_stepping=false)
     stringin               = Debugger::StringArrayInput.open(debugger_cmds)
     stringout              = Debugger::StringArrayOutput.open
-    d_opts                 = {:input  => stringin, :output => stringout}
+    d_opts                 = {:input  => stringin, :output => stringout,
+                              :nx     => true}
     d_opts[:core_opts]     = {:step_events => TEST_STEP_EVENT_MASK}
     d_opts[:core_opts][:step_events] ||= INSN_EVENT_MASK if insn_stepping
     d                      = Debugger.new(d_opts)
