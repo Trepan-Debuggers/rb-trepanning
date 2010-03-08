@@ -43,9 +43,17 @@ task :'test:functional' do |t|
   end
 end
 
+desc 'Test integration - end-to-end blackbox tests'
+task :'test:integration' do |t|
+  Rake::TestTask.new(:'test:integration') do |t|
+    t.test_files = FileList['test/integration/**/test-*.rb']
+    t.verbose = true
+  end
+end
+
 desc 'Test everything - unit tests for now.'
 task :test do
-  exceptions = %w(test:unit test:functional).collect do |task|
+  exceptions = %w(test:unit test:functional test:integration).collect do |task|
     begin
       Rake::Task[task].invoke
       nil
@@ -80,6 +88,10 @@ end
 
 task :'check:functional' do
   run_standalone_ruby_file(File.join(%W(#{rake_dir} test functional)))
+end
+
+task :'check:integration' do
+  run_standalone_ruby_file(File.join(%W(#{rake_dir} test integration)))
 end
 
 task :check => %w(check:lib check:processor check:commands).map{|c| c.to_sym}

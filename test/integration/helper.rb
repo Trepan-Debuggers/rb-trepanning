@@ -1,4 +1,5 @@
 require 'diff/lcs'
+require 'fileutils'
 
 def run_debugger(testname, ruby_file, dbgr_opts='', args='', outfile=nil)
 
@@ -7,7 +8,7 @@ def run_debugger(testname, ruby_file, dbgr_opts='', args='', outfile=nil)
   progdir    = File.join(srcdir, %w(.. example)) 
   
   dbgr_dir   = File.join(srcdir, %w(.. ..))
-  dbgr_short = File.join(srcdir, %w(bin rbdbgr))
+  dbgr_short = File.join(%w(bin rbdbgr))
   dbgr_path  = File.join(dbgr_dir, dbgr_short)
 
   rightfile  = File.join(datadir, "#{testname}.right")
@@ -16,27 +17,25 @@ def run_debugger(testname, ruby_file, dbgr_opts='', args='', outfile=nil)
   outfile     = File.join(srcdir,  "#{testname}.out" % testname)
   programfile = ruby_file ? File.join(progdir, ruby_file) : ''
 
-  outfile_opt = "--output=#{outfile}"
-  
   FileUtils.rm(outfile) if File.exist?(outfile)
 
-  cmd = "%s --command %s %s %s %s %s" %
-    [dbgr_path, cmdfile, outfile_opt, dbgr_opts, programfile, args]
+  cmd = "%s --nx --command %s %s %s %s >%s" %
+    [dbgr_path, cmdfile, dbgr_opts, programfile, args, outfile]
   
-  # print cmd
   system(cmd)
-  fromfile  = rightfile
+  from_file  = rightfile
   # fromdate  = time.ctime(os.stat(fromfile).st_mtime)
-  fromlines = File.open(fromfile).readlines()
-  tofile    = outfile
+  from_lines = File.open(from_file).readlines()
+  to_file    = outfile
   # todate    = time.ctime(os.stat(tofile).st_mtime)
-  tolines   = File.open(tofile).readlines()
+  to_lines   = File.open(to_file).readlines()
 
-  sdiffs = Diff::LCS.sdiff(lines1, lines2)
+  sdiffs = Diff::LCS.sdiff(from_lines, to_lines)
 
   if sdiffs.empty?
     FileUtils.rm(outfile)
   else 
+    puts cmd
     sdiffs.each do |diff|
       p diff
     end

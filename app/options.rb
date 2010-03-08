@@ -51,14 +51,13 @@ Usage: #{PROGRAM} [options] <script.rb> -- <script.rb parameters>
 EOB
       opts.on('--command FILE', String, 
               "Execute debugger commnds from FILE") do |cmdfile| 
-        unless File.readable?(cmdfile)
-          if File.exists?
+        if File.readable?(cmdfile)
+          options[:cmdfiles] << cmdfile
+        elsif File.exists?(cmdfile)
             stderr.puts "Command file '#{cmdfile}' is not readable."
-          else
-            stderr.puts "Command file '#{cmdfile}' does not exist."
-          end
+        else
+          stderr.puts "Command file '#{cmdfile}' does not exist."
         end
-        options[:cmdfiles] << cmdfile
       end
       opts.on('--nx',
               'Not run debugger initialization files (e.g. .rbdbgrc') do

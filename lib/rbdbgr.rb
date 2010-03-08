@@ -132,12 +132,15 @@ class Debugger
     @trace_filter.set_trace_func(nil)
   end
 
-  def add_command_file(cmdfile)
+  def add_command_file(cmdfile, stderr=$stderr)
     unless File.readable?(cmdfile)
-      if File.exists?
+      if File.exists?(cmdfile)
         stderr.puts "Command file '#{cmdfile}' is not readable."
+        return
       else
         stderr.puts "Command file '#{cmdfile}' does not exist."
+        stderr.puts caller
+        return
       end
     end
     @intf << Debugger::ScriptInterface.new(cmdfile, @output)
