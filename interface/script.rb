@@ -46,7 +46,7 @@ class Debugger::ScriptInterface < Debugger::Interface
     #  self.verbose shows lines so we don't have to duplicate info
     #  here. Perhaps there should be a 'terse' mode to never show
     #  position info.
-    mess = if not self.verbose
+    mess = if not @opts[:verbose]
              location = ("%s:%s: Error in source command file" %
                          [@script_name, @input_lineno])
              "%s%s:\n%s%s" % [prefix, location, prefix, msg]
