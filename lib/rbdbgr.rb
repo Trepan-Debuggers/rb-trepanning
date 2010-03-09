@@ -63,12 +63,7 @@ class Debugger
     @trace_filter << Kernel.method(:set_trace_func)
 
     # Run user debugger command startup files.
-    unless @settings[:nx]
-      cwd_initfile = File.join('.', CMD_INITFILE_BASE)
-      [cwd_initfile, CMD_INITFILE].each do |initfile|
-        add_command_file(initfile) if File.readable?(initfile)
-      end
-    end
+    add_startup_files unless @settings[:nx]
   end
 
   # To call from inside a Ruby program, there is one-time setup that 
@@ -144,6 +139,17 @@ class Debugger
       end
     end
     @intf << Debugger::ScriptInterface.new(cmdfile, @output)
+  end
+
+  def add_startup_files()
+    seen = {}
+    cwd_initfile = File.join('.', CMD_INITFILE_BASE)
+    [cwd_initfile, CMD_INITFILE].each do |initfile|
+      full_initfile_path = File.expand_path(initfile)
+      next if seen[full_initfile_path]
+      add_command_file(full_initfile_path) if File.readable?(full_initfile_path)
+      seen[full_initfile_path] = true
+    end
   end
 
   # As a simplification for creating a debugger object, and then
