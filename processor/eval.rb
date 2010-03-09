@@ -1,20 +1,22 @@
 class Debugger
   class CmdProcessor
-    def debug_eval(str)
+    def debug_eval(str, max_fake_filename=15)
       begin
         b = @frame.binding if @frame 
         b ||= binding
-        eval(str, b)
+        filename = fake_eval_filename(str, max_fake_filename)
+        eval(str, b, filename)
       rescue StandardError, ScriptError => e
-        exception_dump(e, settings[:stack_trace_on_error], $!.backtrace)
+        exception_dump(e, @settings[:stack_trace_on_error], $!.backtrace)
       end
     end
 
-    def debug_eval_no_errmsg(str)
+    def debug_eval_no_errmsg(str, max_fake_filename=15)
       begin
         b = @frame.binding if @frame 
         b ||= binding
-        eval(str, b)
+        filename = fake_eval_filename(str, max_fake_filename)
+        eval(str, b, filename)
       rescue StandardError, ScriptError => e
         nil
       end
@@ -28,5 +30,41 @@ class Debugger
       errmsg str
       # throw :debug_error
     end
+
+    def fake_eval_filename(str, maxlen = 15)
+      fake_filename = 
+        if maxlen < str.size
+          # FIXME: Guard against \" in positions 13..15?
+          str.inspect[0..maxlen-1] + '"...'
+        else
+          str.inspect
+        end
+      "(eval #{fake_filename})"
+    end
+    
+    def get_binding_and_filename(str, maxlen)
+      b = @frame.binding if @frame 
+      b ||= binding
+      filename = fake_eval_filename(str, maxlen)
+      return [filename, b]
+    end
+
   end
+end
+
+if __FILE__ == $0
+  # Demo it.
+  cmdp = Debugger::CmdProcessor.new
+  puts cmdp.fake_eval_filename('x = 1; y = 2')
+  puts cmdp.fake_eval_filename('x = 1; y = 2', 7)
+  x = 1
+  require 'thread_frame'
+  cmdp.instance_variable_set('@frame', RubyVM::ThreadFrame.current)
+  cmdp.instance_variable_set('@settings', {:stack_trace_on_error => true})
+  def cmdp.errmsg(mess) ; puts mess end
+  puts cmdp.debug_eval('x = "#{x}"')
+  puts cmdp.debug_eval('x+')
+  puts cmdp.debug_eval_no_errmsg('y+')
+  puts cmdp.debug_eval('x+')
+  puts cmdp.debug_eval('y = 1; x+', 4)
 end
