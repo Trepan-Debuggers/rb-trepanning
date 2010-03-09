@@ -1,29 +1,32 @@
 class Debugger
   class CmdProcessor
+
     def debug_eval(str, max_fake_filename=15)
       begin
-        b = @frame.binding if @frame 
-        b ||= binding
-        filename = fake_eval_filename(str, max_fake_filename)
-        eval(str, b, filename)
-      rescue StandardError, ScriptError => e
+        debug_eval_with_exception(str, max_fake_filename)
+      rescue SyntaxError, StandardError, ScriptError => e
         exception_dump(e, @settings[:stack_trace_on_error], $!.backtrace)
+        nil
       end
+    end
+
+    def debug_eval_with_exception(str, max_fake_filename=15)
+      b = @frame.binding if @frame 
+      b ||= binding
+      filename = fake_eval_filename(str, max_fake_filename)
+      eval(str, b, filename)
     end
 
     def debug_eval_no_errmsg(str, max_fake_filename=15)
       begin
-        b = @frame.binding if @frame 
-        b ||= binding
-        filename = fake_eval_filename(str, max_fake_filename)
-        eval(str, b, filename)
-      rescue StandardError, ScriptError => e
+        debug_eval_with_exception(str, max_fake_filename)
+      rescue SyntaxError, StandardError, ScriptError => e
         nil
       end
     end
 
     def exception_dump(e, stack_trace, backtrace)
-      str = "#{e.class} Exception: #{e.message}"
+      str = "#{e.class} Exception:\n\t#{e.message}"
       if stack_trace
         str += "\n" + backtrace.map{|l| "\t#{l}"}.join("\n") rescue nil
       end

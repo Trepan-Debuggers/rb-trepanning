@@ -70,7 +70,7 @@ class TestDelete < Test::Unit::TestCase
 	VM offset 55 of instruction sequence "test_delete".',
            'Deleted breakpoint 2',
            'xx vd = 4',
-           '3'
+           '=> 3'
           ]
     compare_output(out, d, cmds)
 

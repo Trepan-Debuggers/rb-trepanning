@@ -205,7 +205,7 @@ class TestStep < Test::Unit::TestCase
     d.stop # ({:remove => true})
     out = ['-- x = fact(4)',
            '<- return 1 if x <= 1',
-           'true']
+           '=> true']
     compare_output(out, d, cmds)
   end
 

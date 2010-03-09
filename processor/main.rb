@@ -188,7 +188,7 @@ class Debugger
         
       # Eval anything that's not a command.
       if settings[:autoeval]
-        msg debug_eval(last_command) 
+        msg '=> ' + debug_eval(last_command).inspect
       else
         undefined_command(cmd_name)
       end
