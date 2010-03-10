@@ -6,20 +6,48 @@ require_relative %w(.. substitute)
 class Debugger::SubSubcommand::SetSubstituteEval < Debugger::SubSubcommand
   unless defined?(HELP)
     HELP         = 
-'set substitute eval
+'set substitute eval [FRAME-NUM]
 
 Causes lines in an EVAL frame to show up as we stop/step through them. 
-The text fror the eval string comes from the current frame.
+The text fror the eval string comes from the current frame. 
+
+FRAME-NUM is a relative frame number unless prefaced with an "=" which
+indicates how many frames prior to move. The default is "0"
+(alternatively "=0", the current frame.
+
+This is largely done automatically anytime the debugger discovers an EVAL frame.
+We have this here for completeness and just in case.
 '
     MIN_ABBREV   = 'ev'.size  
-    MAX_ARGS     = 0
+    MAX_ARGS     = 1
     NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP   = 'Set eval string text of an filename'
     PREFIX       = %w(set substitute string)
   end
 
   def run(args)
-    frame = @proc.frame
+
+    frame = 
+      if args.size == 2
+        absolute, count_str = 
+          if '=' == args[1][0]
+            [true, args[1][1..-1].dup]
+          else
+            [false, args[1]]
+          end
+        stack_size = @proc.top_frame.stack_size - @hide_level
+        opts = {
+        :msg_on_error => 
+        "The 'eval' command argument must eval to an integer. Got: %s" % count_str,
+        :min_value => -stack_size,
+        :max_value => stack_size-1
+      }
+        count = @proc.get_an_int(count_str, opts)
+        @proc.get_frame(count, absolute)[0]
+      else
+        @proc.frame
+    end
+    return unless frame
     if 'EVAL' != frame.type
       errmsg "Current frame has to be of type EVAL, not #{frame.type}"
       return

@@ -42,6 +42,7 @@ Examples:
          ).each do |field|
         msg("\t#{field}: %s" % iseq.send(field).inspect)
       end
+      msg("\tsha1: #{iseq.sha1}")
       if iseq.brkpts
         if iseq.brkpts.empty?
           msg("Breakpoints have been allocated, but none have been set.")

@@ -36,8 +36,7 @@ See also 'down' and 'frame'.
       # Form is: "down" which means "down 1"
       count = 1
     else
-      hide_level  = @proc.hidelevels[Thread.current] || 0
-      stack_size = @proc.top_frame.stack_size - hide_level
+      stack_size = @proc.top_frame.stack_size - @hide_level
       count_str = args[1]
       name_or_id = args[1]
       opts = {

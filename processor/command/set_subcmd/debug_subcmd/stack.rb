@@ -8,6 +8,16 @@ class Debugger::SubSubcommand::SetDebugStack < Debugger::SetBoolSubSubcommand
     NAME        = File.basename(__FILE__, '.rb')
     PREFIX      = %w(set debug stack)
   end
+
+  def run(args)
+    super
+    @hide_level  = 
+      if @proc.settings[:debugstack]
+        0
+      else
+        @proc.hidelevels[Thread.current] || 0
+      end
+  end
 end
 
 if __FILE__ == $0

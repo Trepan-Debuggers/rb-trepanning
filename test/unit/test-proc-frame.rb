@@ -47,7 +47,7 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
     assert_equal(0, $errors.size)
     assert_equal(frame_index, @proc.frame_index)
     @proc.adjust_frame(-@proc.top_frame.stack_size-1, true)
-    assert_equal(1, $errors.size)
+    assert_equal(1, $errors.size, $errors)
     assert_equal(frame_index, @proc.frame_index)
 
     setup

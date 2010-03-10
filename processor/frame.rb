@@ -7,6 +7,7 @@ class Debugger
     attr_reader   :current_thread
     attr_accessor :frame           # ThreadFrame, current frame
     attr_accessor :frame_index     # frame index in a "where" command
+    attr_accessor :hide_level      # 
     attr_accessor :hidelevels      # Hash[thread_id] -> FixNum, the
                                    # level of the last frame to
                                    # show. If we called the debugger
@@ -32,48 +33,25 @@ class Debugger
     
 
     def adjust_frame(frame_num, absolute_pos)
-      hide_level  = 
-        if @settings[:debugstack]
-          0
-        else
-          @hidelevels[Thread.current] || 0
-        end
-      stack_size = @top_frame.stack_size - hide_level
-
-      if absolute_pos
-        frame_num += stack_size if frame_num < 0
-      else
-        frame_num += @frame_index
-      end
-
-      if frame_num < 0
-        errmsg('Adjusting would put us beyond the newest frame.')
-        return
-      elsif frame_num >= stack_size
-        errmsg('Adjusting would put us beyond the oldest frame.')
-        return
-      end
-
-      frame = @top_frame.prev(frame_num)
+      frame, frame_num = get_frame(frame_num, absolute_pos)
       if frame 
         @frame = frame
         @frame_index = frame_num
         frame_eval_remap if 'EVAL' == @frame.type
         print_location
         @line_no = frame_line() - 1
+        @frame
       else
-        errmsg("Something went wrong getting frame #{frame_num}.")
+        nil
       end
-
     end
 
     def frame_container(frame, canonicalize=true)
       container = 
         if @remap_container.member?(frame.source_container)
           @remap_container[frame.source_container]
-        elsif @remap_iseq.member?(frame.iseq.inspect)
-          # FIXME: don't use inspect, but sha1-like thing
-          @remap_iseq[frame.iseq.inspect]
+        elsif frame.iseq && @remap_iseq.member?(frame.iseq.sha1)
+          @remap_iseq[frame.iseq.sha1]
         else
           frame.source_container
         end
@@ -91,8 +69,7 @@ class Debugger
       tempfile = Tempfile.new(['eval-', '.rb'])
       tempfile.open.puts(to_str)
 
-      # FIXME: don't use inspect, but sha1-like thing
-      @remap_iseq[@frame.iseq.inspect] = ['file', tempfile.path]
+      @remap_iseq[@frame.iseq.sha1] = ['file', tempfile.path]
       tempfile.close
       LineCache::cache(tempfile.path)
       return true
@@ -131,8 +108,33 @@ class Debugger
     def frame_initialize
       @remap_container = {}
       @remap_iseq      = {}
+      @hide_level      = 
+        if @settings[:debugstack]
+          0
+        else
+          @hidelevels[Thread.current] || 0
+        end
     end
 
+    def get_frame(frame_num, absolute_pos)
+      stack_size = @top_frame.stack_size - @hide_level
+
+      if absolute_pos
+        frame_num += stack_size if frame_num < 0
+      else
+        frame_num += @frame_index
+      end
+
+      if frame_num < 0
+        errmsg('Adjusting would put us beyond the newest frame.')
+        return [nil, nil]
+      elsif frame_num >= stack_size
+        errmsg('Adjusting would put us beyond the oldest frame.')
+        return [nil, nil]
+      end
+
+      [@top_frame.prev(frame_num), frame_num]
+    end
 
   # # The dance we have to do to set debugger frame state to
   # #    `frame', which is in the thread with id `thread_id'. We may
