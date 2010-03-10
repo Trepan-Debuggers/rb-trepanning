@@ -1,4 +1,5 @@
 require_relative 'msg'
+require_relative %w(.. app frame)
 class Debugger
   class CmdProcessor
     # Get line +line_number+ from file named +filename+. Return "\n"
@@ -20,14 +21,21 @@ class Debugger
                   end
       @line_no  = frame_line
       filename  = source_container[1]
-      loc       = "#{canonic_file(filename)}:#{line_no}"
+      canonic_filename = 
+        if (0 == filename.index('(eval')) && frame.prev &&
+            (eval_str = Debugger::Frame.eval_string(frame.prev))
+          'eval ' + safe_repr(eval_str, 15)
+        else
+          canonic_file(filename)
+        end
+      loc = "#{canonic_filename}:#{line_no}"
 
       if source_container[0] != 'file'
         frame = @frame
         via = loc
         while source_container[0] != 'file' and frame.prev do
           source_container = frame_container(frame, false)
-          frame     = frame.prev
+          frame            = frame.prev
         end
         if source_container[0] == 'file'
           @line_no  = frame.source_location[0]

@@ -86,7 +86,7 @@ class Debugger
       end
       s += " in #{frame.source_container[0]} "
       s += 
-        if 'EVAL' == frame.type && (eval_str = eval_string(frame))
+        if (eval_str = eval_string(frame))
           safe_repr(eval_str.inspect, 15)
         else
           frame.source_container[1]
@@ -188,6 +188,8 @@ if __FILE__ == $0
   C.new('Hi')
   puts '=' * 30
   eval("print_stack_trace(RubyVM::ThreadFrame.current)")
+  puts '=' * 30
+  eval("eval('print_stack_trace(RubyVM::ThreadFrame.current)')")
   puts '=' * 30
   1.times do |a; b|
     print_stack_trace(RubyVM::ThreadFrame::current)
