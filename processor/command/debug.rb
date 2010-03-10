@@ -18,10 +18,12 @@ Enter the debugger recursively on RUBY-CODE."
   end
 
   def run(args)
-    th          = Thread.current
-    frame       = @proc.frame  # gets messed up in recursive call
-    arg_str     = args[1..-1].join(' ')
-    hidelevels  = @proc.hidelevels[th]
+    th                     = Thread.current
+    frame                  = @proc.frame  # gets messed up in recursive call
+    arg_str                = args[1..-1].join(' ')
+    @proc.hidelevels[th] ||= 0
+    hidelevels             = @proc.hidelevels[th]
+    
 
     # FIXME save/restore hidelevels so "where" doesn't show debugger
     stack_diff = RubyVM::ThreadFrame.current.stack_size - frame.stack_size 
