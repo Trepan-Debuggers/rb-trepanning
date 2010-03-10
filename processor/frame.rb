@@ -108,11 +108,12 @@ class Debugger
     def frame_initialize
       @remap_container = {}
       @remap_iseq      = {}
+      @hidelevels      = Hash.new(0) # Set default value to 0
       @hide_level      = 
         if @settings[:debugstack]
           0
         else
-          @hidelevels[Thread.current] || 0
+          @hidelevels[Thread.current]
         end
     end
 
