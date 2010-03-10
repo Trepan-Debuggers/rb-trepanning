@@ -143,7 +143,9 @@ Rake::GemPackageTask.new(spec) do |pkg|
 end
 
 def install(spec, *opts)
-  system('gem', 'install', "pkg/#{spec.name}-#{spec.version}.gem", *opts)
+  args = ['gem', 'install', "pkg/#{spec.name}-#{spec.version}.gem"] + opts
+  args.unshift 'sudo' unless 0 == Process.uid
+  system(*args)
 end
 
 desc 'Install locally'
