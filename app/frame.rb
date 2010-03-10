@@ -4,31 +4,6 @@ include Rbdbgr
 class Debugger
 
   module Frame
-    def param_names(iseq, start, stop, prefix='')
-      start.upto(stop).map do |i| 
-        begin
-          prefix + iseq.local_name(i)
-        rescue
-          nil
-        end
-      end.compact
-    end
-
-    def c_params(frame, maxstring=20)
-      argc = frame.argc
-      args = 
-        if 0 == argc
-          ''
-        elsif frame 
-          1.upto(argc).map do 
-            |i| 
-            safe_repr(frame.sp(argc-i+3).inspect, 10)
-          end.join(', ')
-        else
-          '??'
-        end
-      safe_repr(args, maxstring)
-    end
 
     def all_param_names(iseq, delineate=true)
       return '' unless iseq
@@ -53,6 +28,36 @@ class Debugger
 
       return params
     end
+
+    def c_params(frame, maxstring=20)
+      argc = frame.argc
+      args = 
+        if 0 == argc
+          ''
+        elsif frame 
+          1.upto(argc).map do 
+            |i| 
+            safe_repr(frame.sp(argc-i+3).inspect, 10)
+          end.join(', ')
+        else
+          '??'
+        end
+      safe_repr(args, maxstring)
+    end
+
+    # Return the eval string. We get this as the 
+    # parameter to the eval C call. A bit of checking is done
+    # to make sure everything is okay:
+    #  - we have to be in an EVAL type frame which has an iseq
+    #  - we have to have a prev frame which is a CFUNC
+    #  - the prev method name has to be 'eval'
+    def eval_string(frame)
+      return nil unless 'EVAL' == frame.type && frame.iseq
+      prev = frame.prev
+      return nil unless prev && 'CFUNC' == prev.type && 'eval' == prev.method
+      prev.sp 3 
+    end
+    module_function :eval_string
 
     def format_stack_entry(frame, opts={})
       return 'invalid frame' if frame.invalid?
@@ -79,7 +84,13 @@ class Debugger
           s += "(#{all_param_names(iseq)})" 
         end
       end
-      s += " in #{frame.source_container[0]} #{frame.source_container[1]}"
+      s += " in #{frame.source_container[0]} "
+      s += 
+        if 'EVAL' == frame.type && (eval_str = eval_string(frame))
+          safe_repr(eval_str.inspect, 15)
+        else
+          frame.source_container[1]
+        end
       if frame.source_location
         if frame.source_location.size == 1
           s += " at line #{frame.source_location[0]}" if 
@@ -90,6 +101,16 @@ class Debugger
       end
       # s += " pc: #{frame.pc_offset}" if frame.pc_offset > 0
       return s
+    end
+
+    def param_names(iseq, start, stop, prefix='')
+      start.upto(stop).map do |i| 
+        begin
+          prefix + iseq.local_name(i)
+        rescue
+          nil
+        end
+      end.compact
     end
 
     def print_stack_entry(frame, i, prefix='    ', opts={})

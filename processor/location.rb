@@ -1,11 +1,6 @@
 require_relative 'msg'
 class Debugger
   class CmdProcessor
-    attr_accessor :remap_container # Hash[container] -> file container
-                                   # Gives us a way to map non-file
-                                   # contianer objects to a file
-                                   # container for display.
-
     # Get line +line_number+ from file named +filename+. Return "\n"
     # there was a problem. Leaking blanks are stripped off.
     def line_at(filename, line_number) # :nodoc:

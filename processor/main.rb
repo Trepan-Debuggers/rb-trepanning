@@ -82,7 +82,6 @@ class Debugger
 
       @settings        = settings.merge(DEFAULT_SETTINGS)
       @different_pos   = @settings[:different]
-      @remap_container = {}  # See location.rb
 
       # FIXME: Rework using a general "set substitute file" command and
       # a global default profile which gets read.
@@ -100,7 +99,7 @@ class Debugger
       load_debugger_commands(cmd_dir)
 
       # Run initialization routines for each of the "submodule"s.
-      %w(breakpoint display running validate).each do |submod|
+      %w(breakpoint display frame running validate).each do |submod|
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
@@ -238,7 +237,7 @@ end
 if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
   require_relative %w(.. lib rbdbgr)
-  dbg =  Debugger.new
+  dbg =  Debugger.new(:nx => true)
   dbg.core.processor.msg('I am main')
   dbg.core.processor.errmsg('Whoa!')
   cmds = dbg.core.processor.commands

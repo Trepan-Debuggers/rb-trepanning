@@ -240,9 +240,10 @@ if __FILE__ == $0
   else    
     require_relative %w(.. location)
     require_relative %w(.. mock)
+    require_relative %w(.. frame)
     name = File.basename(__FILE__, '.rb')
     dbgr, cmd = MockDebugger::setup(name)
-    cmd.proc.instance_variable_set('@remap_container', {})
+    cmd.proc.send('frame_initialize')
     LineCache::cache(__FILE__)
     cmd.run(['list'])
     cmd.run(['list', __FILE__ + ':10'])
