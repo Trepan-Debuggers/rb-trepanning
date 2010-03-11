@@ -57,7 +57,9 @@ class Debugger
         nil
       end
     @trace_filter = TraceFilter.new
-    [:debugger, :start, :stop].each {|m| @trace_filter << self.method(m)}
+    %w(debugger start stop).each do |m| 
+      @trace_filter << self.method(m.to_sym)
+    end
     [:debugger, :event_processor].each {|m| @trace_filter << @core.method(m)}
     @trace_filter << @trace_filter.method(:set_trace_func)
     @trace_filter << Kernel.method(:set_trace_func)
@@ -164,24 +166,24 @@ class Debugger
   # You can run:
   #  require 'rbdbgr'
   # ...
-  #  mydbg = Debugger.debug
-  # 
-  #  Or if you don't want the save the newly-created debugger object, just
   #  Debugger.debug
+  # 
+  # Or if you don't want the save the newly-created debugger object, just
+  # Debugger.debug
   # 
   # Likewise for mydbg.debugger{ ... }
 
   def self.debug(opts={}, &block)
     $rbdbgr = Debugger.new(opts)
     $rbdbgr.trace_filter << self.method(:debug)
-    $rbdbgr.debugger(opts, &block)
+    $rbdbgr.debug(opts, &block)
   end
 
-  def self.debug_str(string, opts={:core_opts => {:different => false}})
-    $rbdbgr = Debugger.new(opts)
-    $rbdbgr.trace_filter << self.method(:debug_str)
-    frame = RubyVM::ThreadFrame.current
-    eval(string, frame.prev.binding)
+  def self.debug_str(string, opts = DEFAULT_DEBUG_STR_SETTINGS)
+    $rbdbgr = Debugger.new(opts) unless $rbdbgr && $rbdbgr.is_a?(Debugger)
+    $rbdbgr.core.processor.settings[:different] = false
+    # SEGV on using a block
+    $rbdbgr.debugger(:immediate=>true){ eval(string) }
   end
 end
 

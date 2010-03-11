@@ -22,6 +22,10 @@ module Rbdbgr
     :output   => nil,
   } unless defined?(DEFAULT_CMDLINE_SETTINGS)
 
+  DEFAULT_DEBUG_STR_SETTINGS = {
+    :core_opts => {:cmdproc_opts => {:different => false}}
+  } unless defined?(DEFAULT_DEBUG_STR_SETTINGS)
+
   CMD_INITFILE_BASE = 
     if RUBY_PLATFORM =~ /mswin/
       # Of course MS Windows has to be different

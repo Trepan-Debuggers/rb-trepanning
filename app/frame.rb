@@ -5,6 +5,13 @@ class Debugger
 
   module Frame
 
+    DEFAULT_STACK_TRACE_SETTINGS = {
+      :basename     => false,   # Basename only for files?
+      :count        => nil,     # How many entries to show? nil means all
+      :current_pos  => 0,       # Where are we in the stack?
+      :show_pc      => false,   # Show PC offset?
+    }
+
     def all_param_names(iseq, delineate=true)
       return '' unless iseq
       params = param_names(iseq, 0, iseq.argc-1, '')
@@ -89,7 +96,12 @@ class Debugger
         if (eval_str = eval_string(frame))
           safe_repr(eval_str.inspect, 15)
         else
-          frame.source_container[1]
+          if 'file' == frame.source_container[0] &&
+              opts[:basename]
+            File.basename(frame.source_container[1])
+          else
+            frame.source_container[1]
+          end
         end
       if frame.source_location
         if frame.source_location.size == 1
@@ -99,7 +111,8 @@ class Debugger
           s += " at lines #{frame.source_location}"
         end
       end
-      # s += " pc: #{frame.pc_offset}" if frame.pc_offset > 0
+      s += ", pc: #{frame.pc_offset}" if 
+        frame.pc_offset > 0 && opts[:show_pc]
       return s
     end
 
@@ -114,16 +127,17 @@ class Debugger
     end
 
     def print_stack_entry(frame, i, prefix='    ', opts={})
-      opts = {} unless i == 0
+      opts[:class] = nil unless i == 0
       msg "%s%s" % [prefix, format_stack_entry(frame, opts)]
     end
 
     # Print `count' frame entries
-    def print_stack_trace(frame, count=nil, current_pos=0, opts={})
+    def print_stack_trace(frame, opts={})
+      opts = DEFAULT_STACK_TRACE_SETTINGS.merge(opts)
       n = frame.stack_size
-      n = [n, count].min if count
+      n = [n, opts[:count]].min if opts[:count]
       0.upto(n-1) do |i|
-        prefix = (i == current_pos) ? '-->' : '   '
+        prefix = (i == opts[:current_pos]) ? '-->' : '   '
         prefix += ' #%d ' % [i]
         print_stack_entry(frame, i, prefix, opts)
         frame = frame.prev
@@ -140,7 +154,7 @@ if __FILE__ == $0
   def msg(msg)
     puts msg
   end
-  print_stack_trace(RubyVM::ThreadFrame.current)
+  print_stack_trace(RubyVM::ThreadFrame.current, :basename => true)
   def foo
     puts '=' * 10
     print_stack_trace(RubyVM::ThreadFrame.current)
@@ -149,7 +163,8 @@ if __FILE__ == $0
 
   def bar(a, b, c)
     puts '=' * 10
-    print_stack_trace(RubyVM::ThreadFrame.current)
+    print_stack_trace(RubyVM::ThreadFrame.current,
+                      )
   end
   bar(1, 2, 3)
 

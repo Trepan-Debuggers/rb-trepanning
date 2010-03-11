@@ -47,13 +47,15 @@ Examples:
       count = stack_size
     end
     if @proc.frame
-      opts = 
-        if 'CFUNC' == @proc.frame.type && @proc.core.hook_arg
-          {:class => @proc.core.hook_arg}
-        else
-          {}
-        end
-      print_stack_trace(@proc.top_frame, count, @proc.frame_index, opts)
+      opts = {
+        :basename    => @proc.settings[:basename],
+        :count       => count, 
+        :current_pos => @proc.frame_index,
+        :show_pc     => @proc.settings[:show_pc]
+      }
+      opts[:class] = @proc.core_hook_arg  if 
+        'CFUNC' == @proc.frame.type && @proc.core.hook_arg
+      print_stack_trace(@proc.top_frame, opts)
     else
       errmsg 'No frame.'
     end
@@ -76,10 +78,12 @@ if __FILE__ == $0
   run_cmd(cmd, [name])
 
   %w(1 100).each {|count| run_cmd(cmd, [name, count])}
+  cmd.settings[:basename] = true
   def foo(cmd, name)
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
     run_cmd(cmd, [name])
   end
   foo(cmd, name)
+  cmd.settings[:show_pc] = true
   1.times {run_cmd(cmd, [name])}
 end

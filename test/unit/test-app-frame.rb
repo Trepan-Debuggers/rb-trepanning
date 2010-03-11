@@ -19,13 +19,22 @@ class TestLibFrame < Test::Unit::TestCase
       assert(s =~ pat, "got #{s}, expected pat #{pat}")
     end
 
-    def foo(count)
+    def inner_test(count)
       frame = RubyVM::ThreadFrame.current
       assert_equal(count, frame.stack_size)
+
       s = format_stack_entry(frame)
-      pat = /^METHOD .*#foo\(count\) in file .*test-app-frame.rb at line \d+/
-      assert(s =~ pat, "got #{s}, expected pat #{pat}")
+      pat = /^METHOD .*#inner_test\(count\) in file .*test-app-frame.rb at line \d+/
+      assert(s =~ pat, "got: #{s.inspect},\nexpected: pat #{pat}")
+
+      s = format_stack_entry(frame, :basename => true)
+      pat = /^METHOD .*#inner_test\(count\) in file test-app-frame.rb at line \d+/
+      assert(s =~ pat, "got: #{s.inspect},\nexpected: pat #{pat}")
+
+      s = format_stack_entry(frame, :basename => true, :show_pc => true)
+      pat = /^METHOD .*#inner_test\(count\) in file test-app-frame.rb at line \d+, pc: \d+/
+      assert(s =~ pat, "got: #{s.inspect},\nexpected: pat #{pat}")
     end
-    foo(base_count+1)
+    inner_test(base_count+1)
   end
 end
