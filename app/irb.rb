@@ -15,7 +15,13 @@ module IRB # :nodoc:
             'unknown'
           end
         $rbdbgr_args = opts
-        $rbdbgr_command = ([name] + opts).join(' ')
+        $rbdbgr_command = 
+          if $rbdbgr_irb_statements 
+            $rbdbgr_irb_statements
+          else
+            ([name] + opts).join(' ')
+          end
+
         throw :IRB_EXIT, name.to_sym
       end
     end
@@ -35,7 +41,8 @@ module IRB # :nodoc:
           else
             opts.join(' ')
           end
-        $rbdbgr.core.processor.run_command($rbdbgr_command)
+        dbg_cmdproc = conf.workspace.instance_variable_get('@dbg_cmdproc')
+        dbg_cmdproc.run_command($rbdbgr_command)
       end
     end
 
@@ -50,7 +57,7 @@ module IRB # :nodoc:
     end
   end
   
-  def self.start_session(binding)
+  def self.start_session(binding, dbg_cmdproc)
     unless @__initialized
 
       # Set to run the standard rbdbgr IRB profile
@@ -74,6 +81,7 @@ module IRB # :nodoc:
     end
     
     workspace = WorkSpace.new(binding)
+    workspace.instance_variable_set('@dbg_cmdproc', dbg_cmdproc)
 
     irb = Irb.new(workspace)
 

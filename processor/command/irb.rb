@@ -7,12 +7,24 @@ class Debugger::Command::IRBCommand < Debugger::Command
     HELP = 
 "          irb [-d]\tstarts an Interactive Ruby (IRB) session.
 
-If -d is added you can get access to debugger frame the global variable
-$rbdbgr_frame. 
+If -d is added you can get access to debugger frame the global variables
+$rbdbgr_frame and $rbdbgr_proc. 
 
-irb is extended with methods 'cont', 'n', and, 'q', 'step' which 
-run the corresponding debugger commands. In contrast to the real debugger
-commands these commands don't allow command arguments.
+irb is extended with methods 'cont', 'dbgr', 'n', and, 'q', 'step' which 
+run the corresponding debugger commands. 
+
+To issue a debugger command, inside irb nested inside a debugger use
+'dbgr'. For example:
+
+  dbgr %%w(info program)
+  dbgr('info', 'program') # Same as above
+  dbgr 'info program'     # Single quoted string also works
+
+But arguments have to be quoted because irb will evaluate them:
+
+  dbgr info program     # wrong!
+  dbgr info, program    # wrong!
+  dbgr(info, program)   # What I say 3 times is wrong!
 "
 
     CATEGORY     = 'support'
@@ -23,11 +35,12 @@ commands these commands don't allow command arguments.
 
   # This method runs the command
   def run(args) # :nodoc
-    if args.size > 1
-      add_debugging = '-d' == args[1]
-    else
-      add_debugging = false
-    end
+    add_debugging = 
+      if args.size > 1
+        '-d' == args[1]
+      else
+        false
+      end
 
     # unless @state.interface.kind_of?(LocalInterface)
     #   print "Command is available only in local mode.\n"
@@ -47,15 +60,18 @@ commands these commands don't allow command arguments.
     $rbdbgr_irb_statements = nil
     $rbdbgr_command = nil
 
-    cont = IRB.start_session(@proc.frame.binding)
+    cont = IRB.start_session(@proc.frame.binding, @proc)
     trap('SIGINT', save_trap) # Restore old trap
 
     case cont
     when :cont
+      @proc.continue
     when :step
+      @proc.step # (1, {})
     when :next
+      @proc.next # (1, {})
     when :quit
-      @proc.run_command($rbdbgr_command)
+      @proc.quit
     else
       @proc.print_location
     end

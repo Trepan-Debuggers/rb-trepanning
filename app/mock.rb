@@ -1,6 +1,6 @@
 class Debugger
   attr_accessor :trace_filter # Procs/Methods we ignore.
-  def initialize
+  def initialize(opts={})
     @trace_filter = []
   end
   class MockCore
