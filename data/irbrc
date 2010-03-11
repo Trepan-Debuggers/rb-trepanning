@@ -21,11 +21,11 @@ puts "'dbgr', 'step', 'n', 'q', 'cont' commands have been added."
 if defined?($rbdbgr) && $rbdbgr
    puts 'You should have access to debugger state via global variable $rbdbgr'
 end
-if defined?($frame) && $frame
+if defined?($rbdbgr_frame) && $rbdbgr_frame
    puts 'You should have access to the program frame via global variable $frame'
 end
-if defined?($cmdproc) && $cmdproc
-   puts 'You should have access to the command processor via global variable $cmdproc'
+if defined?($rbdbgr_cmdproc) && $rbdbgr_cmdproc
+   puts 'You should have access to the command processor via global variable $rbdbgr_cmdproc'
 end
 
 # Monkeypatch to save the current IRB statement to be run.

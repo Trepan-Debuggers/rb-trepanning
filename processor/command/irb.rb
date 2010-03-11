@@ -8,7 +8,7 @@ class Debugger::Command::IRBCommand < Debugger::Command
 "          irb [-d]\tstarts an Interactive Ruby (IRB) session.
 
 If -d is added you can get access to debugger frame the global variables
-$rbdbgr_frame and $rbdbgr_proc. 
+$rbdbgr_frame and $rbdbgr_cmdproc. 
 
 irb is extended with methods 'cont', 'dbgr', 'n', and, 'q', 'step' which 
 run the corresponding debugger commands. 
@@ -53,8 +53,8 @@ But arguments have to be quoted because irb will evaluate them:
 
     $rbdbgr = @proc.core.dbgr 
     if add_debugging
-      $cmdproc  = @proc
-      $frame    = @proc.frame
+      $rbdbgr_cmdproc  = @proc
+      $rbdbgr_frame    = @proc.frame
     end
     $rbdbgr_in_irb = true
     $rbdbgr_irb_statements = nil
