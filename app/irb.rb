@@ -7,28 +7,28 @@ module IRB # :nodoc:
 
     # a weak irb version of rbdbgr "continue"
     class Continue
-      def self.execute(conf)
+      def self.execute(conf, *opts)
         throw :IRB_EXIT, :cont
       end
     end
 
     # a weak irb version of rbdbgr "next"
     class Next
-      def self.execute(conf)
+      def self.execute(conf, *opts)
         throw :IRB_EXIT, :next
       end
     end
 
     # a weak irb version of rbdbgr "step"
     class Step
-      def self.execute(conf)
+      def self.execute(conf, *opts)
         throw :IRB_EXIT, :step
       end
     end
 
     # leave rbdbgr
     class Quit
-      def self.execute(conf)
+      def self.execute(conf, *opts)
         throw :IRB_EXIT, :quit
       end
     end

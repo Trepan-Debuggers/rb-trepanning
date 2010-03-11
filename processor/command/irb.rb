@@ -43,9 +43,11 @@ commands these commands don't allow command arguments.
       $frame  = @proc.frame
     end
     $rbdbgr_in_irb = true
+    $rbdbgr_irb_statements = nil
 
     cont = IRB.start_session(@proc.frame.binding)
     trap('SIGINT', save_trap) # Restore old trap
+
     case cont
     when :cont
       @proc.continue

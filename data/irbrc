@@ -17,4 +17,12 @@ if defined?($frame) && $frame
    puts 'You should have access to the program frame via global variable $frame'
 end
 
-  
+# Monkeypatch to save the current IRB statement to be run.
+# Possibly not needed.
+class IRB::WorkSpace
+  def evaluate(context, statements, file = __FILE__, line = __LINE__)
+    $rbdbgr_irb_statements = statements
+    eval(statements, @binding, file, line)
+  end
+end
+
