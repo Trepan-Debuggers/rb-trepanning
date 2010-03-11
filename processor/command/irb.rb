@@ -38,25 +38,24 @@ commands these commands don't allow command arguments.
       throw :IRB_EXIT, :cont if $rbdbgr_in_irb
     end
 
+    $rbdbgr = @proc.core.dbgr 
     if add_debugging
-      $rbdbgr = @proc.core.dbgr 
-      $frame  = @proc.frame
+      $cmdproc  = @proc
+      $frame    = @proc.frame
     end
     $rbdbgr_in_irb = true
     $rbdbgr_irb_statements = nil
+    $rbdbgr_command = nil
 
     cont = IRB.start_session(@proc.frame.binding)
     trap('SIGINT', save_trap) # Restore old trap
 
     case cont
     when :cont
-      @proc.continue
     when :step
-      @proc.step # (1, {})
     when :next
-      @proc.next # (1, {})
     when :quit
-      @proc.quit
+      @proc.run_command($rbdbgr_command)
     else
       @proc.print_location
     end

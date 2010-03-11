@@ -5,39 +5,49 @@ module IRB # :nodoc:
     # FIXME: should we read these out of a directory to 
     #        make this more user-customizable? 
 
-    # a weak irb version of rbdbgr "continue"
-    class Continue
+    # A base command class that resume execution
+    class DebuggerResumeCommand
       def self.execute(conf, *opts)
-        throw :IRB_EXIT, :cont
+        name = 
+          if self.name =~ /IRB::ExtendCommand::(\S+)/
+            $1.downcase
+          else
+            'unknown'
+          end
+        $rbdbgr_args = opts
+        $rbdbgr_command = ([name] + opts).join(' ')
+        throw :IRB_EXIT, name.to_sym
       end
     end
 
-    # a weak irb version of rbdbgr "next"
-    class Next
+    class Continue < DebuggerResumeCommand ; end
+    class Next     < DebuggerResumeCommand ; end
+    class Quit     < DebuggerResumeCommand ; end
+    class Step     < DebuggerResumeCommand ; end
+
+    # Issues a comamnd to the debugger without continuing
+    # execution. 
+    class Dbgr
       def self.execute(conf, *opts)
-        throw :IRB_EXIT, :next
+        $rbdbgr_command = 
+          if opts.size == 1 && opts[0].is_a?(String)
+            $rbdbgr_args = opts[0]
+          else
+            opts.join(' ')
+          end
+        $rbdbgr.core.processor.run_command($rbdbgr_command)
       end
     end
 
-    # a weak irb version of rbdbgr "step"
-    class Step
-      def self.execute(conf, *opts)
-        throw :IRB_EXIT, :step
-      end
-    end
-
-    # leave rbdbgr
-    class Quit
-      def self.execute(conf, *opts)
-        throw :IRB_EXIT, :quit
-      end
-    end
   end
   if defined?(ExtendCommandBundle)
-    ExtendCommandBundle.def_extend_command 'cont', :Continue
-    ExtendCommandBundle.def_extend_command 'n',    :Next
-    ExtendCommandBundle.def_extend_command 'step', :Step
-    ExtendCommandBundle.def_extend_command 'q',    :Quit
+    [['cont', :Continue],
+     ['dbgr', :Dbgr],
+     ['n',    :Next],
+     ['step', :Step],
+     ['q',    :Quit]].each do |command, sym|
+      ExtendCommandBundle.def_extend_command command, sym
+    end
   end
   
   def self.start_session(binding)

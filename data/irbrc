@@ -8,13 +8,24 @@ IRB.conf[:PROMPT][:SIMPLE] =
      :PROMPT_N=>"rbdbgr >> ",
      :PROMPT_S=>nil,
      :RETURN=>"=> %s\n"}
+
+# Using dbgr to issue a debugger statement inside irb:
+#  dbgr %w(info program)
+#  dbgr 'info program'  # also works
+# But...
+#  dbgr info program    # wrong!
+# 
 puts "You are in a rbdbgr session. You should have access to program scope."
-puts "'step', 'n', 'q', 'cont' commands have been added."
+puts "'dbgr', 'step', 'n', 'q', 'cont' commands have been added."
+
 if defined?($rbdbgr) && $rbdbgr
    puts 'You should have access to debugger state via global variable $rbdbgr'
 end
 if defined?($frame) && $frame
    puts 'You should have access to the program frame via global variable $frame'
+end
+if defined?($cmdproc) && $cmdproc
+   puts 'You should have access to the command processor via global variable $cmdproc'
 end
 
 # Monkeypatch to save the current IRB statement to be run.

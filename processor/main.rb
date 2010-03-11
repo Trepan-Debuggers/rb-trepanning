@@ -173,26 +173,7 @@ class Debugger
           end
         end
       end
-      args = last_command.split
-      return false if args.size == 0
-      cmd_name = args[0]
-      cmd_name = @aliases[cmd_name] if @aliases.member?(cmd_name)
-      if @commands.member?(cmd_name)
-        cmd = @commands[cmd_name]
-        if ok_for_running(cmd, cmd_name, args.size-1)
-          cmd.run(args) 
-          @last_command = last_command
-        end
-        return false
-      end
-        
-      # Eval anything that's not a command.
-      if settings[:autoeval]
-        msg '=> ' + debug_eval(last_command).inspect
-      else
-        undefined_command(cmd_name)
-      end
-      return false
+      run_command(last_command)
     end
 
     # This is the main entry point.
@@ -222,6 +203,29 @@ class Debugger
           exception_dump(e, @settings[:debugexcept], $!.backtrace)
         end
       end
+    end
+
+    def run_command(last_command)
+      args = last_command.split
+      return false if args.size == 0
+      cmd_name = args[0]
+      cmd_name = @aliases[cmd_name] if @aliases.member?(cmd_name)
+      if @commands.member?(cmd_name)
+        cmd = @commands[cmd_name]
+        if ok_for_running(cmd, cmd_name, args.size-1)
+          cmd.run(args) 
+          @last_command = last_command
+        end
+        return false
+      end
+
+      # Eval anything that's not a command.
+      if settings[:autoeval]
+        msg '=> ' + debug_eval(last_command).inspect
+      else
+        undefined_command(cmd_name)
+      end
+      return false
     end
 
     # Error message when a command doesn't exist
