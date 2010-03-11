@@ -101,6 +101,10 @@ class Debugger
   #
   def debugger(opts={}, &block)
     # FIXME: one option we may want to pass is the initial trace filter.
+    unless opts[:debugstack]
+      @core.processor.hidelevels[Thread.current] = 
+        RubyVM::ThreadFrame.current.stack_size
+    end
     if block
       start
       # I don't think yield or block.call is quite right.
@@ -114,7 +118,7 @@ class Debugger
       @core.debugger(1) 
     else
       # Set to stop on the next event after this returns.
-      step_count_save    = @core.step_count
+      step_count_save   = @core.step_count
       @core.step_count  = -1 
       @trace_filter.set_trace_func(@core.event_proc)
       Trace.event_masks[0] |= @core.step_events
@@ -179,7 +183,7 @@ class Debugger
   def self.debug(opts={}, &block)
     $rbdbgr = Debugger.new(opts)
     $rbdbgr.trace_filter << self.method(:debug)
-    $rbdbgr.debug(opts, &block)
+    $rbdbgr.debugger(opts, &block)
   end
 
   def self.debug_str(string, opts = DEFAULT_DEBUG_STR_SETTINGS)
