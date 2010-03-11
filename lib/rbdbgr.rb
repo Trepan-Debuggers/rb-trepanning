@@ -99,9 +99,14 @@ class Debugger
   #     ... code you want to debug.
   #   }
   #
+  # Some options
+
+  #   :immediate -  boolean. If true, mmediate stop rather than wait
+  #                          for an event
+  #   :hide_stack - boolean. If true, omit stack frames before the debugger call
   def debugger(opts={}, &block)
     # FIXME: one option we may want to pass is the initial trace filter.
-    unless opts[:debugstack]
+    if opts[:hide_stack]
       @core.processor.hidelevels[Thread.current] = 
         RubyVM::ThreadFrame.current.stack_size
     end
@@ -174,13 +179,14 @@ class Debugger
   #  require 'rbdbgr'
   # ...
   #  Debugger.debug
-  # 
-  # Or if you don't want the save the newly-created debugger object, just
-  # Debugger.debug
+  #
+  # See debugger for options that can be passed. By default :hide_stack is
+  # set.
   # 
   # Likewise for mydbg.debugger{ ... }
 
   def self.debug(opts={}, &block)
+    opts = {:hide_stack => true}.merge(opts)
     $rbdbgr = Debugger.new(opts)
     $rbdbgr.trace_filter << self.method(:debug)
     $rbdbgr.debugger(opts, &block)
