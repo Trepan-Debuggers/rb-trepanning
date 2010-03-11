@@ -49,6 +49,7 @@ Examples:
     if @proc.frame
       opts = {
         :basename    => @proc.settings[:basename],
+        :btlimit     => @proc.settings[:btlimit],
         :count       => count, 
         :current_pos => @proc.frame_index,
         :show_pc     => @proc.settings[:show_pc]

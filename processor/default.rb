@@ -7,6 +7,7 @@ class Debugger
       :autolist      => false,     # Run 'list' 
 
       :basename      => false,     # Show basename of filenames only
+      :btlimit       => 16,        # backtrace limit
       :different     => 'nostack', # stop *only* when  different position? 
 
       :debugexcept   => true,      # Internal debugging of command exceptions
