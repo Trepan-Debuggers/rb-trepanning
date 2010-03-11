@@ -157,7 +157,7 @@ if __FILE__ == $0
   print_stack_trace(RubyVM::ThreadFrame.current, :basename => true)
   def foo
     puts '=' * 10
-    print_stack_trace(RubyVM::ThreadFrame.current)
+    print_stack_trace(RubyVM::ThreadFrame.current, :show_pc => true)
   end
   foo
 

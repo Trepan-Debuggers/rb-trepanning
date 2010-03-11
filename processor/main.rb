@@ -59,6 +59,7 @@ class Debugger
         'raise'          => '!!',
         'return'         => '<-',
         'switch'         => 'sw',
+        'trace-var'      => '$V',
         'unknown'        => '?!',
         'vm'             => 'VM',
         'vm-insn'        => '..',
@@ -204,6 +205,9 @@ class Debugger
 
       @leave_cmd_loop = false
       print_location unless @settings[:trace]
+      if 'trace-var' == @core.event 
+        msg "Note: we are stopped *after* the above location."
+      end
 
       @cmdloop_prehooks.run
 

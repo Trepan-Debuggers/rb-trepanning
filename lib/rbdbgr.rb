@@ -60,7 +60,10 @@ class Debugger
     %w(debugger start stop).each do |m| 
       @trace_filter << self.method(m.to_sym)
     end
-    [:debugger, :event_processor].each {|m| @trace_filter << @core.method(m)}
+    %w(debugger event_processor trace_var_processor).each do 
+      |m| 
+      @trace_filter << @core.method(m)
+    end
     @trace_filter << @trace_filter.method(:set_trace_func)
     @trace_filter << Kernel.method(:set_trace_func)
 

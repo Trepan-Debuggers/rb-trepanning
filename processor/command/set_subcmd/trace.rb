@@ -3,7 +3,10 @@ require_relative %w(.. base subcmd)
 
 class Debugger::Subcommand::SetTrace < Debugger::SetBoolSubcommand
   unless defined?(HELP)
-    HELP = "Set to display trace events as seen in the debugger.
+    HELP = "set trace [on|off]
+set trace var GLOBAL_VARIABLE
+
+In the first form to display trace events as seen in the debugger.  
 
 When 'set trace' is set, calls to the event command processor that are
 will be displayed. This is generally more than those events that one
@@ -16,15 +19,32 @@ However, sometimes full-speed running occurs such as one runs
 if the event mask is set not to trap certain events, those events will
 not be shown either.
 
+In the second form, the debugger calls 'trace_var' to trace changes to
+the value of global variable.  Note in contrast to other events
+stopping for variable tracing occurs *after* the event, not before.
+
 See also 'set events'.
 "
 
     IN_LIST    = true
     MIN_ABBREV = 'tr'.size
     NAME       = File.basename(__FILE__, '.rb')
+    SHORT_HELP = "Set to display trace events or trace a global variable."
   end
 
   def run(args)
+    if args.size == 4
+      if args[2] == 'var'
+        traced_var = args[3]
+        unless traced_var[0] == '$'
+          errmsg "Expecting a global variable to trace, got: #{traced_var}"
+          return
+        end
+        trace_var(traced_var, @proc.core.method(:trace_var_processor))
+        msg("Tracing variable #{traced_var}.")
+        return
+      end
+    end
     super
     if @proc.settings[:trace]
       @proc.unconditional_prehooks.insert_if_new(-1, *@proc.trace_hook)

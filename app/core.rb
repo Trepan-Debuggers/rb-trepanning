@@ -144,10 +144,26 @@ class Debugger
         @frame = @frame.prev
       end
       frame = RubyVM::ThreadFrame.current.prev(prev_count+1)
-      @step_count = 0
+      @step_count = 0  # Make event processor stop
       event_processor('debugger-call', frame)
     end
     
+    # A trace-hook processor for 'trace var'
+    def trace_var_processor(val)
+      frame = RubyVM::ThreadFrame.current.prev
+      if 'CFUNC' == frame.type
+        # Don't need the C call that got us here.
+        prev = frame.prev
+        frame = frame.prev if prev
+      end
+
+      # Stop future tracing into the debugger
+      Thread.current.tracing = true  
+      
+      @step_count = 0  # Make event processor stop
+      event_processor('trace-var', frame)
+    end
+
   end
 end
 if __FILE__ == $0

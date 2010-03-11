@@ -53,7 +53,7 @@ Examples:
         :current_pos => @proc.frame_index,
         :show_pc     => @proc.settings[:show_pc]
       }
-      opts[:class] = @proc.core_hook_arg  if 
+      opts[:class] = @proc.core.hook_arg  if 
         'CFUNC' == @proc.frame.type && @proc.core.hook_arg
       print_stack_trace(@proc.top_frame, opts)
     else
