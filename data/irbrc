@@ -1,3 +1,4 @@
+# -*- Ruby -*-
 # We use this as the default startup file for irb inside rbdbgr
 # Down the line we will have a way for folks to add/override this
 # with their own file.
@@ -28,12 +29,23 @@ if defined?($rbdbgr_cmdproc) && $rbdbgr_cmdproc
    puts 'You should have access to the command processor via global variable $rbdbgr_cmdproc'
 end
 
-# Monkeypatch to save the current IRB statement to be run.
-# Possibly not needed.
-class IRB::WorkSpace
-  def evaluate(context, statements, file = __FILE__, line = __LINE__)
-    $rbdbgr_irb_statements = statements
-    eval(statements, @binding, file, line)
+# Monkeypatch to save the current IRB statement to be run and make the instruction sequence
+# "filename" unique. Possibly not needed.
+class IRB::Context
+  def evaluate(line, line_no)
+    $rbdbgr_irb_statements = line
+    @line_no = line_no
+    @eval_counter ||= 0
+    container = 
+      if irb_path =~ /\((.+)\)/
+        "(#{$1}:#{@eval_counter})" 
+      else
+        irb_path
+      end
+    set_last_value(@workspace.evaluate(self, line, container, line_no))
+#    @workspace.evaluate("_ = IRB.conf[:MAIN_CONTEXT]._")
+#    @_ = @workspace.evaluate(line, irb_path, line_no)
+    @eval_counter += 1
   end
 end
 
