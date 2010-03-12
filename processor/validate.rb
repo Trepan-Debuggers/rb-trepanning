@@ -125,39 +125,58 @@ class Debugger
       nil
     end
 
+    # Parse a breakpoint position. Return
+    # - the position - a Fixnum
+    # - the instruction sequence to use
+    # - whether the postion is an offset or a line number
+    # - the condition (by default 'true') to use for this breakpoint
     def breakpoint_position(args)
       first = args.shift
-      iseq = object_iseq(first)
-      position_str = 
-        if iseq
-          # FIXME: we have trouble stopping at offset 0. 
-          if args.empty? 
-            offsets = iseq.offsetlines.keys
-            if offsets[0] == 0 && offsets.size > 1
-              "O#{offsets[1]}"
-            else
-              "O0"
-            end
-          else args.shift
+      # FIXME:
+      modfunc, container, position = nil, nil, nil # parse_position(first, nil, true)
+      if container && position
+        iseq = find_iseqs_with_lineno(container[1], position) || object_iseq(first)
+        unless iseq
+          unless @frame.iseq.source_container[1] == container[1]
+            errmsg "Unable to find instruction sequence with #{position} in #{container[1]}"
+            return [nil, nil, nil, true]
           end
-        else
-          iseq = @frame.iseq 
-          first
+          iseq = @frame.iseq
         end
-      use_offset = 
-        if position_str.size > 0 && position_str[0].downcase == 'o'
-          position_str[0] = ''
-          true
-        else
-          false
-        end
-      opts = {
-        :msg_on_error => 
-        ("argument '%s' does not seem to eval to a method or an integer." % 
-         position_str),
-        :min_value => 0
-      }
-      position  = get_an_int(position_str, opts)
+        use_offset = false 
+      else
+        iseq = object_iseq(first)
+        position_str = 
+          if iseq
+            # FIXME: we have trouble stopping at offset 0. 
+            if args.empty? 
+              offsets = iseq.offsetlines.keys
+              if offsets[0] == 0 && offsets.size > 1
+                "O#{offsets[1]}"
+              else
+                "O0"
+              end
+            else args.shift
+            end
+          else
+            iseq = @frame.iseq unless container
+            first
+          end
+        use_offset = 
+          if position_str.size > 0 && position_str[0].downcase == 'o'
+            position_str[0] = ''
+            true
+          else
+            false
+          end
+        opts = {
+          :msg_on_error => 
+          ("argument '%s' does not seem to eval to a method or an integer." % 
+           position_str),
+          :min_value => 0
+        }
+        position  = get_an_int(position_str, opts)
+      end
       condition = 'true'
       if args.size > 0 && 'if' == args[0] 
         condition_try = args[1..-1].join(' ')
@@ -204,20 +223,20 @@ class Debugger
     # 
     # Parse arg as [filename:]lineno | function | module
     # Make sure it works for C:\foo\bar.py:12
-    def parse_position(arg, old_mod=nil)
+    def parse_position(arg, old_mod=nil, allow_offset = false)
         colon = arg.rindex(':') 
         if colon
           # First handle part before the colon
           arg1 = arg[0...colon].rstrip
           lineno_str = arg[colon+1..-1].lstrip
-          mf, container, lineno = parse_position_one_arg(arg1, old_mod, false)
+          mf, container, lineno = parse_position_one_arg(arg1, old_mod, false, allow_offset)
           return nil, nil, nil unless container
           filename = canonic_file(arg1) 
           # Next handle part after the colon
           val = get_an_int(lineno_str)
           lineno = val if val
         else
-          mf, container, lineno = parse_position_one_arg(arg, old_mod, true)
+          mf, container, lineno = parse_position_one_arg(arg, old_mod, true, allow_offset)
         end
 
         return mf, container, lineno
@@ -228,7 +247,7 @@ class Debugger
     # See if arg is a line number, function name, or module name.
     # Return what we've found. nil can be returned as a value in
     # the triple.
-    def parse_position_one_arg(arg, old_mod=nil, show_errmsg=true)
+    def parse_position_one_arg(arg, old_mod=nil, show_errmsg=true, allow_offset=false)
       modfunc, filename = nil, nil, nil
       begin
         # First see if argument is an integer
@@ -268,8 +287,10 @@ class Debugger
       end
 
       if show_errmsg
-        errmsg("#{arg} is not a line number, read-in filename or method " +
-               "we can get location information about")
+        unless (allow_offset && arg.size > 0 && arg[0].downcase == 'o')
+          errmsg("#{arg} is not a line number, read-in filename or method " +
+                 "we can get location information about")
+        end
       end
       return nil, nil, nil
     end

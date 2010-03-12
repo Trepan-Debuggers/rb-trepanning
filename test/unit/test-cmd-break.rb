@@ -21,7 +21,7 @@ class TestCommandBreak < Test::Unit::TestCase
      [@name, "O#{pc_offset}"],
     ].each_with_index do |args, i|
       @my_cmd.run(args)
-      assert_equal(true, @cmdproc.errmsgs.empty?)
+      assert_equal(true, @cmdproc.errmsgs.empty?, @cmdproc.errmsgs)
       assert_equal(0, 
                    @cmdproc.msgs[0] =~ /^Breakpoint #{i+1} set at line \d+\n\tin file .*\n\tVM offset \d+ of instruction sequence \"test_basic\"\.$/,
                    @cmdproc.msgs[0])

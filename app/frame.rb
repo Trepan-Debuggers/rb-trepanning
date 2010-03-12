@@ -11,7 +11,7 @@ class Debugger
       :count        => nil,     # How many entries to show? nil means all
       :current_pos  => 0,       # Where are we in the stack?
       :show_pc      => false,   # Show PC offset?
-    }
+    } unless defined?(DEFAULT_STACK_TRACE_SETTINGS)
 
     def all_param_names(iseq, delineate=true)
       return '' unless iseq

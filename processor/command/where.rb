@@ -32,35 +32,34 @@ Examples:
 
   # This method runs the command
   def run(args) # :nodoc
+    unless @proc.frame
+      errmsg 'No frame.'
+      return false
+    end
     hide_level  = 
       if !settings[:debugstack] && @proc.hidelevels[Thread.current] 
         @proc.hidelevels[Thread.current] 
       else 0 
       end
     stack_size = @proc.top_frame.stack_size - hide_level
-    if args.size > 1
-      count = @proc.get_int(args[1], 
-                            :cmdname   => 'where',
-                            :max_value => stack_size)
-      return false unless count
-    else
-      count = stack_size
-    end
-    if @proc.frame
-      opts = {
-        :basename    => @proc.settings[:basename],
-        :btlimit     => @proc.settings[:btlimit],
-        :count       => count, 
-        :current_pos => @proc.frame_index,
-        :show_pc     => @proc.settings[:show_pc]
-      }
-      opts[:class] = @proc.core.hook_arg  if 
-        'CFUNC' == @proc.frame.type && @proc.core.hook_arg
-      print_stack_trace(@proc.top_frame, opts)
-    else
-      errmsg 'No frame.'
-    end
-    return false  # Don't break out of cmd loop
+    opts = {
+      :basename    => @proc.settings[:basename],
+      :btlimit     => @proc.settings[:btlimit],
+      :current_pos => @proc.frame_index,
+      :show_pc     => @proc.settings[:show_pc]
+    }
+    opts[:count] = 
+      if args.size > 1
+        opts[:btlimit] = @proc.get_int(args[1], 
+                                       :cmdname   => 'where',
+                                       :max_value => stack_size)
+      else
+        stack_size
+      end
+    return false unless opts[:count]
+    opts[:class] = @proc.core.hook_arg  if 
+      'CFUNC' == @proc.frame.type && @proc.core.hook_arg
+    print_stack_trace(@proc.top_frame, opts)
   end
 end
 

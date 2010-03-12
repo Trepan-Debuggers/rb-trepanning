@@ -32,7 +32,7 @@ module Rbdbgr
       iseq.source_container[1] =~ /^#{dirname}/
     }
     rejected = {}
-    ISEQS__.each do |name, iseqs|
+    SCRIPT_ISEQS__.each do |name, iseqs|
       ary = iseqs.select(&match_block)
       rejected[name] = ary unless ary.empty?
       iseqs.delete_if(&match_block)
@@ -56,6 +56,18 @@ module Rbdbgr
     else
       return iseqs 
     end
+  end
+
+  def find_iseqs_with_lineno(filename, lineno)
+    files = find_scripts(filename)
+    files.each do |file|
+      found = 
+        SCRIPT_ISEQS__[file].detect do |iseq|
+        iseq.offsetlines.values.flatten.uniq.member?(lineno)
+      end
+      return found if found
+    end
+    return nil
   end
 
   # parse_position(errmsg, arg)->(fn, name, lineno)

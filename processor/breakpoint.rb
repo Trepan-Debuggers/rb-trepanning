@@ -48,7 +48,13 @@ class Debugger
       iseq = iseq.child_iseqs.detect do |iseq|
         iseq.lineoffsets.keys.member?(line_number) 
       end
-      offset = iseq ? iseq.line2offsets(line_number)[1] : nil
+      offset = 
+        if iseq 
+          # FIXME
+          iseq.line2offsets(line_number)[1] || iseq.line2offsets(line_number)[0]
+        else
+          nil
+        end
       unless offset
         place = "in #{iseq.source_container.join(' ')} " if iseq 
         errmsg("No line #{line_number} found #{place}for breakpoint.")
