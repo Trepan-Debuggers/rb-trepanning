@@ -23,7 +23,9 @@ module Rbdbgr
   } unless defined?(DEFAULT_CMDLINE_SETTINGS)
 
   DEFAULT_DEBUG_STR_SETTINGS = {
-    :core_opts => {:cmdproc_opts => {:different => false}}
+    :core_opts => {
+      :cmdproc_opts => {:different => false}},
+    :hide_stack => true,
   } unless defined?(DEFAULT_DEBUG_STR_SETTINGS)
 
   CMD_INITFILE_BASE = 

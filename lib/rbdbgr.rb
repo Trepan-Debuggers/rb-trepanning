@@ -195,8 +195,7 @@ class Debugger
   def self.debug_str(string, opts = DEFAULT_DEBUG_STR_SETTINGS)
     $rbdbgr = Debugger.new(opts) unless $rbdbgr && $rbdbgr.is_a?(Debugger)
     $rbdbgr.core.processor.settings[:different] = false
-    # SEGV on using a block
-    $rbdbgr.debugger(:immediate=>true){ eval(string) }
+    $rbdbgr.debugger(opts) { eval(string) }
   end
 end
 
