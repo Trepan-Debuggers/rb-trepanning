@@ -38,7 +38,10 @@ class IRB::Context
     @eval_counter ||= 0
     container = 
       if irb_path =~ /\((.+)\)/
-        "(#{$1}:#{@eval_counter})" 
+        # Note we originally had a colon below. This causes IRB to think
+        # tracebacks are IRB bugs since the regexp matching it uses here
+        # is now messed up. (irb:5): in ... vs (irb): in ...
+        "(#{$1}[#{@eval_counter}])" 
       else
         irb_path
       end

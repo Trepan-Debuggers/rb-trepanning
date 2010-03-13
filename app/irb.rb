@@ -57,7 +57,7 @@ module IRB # :nodoc:
     end
   end
   
-  def self.start_session(binding, dbg_cmdproc)
+  def self.start_session(binding, dbg_cmdproc, conf={})
     unless @__initialized
 
       # Set to run the standard rbdbgr IRB profile
@@ -87,6 +87,9 @@ module IRB # :nodoc:
 
     @CONF[:IRB_RC].call(irb.context) if @CONF[:IRB_RC]
     @CONF[:MAIN_CONTEXT] = irb.context
+    conf.each {|k, v| @CONF[k] = v}
+    # A copy of this back_trace_limit is already active. How? 
+    IRB.CurrentContext.back_trace_limit = @CONF[:BACK_TRACE_LIMIT]
 
     catch(:IRB_EXIT) do
       irb.eval_input
@@ -96,5 +99,5 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  IRB.start_session(binding) if ARGV.size > 0
+  IRB.start_session(binding, nil) if ARGV.size > 0
 end

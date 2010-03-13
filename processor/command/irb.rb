@@ -60,8 +60,16 @@ But arguments have to be quoted because irb will evaluate them:
     $rbdbgr_irb_statements = nil
     $rbdbgr_command = nil
 
-    cont = IRB.start_session(@proc.frame.binding, @proc)
+    conf = {:BACK_TRACE_LIMIT => settings[:btlimit]}
+    cont = IRB.start_session(@proc.frame.binding, @proc, conf)
     trap('SIGINT', save_trap) # Restore old trap
+
+    back_trace_limit = IRB.CurrentContext.back_trace_limit
+    if settings[:btlimit] !=  back_trace_limit
+      msg("\nSetting debugger's BACK_TRACE_LIMIT (%d) to match irb's last setting (%d)" % 
+          [settings[:btlimit], back_trace_limit])
+      settings[:btlimit]= IRB.CurrentContext.back_trace_limit
+    end
 
     case cont
     when :cont
