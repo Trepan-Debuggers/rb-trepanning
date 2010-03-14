@@ -23,10 +23,15 @@ class TestFinish < Test::Unit::TestCase
     y = 5
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- x = fact(4)',
-           '-> def fact(x)',
-           '<- end',
-           '=> true']
+    out = ["-- ",
+           "x = fact(4)",
+           "METHOD TestFinish#fact(x)",
+           "-> ",
+           "def fact(x)",
+           "<- ",
+           "=> 24",
+           "end",
+           "=> true"]
     compare_output(out, d, cmds)
   end
   

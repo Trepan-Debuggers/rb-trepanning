@@ -37,7 +37,7 @@ module FnTestHelper
 
   def compare_output(right, d, debugger_cmds)
     # require_relative %w(.. .. lib rbdbgr)
-    # dbgr = Debugger.new(:set_restart => true)
+    # Debugger.debug(:set_restart => true)
     got = filter_line_cmd(d.intf[-1].output.output)
     if got != right
       got.each_with_index do |got_line, i|
@@ -63,25 +63,25 @@ module FnTestHelper
 
   # Return output with source lines prompt and command removed
   def filter_line_cmd(a, show_prompt=false)
-    # Remove line locations and extra leading spaces.
-    # For example:
-    # -- 42         y = 5
-    # becomes
-    # -- y = 5
+    # Remove debugger prompt
     a = a.map do |s|
      s =~ RBDBGR_PROMPT ? nil : s
     end.compact unless show_prompt
 
     # Remove debugger location lines. 
     # For example: 
-    # -- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
+    #   -- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
+    # becomes:
+    #   -- 
     a2 = a.map do |s|
       s =~ RBDBGR_LOC ? s.gsub(/\(.+:\d+\)\n/, '').chomp : s.chomp
     end
 
     # Remove VM offset locationss. 
     # For example: 
-    # -- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
+    #	VM offset 2 of instruction sequence "block in compare_output".
+    # becomes 
+    #   VM offset 55 of instruction sequence "block in compare_output".
     a3 = a2.map do |s|
       s.gsub(/VM offset \d+/, 'VM offset 55')
     end

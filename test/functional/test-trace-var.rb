@@ -24,15 +24,19 @@ class TestTraceVar < Test::Unit::TestCase
     z = 3
     ##############################
     d.stop
-    out = [
-           '-- x = 1',
+    out = ['-- ',
+           'x = 1',
            'Tracing variable $my_var.',
-           '$V $my_var = 5',
+           '$V ',
+           '$my_var = 5',
            'Note: we are stopped *after* the above location.',
-           '$V $my_var = 6',
+           '$V ',
+           '$my_var = 6',
            'Note: we are stopped *after* the above location.',
-           '-- z = 3',
-           '-- d.stop']
+           '-- ',
+           'z = 3',
+           '-- ',
+           'd.stop']
     compare_output(out, d, cmds)
     end
 

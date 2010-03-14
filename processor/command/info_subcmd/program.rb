@@ -21,8 +21,11 @@ class Debugger::Subcommand::InfoProgram < Debugger::Subcommand
         '.'
       end
     msg m
-    msg '=> %s' % @proc.frame.sp(1).inspect if 
-      'return' == @proc.core.event 
+    if 'return' == @proc.core.event 
+      msg '=> %s' % @proc.frame.sp(1).inspect 
+    elsif 'raise' == @proc.core.event
+      msg @proc.hook_arg if @proc.hook_arg
+    end
 
     if @proc.brkpt
       msg('It is stopped at %sbreakpoint %d.' %

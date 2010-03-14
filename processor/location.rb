@@ -15,6 +15,8 @@ class Debugger
     def print_location
       if %w(c-call call).member?(@core.event)
         msg format_stack_call(@frame, {}) 
+      elsif 'raise' == @core.event
+        msg @core.hook_arg if @core.hook_arg # Exception object
       end
 
       text      = nil

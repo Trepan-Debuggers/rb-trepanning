@@ -26,12 +26,14 @@ class TestBreak < Test::Unit::TestCase
     z = 7
     ##############################
     d.stop
-    out = ['-- x = 5',
+    out = ['-- ',
+           'x = 5',
            'basename is on.',
            "Breakpoint 1 set at line 26\n" + 
            "\tin file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
-           'xx z = 7']
+           'xx ',
+           'z = 7']
     compare_output(out, d, cmds)
 
     # Try a disabling the breakpoint
@@ -48,16 +50,18 @@ class TestBreak < Test::Unit::TestCase
     z = 8+1
     ##############################
     d.stop
-    out = ['-- x = 7',
+    out = ['-- ',
+           'x = 7',
            'basename is on.',
-           "Breakpoint 2 set at line 47\n" +
+           "Breakpoint 2 set at line 49\n" +
            "\tin file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
-           "Breakpoint 3 set at line 48\n" + 
+           "Breakpoint 3 set at line 50\n" + 
            "\tin file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
            "Breakpoint 2 disabled.",
-           'xx z = 8+1']
+           'xx ',
+           'z = 8+1']
     compare_output(out, d, cmds)
   end
     

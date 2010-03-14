@@ -30,13 +30,11 @@ class TestDelete < Test::Unit::TestCase
     ve = 5
     ##############################
     d.stop
-    out = ['-- va = 1',
+    out = ['-- ',
+           'va = 1',
            'basename is on.',
-           'Breakpoint 1 set at line 28
-	in file test-delete.rb,
-	VM offset 55 of instruction sequence "test_delete".',
-           'Deleted breakpoint 1',
-          ]
+           "Breakpoint 1 set at line 28\n\tin file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
+           "Deleted breakpoint 1"]
     compare_output(out, d, cmds)
 
     # See that when we can delete a breakpoint but get to the next one.
@@ -59,19 +57,16 @@ class TestDelete < Test::Unit::TestCase
     ve = 5
     ##############################
     d.stop
-    out = ['-- va = 1',
-           'basename is on.',
-           'autoeval is on.',
-           'Breakpoint 2 set at line 56
-	in file test-delete.rb,
-	VM offset 55 of instruction sequence "test_delete".',
-           'Breakpoint 3 set at line 58
-	in file test-delete.rb,
-	VM offset 55 of instruction sequence "test_delete".',
-           'Deleted breakpoint 2',
-           'xx vd = 4',
-           '=> 3'
-          ]
+    out = ["-- ",
+           "va = 1",
+           "basename is on.",
+           "autoeval is on.",
+           "Breakpoint 2 set at line 54\n\tin file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
+           "Breakpoint 3 set at line 56\n\tin file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
+           "Deleted breakpoint 2",
+           "xx ",
+           "vd = 4",
+           "=> 3"]
     compare_output(out, d, cmds)
 
   end

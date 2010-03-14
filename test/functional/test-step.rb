@@ -21,8 +21,7 @@ class TestStep < Test::Unit::TestCase
     y = 6
     ##############################
     d.stop
-    out = ['-- x = 5',
-           '-- y = 6']
+    out = ['-- ', 'x = 5', '-- ', 'y = 6']
     compare_output(out, d, cmds)
 
     # See that we can step with a computed count value
@@ -35,8 +34,7 @@ class TestStep < Test::Unit::TestCase
     z = 7
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- x = 5',
-           '-- z = 7']
+    out = ['-- ', 'x = 5', '-- ', 'z = 7']
     compare_output(out, d, cmds)
     
     # Test step>
@@ -51,8 +49,7 @@ class TestStep < Test::Unit::TestCase
     foo
     ##############################
     d.stop  # {:remove => true})
-    out = ['-- x = 5',
-           '-> def foo()']
+    out = ['-- ', 'x = 5', 'METHOD TestStep#foo()', '-> ', 'def foo()']
     compare_output(out, d, cmds)
     
     # Test step!
@@ -68,8 +65,7 @@ class TestStep < Test::Unit::TestCase
     end
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- x = 5',
-           '!! z = 1/0']
+    out = ['-- ', 'x = 5', 'Fixnum', '!! ', 'z = 1/0']
     compare_output(out, d, cmds)
     
     # Test "step" with sets of events. Part 1
@@ -88,12 +84,16 @@ class TestStep < Test::Unit::TestCase
     z = 1
     ##############################
     d.stop # ({:remove => true})
-    out = ["-- x = 5",
-           "Trace events we may stop on:",
+    out = ['-- ',
+           'x = 5',
+           'Trace events we may stop on:',
            "\tcall, raise",
-           "-> def foo1",
-           "!! raise Exception",
-           "!! raise Exception"]
+           'METHOD TestStep#foo1()',
+           '-> ',
+           'def foo1',
+           'TestStep',
+           '!! ',
+           'raise Exception']
 
     got = filter_line_cmd(d.intf[-1].output.output)
     out.pop if got.size+1 == out.size
@@ -117,10 +117,14 @@ class TestStep < Test::Unit::TestCase
     z = 1
     ##############################
     d.stop({:remove => true})
-    out = ['-- x = 5',
-           '-> def foo2()',
-           '!! raise Exception']
-    compare_output(out, d, cmds)
+    out = ['-- ',
+           'x = 5',
+           'METHOD TestStep#foo2()',
+           '-> ',
+           'def foo2()',
+           'TestStep',
+           '!! ',
+           'raise Exception']
     
   end
 
@@ -131,11 +135,18 @@ class TestStep < Test::Unit::TestCase
       y = x * x
     end
     cmds = %w(step) * 4 + %w(continue)
-    out =  ['-- x = sqr(4)',
-            '-> def sqr(x)',
-            '-- y = x * x',
-            '<- end',
-            '-- y = 5']
+    out =  ['-- ',
+            'x = sqr(4)',
+            'METHOD TestStep#sqr(x)',
+            '-> ',
+            'def sqr(x)',
+            '-- ',
+            'y = x * x',
+            '<- ',
+            '=> 16',
+            'end',
+            '-- ',
+            'y = 5']
     d = strarray_setup(cmds)
     d.start
     ########### t7 ###############
@@ -147,11 +158,16 @@ class TestStep < Test::Unit::TestCase
 
     cmds = ['set events call return',
             'step', 'step', 'continue']
-    out =  ['-- x = sqr(4)',
+    out =  ['-- ',
+            'x = sqr(4)',
             'Trace events we may stop on:',
-            '	call, return',
-            '-> def sqr(x)',
-            '<- end']
+            "\tcall, return",
+            'METHOD TestStep#sqr(x)',
+            '-> ',
+            'def sqr(x)',
+            '<- ',
+            '=> 16',
+            'end']
     d = strarray_setup(cmds)
     d.start
     ########### t8 ###############
@@ -182,9 +198,12 @@ class TestStep < Test::Unit::TestCase
       d.stop({:remove => true})
     end
     
-    out = ['-- x = bad(0)',  # line event
-           '!! y = 0/x',     # exception event
-           ]
+    out = ['-- ', 
+           'x = bad(0)', # line event
+           'Fixnum', 
+           '!! ',        # exception event
+           'y = 0/x']
+
     compare_output(out, d, cmds)
   end
 
@@ -203,8 +222,11 @@ class TestStep < Test::Unit::TestCase
     y = 5
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- x = fact(4)',
-           '<- return 1 if x <= 1',
+    out = ['-- ', 
+           'x = fact(4)', 
+           '<- ', 
+           '=> 1', 
+           'return 1 if x <= 1', 
            '=> true']
     compare_output(out, d, cmds)
   end
@@ -231,14 +253,20 @@ class TestStep < Test::Unit::TestCase
     foo
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- def bar',
-           "different is on.",
+    out = ['-- ',
+           'def bar',
+           'different is on.',
            'Trace events we may stop on:',
            "\tcall, class, line, return",
-           '-- def foo',
-           '-- foo',
-           '-> def foo',
-           '-- bar']
+           '-- ',
+           'def foo',
+           '-- ',
+           'foo',
+           'METHOD TestStep#foo()',
+           '-> ',
+           'def foo',
+           '-- ',
+           'bar']
     compare_output(out, d, cmds)
   end
 end

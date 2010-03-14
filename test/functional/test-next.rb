@@ -16,8 +16,7 @@ class TestNext < Test::Unit::TestCase
     x = 5
     y = 6
     d.stop
-    out = ['-- x = 5',
-           '-- y = 6']
+    out = ['-- ', 'x = 5', '-- ', 'y = 6']
     compare_output(out, d, cmds)
     
     # See that we can next with a computed count value
@@ -30,8 +29,7 @@ class TestNext < Test::Unit::TestCase
     z = 7
     ##############################
     d.stop # ({'remove': true})
-    out = ['-- x = 5',
-           '-- z = 7']
+    out = ['-- ', 'x = 5', '-- ', 'z = 7']
     compare_output(out, d, cmds)
   end
     
@@ -50,8 +48,7 @@ class TestNext < Test::Unit::TestCase
     y = 5
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- def fact(x)',
-           '-- y = 5']
+    out = ['-- ', 'def fact(x)', '-- ', 'y = 5']
     compare_output(out, d, cmds)
   end
   
@@ -68,8 +65,7 @@ class TestNext < Test::Unit::TestCase
     end
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- begin',
-           '!! x = 4/0']
+    out = ['-- ', 'begin', 'Fixnum', '!! ', 'x = 4/0']
     compare_output(out, d, cmds)
   end
 end

@@ -27,7 +27,8 @@ class TestBreak < Test::Unit::TestCase
     z = 8
     ##############################
     d.stop
-    out = ['-- x = 6',
+    out = ['-- ',
+           'x = 6',
            'basename is on.',
            "Breakpoint 1 set at line 26\n" + 
            "\tin file test-condition.rb,\n" + 
@@ -48,12 +49,14 @@ class TestBreak < Test::Unit::TestCase
     z = 8
     ##############################
     d.stop
-    out = ['-- x = 6',
+    out = ['-- ',
+           'x = 6',
            'basename is on.',
-           "Breakpoint 2 set at line 47\n" +
+           "Breakpoint 2 set at line 48\n" +
            "\tin file test-condition.rb,\n" + 
            "\tVM offset 55 of instruction sequence \"test_condition\".",
-           'xx y = 7']
+           'xx ',
+           'y = 7']
     compare_output(out, d, cmds)
   end
     
