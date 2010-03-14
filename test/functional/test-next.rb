@@ -65,11 +65,7 @@ class TestNext < Test::Unit::TestCase
     end
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- ', 
-           'begin', 
-           '#<ZeroDivisionError: divided by 0>', 
-           '!! ', 
-           'x = 4/0']
+    out = ['-- ', 'begin']
     compare_output(out, d, cmds)
   end
 end

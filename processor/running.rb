@@ -111,12 +111,8 @@ class Debugger
       # to stop on them.
       # return false if UNMASKABLE_EVENTS.member?(@core.event)
 
-      frame = @frame
-      while 'CFUNC' == frame.type && frame do
-        frame = frame.prev
-      end
       return true if 
-        !frame || (@next_level < frame.stack_size &&
+        !frame || (@next_level < @frame.stack_size &&
                    Thread.current == @next_thread)
 
       new_pos = [@frame.source_container, frame_line,

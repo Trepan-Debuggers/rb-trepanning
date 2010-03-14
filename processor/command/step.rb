@@ -90,13 +90,13 @@ Related and similar is the 'next' command.  See also the commands:
         end
       else
         count_str = args[1]
-        opts = {
+        int_opts = {
           :msg_on_error => 
           "The 'step' command argument must eval to an integer. Got: %s" % 
           count_str,
           :min_value => 1
         }.merge(opts)
-        count = @proc.get_an_int(count_str, opts)
+        count = @proc.get_an_int(count_str, int_opts)
         return unless count
         # step 1 is core.step_count = 0 or "stop next event"
         step_count = count - 1  
