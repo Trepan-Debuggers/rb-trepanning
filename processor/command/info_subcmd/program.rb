@@ -24,7 +24,7 @@ class Debugger::Subcommand::InfoProgram < Debugger::Subcommand
     if 'return' == @proc.core.event 
       msg '=> %s' % @proc.frame.sp(1).inspect 
     elsif 'raise' == @proc.core.event
-      msg @proc.hook_arg if @proc.hook_arg
+      msg @proc.core.hook_arg.inspect if @proc.core.hook_arg
     end
 
     if @proc.brkpt

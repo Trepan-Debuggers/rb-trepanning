@@ -65,7 +65,9 @@ class TestStep < Test::Unit::TestCase
     end
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- ', 'x = 5', 'Fixnum', '!! ', 'z = 1/0']
+    out = ['-- ', 'x = 5', 
+           '#<ZeroDivisionError: divided by 0>', 
+           '!! ', 'z = 1/0']
     compare_output(out, d, cmds)
     
     # Test "step" with sets of events. Part 1
@@ -91,7 +93,7 @@ class TestStep < Test::Unit::TestCase
            'METHOD TestStep#foo1()',
            '-> ',
            'def foo1',
-           'TestStep',
+           '#<Exception: Exception>',
            '!! ',
            'raise Exception']
 
@@ -200,7 +202,7 @@ class TestStep < Test::Unit::TestCase
     
     out = ['-- ', 
            'x = bad(0)', # line event
-           'Fixnum', 
+           '#<ZeroDivisionError: divided by 0>',
            '!! ',        # exception event
            'y = 0/x']
 
