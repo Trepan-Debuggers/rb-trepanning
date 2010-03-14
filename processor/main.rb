@@ -228,6 +228,10 @@ class Debugger
       return false
     end
 
+    def trace_hook_method(*args)
+      print_location
+    end
+
     # Error message when a command doesn't exist
     def undefined_command(cmd_name)
       errmsg('Undefined command: "%s". Try "help".' % cmd_name)

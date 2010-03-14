@@ -2,6 +2,7 @@ require_relative 'msg'
 require_relative %w(.. app frame)
 class Debugger
   class CmdProcessor
+    include Frame
     # Get line +line_number+ from file named +filename+. Return "\n"
     # there was a problem. Leaking blanks are stripped off.
     def line_at(filename, line_number) # :nodoc:
@@ -12,6 +13,10 @@ class Debugger
     end
 
     def print_location
+      if %w(c-call call).member?(@core.event)
+        msg format_stack_call(@frame, {}) 
+      end
+
       text      = nil
       source_container = frame_container(@frame, false)
       ev        = if @core.event.nil? || @frame_index != 0 
@@ -52,12 +57,13 @@ class Debugger
         
         text  = line_at(container, @line_no)
       end
-      message = "#{ev} (#{loc})"
+      msg "#{ev} (#{loc})"
+      msg '=> %s' % @frame.sp(1).inspect if 'return' == @core.event 
+
       if text && !text.strip.empty?
-        message += "\n#{text}" 
+        msg text
         @line_no -= 1
       end
-      msg message
     end
   end
 end

@@ -21,6 +21,9 @@ class Debugger::Subcommand::InfoProgram < Debugger::Subcommand
         '.'
       end
     msg m
+    msg '=> %s' % @proc.frame.sp(1).inspect if 
+      'return' == @proc.core.event 
+
     if @proc.brkpt
       msg('It is stopped at %sbreakpoint %d.' %
           [@proc.brkpt.temp? ? 'temporary ' : '',

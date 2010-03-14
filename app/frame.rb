@@ -67,8 +67,7 @@ class Debugger
     end
     module_function :eval_string
 
-    def format_stack_entry(frame, opts={})
-      return 'invalid frame' if frame.invalid?
+    def format_stack_call(frame, opts)
       # FIXME: prettify 
       s = "#{frame.type} "
       s += if opts[:class]
@@ -92,6 +91,12 @@ class Debugger
           s += "(#{all_param_names(iseq)})" 
         end
       end
+      s
+    end
+
+    def format_stack_entry(frame, opts={})
+      return 'invalid frame' if frame.invalid?
+      s  = format_stack_call(frame, opts)
       s += " in #{frame.source_container[0]} "
       s += 
         if (eval_str = eval_string(frame))

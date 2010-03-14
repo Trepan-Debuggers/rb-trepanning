@@ -90,4 +90,8 @@ if __FILE__ == $0
   puts '-' * 30
   hooks.delete_by_name('hook2')
   hooks.run(30)
+  puts '-' * 30
+  hooks.delete_by_name('hook1')
+  hooks.run(30)
+  puts '-' * 30
 end
