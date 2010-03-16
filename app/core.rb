@@ -19,6 +19,8 @@ class Debugger
     attr_reader   :frame        # ThreadFrame instance
     attr_reader   :hook_arg     # 'arg' passed from trace hook
     attr_accessor :processor    # Debugger::CmdProc instance
+    attr_accessor :exception    # Return exception to pass back. A 'raise'
+                                # command can set this.
     attr_reader   :settings     # Hash of things you can configure
     attr_accessor :step_count   # Fixnum. Negative means no tracing,
                                 # 0 means stop on next event, 1 means 
@@ -65,6 +67,7 @@ class Debugger
 
     def initialize(debugger, settings={})
       @dbgr         = debugger
+      @exception    = nil
       @settings     = CORE_DEFAULT_SETTINGS.merge(settings)
       @step_count   = @settings[:step_count]
       @step_events  = @settings[:step_events]
@@ -124,11 +127,13 @@ class Debugger
         @step_count = step_count_save
       end
 
-      # Just in case...
-      @frame = @event = @arg = nil
+      # Nil out variables just in case...
+
+      e = @exception
+      @frame = @event = @arg = @exception = nil
 
       # FIXME: unblock other threads
-
+      raise e if e
     end
 
     # A Ruby 1.8-style event processor. We don't use file, line, id, bind. 

@@ -60,7 +60,7 @@ class Debugger
         text  = line_at(container, @line_no)
       end
       msg "#{ev} (#{loc})"
-      msg '=> %s' % @frame.sp(1).inspect if 'return' == @core.event 
+      msg 'R=> %s' % @frame.sp(1).inspect if 'return' == @core.event 
 
       if text && !text.strip.empty?
         msg text

@@ -66,7 +66,7 @@ class TestDelete < Test::Unit::TestCase
            "Deleted breakpoint 2",
            "xx ",
            "vd = 4",
-           "=> 3"]
+           "R=> 3"]
     compare_output(out, d, cmds)
 
   end

@@ -29,6 +29,7 @@ class Debugger
                                    # the command loop (which often continues to 
                                    # run the debugged program). 
     attr_accessor :line_no         # Last line shown in "list" command
+    attr_accessor :pass_exception  # Pass an exception back 
     attr_accessor :next_level      # Fixnum. frame.stack_size has to
                                    # be <= than this.  If next'ing,
                                    # this will be > 0.
@@ -198,9 +199,10 @@ class Debugger
         rescue SystemExit
           @dbgr.stop
           raise
-        rescue Exception => e
-          errmsg("Internal debugger error!")
-          exception_dump(e, @settings[:debugexcept], $!.backtrace)
+        rescue Exception => exc
+          break if @core.exception # sould be equal to exc. 'raise' command run.
+          errmsg("Internal debugger error: #{exc}.inspect")
+          exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end
       end
     end
@@ -221,7 +223,7 @@ class Debugger
 
       # Eval anything that's not a command.
       if settings[:autoeval]
-        msg '=> ' + debug_eval(last_command).inspect
+        msg 'R=> ' + debug_eval(last_command).inspect
       else
         undefined_command(cmd_name)
       end

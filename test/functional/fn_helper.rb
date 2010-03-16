@@ -58,7 +58,7 @@ module FnTestHelper
         end
       end
     end
-    assert_equal(right, got)
+    assert_equal(right, got, caller[0])
   end
 
   # Return output with source lines prompt and command removed
