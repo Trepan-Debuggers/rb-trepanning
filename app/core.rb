@@ -129,11 +129,11 @@ class Debugger
 
       # Nil out variables just in case...
 
-      e = @exception
+      exception = @exception
       @frame = @event = @arg = @exception = nil
 
       # FIXME: unblock other threads
-      raise e if e
+      raise exception if exception
     end
 
     # A Ruby 1.8-style event processor. We don't use file, line, id, bind. 

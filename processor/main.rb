@@ -200,7 +200,6 @@ class Debugger
           @dbgr.stop
           raise
         rescue Exception => exc
-          break if @core.exception # sould be equal to exc. 'raise' command run.
           errmsg("Internal debugger error: #{exc}.inspect")
           exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end

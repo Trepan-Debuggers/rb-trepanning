@@ -77,7 +77,7 @@ module FnTestHelper
       s =~ RBDBGR_LOC ? s.gsub(/\(.+:\d+\)\n/, '').chomp : s.chomp
     end
 
-    # Remove VM offset locationss. 
+    # Remove VM offset locations. 
     # For example: 
     #	VM offset 2 of instruction sequence "block in compare_output".
     # becomes 

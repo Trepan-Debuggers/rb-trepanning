@@ -15,11 +15,15 @@ Raise an exception in the debugged program."
     
   # This method runs the command
   def run(args) # :nodoc
-    except = 
+    exception = 
       if args.size > 1
-        except_str = args[1]
-        unless @proc.debug_eval_no_errmsg("#{except_str}.is_a?(Class)")
-          errmsg "#{except_str} is not known to be a Class\n"
+        except_str = args[1..-1].join(' ')
+        # Normally would need x.respond_to? && ..
+        # but since we catch errors with debug_eval.. not needed.
+        eval_str = ("%s.ancestors.include?(Exception)" %
+                    [except_str])
+        unless @proc.debug_eval_no_errmsg(eval_str)
+          errmsg "\"#{except_str}\" does not inherit Exception."
           return
         end
         @proc.debug_eval_no_errmsg(except_str)
@@ -27,7 +31,7 @@ Raise an exception in the debugged program."
         RuntimeError
       end
     @proc.leave_cmd_loop = true
-    @proc.core.exception = except
+    @proc.core.exception = exception
   end
 end
 
@@ -35,5 +39,7 @@ if __FILE__ == $0
   require_relative %w(.. mock)
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
+  puts cmd.run([name, 'NotanException'])
+  puts cmd.run([name, '[5]'])
   puts cmd.run([name, 'RuntimeError'])
 end
