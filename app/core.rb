@@ -133,7 +133,7 @@ class Debugger
       @frame = @event = @arg = @exception = nil
 
       # FIXME: unblock other threads
-      raise exception if exception
+      return exception if exception
     end
 
     # A Ruby 1.8-style event processor. We don't use file, line, id, bind. 
