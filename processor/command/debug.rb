@@ -29,13 +29,10 @@ Enter the debugger recursively on RUBY-CODE."
     @proc.hidelevels[th] += stack_diff + 1
 
     # Ignore tracing in support routines:
-    # this method and debug_eval.
     tf = @proc.core.dbgr.trace_filter 
-    me = self.method(:run)
-    eval_me = @proc.method(:debug_eval)
-    # FIXME if eval_me is added to ignore
-    # we skip over things eval calls.
-    [me, eval_me].each do |m|
+    [self.method(:run), @proc.method(:debug_eval),
+     @proc.method(:debug_eval_with_exception),
+     @proc.method(:fake_eval_filename)].each do |m|
       tf << m unless tf.member?(m)
     end
 
@@ -49,10 +46,11 @@ Enter the debugger recursively on RUBY-CODE."
     th.exec_event_tracing  = false
     @proc.core.step_count  = 0
     @proc.next_level       = 32000
-    @proc.debug_eval(arg_str)
+    retval = @proc.debug_eval(arg_str)
     th.exec_event_tracing  = old_exec_event_tracing
     th.tracing             = old_tracing
     msg 'LEAVING RECURSIVE DEBUGGER'
+    msg "R=> #{retval.inspect}"
     @proc.frame_setup(frame)
     @proc.hidelevels[th]   = hidelevels
     @proc.core.step_count  = old_step_count

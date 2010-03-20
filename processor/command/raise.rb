@@ -30,6 +30,7 @@ Raise an exception in the debugged program."
       else
         RuntimeError
       end
+    @proc.step(0)
     @proc.leave_cmd_loop = true
     @proc.core.exception = exception
   end
