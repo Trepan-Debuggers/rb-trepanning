@@ -59,4 +59,29 @@ class TestCmdProcessor < Test::Unit::TestCase
     end
   end
 
+  def test_run_command
+    def run_and_check(cmd, expect_msgs, expect_errmsgs, add_msg)
+      $errs = []; $msgs = []
+      @cmdproc.run_command(cmd)
+      assert_equal(expect_msgs, $msgs, 
+                   "#{add_msg}: mismatched messages from #{caller[0]}")
+      assert_equal(expect_errmsgs, $errs, 
+                   "Mismatched error messages from #{caller[0]}")
+    end
+    def @cmdproc.msg(mess)
+      $msgs << "#{mess}"
+    end
+    def @cmdproc.errmsg(mess)
+      $errs << "#{mess}"
+    end
+    run_and_check('!s=1', ['R=> 1'], [], "! evaluation")
+    run_and_check('print "foo"', ['foo'], [], "print command")
+    run_and_check('set autoeval off', ['autoeval is off.'], [], 
+                  "autoeval set")
+    run_and_check('asdf', [], 
+                  ['Undefined command: "asdf". Try "help".'], 
+                  "invalid command")
+    
+  end
+
 end

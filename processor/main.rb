@@ -19,6 +19,7 @@ class Debugger
     attr_reader   :aliases         # Hash[String] of command names
                                    # indexed by alias name
     attr_reader   :core            # Debugger core object
+    attr_reader   :current_command # Current command getting run, a String.
     attr_reader   :dbgr            # Debugger instance (via
                                    # Debugger::Core instance)
     attr_accessor :different_pos   # Same type as settings[:different] 
@@ -155,11 +156,11 @@ class Debugger
       return true if intf[-1].input.eof? && intf.size == 1
       while !intf[-1].input.eof? || intf.size > 1
         begin
-          last_command = read_command().strip
-          if last_command.empty? && @last_command && intf[-1].interactive?
-            last_command = @last_command 
+          @current_command = read_command().strip
+          if @current_command.empty? && @last_command && intf[-1].interactive?
+            @current_command = @last_command 
           end
-          next if last_command[0..0] == '#' # Skip comment lines
+          next if @current_command[0..0] == '#' # Skip comment lines
           break
         rescue IOError, Errno::EPIPE
           if @dbgr.intf.size > 1
@@ -174,7 +175,7 @@ class Debugger
           end
         end
       end
-      run_command(last_command)
+      run_command(@current_command)
     end
 
     # This is the main entry point.
@@ -206,23 +207,34 @@ class Debugger
       end
     end
 
-    def run_command(last_command)
-      args = last_command.split
-      return false if args.size == 0
-      cmd_name = args[0]
-      cmd_name = @aliases[cmd_name] if @aliases.member?(cmd_name)
-      if @commands.member?(cmd_name)
-        cmd = @commands[cmd_name]
-        if ok_for_running(cmd, cmd_name, args.size-1)
-          cmd.run(args) 
-          @last_command = last_command
+    # Run current_command, a String. @last_command is set after the
+    # command is run if it is a command.
+    def run_command(current_command)
+      eval_command = 
+        if current_command[0..0] == '!'
+          current_command[0] = ''
+        else
+          false
         end
-        return false
+      unless eval_command
+        args = current_command.split
+        return false if args.size == 0
+        cmd_name = args[0]
+        cmd_name = @aliases[cmd_name] if @aliases.member?(cmd_name)
+        if @commands.member?(cmd_name)
+          cmd = @commands[cmd_name]
+          if ok_for_running(cmd, cmd_name, args.size-1)
+            cmd.run(args) 
+            @last_command = current_command
+          end
+          return false
+        end
       end
 
-      # Eval anything that's not a command.
-      if settings[:autoeval]
-        msg 'R=> ' + debug_eval(last_command).inspect
+      # Eval anything that's not a command or has been
+      # requested to be eval'd
+      if settings[:autoeval] || eval_command
+        msg 'R=> ' + debug_eval(current_command).inspect
       else
         undefined_command(cmd_name)
       end
@@ -270,6 +282,8 @@ if __FILE__ == $0
       end
     end
     $input = ['1+2']
+    dbg.core.processor.process_command_and_quit?
+    $input = ['!s = 5']  # ! means eval line 
     dbg.core.processor.process_command_and_quit?
   end
 end
