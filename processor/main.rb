@@ -157,8 +157,12 @@ class Debugger
       while !intf[-1].input.eof? || intf.size > 1
         begin
           @current_command = read_command().strip
-          if @current_command.empty? && @last_command && intf[-1].interactive?
-            @current_command = @last_command 
+          if @current_command.empty? 
+            if @last_command && intf[-1].interactive?
+              @current_command = @last_command 
+            else
+              next
+            end
           end
           next if @current_command[0..0] == '#' # Skip comment lines
           break

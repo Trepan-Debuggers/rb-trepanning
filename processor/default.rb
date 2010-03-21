@@ -21,7 +21,7 @@ class Debugger
       :prompt        => '(rbdbgr): ',
       :trace         => false, # event tracing
       :width         => (ENV['COLUMNS'] || '80').to_i,
-    }
+    } unless defined?(DEFAULT_SETTINGS)
   end
 end
 

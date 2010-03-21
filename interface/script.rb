@@ -4,6 +4,7 @@
 # Our local modules
 require_relative 'base_intf'
 require_relative %w(.. io input)
+require_relative %w(.. io string_array)
 
 # Interface when reading debugger scripts
 class Debugger::ScriptInterface < Debugger::Interface
@@ -23,6 +24,10 @@ class Debugger::ScriptInterface < Debugger::Interface
     @input_lineno    = 0
     @input           = Debugger::UserInput.open(script_name,
                                                 :line_edit => false)
+    @buffer_output   = []
+    unless opts[:verbose] or out
+      out = Debugger::StringArrayOutput.open(@buffer_output)
+    end
     super(@input, out, @opts)
   end
 
