@@ -25,9 +25,13 @@ Examples:
   def run(args)
 
     args = @parent.last_args
-    all_regs = @subcmds.subcmds.keys.sort
-    all_regs -= %w(inforegisterslfp inforegisterspc) if 
-      'CFUNC' == @proc.frame.type
+    unavailable_regs = 
+      if 'CFUNC' == @proc.frame.type
+        %w(inforegisterslfp inforegisterspc) 
+      else
+        []
+      end
+    all_regs = @subcmds.subcmds.keys.sort - unavailable_regs
       
     if args.size == 2
       # Form is: "info registers"
@@ -40,9 +44,11 @@ Examples:
       remain_args = args[3..-1]
       if all_regs.member?(key_name)
         @subcmds.subcmds[key_name].run(remain_args) 
+      elsif unavailable_regs.member?(key_name)
+        msg("info registers: %s can not be displayed for frame type %s." % 
+            [subcmd_name, @proc.frame.type])
       else
         errmsg("info registers: %s is not a valid register name" % subcmd_name)
-        nil
       end
     end
   end

@@ -25,7 +25,6 @@ class Debugger::Subcommand::SetSp < Debugger::Subcommand
     begin
       new_val = @proc.debug_eval(new_val_str)
     rescue StandardError, ScriptError => e
-      p $!
       return
     end
     msg("Old value was: %s" % @proc.frame.sp(index).inspect)
@@ -43,7 +42,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Debugger::Subcommand::SetSP.new(cmd)
+  subcommand = Debugger::Subcommand::SetSp.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   def subcommand.msg(message)
