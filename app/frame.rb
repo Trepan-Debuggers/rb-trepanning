@@ -122,6 +122,12 @@ class Debugger
       return s
     end
 
+    def offset_for_return(event)
+      raise RuntimeError unless %w(return c-return).member?(event)
+      'return' == event ? 1 : 2
+    end
+    module_function :offset_for_return
+
     def param_names(iseq, start, stop, prefix='')
       start.upto(stop).map do |i| 
         begin
@@ -160,7 +166,17 @@ class Debugger
         print_stack_trace_from_to(0, n-1, frame, opts)
       end
     end
-    module_function
+
+    def set_return_value(frame, event, value)
+      offset = offset_for_return(event)
+      frame.sp_set(offset, value)
+    end
+    module_function :set_return_value
+
+    def value_returned(frame, event)
+      frame.sp(offset_for_return(event))
+    end
+    module_function :value_returned
   end
 end
 

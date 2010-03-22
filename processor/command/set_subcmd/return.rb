@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. base subcmd)
+require_relative %w(.. .. .. app frame)
 
 class Debugger::Subcommand::SetReturn < Debugger::Subcommand
   unless defined?(HELP)
@@ -9,12 +10,13 @@ class Debugger::Subcommand::SetReturn < Debugger::Subcommand
     NAME         = File.basename(__FILE__, '.rb')
   end
 
+  include Debugger::Frame
+
   def run(args)
-    # FIXME handle c-return
-    # unless %w(return c-return).member?(@proc.core.event)
-    unless %w(return).member?(@proc.core.event)
-      errmsg("You need to be in a return event to do this. Event is %s" % 
-             @proc.core.event)
+    event = @proc.core.event
+    unless %w(return c-return).member?(event)
+      errmsg('You need to be in a return event to do this. Event is %s' % 
+             event)
       return
     end
     if args.size < 3 
@@ -28,9 +30,10 @@ class Debugger::Subcommand::SetReturn < Debugger::Subcommand
       p $!
       return
     end
-    msg("Return value was: %s" % @proc.frame.sp(1).inspect)
-    @proc.frame.sp_set(1, new_val).inspect
-    msg("New value is: %s" % new_val.inspect)
+    ret_val = Debugger::Frame.value_returned(@proc.frame, event)
+    msg('Return value was: %s' % ret_val.inspect)
+    Debugger::Frame.set_return_value(@proc.frame, event, new_val)
+    msg('New value is: %s' % new_val.inspect)
   end
 
 end

@@ -60,8 +60,11 @@ class Debugger
         text  = line_at(container, @line_no)
       end
       msg "#{ev} (#{loc})"
-      msg 'R=> %s' % @frame.sp(1).inspect if 'return' == @core.event 
-
+      if %w(return c-return).member?(@core.event)
+        retval = Debugger::Frame.value_returned(@frame, @core.event)
+        msg 'R=> %s' % retval.inspect 
+      end
+      
       if text && !text.strip.empty?
         msg text
         @line_no -= 1

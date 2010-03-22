@@ -9,11 +9,6 @@ class TestRaise < Test::Unit::TestCase
 
   def test_raise
 
-    # FIXME: looks like we still have a bug in that raising an
-    # exception is not clear the exec_event_tracing flag (in our Ruby
-    # 1.9 patch) so debug after 'raise' doesn't work.
-    # Uncomment after fixing...
-    
     cmds = [
             'step',
             'step',
