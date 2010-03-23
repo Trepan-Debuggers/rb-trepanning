@@ -66,12 +66,14 @@ class Debugger
       return nil unless to_str.is_a?(String)
 
       # All systems go!
-      tempfile = Tempfile.new(['eval-', '.rb'])
-      tempfile.open.puts(to_str)
+      unless @remap_iseq.member?(@frame.iseq.sha1)
+        tempfile = Tempfile.new(['eval-', '.rb'])
+        tempfile.open.puts(to_str)
 
-      @remap_iseq[@frame.iseq.sha1] = ['file', tempfile.path]
-      tempfile.close
-      LineCache::cache(tempfile.path)
+        @remap_iseq[@frame.iseq.sha1] = ['file', tempfile.path]
+        tempfile.close
+        LineCache::cache(tempfile.path)
+      end
       return true
     end
 
