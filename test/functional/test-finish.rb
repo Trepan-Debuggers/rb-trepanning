@@ -29,7 +29,7 @@ class TestFinish < Test::Unit::TestCase
            '-> ',
            'def fact(x)',
            '<- ',
-           'R=> 24',
+           'r=> 24',
            'end',
            'R=> true']
     compare_output(out, d, cmds)

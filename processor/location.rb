@@ -62,7 +62,7 @@ class Debugger
       msg "#{ev} (#{loc})"
       if %w(return c-return).member?(@core.event)
         retval = Debugger::Frame.value_returned(@frame, @core.event)
-        msg 'R=> %s' % retval.inspect 
+        msg 'r=> %s' % retval.inspect 
       end
       
       if text && !text.strip.empty?

@@ -145,7 +145,7 @@ class TestStep < Test::Unit::TestCase
             '-- ',
             'y = x * x',
             '<- ',
-            'R=> 16',
+            'r=> 16',
             'end',
             '-- ',
             'y = 5']
@@ -168,7 +168,7 @@ class TestStep < Test::Unit::TestCase
             '-> ',
             'def sqr(x)',
             '<- ',
-            'R=> 16',
+            'r=> 16',
             'end']
     d = strarray_setup(cmds)
     d.start
@@ -227,7 +227,7 @@ class TestStep < Test::Unit::TestCase
     out = ['-- ', 
            'x = fact(4)', 
            '<- ', 
-           'R=> 1', 
+           'r=> 1', 
            'return 1 if x <= 1', 
            'R=> true']
     compare_output(out, d, cmds)
