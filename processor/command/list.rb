@@ -94,6 +94,18 @@ disabled."
     frame = @proc.frame
     
     container = @proc.frame_container(frame, false)
+
+    # FIXME: put into a helper routine
+    # See also duplicate code in print_location
+    if container[0] != 'file'
+      try_container = container
+      while try_container[0] != 'file' && frame.prev do
+        frame            = frame.prev
+        try_container = @proc.frame_container(frame, false)
+      end
+      container = try_container if try_container[0] == 'file'
+    end
+
     filename = container[1]
     
     last = nil
@@ -227,7 +239,8 @@ disabled."
         msg(s + "\t" + line)
         @proc.line_no = lineno
       end
-    rescue
+    rescue => e
+      errmsg e if settings[:debugexcept]
     end
   end
 end

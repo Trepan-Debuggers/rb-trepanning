@@ -2,11 +2,16 @@ require_relative 'msg'
 require_relative %w(.. app frame)
 class Debugger
   class CmdProcessor
+    attr_accessor :reload_on_change
     include Frame
+
+    def location_initialize
+      @reload_on_change = nil
+    end
+
     # Get line +line_number+ from file named +filename+. Return "\n"
     # there was a problem. Leaking blanks are stripped off.
     def line_at(filename, line_number) # :nodoc:
-      @reload_on_change=nil unless defined?(@reload_on_change)
       line = LineCache::getline(filename, line_number, @reload_on_change)
       return "\n" unless line
       return line.gsub(/^\s+/, '').chomp
@@ -42,6 +47,8 @@ class Debugger
         end
       loc = "#{canonic_filename}:#{line_no}"
 
+      # FIXME: put some of the belo into a helper routine
+      # See also duplicate code in list.rb
       if source_container[0] != 'file'
         frame = @frame
         via = loc
