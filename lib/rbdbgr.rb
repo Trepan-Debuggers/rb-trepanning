@@ -195,6 +195,7 @@ class Debugger
   def self.debug_str(string, opts = DEFAULT_DEBUG_STR_SETTINGS)
     $rbdbgr = Debugger.new(opts) unless $rbdbgr && $rbdbgr.is_a?(Debugger)
     $rbdbgr.core.processor.settings[:different] = false
+    # Perhaps we should do a remap file to string right here? 
     $rbdbgr.debugger(opts) { eval(string) }
   end
 end

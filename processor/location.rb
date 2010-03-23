@@ -40,9 +40,9 @@ class Debugger
       if source_container[0] != 'file'
         frame = @frame
         via = loc
-        while source_container[0] != 'file' and frame.prev do
-          source_container = frame_container(frame, false)
+        while source_container[0] != 'file' && frame.prev do
           frame            = frame.prev
+          source_container = frame_container(frame, false)
         end
         if source_container[0] == 'file'
           @line_no  = frame.source_location[0]
