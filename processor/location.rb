@@ -14,14 +14,19 @@ class Debugger
 
     def print_location
       if %w(c-call call).member?(@core.event)
-        msg format_stack_call(@frame, {}) 
+        # FIXME: Fix Ruby so we don't need this workaround? 
+        # See also where.rb
+        opts = {}
+        opts[:class] = @core.hook_arg if 
+          'CFUNC' == frame.type && @core.hook_arg && 0 == @frame_index 
+        msg format_stack_call(@frame, opts) 
       elsif 'raise' == @core.event
         msg @core.hook_arg.inspect if @core.hook_arg # Exception object
       end
 
       text      = nil
       source_container = frame_container(@frame, false)
-      ev        = if @core.event.nil? || @frame_index != 0 
+      ev        = if @core.event.nil? || 0 != @frame_index
                     '  ' 
                   else
                     (EVENT2ICON[@core.event] || @core.event)

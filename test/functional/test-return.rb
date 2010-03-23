@@ -79,9 +79,7 @@ class TestRaise < Test::Unit::TestCase
            'different is off.',
            "Trace events we may stop on:",
            "\tc_call, c_return",
-           # FIXME: The below line should be 
-           # "CFUNC File.basename(\"/a/b.c\")", 
-           "CFUNC Class#basename(\"/a/b.c\")", 
+           "CFUNC File#basename(\"/a/b.c\")", 
            "C> ",
            "result = File.basename('/a/b.c')",
            "1: \"/a/b.c\"",

@@ -57,6 +57,8 @@ Examples:
         stack_size
       end
     return false unless opts[:count]
+    # FIXME: Fix Ruby so we don't need this workaround? 
+    # See also location.rb
     opts[:class] = @proc.core.hook_arg  if 
       'CFUNC' == @proc.frame.type && 
       @proc.core.hook_arg && @proc.core.event != 'raise'

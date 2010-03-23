@@ -206,7 +206,8 @@ disabled."
 
     begin
       first.upto(last).each do |lineno|
-        line = LineCache::getline(container[1], lineno).chomp
+        line = LineCache::getline(container[1], lineno,
+                                  @proc.reload_on_change).chomp
         unless line
           msg('[EOF]')
           break
