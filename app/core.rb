@@ -85,6 +85,11 @@ class Debugger
       # FIXME: Block all other threads
       # FIXME: check for breakpoints or other unmaskable events. 
       # For now there are none.
+
+      while @frame.type == 'IFUNC'
+        @frame = @frame.prev
+      end
+
       if @step_count > 0
         @step_count -= 1
         return
@@ -95,9 +100,6 @@ class Debugger
       @event    = event
       @frame    = frame
       @hook_arg = arg
-      while @frame.type == 'IFUNC'
-        @frame = @frame.prev
-      end
 
       if @settings[:debug_core_events]
         puts "event #{event} #{@frame.source_container.inspect} #{@frame.source_location.inspect}"
