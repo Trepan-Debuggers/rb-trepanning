@@ -25,14 +25,63 @@ class Debugger
       item = EventStruct.new(event, arg, frame.type, frame.thread, frame.method,
                              frame.source_container, frame.source_location,
                              iseq, iseq ? frame.pc_offset : nil)
-      @pos += 1 
-      @pos = 0 if @size && @pos == @size
+      @pos = next_pos
       @marks.shift if @marks[0] == @pos
       @buf[@pos] = item
     end
 
+    def next_pos
+      pos = @pos + 1 
+      if @size && @pos == @size
+        0
+      else
+        pos
+      end
+    end
+
     def add_mark
       @marks << @pos
+    end
+
+    def each(from=nil, to=nil)
+      from = next_pos unless from
+      to   = @pos     unless to
+      if from <= to
+        from.upto(to).each do |pos|
+          yield @buf[pos]
+        end
+      else
+        from.upto(size-1).each do |pos|
+          yield @buf[pos]
+        end
+        0.upto(@pos).each do |pos|
+          yield @buf[pos]
+        end
+      end
+    end
+
+    def format_entry(item, long_format=true)
+      # require 'rbdbgr'; Debugger.debug
+      container = 
+        if item.source_container[0] == 'file'
+          item.source_container[1].inspect
+        else
+          item.source_container.inspect
+        end
+
+      location = 
+        if 1 == item.source_location.size 
+          item.source_location[0].inspect
+        else
+          item.source_location.inspect
+        end
+          
+      mess = "#{item.event} #{item.type} #{item.method} " + 
+        "#{container} #{location}"
+      if long_format && item.iseq
+        mess += "\n\t" + "#{item.pc_offset} of #{item.iseq.name}"
+      end
+      mess
     end
   end
 end
@@ -45,11 +94,14 @@ if __FILE__ == $0
     end
   end
   @eventbuf = Debugger::EventBuffer.new(5)
-  require 'trace'
+  load '/src/external-vcs/rb-trace/lib/tracefilter.rb'
   trace_filter = TraceFilter.new
   trace_func   = method(:event_processor).to_proc
   trace_filter << trace_func
   trace_filter.set_trace_func(trace_func)
   x = 1
-  @eventbuf.buf.each { |e| p e}
+  trace_filter.set_trace_func(nil)
+  @eventbuf.each do |e| 
+    puts @eventbuf.format_entry(e)
+  end
 end
