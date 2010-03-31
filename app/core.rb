@@ -86,6 +86,7 @@ class Debugger
       # FIXME: check for breakpoints or other unmaskable events. 
       # For now there are none.
 
+      @frame = frame
       while @frame.type == 'IFUNC'
         @frame = @frame.prev
       end
