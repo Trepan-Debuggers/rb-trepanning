@@ -23,7 +23,7 @@ class Debugger
         # See also where.rb
         opts = {}
         opts[:class] = @core.hook_arg if 
-          'CFUNC' == frame.type && @core.hook_arg && 0 == @frame_index 
+          'CFUNC' == @frame.type && @core.hook_arg && 0 == @frame_index 
         msg format_stack_call(@frame, opts) 
       elsif 'raise' == @core.event
         msg @core.hook_arg.inspect if @core.hook_arg # Exception object
@@ -39,15 +39,15 @@ class Debugger
       @line_no  = frame_line
       filename  = source_container[1]
       canonic_filename = 
-        if (0 == filename.index('(eval')) && frame.prev &&
-            (eval_str = Debugger::Frame.eval_string(frame.prev))
+        if (0 == filename.index('(eval')) && @frame.prev &&
+            (eval_str = Debugger::Frame.eval_string(@frame.prev))
           'eval ' + safe_repr(eval_str, 15)
         else
           canonic_file(filename)
         end
       loc = "#{canonic_filename}:#{line_no}"
 
-      # FIXME: put some of the belo into a helper routine
+      # FIXME: put some of the below into a helper routine
       # See also duplicate code in list.rb
       if source_container[0] != 'file'
         frame = @frame

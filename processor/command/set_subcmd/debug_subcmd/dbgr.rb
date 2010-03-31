@@ -3,10 +3,15 @@ require_relative %w(.. .. base subsubcmd)
 
 class Debugger::SubSubcommand::SetDebugDbgr < Debugger::SetBoolSubSubcommand
   unless defined?(HELP)
-    HELP        = 'Set debugging debugger'
+    HELP        = 'Set debugging debugger
+
+Global variables $rbdbgr_cmdproc and $rbdbgr_frame are set to the current 
+values of @frame and self when the command processor was entered.
+'
     MIN_ABBREV  = 'db'.size
     NAME        = File.basename(__FILE__, '.rb')
     PREFIX      = %w(set debug skip)
+    SHORTHELP   = 'Set debugging debugger'
   end
 
   def run(args)
