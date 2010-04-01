@@ -13,9 +13,13 @@ Set saving trace events in a buffer
     PREFIX       = %w(set trace buffer)
   end
 
-  def run
+  def run(args)
     super
-    # FIXME: add/remove buffer trace hook to tracefilter.
+    if settings[:tracebuffer]
+      @proc.start_capture
+    else
+      @proc.stop_capture
+    end
   end
 
 end

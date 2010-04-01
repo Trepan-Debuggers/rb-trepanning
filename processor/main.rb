@@ -5,7 +5,8 @@ require 'linecache'
 require 'set'
 require 'pathname'  # For cleanpath
 
-%w(default display eval load_cmds location frame hook msg validate).each do
+%w(default display eventbuf eval load_cmds location frame hook msg 
+   validate).each do
   |mod_str|
   require_relative mod_str
 end
@@ -102,7 +103,8 @@ class Debugger
       load_debugger_commands(cmd_dir)
 
       # Run initialization routines for each of the "submodule"s.
-      %w(breakpoint display frame running validate).each do |submod|
+      %w(breakpoint display eventbuf frame running validate
+         ).each do |submod|
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
