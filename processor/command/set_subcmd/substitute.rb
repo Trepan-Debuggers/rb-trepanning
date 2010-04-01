@@ -12,9 +12,7 @@ end
 
 if __FILE__ == $0
   require_relative %w(.. .. mock)
-  dbgr = MockDebugger::MockDebugger.new
-  cmds = dbgr.core.processor.commands
-  set_cmd = cmds['set']
+  dbgr, set_cmd = MockDebugger::setup('set')
   command = Debugger::SubSubcommand::SetSubstitute.new(dbgr.core.processor, 
                                                        set_cmd)
   name = File.basename(__FILE__, '.rb')

@@ -40,7 +40,7 @@ class TestCommandHelp < Test::Unit::TestCase
       check_help(false, alias_name)
     end
 
-    # double-check specific comands and aliases
+    # double-check specific commands and aliases
     %w(step n help).each do |cmd_pat|
       check_help(false, cmd_pat)
     end
@@ -73,6 +73,28 @@ class TestCommandHelp < Test::Unit::TestCase
     # screwball error
     check_help(true, '["info",')
 
+  end
+
+  # FIXME: Do better than this.
+  def check_subcmd_help(cmd_name, subcmd, *args)
+    def subcmd.msg(mess)
+      @msgs << mess
+    end
+    subcmd.instance_variable_set('@msgs', [])
+    subcmd.instance_variable_set('@errmsgs', [])
+    subcmd.help(cmd_name)
+    assert subcmd.instance_variable_get('@msgs')
+    # subcmd.help
+  end
+
+  def test_help_subcommand
+    # Get list of commands with subcmds
+    cmd_names = @cmds.values.map do |c| 
+      c.instance_variable_defined?(:@subcmds) ? c.name : nil
+    end.compact
+    cmd_names.each do |cmd_name|
+      check_subcmd_help(cmd_name, @cmds[cmd_name].subcmds)
+    end
   end
 
 end
