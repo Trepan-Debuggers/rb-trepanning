@@ -16,10 +16,8 @@ The types of tracing include global variables, events from the trace buffer, or 
   end
 
   def run(args)
-    if args.size == 4
-      super
-      return
-    elsif args.size == 3
+    if args.size == 4 || 
+        (args.size == 3 && 0 == 'buffer'.index(args[-1]))
       super
       return
     end
@@ -37,11 +35,12 @@ The types of tracing include global variables, events from the trace buffer, or 
     onoff_arg = args.size < 3 ? 'on' : args[2]
     begin
       settings[@name] = @proc.get_onoff(onoff_arg)
-      run_show_bool
+      run_show_bool('Set trace buffer')
     rescue NameError, TypeError
     end
   end
 
+  # FIXME: Dry
   # Generic subcommand showing a boolean-valued debugger setting.
   def run_show_bool(what=nil)
     val = show_onoff(@proc.settings[@name])
