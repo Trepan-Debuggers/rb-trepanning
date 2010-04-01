@@ -19,6 +19,11 @@ module FnTestHelper
     d_opts[:core_opts]     = {:step_events => TEST_STEP_EVENT_MASK}
     d_opts[:core_opts][:step_events] ||= INSN_EVENT_MASK if insn_stepping
     d                      = Debugger.new(d_opts)
+
+    # Remove vm and switch from unmaskable events to increase predictability
+    # of test results
+    d.core.instance_variable_set('@unmaskable_events', %w(brkpt raise))
+
     d.settings[:basename]  = true
     d.settings[:different] = false
     d.settings[:autoeval]  = false

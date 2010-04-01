@@ -16,9 +16,11 @@ Set saving trace events in a buffer
   def run(args)
     super
     if settings[:tracebuffer]
-      @proc.start_capture
+      # @proc.start_capture
+      @proc.unconditional_prehooks.insert_if_new(-1, *@proc.tracebuf_hook)
     else
-      @proc.stop_capture
+      @proc.unconditional_prehooks.delete_by_name('tracebuffer')
+      # @proc.stop_capture
     end
   end
 

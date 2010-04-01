@@ -198,6 +198,8 @@ class Debugger
         msg "Note: we are stopped *after* the above location."
       end
 
+      @eventbuf.add_mark if @settings[:tracebuffer]
+
       @cmdloop_prehooks.run
 
       while not @leave_cmd_loop do

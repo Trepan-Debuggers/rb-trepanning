@@ -5,6 +5,7 @@ class Debugger
     attr_reader :autolist_hook
     attr_reader :display_hook
     attr_reader :trace_hook
+    attr_reader :tracebuf_hook
     attr_reader :unconditional_prehooks
     attr_reader :cmdloop_prehooks
 
@@ -55,19 +56,23 @@ class Debugger
       @unconditional_prehooks = Hook.new
 
       irb_cmd = commands['irb']
-      @autoirb_hook = ['autoirb', 
-                       Proc.new{|*args| irb_cmd.run(['irb']) if irb_cmd}]
+      @autoirb_hook  = ['autoirb', 
+                        Proc.new{|*args| irb_cmd.run(['irb']) if irb_cmd}]
 
       display_cmd = commands['display']
-      @display_hook = ['display', 
-                       Proc.new{|*args| display_cmd.run(['display']) if display_cmd}]
+      @display_hook  = ['display', 
+                        Proc.new{|*args| display_cmd.run(['display']) if 
+                          display_cmd}]
 
       list_cmd = commands['list']
       @autolist_hook = ['autolist', 
-                       Proc.new{|*args| list_cmd.run(['list']) if list_cmd}]
-
-      @trace_hook   = ['trace', 
-                       Proc.new{|*args| print_location}]
+                        Proc.new{|*args| list_cmd.run(['list']) if list_cmd}]
+      
+      @trace_hook    = ['trace', 
+                        Proc.new{|*args| print_location}]
+      @tracebuf_hook = ['tracebuffer', 
+                        Proc.new{|*args| @eventbuf.append(@core.event, @frame, 
+                                                          @core.hook_arg)}]
     end
 
   end
