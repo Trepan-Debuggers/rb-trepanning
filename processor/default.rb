@@ -19,7 +19,8 @@ class Debugger
                                    # will be truncated to this length when
                                    # printed
       :prompt        => '(rbdbgr): ',
-      :trace         => false, # event tracing
+      :trace         => false,     # event tracing
+      :tracebuffer   => false,     # save events to a trace buffer.
       :width         => (ENV['COLUMNS'] || '80').to_i,
     } unless defined?(DEFAULT_SETTINGS)
   end

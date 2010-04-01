@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require_relative %w(.. .. base subsubcmd)
 
-class Debugger::Subcommand::SetAutoEval < Debugger::SetBoolSubSubcommand
+class Debugger::SubSubcommand::SetAutoEval < Debugger::SetBoolSubSubcommand
   unless defined?(HELP)
     HELP = "Evaluate unrecognized debugger commands.
 
@@ -52,15 +52,14 @@ if __FILE__ == $0
                                                         set_cmd)
 
   # FIXME: remove the 'join' below
-  cmd_name      = Debugger::Subcommand::SetAutoEval::PREFIX.join('')
-  autox_cmd     = Debugger::SubSubcommand::SetAutoEval.new(set_cmd.proc, 
+  cmd_name      = Debugger::SubSubcommand::SetAutoEval::PREFIX.join('')
+  subcmd        = Debugger::SubSubcommand::SetAutoEval.new(set_cmd.proc, 
                                                            auto_cmd,
                                                            cmd_name)
   # require_relative %w(.. .. .. .. lib rbdbgr)
-  # dbgr = Debugger.new(:set_restart => true)
-  # dbgr.debugger
-  autox_cmd.run([])
-  autox_cmd.run(['off'])
-  autox_cmd.run(['on'])
+  # Debugger.debug(:set_restart => true)
+
+  subcmd.run([cmd_name])
+  %w(off on 1 0).each { |arg| subcmd.run([cmd_name, arg]) }
 
 end
