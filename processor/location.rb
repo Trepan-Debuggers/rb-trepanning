@@ -1,3 +1,4 @@
+require 'linecache'
 require_relative 'msg'
 require_relative %w(.. app frame)
 class Debugger
