@@ -60,7 +60,7 @@ class TestDelete < Test::Unit::TestCase
     out = ["-- ",
            "va = 1",
            "basename is on.",
-           "autoeval is on.",
+           "Evaluation of unrecognized debugger commands is on.",
            "Breakpoint 2 set at line 54\n\tin file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
            "Breakpoint 3 set at line 56\n\tin file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
            "Deleted breakpoint 2",
