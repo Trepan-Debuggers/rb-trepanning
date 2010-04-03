@@ -10,8 +10,8 @@ class Debugger
     attr_reader :event_tracefilter
 
     def eventbuf_initialize(size=100)
-      @eventbuf = TraceBuffer.new(size)
-      # @event_tracefilter = TraceFilter.new
+      @eventbuf = Trace::EventBuffer.new(size)
+      # @event_tracefilter = Trace::Filter.new
     end
     
     # def event_processor(event, frame, arg=nil)

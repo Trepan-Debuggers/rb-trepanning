@@ -56,7 +56,7 @@ class Debugger
       else 
         nil
       end
-    @trace_filter = TraceFilter.new
+    @trace_filter = Trace::Filter.new
     %w(debugger start stop).each do |m| 
       @trace_filter << self.method(m.to_sym)
     end
