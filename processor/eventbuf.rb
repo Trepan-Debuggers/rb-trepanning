@@ -19,9 +19,29 @@ class Debugger
     # end
 
     # FIXME temporary routine
-    def dump_all(from=nil, to=nil)
+    def dump_all(from=nil, to=nil, width=80)
+      sep = '-' * ((width - 7) / 2)
       last_container, last_location = nil, nil
-      @eventbuf.each(from, to) do |e| 
+      mark_index =
+        if from == nil
+          0
+        else
+          j = marks[-1]
+          marks.each_with_index do
+            |m, i|
+            if m > from
+              j = [0, i-1].max
+              break
+            end
+          j
+          end
+        end
+
+      @eventbuf.each_with_index(from, to) do |e, i| 
+        if @eventbuf.marks[mark_index] == i
+          msg "#{sep} %5d #{sep}" % (mark_index - @eventbuf.marks.size)
+          mark_index += 1 if mark_index < @eventbuf.marks.size - 1
+        end
         last_container, last_location, mess = 
           format_eventbuf_entry(e, last_container, last_location) if e
         msg mess
@@ -47,14 +67,14 @@ class Debugger
 
       same_loc = (container == last_container && location == last_location)
       mess = "#{item.event} #{item.type} #{item.method} "
-      mess += "#{container} at #{location}:" unless same_loc
+      mess += "#{container} at line #{location}" unless same_loc
 
       if item.iseq # && long_format
-        mess += "\n\tVM offset #{item.pc_offset} of #{item.iseq.name}"
+        mess += "\n\tVM offset #{item.pc_offset}"
       end
       unless same_loc
-        text = LineCache::getline(container, location, @reload_on_change).chomp
-        mess += "\n  #{text}" if text
+        text = LineCache::getline(container, location, @reload_on_change)
+        mess += ":\n  #{text.chomp}" if text
       end
       return container, location, mess
     end

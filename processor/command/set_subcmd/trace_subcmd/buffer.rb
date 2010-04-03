@@ -11,6 +11,7 @@ Set saving trace events in a buffer
     MIN_ABBREV   = 'b'.size  
     NAME         = File.basename(__FILE__, '.rb')
     PREFIX       = %w(set trace buffer)
+    SHORT_HELP   = 'Set saving trace events in a buffer'
   end
 
   def run(args)
