@@ -36,6 +36,7 @@ problem. Another possibility is to go into a real Ruby shell via the
     MIN_ABBREV = 'ev'.size
     NAME       = File.basename(__FILE__, '.rb')
     PREFIX     = %w(set auto eval)
+    SHORT_HELP = "Set evaluation of unrecognized debugger commands"
   end
 
 end

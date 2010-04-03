@@ -38,7 +38,14 @@ class Debugger
                             :SHORT_HELP 
                           else :HELP
                           end
-      my_const(help_constant_sym)['Show '.size .. -1].capitalize
+      str = my_const(help_constant_sym)
+      %w(Show Set).each do |word|
+        if 0 == str.index(word)
+          str = str[word.size+1 ..-1].capitalize
+          break
+        end
+      end
+      str
     end
 
     # Set a Boolean-valued debugger setting. 
@@ -47,7 +54,7 @@ class Debugger
       setting = @name.gsub(/^(set|show)/,'')
       begin
         settings[setting.to_sym] = @proc.get_onoff(set_val)
-        run_show_bool(setting)
+        run_show_bool(string_in_show)
       rescue NameError, TypeError
       end
     end
@@ -56,7 +63,7 @@ class Debugger
       setting = @name.gsub(/^(set|show)/,'')
       val = show_onoff(settings[setting.to_sym])
       what = setting unless what
-      msg('%s is %s.' % [what, val])
+      msg('%s is %s.' % [what.chomp, val])
     end
 
   end

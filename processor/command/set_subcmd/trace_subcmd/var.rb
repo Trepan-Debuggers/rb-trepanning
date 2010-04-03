@@ -6,12 +6,12 @@ class Debugger::SubSubcommand::SetTraceVar < Debugger::SubSubcommand
     HELP         = 
 "set trace var GLOBAL_VARIABLE
 
-the debugger calls 'trace_var' to trace changes to
-the value of GLOBAL_VARIABLE.  Note in contrast to other events
-stopping for variable tracing occurs *after* the event, not before.
+The debugger calls 'trace_var' to trace changes to the value of
+GLOBAL_VARIABLE.  Note in contrast to other events, stopping for
+variable tracing occurs *after* the event, not before.
 
-See also 'set events'.
-"
+See also 'set events'."
+
     MIN_ABBREV   = 'v'.size  
     NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP   = "Set to display trace a global variable."

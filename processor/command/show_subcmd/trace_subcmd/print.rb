@@ -7,6 +7,7 @@ class Debugger::SubSubcommand::ShowTracePrint < Debugger::ShowBoolSubSubcommand
     MIN_ABBREV   = 'p'.size
     NAME         = File.basename(__FILE__, '.rb')
     PREFIX       = %w(show trace buffer)
+    SHORT_HELP   = "Show tracing print status"
   end
 
 end

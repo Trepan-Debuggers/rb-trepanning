@@ -6,11 +6,12 @@ class Debugger::SubSubcommand::SetTracePrint < Debugger::SetBoolSubSubcommand
     HELP         = 
 "set trace print [on|off|1|0]
 
-Set printing trace events
-"
-    MIN_ABBREV   = 'b'.size  
+Set printing trace events."
+
+    MIN_ABBREV   = 'p'.size  
     NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(set trace buffer)
+    PREFIX       = %w(set trace print)
+    SHORT_HELP   = 'Set print trace events'
   end
 
   def run(args)

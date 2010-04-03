@@ -76,7 +76,8 @@ class TestCmdProcessor < Test::Unit::TestCase
     end
     run_and_check('!s=1', ['R=> 1'], [], "! evaluation")
     run_and_check('print "foo"', ['foo'], [], "print command")
-    run_and_check('set autoeval off', ['autoeval is off.'], [], 
+    run_and_check('set autoeval off', 
+                  ['Evaluation of unrecognized debugger commands is off.'], [], 
                   "autoeval set")
     run_and_check('asdf', [], 
                   ['Undefined command: "asdf". Try "help".'], 

@@ -6,7 +6,11 @@ class Debugger::SubSubcommand::SetTrace < Debugger::SubSubcommandMgr
   unless defined?(HELP)
     HELP = "Set tracing of various sorts.
 
-The types of tracing include global variables, events from the trace buffer, or printing those events."
+The types of tracing include global variables, events from the trace
+buffer, or printing those events.
+
+See 'help set trace *' or a list of subcommands or 'help set trace
+<name>' for help on a particular trace subcommand."
 
     IN_LIST    = true
     MIN_ABBREV = 'tr'.size
