@@ -18,29 +18,41 @@ class Debugger
     #   @eventbuf.append(event, frame, arg)
     # end
 
-    # FIXME temporary routine
-    def dump_all(from=nil, to=nil, width=80)
+    # Print event buffer entries from FROM up to TO try to stay within
+    # WIDTH. We show source lines only the first time they are
+    # encountered. Also we use separators to indicate points that the
+    # debugger has stopped at.
+    def eventbuf_print(from=nil, to=nil, width=80)
       sep = '-' * ((width - 7) / 2)
       last_container, last_location = nil, nil
-      mark_index =
-        if from == nil
-          0
-        else
-          j = marks[-1]
-          marks.each_with_index do
-            |m, i|
-            if m > from
-              j = [0, i-1].max
-              break
-            end
-          j
+      if from == nil || !@eventbuf.marks[-1] 
+        mark_index = 0
+      else
+        mark_index = @eventbuf.marks.size-1
+        translated_from = @eventbuf.zero_pos + from
+        @eventbuf.marks.each_with_index do
+          |m, i|
+          if m > translated_from
+            mark_index = [0, i-1].max
+            break
+          elsif m == translated_from
+            mark_index = i
+            break
           end
         end
+      end
 
+      nextmark = @eventbuf.marks[mark_index]
       @eventbuf.each_with_index(from, to) do |e, i| 
-        if @eventbuf.marks[mark_index] == i
-          msg "#{sep} %5d #{sep}" % (mark_index - @eventbuf.marks.size)
-          mark_index += 1 if mark_index < @eventbuf.marks.size - 1
+        if nextmark 
+          if nextmark == i
+            msg "#{sep} %5d #{sep}" % (mark_index - @eventbuf.marks.size)
+            mark_index += 1 if mark_index < @eventbuf.marks.size - 1
+            nextmark = @eventbuf.marks[mark_index]
+          elsif nextmark < i
+            mark_index += 1 if mark_index < @eventbuf.marks.size - 1
+            nextmark = @eventbuf.marks[mark_index]
+          end
         end
         last_container, last_location, mess = 
           format_eventbuf_entry(e, last_container, last_location) if e
@@ -106,5 +118,5 @@ if __FILE__ == $0
   #   y = x+2
   # end
   # cmdproc.stop_capture
-  cmdproc.dump_all
+  cmdproc.eventbuf_print
 end

@@ -11,7 +11,6 @@ class Debugger::SubSubcommand::ShowTrace < Debugger::SubSubcommandMgr
     PREFIX     = %w(show trace)
     SHORT_HELP = HELP
   end
-
 end
 
 if __FILE__ == $0

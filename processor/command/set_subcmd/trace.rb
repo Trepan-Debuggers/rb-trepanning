@@ -15,9 +15,10 @@ See 'help set trace *' or a list of subcommands or 'help set trace
     IN_LIST    = true
     MIN_ABBREV = 'tr'.size
     NAME       = File.basename(__FILE__, '.rb')
-    PREFIX = %w(set trace)
+    PREFIX     = %w(set trace)
     SHORT_HELP = 'Set tracing of various sorts.'
   end
+
 end
 
 if __FILE__ == $0
