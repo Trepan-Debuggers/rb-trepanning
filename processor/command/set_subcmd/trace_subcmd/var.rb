@@ -14,7 +14,7 @@ See also 'set events'.
 "
     MIN_ABBREV   = 'v'.size  
     NAME         = File.basename(__FILE__, '.rb')
-    SHORT_HELP   = "Set to display trace events or trace a global variable."
+    SHORT_HELP   = "Set to display trace a global variable."
     PREFIX       = %w(set trace var)
   end
 

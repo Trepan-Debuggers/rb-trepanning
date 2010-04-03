@@ -14,39 +14,6 @@ The types of tracing include global variables, events from the trace buffer, or 
     PREFIX = %w(set trace)
     SHORT_HELP = 'Set tracing of various sorts.'
   end
-
-  def run(args)
-    if args.size == 4 || 
-        (args.size == 3 && 0 == 'buffer'.index(args[-1]))
-      super
-      return
-    end
-    run_set_bool(args)
-    if @proc.settings[:trace]
-      @proc.unconditional_prehooks.insert_if_new(-1, *@proc.trace_hook)
-    else
-      @proc.unconditional_prehooks.delete_by_name('trace')
-    end
-  end
-
-  # FIXME: DRY code by putting the below and that from SetBoolSubcommand
-  # in a mixin module.
-  def run_set_bool(args, default=true)
-    onoff_arg = args.size < 3 ? 'on' : args[2]
-    begin
-      settings[@name] = @proc.get_onoff(onoff_arg)
-      run_show_bool('Set trace buffer')
-    rescue NameError, TypeError
-    end
-  end
-
-  # FIXME: Dry
-  # Generic subcommand showing a boolean-valued debugger setting.
-  def run_show_bool(what=nil)
-    val = show_onoff(@proc.settings[@name])
-    what = @name unless what
-    @proc.msg("%s is %s." % [what, val])
-  end
 end
 
 if __FILE__ == $0

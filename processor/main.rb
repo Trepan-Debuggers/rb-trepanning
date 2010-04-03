@@ -193,7 +193,7 @@ class Debugger
       return if !breakpoint? && stepping_skip?
 
       @leave_cmd_loop = false
-      print_location unless @settings[:trace]
+      print_location unless @settings[:traceprint]
       if 'trace-var' == @core.event 
         msg "Note: we are stopped *after* the above location."
       end
