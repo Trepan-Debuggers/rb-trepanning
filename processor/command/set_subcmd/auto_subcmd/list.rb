@@ -7,6 +7,7 @@ class Debugger::Subcommand::SetAutoList < Debugger::SetBoolSubSubcommand
     MIN_ABBREV = 'l'.size
     NAME       = File.basename(__FILE__, '.rb')
     PREFIX     = %w(set auto list)
+    SHORT_HELP = "Set running a 'list' command each time we enter the debugger"
   end
 
   def run(args)
