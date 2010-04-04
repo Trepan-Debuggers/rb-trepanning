@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. base subsubcmd)
-require_relative %w(.. base subsubmgr)
+require_relative '../base/subsubcmd'
+require_relative '../base/subsubmgr'
 
 class Debugger::SubSubcommand::SetDebug < Debugger::SubSubcommandMgr
   unless defined?(HELP)
@@ -11,7 +11,7 @@ class Debugger::SubSubcommand::SetDebug < Debugger::SubSubcommandMgr
 end
 
 if __FILE__ == $0
-  require_relative %w(.. .. mock)
+  require_relative '../../mock'
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   set_cmd = cmds['set']
@@ -20,7 +20,7 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['set', name]
   set_cmd.instance_variable_set('@last_args', cmd_args)
-  # require_relative %w(.. .. .. app rbdbgr)
+  # require_relative '../../../app/rbdbgr'
   # Debugger.debug(:set_restart => true)
   command.run(cmd_args)
 end

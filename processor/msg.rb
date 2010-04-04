@@ -1,5 +1,5 @@
 # I/O related command processor methods
-require_relative File.join(%w(.. app util))
+require_relative '../app/util'
 class Debugger
   include Rbdbgr
   class CmdProcessor

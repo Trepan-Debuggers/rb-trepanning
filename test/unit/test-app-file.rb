@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. app file)
+require_relative '../../app/file'
 
 if defined?(SCRIPT_ISEQS__) && SCRIPT_ISEQS__.is_a?(Hash)
   SCRIPT_ISEQS__.clear

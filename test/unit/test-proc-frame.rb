@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'thread_frame'
-require_relative %w(.. .. processor main) # Have to include before frame!
-                                          # FIXME
-require_relative %w(.. .. processor frame) 
-require_relative %w(.. .. app mock)
+require_relative '../../processor/main' # Have to include before frame!
+                                        # FIXME
+require_relative '../../processor/frame'
+require_relative '../../app/mock'
 
 $errors = []
 $msgs   = []

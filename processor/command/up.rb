@@ -1,4 +1,4 @@
-require_relative %w(base cmd)
+require_relative 'base/cmd'
 
 class Debugger::Command::UpCommand < Debugger::Command
 
@@ -20,7 +20,7 @@ See also 'down' and 'frame'.
     SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
   end
   
-  require_relative %w(.. .. app frame)
+  require_relative '../../app/frame'
   include Debugger::Frame
 
   # Run 'up' command. 
@@ -36,7 +36,7 @@ See also 'down' and 'frame'.
       # Form is: "down" which means "down 1"
       count = 1
     else
-      stack_size = @proc.top_frame.stack_size - @hide_level
+      stack_size = @proc.top_frame.stack_size - @proc.hide_level
       count_str = args[1]
       name_or_id = args[1]
       opts = {
@@ -56,7 +56,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
 

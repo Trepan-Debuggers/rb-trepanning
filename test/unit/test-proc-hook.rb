@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. processor hook)
+require_relative '../../processor/hook'
 
 # Test Debugger:CmdProcessor Hook portion
 class TestProcHook < Test::Unit::TestCase

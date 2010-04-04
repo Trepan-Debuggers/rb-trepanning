@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. .. base subsubcmd)
-require_relative %w(.. auto)
+require_relative '../../base/subsubcmd'
+require_relative '../auto'
 
 class Debugger::SubSubcommand::ShowAutoIrb < Debugger::ShowBoolSubSubcommand
   unless defined?(HELP)
@@ -14,8 +14,8 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. .. mock)
-  require_relative %w(.. .. .. subcmd)
+  require_relative '../../../mock'
+  require_relative '../../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code

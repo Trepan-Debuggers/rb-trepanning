@@ -1,8 +1,8 @@
 # Debugger command input validation routines.
 # A String is usually passed in.
 
-require_relative %w(.. app file)
-require_relative %w(.. app condition)
+require_relative '../app/file'
+require_relative '../app/condition'
 class Debugger
   class CmdProcessor
 
@@ -309,9 +309,9 @@ if __FILE__ == $0
     load(__FILE__)
   else    
     require 'thread_frame'
-    require_relative %w(.. app mock)
-    require_relative %w(main) # Have to include before defining CmdProcessor!
-                              # FIXME
+    require_relative '../app/mock'
+    require_relative 'main' # Have to include before defining CmdProcessor!
+                            # FIXME
 
     proc = Debugger::CmdProcessor.new(Debugger::MockCore.new())
     proc.frame_setup(RubyVM::ThreadFrame.current)
@@ -338,7 +338,7 @@ if __FILE__ == $0
       puts "#{str} should be true: #{proc.method?(str).inspect}"
     end
     puts '=' * 40
-    # require_relative %w(.. lib rbdbgr)
+    # require_relative '../lib/rbdbgr'
     # dbgr = Debugger.new(:set_restart => true)
     # dbgr.debugger
 

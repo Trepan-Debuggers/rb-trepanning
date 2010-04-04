@@ -1,4 +1,4 @@
-require_relative %w(.. app display)
+require_relative '../app/display'
 class Debugger
   class CmdProcessor
     attr_reader   :displays

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. base subcmd)
-require_relative %w(.. .. .. app frame)
+require_relative '../base/subcmd'
+require_relative '../../../app/frame'
 
 class Debugger::Subcommand::InfoArgs < Debugger::Subcommand
   unless defined?(HELP)
@@ -41,8 +41,8 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. mock)
-  require_relative %w(.. .. subcmd)
+  require_relative '../../mock'
+  require_relative '../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code

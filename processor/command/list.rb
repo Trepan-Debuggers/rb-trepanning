@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'linecache'
-require_relative %w(base cmd)
+require_relative 'base/cmd'
 
 class Debugger::Command::ListCommand < Debugger::Command
   unless defined?(HELP)
@@ -252,9 +252,9 @@ if __FILE__ == $0
     ARGV[0..-1]    = ['noload']
     load(__FILE__)
   else    
-    require_relative %w(.. location)
-    require_relative %w(.. mock)
-    require_relative %w(.. frame)
+    require_relative '../location'
+    require_relative '../mock'
+    require_relative '../frame'
     name = File.basename(__FILE__, '.rb')
     dbgr, cmd = MockDebugger::setup(name)
     cmd.proc.send('frame_initialize')

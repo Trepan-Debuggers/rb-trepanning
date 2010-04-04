@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Our local modules
-require_relative %w(base cmd)
-require_relative %w(.. .. interface script)
+require_relative 'base/cmd'
+require_relative '../../interface/script'
 # Mfile     = import_relative('file', '...lib', 'pydbgr')
 
 class Debugger::Command::SourceCommand < Debugger::Command
@@ -64,7 +64,7 @@ end
   
 # Demo it
 if __FILE__ == $0
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
   if ARGV.size > 1 

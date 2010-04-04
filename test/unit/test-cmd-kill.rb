@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. processor mock)
-require_relative %w(.. .. processor command kill)
+require_relative '../../processor/mock'
+require_relative '../../processor/command/kill'
 
 class TestCommandKill < Test::Unit::TestCase
 

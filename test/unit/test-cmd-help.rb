@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require_relative 'cmd-helper'
-require_relative %w(.. .. processor command help)
+require_relative '../../processor/command/help'
 
 class TestCommandHelp < Test::Unit::TestCase
 

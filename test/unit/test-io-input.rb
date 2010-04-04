@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. io input)
+require_relative '../../io/input'
 
 # Test Debugger:CmdProcessor
 class TestIOInput < Test::Unit::TestCase

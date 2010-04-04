@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. processor main) # Have to include before frame!
-                                          # FIXME
-require_relative %w(.. .. processor eval)
-require_relative %w(.. .. app mock)
+require_relative '../../processor/main' # Have to include before frame!
+                                        # FIXME
+require_relative '../../processor/eval'
+require_relative '../../app/mock'
 
 # Test Debugger:CmdProcessor Eval portion
 class TestProcEval < Test::Unit::TestCase

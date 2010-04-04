@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. .. base subsubcmd)
-require_relative %w(.. trace)
+require_relative '../../base/subsubcmd'
+require_relative '../trace'
 class Debugger::SubSubcommand::SetTraceVar < Debugger::SubSubcommand
   unless defined?(HELP)
     HELP         = 
@@ -36,8 +36,8 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. .. mock)
-  require_relative %w(.. .. .. subcmd)
+  require_relative '../../../mock'
+  require_relative '../../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
@@ -49,7 +49,7 @@ if __FILE__ == $0
                                                         set_cmd,
                                                         cmd_name)
   setx_cmd.run([])
-  # require_relative %w(.. .. .. .. lib rbdbgr)
+  # require_relative '../../../../lib/bdbgr'
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   eval('set_cmd.proc.frame_setup(RubyVM::ThreadFrame::current); setx_cmd.run([])')

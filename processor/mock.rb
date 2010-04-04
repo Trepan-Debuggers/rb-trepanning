@@ -1,8 +1,8 @@
 # Mock setup for commands.
 require_relative 'main'
-require_relative %w(.. app core)
-require_relative %w(.. app default)
-require_relative %w(.. interface user)  # user interface (includes I/O)
+require_relative '../app/core'
+require_relative '../app/default'
+require_relative '../interface/user'  # user interface (includes I/O)
 
 SCRIPT_ISEQS__ = {} unless 
   defined?(SCRIPT_ISEQS__) && SCRIPT_ISEQS__.is_a?(Hash)
@@ -34,7 +34,7 @@ module MockDebugger
   # Common Mock debugger setup 
   def setup(name, show_constants=true)
     if ARGV.size > 0 && ARGV[0] == 'debug'
-      require_relative %w(rbdbgr)
+      require_relative 'rbdbgr'
       dbgr = Debugger.new
       dbgr.debugger
     else

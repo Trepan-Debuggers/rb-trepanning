@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. processor help)
+require_relative '../../processor/help'
 
 # Test Debugger:CmdProcessor
 class TestCmdProcessor < Test::Unit::TestCase

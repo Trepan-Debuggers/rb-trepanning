@@ -1,6 +1,6 @@
 require 'irb'
-require_relative %w(base cmd)
-require_relative %w(.. .. app irb)
+require_relative 'base/cmd'
+require_relative '../../app/irb'
 class Debugger::Command::IRBCommand < Debugger::Command
 
   unless defined?(HELP)
@@ -92,7 +92,7 @@ end
 
 if __FILE__ == $0
   require 'thread_frame'
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
   # Get an IRB session -- the hard way :-)

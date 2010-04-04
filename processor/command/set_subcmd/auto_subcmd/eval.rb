@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. .. base subsubcmd)
+require_relative '../../base/subsubcmd'
 
 class Debugger::SubSubcommand::SetAutoEval < Debugger::SetBoolSubSubcommand
   unless defined?(HELP)
@@ -43,8 +43,8 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. .. mock)
-  require_relative %w(.. .. .. subcmd)
+  require_relative '../../../mock'
+  require_relative '../../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
@@ -57,7 +57,7 @@ if __FILE__ == $0
   subcmd        = Debugger::SubSubcommand::SetAutoEval.new(set_cmd.proc, 
                                                            auto_cmd,
                                                            cmd_name)
-  # require_relative %w(.. .. .. .. lib rbdbgr)
+  # require_relative '../../../../lib/rbdbgr'
   # Debugger.debug(:set_restart => true)
 
   subcmd.run([cmd_name])

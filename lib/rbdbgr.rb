@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 require 'trace'                          # Trace filtering
 require 'thread_frame'
-require_relative %w(.. app core)         # core event-handling mechanism
-require_relative %w(.. app default)      # default debugger settings
-require_relative %w(.. interface user)   # user interface (includes I/O)
-require_relative %w(.. interface script) # --command interface (includes I/O)
+require_relative '../app/core'           # core event-handling mechanism
+require_relative '../app/default'        # default debugger settings
+require_relative '../interface/user'     # user interface (includes I/O)
+require_relative '../interface/script'   # --command interface (includes I/O)
 
 # SCRIPT_ISEQS__ is like SCRIPT_LINES__ in a patched Ruby 1.9. Setting
 # this variable to a hash causes instruction sequences to be added in

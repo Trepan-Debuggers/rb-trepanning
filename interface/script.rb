@@ -3,8 +3,8 @@
 
 # Our local modules
 require_relative 'base_intf'
-require_relative %w(.. io input)
-require_relative %w(.. io string_array)
+require_relative '../io/input'
+require_relative '../io/string_array'
 
 # Interface when reading debugger scripts
 class Debugger::ScriptInterface < Debugger::Interface

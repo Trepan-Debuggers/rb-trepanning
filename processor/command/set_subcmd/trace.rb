@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. base subsubcmd)
-require_relative %w(.. base subsubmgr)
+require_relative '../base/subsubcmd'
+require_relative '../base/subsubmgr'
 
 class Debugger::SubSubcommand::SetTrace < Debugger::SubSubcommandMgr 
   unless defined?(HELP)
@@ -23,9 +23,9 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. mock)
-  require_relative %w(.. .. subcmd)
-  require_relative %w(.. .. hook)
+  require_relative '../../mock'
+  require_relative '../../subcmd'
+  require_relative '../../hook'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
@@ -35,7 +35,7 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['set', name]
   set_cmd.instance_variable_set('@last_args', cmd_args)
-  # require_relative %w(.. .. .. lib rbdbgr)
+  # require_relative '../../../lib/rbdbgr'
   # Debugger.debug(:set_restart => true)
   command.run(cmd_args)
   command.run(['set', name, '*'])

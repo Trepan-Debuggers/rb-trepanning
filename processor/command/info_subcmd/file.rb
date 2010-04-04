@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'linecache'
-require_relative %w(.. base subcmd)
+require_relative '../base/subcmd'
 
 class Debugger::Subcommand::InfoFile < Debugger::Subcommand
   unless defined?(HELP)
@@ -137,8 +137,8 @@ if __FILE__ == $0
     ARGV[0..-1]    = ['noload']
     load(__FILE__)
   else    
-    require_relative %w(.. .. mock)
-    require_relative %w(.. .. subcmd)
+    require_relative '../../mock'
+    require_relative '../../subcmd'
     name = File.basename(__FILE__, '.rb')
     # FIXME: DRY the below code
     dbgr, cmd = MockDebugger::setup('info')

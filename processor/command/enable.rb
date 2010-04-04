@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-require_relative %w(base cmd)
-require_relative %w(.. breakpoint)
-require_relative %w(.. .. app brkpt)
+require_relative 'base/cmd'
+require_relative '../breakpoint'
+require_relative '../../app/brkpt'
 class Debugger::Command::EnableCommand < Debugger::Command
 
   unless defined?(HELP)
@@ -37,7 +37,7 @@ end
         
 
 if __FILE__ == $0
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
   cmd.run([name])

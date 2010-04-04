@@ -10,7 +10,7 @@ require 'pathname'  # For cleanpath
   |mod_str|
   require_relative mod_str
 end
-require_relative %w(.. app brkptmgr)
+require_relative '../app/brkptmgr'
 
 class Debugger
   class CmdProcessor
@@ -269,7 +269,7 @@ end
 
 if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
-  require_relative %w(.. lib rbdbgr)
+  require_relative '../lib/rbdbgr'
   dbg =  Debugger.new(:nx => true)
   dbg.core.processor.msg('I am main')
   dbg.core.processor.errmsg('Whoa!')

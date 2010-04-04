@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-require_relative %w(base cmd)
-require_relative %w(.. .. app run)
+require_relative 'base/cmd'
+require_relative '../../app/run'
 class Debugger::Command::RestartCommand < Debugger::Command
 
   unless defined?(HELP)
@@ -44,7 +44,7 @@ end
 if __FILE__ == $0
   exit if ARGV[0] == 'exit'
 
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
   dbgr.restart_argv = []

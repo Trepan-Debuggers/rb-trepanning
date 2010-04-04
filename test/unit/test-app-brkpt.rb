@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. app brkpt)
+require_relative '../../app/brkpt'
 require 'thread_frame'
 
 class TestLibBrkpt < Test::Unit::TestCase
@@ -23,7 +23,7 @@ class TestLibBrkpt < Test::Unit::TestCase
     assert_raises TypeError do 
       Breakpoint.new(false, 0, 5)
     end
-    require_relative %w(.. .. lib rbdbgr.rb)
+    require_relative '../../lib/rbdbgr.rb'
     b2 = Breakpoint.new(true, 0, iseq)
     assert_equal('t', b2.icon_char)
   end

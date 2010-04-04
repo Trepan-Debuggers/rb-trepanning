@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. .. base subsubcmd)
+require_relative '../../base/subsubcmd'
 require_relative 'helper'
 
 class Debugger::Subcommand::InfoRegistersSp < Debugger::SubSubcommand
@@ -28,8 +28,8 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. .. mock)
-  require_relative %w(.. .. .. subcmd)
+  require_relative '../../../mock'
+  require_relative '../../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
@@ -40,7 +40,7 @@ if __FILE__ == $0
                                                             info_cmd,
                                                             cmd_name)
   infox_cmd.summary_help(name)
-  # require_relative %w(.. .. .. .. lib rbdbgr)
+  # require_relative '../../../../lib/rbdbgr'
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   infox_cmd.run([])

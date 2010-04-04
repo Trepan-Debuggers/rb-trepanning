@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative %w(base cmd)
+require_relative 'base/cmd'
 
 class Debugger::Command::DisplayCommand < Debugger::Command
 
@@ -60,7 +60,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
 

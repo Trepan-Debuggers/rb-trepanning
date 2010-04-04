@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative %w(base submgr)
+require_relative 'base/submgr'
 
 class Debugger::Command::SetCommand < Debugger::SubcommandMgr
   unless defined?(HELP)
@@ -36,7 +36,7 @@ as "set auto list".
 end
 
 if __FILE__ == $0
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
   cmd.run([name])

@@ -1,6 +1,6 @@
 require 'tempfile'
 require 'linecache'
-require_relative %w(.. app frame)
+require_relative '../app/frame'
 class Debugger
   class CmdProcessor
 
@@ -172,8 +172,8 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
-  require_relative %w(.. app mock)
-  require_relative %w(main) # Have to include before defining CmdProcessor!
+  require_relative '../app/mock'
+  require_relative 'main'   # Have to include before defining CmdProcessor!
                             # FIXME
   class Debugger::CmdProcessor
     def errmsg(msg)

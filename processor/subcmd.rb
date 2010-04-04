@@ -107,8 +107,8 @@ end
 # When invoked as main program, invoke the debugger on a script
 if __FILE__ == $0
 
-  require_relative('mock')
-  require_relative(%w(command base cmd))
+  require_relative 'mock'
+  require_relative 'command/base/cmd'
 
   class Debugger::TestCommand < Debugger::Command
     

@@ -1,6 +1,6 @@
-require_relative %w(base cmd)
-require_relative %w(.. running)
-require_relative %w(.. .. app brkpt) # FIXME: possibly temporary
+require_relative 'base/cmd'
+require_relative '../running'
+require_relative '../../app/brkpt' # FIXME: possibly temporary
 class Debugger::Command::ContinueCommand < Debugger::Command
 
   unless defined?(HELP)
@@ -53,7 +53,7 @@ Examples:
 end
 
 if __FILE__ == $0
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
   p cmd.run([name])

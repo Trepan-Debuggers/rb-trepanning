@@ -2,7 +2,7 @@
 require 'test/unit'
 require 'stringio'
 require 'tempfile'
-require_relative %w(.. .. app options)
+require_relative '../../app/options'
 
 # To have something to work with.
 load 'tmpdir.rb'

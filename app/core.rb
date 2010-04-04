@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 require 'thread_frame'
 require 'trace'
-# require_relative %w(.. .. rb-trace app trace)
-require_relative %w(.. processor main)
+# require_relative '../../rb-trace/app/trace'
+require_relative '../processor/main'
 class Debugger
   # This class contains the Debugger core routines, such as an event
   # processor which is responsible of handling what to do when an event is
@@ -175,7 +175,7 @@ class Debugger
   end
 end
 if __FILE__ == $0
-  require_relative %w(.. lib rbdbgr)
+  require_relative '../lib rbdbgr'
   dbg = Debugger.new()
   if ARGV.size > 0
     def foo(dbg)

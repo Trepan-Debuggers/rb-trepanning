@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 # -*- Ruby -*-
 # Invoke debugger from the command line. 
-require_relative %w(.. app run)
-require_relative %w(.. app options)
-require_relative %w(.. lib rbdbgr)
+require_relative '../app/run'
+require_relative '../app/options'
+require_relative '../lib/rbdbgr'
 
 # FIXME: the figure out how to run via gem installation.
 if File.basename(__FILE__) == File.basename($0)

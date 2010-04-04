@@ -1,7 +1,7 @@
 require 'thread_frame'
 require 'trace'
-require_relative %w(.. .. lib rbdbgr)
-require_relative %w(.. .. io string_array)
+require_relative '../../lib/rbdbgr'
+require_relative '../../io/string_array'
 
 module FnTestHelper
   include Trace
@@ -41,7 +41,7 @@ module FnTestHelper
   end
 
   def compare_output(right, d, debugger_cmds)
-    # require_relative %w(.. .. lib rbdbgr)
+    # require_relative '../../lib/rbdbgr'
     # Debugger.debug(:set_restart => true)
     got = filter_line_cmd(d.intf[-1].output.output)
     if got != right

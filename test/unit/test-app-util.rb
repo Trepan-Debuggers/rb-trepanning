@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. app util)
+require_relative '../../app/util'
 
 class TestAppUtil < Test::Unit::TestCase
   include Rbdbgr

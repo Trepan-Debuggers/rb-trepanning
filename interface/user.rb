@@ -5,7 +5,7 @@
 # Our local modules
 
 require_relative 'base_intf'
-require_relative %w(.. io input)
+require_relative '../io/input'
 
 # Moutput    = import_relative('dbg_output', '..io', 'pydbgr')
 

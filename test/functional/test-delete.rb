@@ -2,7 +2,7 @@
 require 'test/unit'
 require 'trace'
 require_relative 'fn_helper'
-require_relative %w(.. .. app brkpt)
+require_relative '../../app/brkpt'
 
 class TestDelete < Test::Unit::TestCase
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-require_relative %w(base cmd)
-require_relative %w(.. breakpoint)
-require_relative %w(.. .. app brkpt)
+require_relative 'base/cmd'
+require_relative '../breakpoint'
+require_relative '../../app/brkpt'
 class Debugger::Command::DisableCommand < Debugger::Command
 
   unless defined?(HELP)
@@ -35,7 +35,7 @@ numbers. See also "info break" to get a list.
 end
         
 if __FILE__ == $0
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
   cmd.run([name])
@@ -44,7 +44,7 @@ if __FILE__ == $0
   cmds = dbgr.core.processor.commands
   break_cmd = cmds['break']
   break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
-  # require_relative %w(.. .. lib rbdbgr)
+  # require_relative '../../lib/rbdbgr'
   # Debugger.debug(:set_restart => true)
   cmd.run([name, '1'])
 end

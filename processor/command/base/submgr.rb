@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require_relative 'cmd'
-require_relative %w(.. .. subcmd)
-require_relative %w(.. .. help)
+require_relative '../../subcmd'
+require_relative '../../help'
 
 class Debugger::SubcommandMgr < Debugger::Command
 
@@ -162,14 +162,14 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. mock)
+  require_relative '../../mock'
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   cmd  = cmds['set']
   Debugger::SubcommandMgr.new(dbgr.core.processor)
   puts cmd.help(%w(help set))
   puts '=' * 40
-  # require_relative %w(.. .. .. lib rbdbgr)
+  # require_relative '../../../lib/rbdbgr)
   # Debugger.debug(:set_restart => true)
   puts cmd.help(%w(help set *))
   puts '=' * 40

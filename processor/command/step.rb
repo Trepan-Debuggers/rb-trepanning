@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-require_relative %w(base cmd)
-require_relative %w(.. .. app condition)
+require_relative 'base/cmd'
+require_relative '../../app/condition'
 class Debugger::Command::StepCommand < Debugger::Command
 
   unless defined?(HELP)
@@ -107,7 +107,7 @@ Related and similar is the 'next' command.  See also the commands:
 end
 
 if __FILE__ == $0
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
   p cmd.run([name])

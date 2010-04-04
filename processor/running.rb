@@ -1,4 +1,4 @@
-require_relative %w(.. app core)
+require_relative '../app/core'
 class Debugger
   class CmdProcessor
 

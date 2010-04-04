@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. processor main) # Have to include before validate!
-                                          # FIXME
-require_relative %w(.. .. processor validate)
-require_relative %w(.. .. app mock)
+require_relative '../../processor/main' # Have to include before validate!
+                                        # FIXME
+require_relative '../../processor/validate'
+require_relative '../../app/mock'
 
 $errors = []
 $msgs   = []
@@ -69,7 +69,7 @@ class TestValidate < Test::Unit::TestCase
   def test_method?
     def foo; 5 end
     
-    # require_relative %w(.. .. lib rbdbgr)
+    # require_relative '../../lib/rbdbgr'
     # dbgr = Debugger.new(:set_restart => true)
     # FIXME: 'foo', 'errmsg'
     ['Array#map', 'Debugger::CmdProcessor.new'

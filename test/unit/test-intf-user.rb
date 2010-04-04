@@ -2,7 +2,7 @@
 # Unit test for rbdbgr.interface.user
 
 require 'test/unit'
-require_relative %w(.. .. interface user)
+require_relative '../../interface/user'
 
 # Tests Debugger::UserInterface
 class TestInterfaceUser < Test::Unit::TestCase

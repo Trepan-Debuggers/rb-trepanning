@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. base subsubcmd)
-require_relative %w(.. base subsubmgr)
+require_relative '../base/subsubcmd'
+require_relative '../base/subsubmgr'
 
 class Debugger::SubSubcommand::ShowTrace < Debugger::SubSubcommandMgr 
 
@@ -15,7 +15,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. mock)
+  require_relative '../../mock'
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   show_cmd = cmds['show']

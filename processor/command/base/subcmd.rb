@@ -173,7 +173,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. mock)
+  require_relative '../../mock'
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   p cmds.keys

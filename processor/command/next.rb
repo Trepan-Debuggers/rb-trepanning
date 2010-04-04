@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative %w(base cmd)
+require_relative 'base/cmd'
 
 class Debugger::Command::NextCommand < Debugger::Command
 
@@ -68,7 +68,7 @@ Examples:
 end
 
 if __FILE__ == $0
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
   [%w(n 5), %w(next 1+2), %w(n foo)].each do |c|

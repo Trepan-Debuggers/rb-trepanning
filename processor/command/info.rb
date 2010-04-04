@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative %w(base submgr)
+require_relative 'base/submgr'
 
 class Debugger::Command::InfoCommand < Debugger::SubcommandMgr
   unless defined?(HELP)
@@ -21,7 +21,7 @@ Type "help info *" for just a list of "info" subcommands.
 end
 
 if __FILE__ == $0
-  require_relative %w(.. mock)
+  require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
 end

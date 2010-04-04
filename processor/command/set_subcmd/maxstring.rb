@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require_relative %w(.. base subcmd)
+require_relative '../base/subcmd'
 
 class Debugger::Subcommand::SetMaxstring < Debugger::Subcommand
   unless defined?(HELP)
@@ -28,7 +28,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative %w(.. .. mock)
+  require_relative '../../mock'
   dbgr, cmd = MockDebugger::setup('set')
   subcommand = Debugger::Subcommand::SetMaxstring.new(cmd)
   subcommand.run([])

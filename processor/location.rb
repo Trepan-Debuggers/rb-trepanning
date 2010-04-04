@@ -1,6 +1,6 @@
 require 'linecache'
 require_relative 'msg'
-require_relative %w(.. app frame)
+require_relative '../app/frame'
 class Debugger
   class CmdProcessor
     attr_accessor :reload_on_change

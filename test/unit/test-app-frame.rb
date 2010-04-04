@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative %w(.. .. app frame)
+require_relative '../../app/frame'
 require 'thread_frame'
 
 class TestLibFrame < Test::Unit::TestCase

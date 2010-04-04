@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require_relative 'cmd-helper'
-require_relative %w(.. .. app brkpt)
+require_relative '../../app/brkpt'
 
 class TestCommandEnableDisable < Test::Unit::TestCase
 
