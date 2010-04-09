@@ -136,7 +136,13 @@ class Debugger
         return [nil, nil]
       end
 
-      [@top_frame.prev(frame_num), frame_num]
+      frame = @top_frame.prev(frame_num)
+      while 'IFUNC' == frame.type && frame.prev
+        frame = frame.prev
+        frame_num += 1
+      end
+
+      [frame, frame_num]
     end
 
   # # The dance we have to do to set debugger frame state to

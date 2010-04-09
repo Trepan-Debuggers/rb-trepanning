@@ -39,18 +39,23 @@ class Debugger
 
     def c_params(frame, maxstring=20)
       argc = frame.argc
-      args = 
-        if 0 == argc
-          ''
-        elsif frame 
-          1.upto(argc).map do 
+      # FIXME should figure out why exception is raised.
+      begin
+        args = 
+          if 0 == argc
+            ''
+          elsif frame 
+            1.upto(argc).map do 
             |i| 
             safe_repr(frame.sp(argc-i+3).inspect, 10)
           end.join(', ')
-        else
-          '??'
-        end
-      safe_repr(args, maxstring)
+          else
+            '??'
+          end
+        safe_repr(args, maxstring)
+      rescue NotImplementedError
+        '??'
+      end
     end
 
     # Return the eval string. We get this as the 
