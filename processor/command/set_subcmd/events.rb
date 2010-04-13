@@ -29,6 +29,7 @@ Examples:
       events = args[2..-1]
       events.each {|event| event.chomp!(',')}
       bitmask, bad_events = Trace.events2bitmask(events)
+      bitmask |= Trace::BRKPT_EVENT_MASK
       unless bad_events.empty?
         errmsg("Event names unrecognized/ignored: %s" % bad_events.join(', '))
       end
