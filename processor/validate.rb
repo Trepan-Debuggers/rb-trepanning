@@ -104,6 +104,8 @@ class Debugger
       nil
     end
 
+    # Return the instruction sequence associated with string
+    # OBJECT_STRING or nil if no instruction sequence
     def object_iseq(object_string)
       iseqs = find_iseqs(ISEQS__, object_string)
       # FIXME: do something if there is more than one.
@@ -130,10 +132,11 @@ class Debugger
     # - the instruction sequence to use
     # - whether the postion is an offset or a line number
     # - the condition (by default 'true') to use for this breakpoint
+    # - the condition (by default 'true') to use for this breakpoint
     def breakpoint_position(args)
       first = args.shift
       # FIXME:
-      modfunc, container, position = nil, nil, nil # parse_position(first, nil, true)
+      name, container, position = nil, nil, nil # parse_position(first, nil, true)
       if container && position
         iseq = find_iseqs_with_lineno(container[1], position) || object_iseq(first)
         unless iseq
@@ -148,16 +151,9 @@ class Debugger
         iseq = object_iseq(first)
         position_str = 
           if iseq
-            # FIXME: we have trouble stopping at offset 0. 
-            if args.empty? 
-              offsets = iseq.offsetlines.keys
-              if offsets[0] == 0 && offsets.size > 1
-                "O#{offsets[1]}"
-              else
-                "O0"
-              end
-            else args.shift
-            end
+            # Got name and possibly position
+            name = first
+            args.empty? ? 'o0' : args.shift
           else
             iseq = @frame.iseq unless container
             first
@@ -171,8 +167,8 @@ class Debugger
           end
         opts = {
           :msg_on_error => 
-          ("argument '%s' does not seem to eval to a method or an integer." % 
-           position_str),
+          "argument '%s' does not seem to eval to a method or an integer." % 
+          position_str,
           :min_value => 0
         }
         position  = get_an_int(position_str, opts)
@@ -182,7 +178,7 @@ class Debugger
         condition_try = args[1..-1].join(' ')
         condition = condition_try if valid_condition?(condition_try)
       end
-      return [position, iseq, use_offset, condition]
+      return [position, iseq, use_offset, condition, name]
     end
 
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.
@@ -248,14 +244,14 @@ class Debugger
     # Return what we've found. nil can be returned as a value in
     # the triple.
     def parse_position_one_arg(arg, old_mod=nil, show_errmsg=true, allow_offset=false)
-      modfunc, filename = nil, nil, nil
+      name, filename = nil, nil, nil
       begin
         # First see if argument is an integer
-        lineno   = Integer(arg)
+        lineno    = Integer(arg)
       rescue
       else
         container = frame_container(@frame, false)
-        filename = container[1] unless old_mod
+        filename  = container[1] unless old_mod
         return nil, [container[0], canonic_file(filename)], lineno
       end
 

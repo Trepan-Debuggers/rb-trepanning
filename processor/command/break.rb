@@ -33,7 +33,7 @@ Examples:
       bp = @proc.breakpoint_offset(@proc.frame.pc_offset, 
                                    @proc.frame.iseq) 
     else
-      position, iseq, use_offset, condition = 
+      position, iseq, use_offset, condition, name = 
         @proc.breakpoint_position(args[1..-1])
       return false unless position && iseq
       bp = 

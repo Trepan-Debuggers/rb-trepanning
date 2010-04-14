@@ -51,11 +51,11 @@ class TestValidate < Test::Unit::TestCase
       args
     end
 
-    assert_equal([0, 'bogus', true, 'true'],
+    assert_equal([0, 'bogus', true, 'true', nil],
                  munge(@proc.breakpoint_position(%w(O0))))
-    assert_equal([1, 'bogus', false, 'true'], 
+    assert_equal([1, 'bogus', false, 'true', nil], 
                  munge(@proc.breakpoint_position(%w(1))))
-    assert_equal([2, 'bogus', false, 'a > b'],
+    assert_equal([2, 'bogus', false, 'a > b', nil],
                  munge(@proc.breakpoint_position(%w(2 if a > b))))
   end
 
