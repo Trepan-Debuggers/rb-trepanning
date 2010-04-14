@@ -107,11 +107,11 @@ if __FILE__ == $0
   frame = RubyVM::ThreadFrame.current 
   iseq = frame.iseq
   brkpts = BreakpointMgr.new
-  brkpts.add(false, 0, iseq)
+  brkpts.add(iseq, 0)
   p brkpts[2]
   bp_status(brkpts, 1)
   offset = frame.pc_offset
-  b2 = Breakpoint.new(false, offset, iseq)
+  b2 = Breakpoint.new(iseq, offset)
   brkpts << b2
   p brkpts.find(b2.iseq, b2.offset, nil)
   p brkpts[2]
@@ -124,10 +124,10 @@ if __FILE__ == $0
   # Two of the same breakpoints but delete 1 and see that the
   # other still stays
   offset = frame.pc_offset
-  b2 = Breakpoint.new(false, offset, iseq)
+  b2 = Breakpoint.new(iseq, offset)
   brkpts << b2
   bp_status(brkpts, 4)
-  b3 = Breakpoint.new(false, offset, iseq)
+  b3 = Breakpoint.new(iseq, offset)
   brkpts << b3
   bp_status(brkpts, 5)
   brkpts.delete_by_brkpt(b2)

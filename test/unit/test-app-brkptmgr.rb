@@ -13,7 +13,7 @@ class TestLibBrkptMgr < Test::Unit::TestCase
     offset  = offsets[0]
     brkpts = BreakpointMgr.new
     assert_equal(0, brkpts.size)
-    b1 = brkpts.add(false, offset, iseq)
+    b1 = brkpts.add(iseq, offset)
     assert_equal(b1, brkpts.find(iseq, offset, tf.binding))
     assert_equal(1, brkpts.size)
     assert_equal(b1, brkpts.find(iseq, offset, tf.binding))
@@ -21,7 +21,7 @@ class TestLibBrkptMgr < Test::Unit::TestCase
     assert_equal(0, brkpts.size)
 
     # Try adding via << rather than .add
-    b2 = brkpts << Breakpoint.new(true, offsets[1], iseq)
+    b2 = brkpts << Breakpoint.new(iseq, offsets[1], :temp => true)
 
     assert_equal(nil, brkpts.find(iseq, offset, tf.binding))
     brkpts.reset
@@ -34,8 +34,8 @@ class TestLibBrkptMgr < Test::Unit::TestCase
     offsets = iseq.offsetlines.keys
     offset  = offsets[0]
     brkpts = BreakpointMgr.new
-    b1 = brkpts.add(false, offset, iseq)
-    b2 = brkpts.add(false, offset, iseq)
+    b1 = brkpts.add(iseq, offset)
+    b2 = brkpts.add(iseq, offset)
     assert_equal(2, brkpts.size)
     assert_equal(1, brkpts.set.size, 
                  'Two breakpoints but only one iseq/offset')

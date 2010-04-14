@@ -60,7 +60,7 @@ class Debugger
         errmsg("No line #{line_number} found #{place}for breakpoint.")
         return nil
       end
-      @brkpts.add(temp, offset, iseq)
+      @brkpts.add(iseq, offset, :temp => temp)
     end
 
     def breakpoint_offset(offset, iseq, temp=false)
@@ -69,7 +69,7 @@ class Debugger
         errmsg("Offset #{offset} not found in #{iseq.name} for breakpoint.")
         return nil
       end
-      @brkpts.add(temp, offset, iseq)
+      @brkpts.add(iseq, offset, :temp => temp, :type => 'offset')
     end
 
     # Delete a breakpoint given its breakpoint number.

@@ -19,27 +19,41 @@ class Breakpoint
                            # breakpoint
   @@next_id = 1
 
-  # FIXME: redo as a hash. Allow id to be passed in (from breakpoint
-  # manager).
-  def initialize(is_temporary, offset, iseq, condition = 'true',
-                 enabled = 'true')
-    @condition = condition
-    @enabled   = enabled
-    @hits      = 0
-    @id        = @@next_id
-    @ignore    = 0
-
+  BRKPT_DEFAULT_SETTINGS = {
+    :condition => 'true',
+    :enabled   => 'true',
+    :ignore    =>  0,
+    :temp      =>  false,
+    :type      => 'line',
+  } unless defined?(BRKPT_DEFAULT_SETTINGS)
+      
+  def initialize(iseq, offset, opts = {})
     raise TypeError, 
     "#{iseq} is not an instruction sequence" unless 
       iseq.is_a?(RubyVM::InstructionSequence)
-    
-    @iseq      = iseq
+    @iseq = iseq
+
     raise TypeError, 
     "offset #{offset.inspect} not found in instruction sequence" unless 
       iseq.offset2lines(offset)
-    @offset    = offset 
-    @@next_id += 1
-    @temp      = is_temporary
+    @offset = iseq
+
+    raise TypeError, 
+    "type mismatch: #{offset.class} given, Fixnum expected" unless 
+      offset.is_a?(Fixnum)
+    @offset = offset
+
+    opts = BRKPT_DEFAULT_SETTINGS.merge(opts)
+    BRKPT_DEFAULT_SETTINGS.keys.each do |key|
+      self.instance_variable_set('@'+key.to_s, opts[key])
+    end
+
+    @hits = 0
+
+    unless @id
+      @id = @@next_id 
+      @@next_id += 1
+    end
     set
   end
 
@@ -111,23 +125,23 @@ end
 if __FILE__ == $0
   tf = RubyVM::ThreadFrame.current
   iseq = tf.iseq
-  b1 = Breakpoint.new(false, 0, iseq)
+  b1 = Breakpoint.new(iseq, 0)
   p b1
   p b1.source_location
   p b1.source_container
-  b2 = Breakpoint.new(true, 0, iseq)
+  b2 = Breakpoint.new(iseq, 0, :temp => true)
   p b2
   puts "b2 id: #{b2.id}"
   puts "b2 hits: #{b2.hits}"
   puts "b2.condition? #{b2.condition?(tf.binding)}"
   puts "b2 hits: #{b2.hits}"
   begin
-    b3 = Breakpoint.new(true, iseq.iseq_size, 5)
+    b3 = Breakpoint.new(iseq, iseq.iseq_size)
   rescue TypeError => e
     puts "TypeError (expected): #{e}"
   end
   begin
-    b3 = Breakpoint.new(true, iseq.iseq_size, iseq)
+    b3 = Breakpoint.new(5, iseq.iseq_size)
   rescue TypeError => e
     puts "TypeError (expected): #{e}"
   end

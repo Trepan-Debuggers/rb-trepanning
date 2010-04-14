@@ -8,7 +8,7 @@ class TestLibBrkpt < Test::Unit::TestCase
   def test_basic
     tf = RubyVM::ThreadFrame.current
     iseq = tf.iseq
-    b1 = Breakpoint.new(false, 0, iseq)
+    b1 = Breakpoint.new(iseq, 0)
     assert_equal(false, b1.temp?)
     assert_equal(0, b1.hits)
     assert_equal('B', b1.icon_char)
@@ -18,13 +18,13 @@ class TestLibBrkpt < Test::Unit::TestCase
     b1.enabled = false
     assert_equal('b', b1.icon_char)
     assert_raises TypeError do 
-      Breakpoint.new(true, iseq.iseq_size, iseq)
+      Breakpoint.new(iseq, iseq.iseq_size, :temp => true)
     end
     assert_raises TypeError do 
-      Breakpoint.new(false, 0, 5)
+      Breakpoint.new(0, 5)
     end
     require_relative '../../lib/rbdbgr.rb'
-    b2 = Breakpoint.new(true, 0, iseq)
+    b2 = Breakpoint.new(iseq, 0, :temp => true)
     assert_equal('t', b2.icon_char)
   end
 end
