@@ -242,7 +242,7 @@ class Debugger
       # Eval anything that's not a command or has been
       # requested to be eval'd
       if settings[:autoeval] || eval_command
-        msg 'R=> ' + debug_eval(current_command).inspect
+        msg 'D=> ' + debug_eval(current_command).inspect
       else
         undefined_command(cmd_name)
       end

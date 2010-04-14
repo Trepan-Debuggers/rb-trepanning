@@ -17,6 +17,9 @@ class Breakpoint
   attr_reader   :offset    # Fixnum. Offset into an instruction
                            # sequence for the location of the
                            # breakpoint
+  attr_reader   :type      # String. 'line' if breakpoint requested at 
+                           # "line" boundary or 'offset' requested at a specific
+                           # offset
   @@next_id = 1
 
   BRKPT_DEFAULT_SETTINGS = {

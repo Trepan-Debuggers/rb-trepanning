@@ -30,15 +30,23 @@ EOH
     disp += bp.enabled? ? 'y  '   : 'n  '
 
     iseq = bp.iseq
-    mess = '%-4dbreakpoint    %s at %s:%d' %
-      [bp.id, disp, iseq.source_container.join(' '),
-         iseq.offset2lines(bp.offset).join(', ')]
+    mess = '%-4dbreakpoint    %s at ' % [bp.id, disp]
 
-    msg(mess)
-    if verbose
-      msg("\tVM offset %d of instruction sequence %s" % 
-          [bp.offset, iseq.name])
-    end
+    line_loc = '%s:%d' % 
+      [iseq.source_container.join(' '),
+       iseq.offset2lines(bp.offset).join(', ')]
+    vm_loc = "VM offset %d of instruction sequence \"%s\"" %
+      [bp.offset, iseq.name]
+
+    loc, other_loc =
+      if 'line' == bp.type
+        [line_loc, vm_loc]
+      else # 'offset' == bp.type
+        [vm_loc, line_loc]
+      end
+    msg(mess + loc)
+    msg("\t#{other_loc}") if verbose
+
     if bp.condition && bp.condition != 'true'
       msg("\tstop only if %s" % bp.condition)
     end

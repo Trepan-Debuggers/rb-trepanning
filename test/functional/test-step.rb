@@ -89,7 +89,7 @@ class TestStep < Test::Unit::TestCase
     out = ['-- ',
            'x = 5',
            'Trace events we may stop on:',
-           "\tcall, raise",
+           "\tbrkpt, call, raise",
            'METHOD TestStep#foo1()',
            '-> ',
            'def foo1',
@@ -145,7 +145,7 @@ class TestStep < Test::Unit::TestCase
             '-- ',
             'y = x * x',
             '<- ',
-            'r=> 16',
+            'R=> 16',
             'end',
             '-- ',
             'y = 5']
@@ -163,12 +163,12 @@ class TestStep < Test::Unit::TestCase
     out =  ['-- ',
             'x = sqr(4)',
             'Trace events we may stop on:',
-            "\tcall, return",
+            "\tbrkpt, call, return",
             'METHOD TestStep#sqr(x)',
             '-> ',
             'def sqr(x)',
             '<- ',
-            'r=> 16',
+            'R=> 16',
             'end']
     d = strarray_setup(cmds)
     d.start
@@ -227,9 +227,9 @@ class TestStep < Test::Unit::TestCase
     out = ['-- ', 
            'x = fact(4)', 
            '<- ', 
-           'r=> 1', 
+           'R=> 1', 
            'return 1 if x <= 1', 
-           'R=> true']
+           'D=> true']
     compare_output(out, d, cmds)
   end
 
@@ -259,7 +259,7 @@ class TestStep < Test::Unit::TestCase
            'def bar',
            'different is on.',
            'Trace events we may stop on:',
-           "\tcall, class, line, return",
+           "\tbrkpt, call, class, line, return",
            '-- ',
            'def foo',
            '-- ',

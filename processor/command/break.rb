@@ -45,12 +45,23 @@ Examples:
     end
     if bp
       bp.condition = condition
-      msg(("Breakpoint %d set at line %s\n" + 
-          "\tin %s,\n\tVM offset %d of instruction sequence \"%s\".") %
-          [bp.id, 
-           bp.source_location.join(', '),
-           @proc.canonic_container(bp.iseq.source_container).join(' '),
-           bp.offset, bp.iseq.name] )
+
+      mess = "Breakpoint %d set at " % bp.id
+
+      line_loc = "line %s in %s" % 
+        [bp.source_location.join(', '),
+         @proc.canonic_container(bp.iseq.source_container).join(' ')]
+
+      vm_loc = "VM offset %d of instruction sequence \"%s\"" % 
+        [bp.offset, bp.iseq.name]
+      
+      loc, other_loc =
+        if 'line' == bp.type
+          [line_loc, vm_loc]
+        else # 'offset' == bp.type
+          [vm_loc, line_loc]
+        end
+      msg(mess + loc + ",\n\t" + other_loc + ".")
     end
   end
 end

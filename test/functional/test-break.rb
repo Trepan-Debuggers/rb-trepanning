@@ -29,8 +29,7 @@ class TestBreak < Test::Unit::TestCase
     out = ['-- ',
            'x = 5',
            'basename is on.',
-           "Breakpoint 1 set at line 26\n" + 
-           "\tin file test-break.rb,\n" + 
+           "Breakpoint 1 set at line 26 in file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
            'xx ',
            'z = 7']
@@ -53,11 +52,9 @@ class TestBreak < Test::Unit::TestCase
     out = ['-- ',
            'x = 7',
            'basename is on.',
-           "Breakpoint 2 set at line 49\n" +
-           "\tin file test-break.rb,\n" + 
+           "Breakpoint 2 set at line 48 in file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
-           "Breakpoint 3 set at line 50\n" + 
-           "\tin file test-break.rb,\n" + 
+           "Breakpoint 3 set at line 49 in file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
            "Breakpoint 2 disabled.",
            'xx ',

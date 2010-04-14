@@ -74,7 +74,7 @@ class TestCmdProcessor < Test::Unit::TestCase
     def @cmdproc.errmsg(mess)
       $errs << "#{mess}"
     end
-    run_and_check('!s=1', ['R=> 1'], [], "! evaluation")
+    run_and_check('!s=1', ['D=> 1'], [], "! evaluation")
     run_and_check('print "foo"', ['foo'], [], "print command")
     run_and_check('set autoeval off', 
                   ['Evaluation of unrecognized debugger commands is off.'], [], 
