@@ -24,4 +24,10 @@ if __FILE__ == $0
 
   subcommand.run_show_bool
   subcommand.summary_help(name)
+
+  # require 'rbdbgr'
+  # Debugger.debug(:set_restart => true)
+  subcommand.run(['set', name])
+  subcommand.run(['set', name, 'off'])
+  subcommand.run(['set', name, 'on'])
 end

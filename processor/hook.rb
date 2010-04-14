@@ -1,13 +1,17 @@
 class Debugger
   class CmdProcessor
     # Command processor hooks.
-    attr_reader :autoirb_hook
-    attr_reader :autolist_hook
-    attr_reader :display_hook
-    attr_reader :trace_hook
-    attr_reader :tracebuf_hook
-    attr_reader :unconditional_prehooks
-    attr_reader :cmdloop_prehooks
+    attr_reader   :autoirb_hook
+    attr_reader   :autolist_hook
+    attr_reader   :display_hook
+    attr_reader   :timer_hook
+    attr_reader   :trace_hook
+    attr_reader   :tracebuf_hook
+    attr_reader   :unconditional_prehooks
+    attr_reader   :cmdloop_prehooks
+
+    # Used to time how long a debugger action takes
+    attr_accessor :time_last
 
     class Hook
       attr_accessor :list
@@ -68,6 +72,12 @@ class Debugger
       @autolist_hook = ['autolist', 
                         Proc.new{|*args| list_cmd.run(['list']) if list_cmd}]
       
+      @timer_hook    = ['timer', 
+                        Proc.new{|*args|
+                          now = Time.now
+                          msg("%f seconds" % (now - @time_last)) if @time_last
+                          @time_last = now
+                        }]
       @trace_hook    = ['trace', 
                         Proc.new{|*args| print_location}]
       @tracebuf_hook = ['tracebuffer', 
