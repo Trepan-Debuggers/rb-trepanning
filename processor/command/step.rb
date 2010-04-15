@@ -5,9 +5,11 @@ class Debugger::Command::StepCommand < Debugger::Command
 
   unless defined?(HELP)
     HELP =
-"step[+|=|-|<|>|!|<>] [EVENT-NAME...] [count]
+"step[+|=|-|<|>|!|<>] [into] [EVENT-NAME...] [count]
 step until EXPRESSION
 step to METHOD-NAME
+step over 
+step out
 
 Execute the current line, stopping at the next event.  Sometimes this
 is called 'step into'.
@@ -45,10 +47,15 @@ Examples:
   step<       # step only return and C-return events
   step call line   # Step line *and* call events
   step<>      # same as step call c-call return c-return 
-
   step until a > b
+  step over   # same as 'next'
+  step out    # same as 'finish'
 
-Related and similar is the 'next' command.  See also the commands:
+
+Related and similar is the 'next' (step over) and 'finish' (step out)
+commands.  All of thsee are slower than running to a breakpoint.
+
+See also the commands:
 'skip', 'jump' (there's no 'hop' yet), 'continue', 'return' and
 'finish' for other ways to progress execution.
 "
@@ -59,6 +66,12 @@ Related and similar is the 'next' command.  See also the commands:
     NAME         = File.basename(__FILE__, '.rb')
     NEED_RUNNING = true
     SHORT_HELP   = 'Step program (possibly entering called functions)'
+
+    Keyword_to_related_cmd = {
+      'out'  => 'finish',
+      'over' => 'next',
+      'into' => 'step',
+    }
   end
 
   # This method runs the command
@@ -69,7 +82,11 @@ Related and similar is the 'next' command.  See also the commands:
       # Form is: "step" which means "step 1"
       step_count = 0
     else
-      if 'until' == args[1]
+      replace_cmd = Keyword_to_related_cmd[args[1]]
+      if replace_cmd
+        cmd = @proc.commands[replace_cmd]
+        return cmd.run([replace_cmd] + args[2..-1])
+      elsif 'until' == args[1]
         try_condition = args[2..-1].join(' ')
         if valid_condition?(try_condition)
           condition = try_condition

@@ -201,7 +201,6 @@ class Debugger
       @eventbuf.add_mark if @settings[:tracebuffer]
 
       @cmdloop_prehooks.run
-
       while not @leave_cmd_loop do
         begin
           break if process_command_and_quit?()
@@ -213,6 +212,7 @@ class Debugger
           exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end
       end
+      @cmdloop_posthooks.run
     end
 
     # Run current_command, a String. @last_command is set after the

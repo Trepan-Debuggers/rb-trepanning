@@ -8,6 +8,7 @@ class Debugger
     attr_reader   :trace_hook
     attr_reader   :tracebuf_hook
     attr_reader   :unconditional_prehooks
+    attr_reader   :cmdloop_posthooks
     attr_reader   :cmdloop_prehooks
 
     # Used to time how long a debugger action takes
@@ -56,7 +57,8 @@ class Debugger
     end
     
     def hook_initialize(commands)
-      @cmdloop_prehooks = Hook.new
+      @cmdloop_posthooks      = Hook.new
+      @cmdloop_prehooks       = Hook.new
       @unconditional_prehooks = Hook.new
 
       irb_cmd = commands['irb']
@@ -64,25 +66,27 @@ class Debugger
                         Proc.new{|*args| irb_cmd.run(['irb']) if irb_cmd}]
 
       display_cmd = commands['display']
-      @display_hook  = ['display', 
-                        Proc.new{|*args| display_cmd.run(['display']) if 
-                          display_cmd}]
-
-      list_cmd = commands['list']
-      @autolist_hook = ['autolist', 
-                        Proc.new{|*args| list_cmd.run(['list']) if list_cmd}]
+      @display_hook   = ['display', 
+                         Proc.new{|*args| display_cmd.run(['display']) if 
+                           display_cmd}]
       
-      @timer_hook    = ['timer', 
-                        Proc.new{|*args|
-                          now = Time.now
-                          msg("%f seconds" % (now - @time_last)) if @time_last
-                          @time_last = now
-                        }]
-      @trace_hook    = ['trace', 
+      list_cmd = commands['list']
+      @autolist_hook  = ['autolist', 
+                         Proc.new{|*args| list_cmd.run(['list']) if list_cmd}]
+      
+      @timer_hook     = ['timer', 
+                         Proc.new{|*args|
+                           now = Time.now
+                           msg("%g seconds" % 
+                               (now - @time_last)) if @time_last
+                           @time_last = now
+                         }]
+      @timer_posthook = ['timer', Proc.new{|*args| @time_last = Time.now}]
+      @trace_hook     = ['trace', 
                         Proc.new{|*args| print_location}]
-      @tracebuf_hook = ['tracebuffer', 
-                        Proc.new{|*args| @eventbuf.append(@core.event, @frame, 
-                                                          @core.hook_arg)}]
+      @tracebuf_hook  = ['tracebuffer', 
+                         Proc.new{|*args| @eventbuf.append(@core.event, @frame, 
+                                                           @core.hook_arg)}]
     end
 
   end
