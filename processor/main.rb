@@ -145,10 +145,10 @@ class Debugger
       # end
 
       if cmd.class.const_get(:NEED_STACK) && !@frame
-        errmsg "Command '%s' requires at running stack frame." % name
+        errmsg "Command '%s' requires a running stack frame." % name
         return false
       end
-        
+
       return true
     end
 
@@ -191,6 +191,8 @@ class Debugger
 
       @unconditional_prehooks.run
       return if !breakpoint? && stepping_skip?
+
+      # Finally check step count
 
       @leave_cmd_loop = false
       print_location unless @settings[:traceprint]

@@ -12,6 +12,8 @@ class Debugger
   # which ultimately will call this.
 
   class Core
+    attr_accessor :async_events # bitmask of asyncronous events - used all
+                                # the time
     attr_reader   :dbgr         # Debugger instance
     attr_reader   :event        # String - event which triggering event
                                 # processor
@@ -28,8 +30,7 @@ class Debugger
                                 # kind of things to count as a step.
     attr_accessor :step_events  # bitmask of events - used only when 
                                 # we are stepping
-    attr_accessor :async_events # bitmask of asyncronous events - used all
-                                # the time
+    attr_accessor :unmaskable_events 
 
     include Trace
 
@@ -120,8 +121,9 @@ class Debugger
         step_count_save = step_count
         @step_count     = -1 
 
-        dbgr.trace_filter.set_trace_func(@event_proc) unless
-          RubyVM::TraceHook::trace_hooks.member?(@event_proc)
+        unless @event_proc == dbgr.trace_filter.hook_proc
+          dbgr.trace_filter.add_trace_func(@event_proc) 
+        end
           
         # FIXME: this doesn't work. Bug in rb-trace? 
         # Trace.event_masks[0] = @step_events | @async_events
@@ -175,7 +177,7 @@ class Debugger
   end
 end
 if __FILE__ == $0
-  require_relative '../lib rbdbgr'
+  require_relative '../lib/rbdbgr'
   dbg = Debugger.new()
   if ARGV.size > 0
     def foo(dbg)

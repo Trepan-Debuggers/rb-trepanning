@@ -93,7 +93,7 @@ class Debugger
       
     # FIXME: multiple hook mechanism needs work. 
     # def start_capture
-    #   @event_tracefilter.set_trace_func(method(:event_processor).to_proc,
+    #   @event_tracefilter.add_trace_func(method(:event_processor).to_proc,
     #                                     Trace::DEFAULT_EVENT_MASK)
     # end
 

@@ -11,7 +11,7 @@ class TestTraceVar < Test::Unit::TestCase
 
   def test_basic
 
-    cmds = ['set trace var $my_var', 'continue', 'continue']
+    cmds = ['set trace var $my_var', 'continue', 'continue', 'continue']
     d = strarray_setup(cmds)
     d.core.step_events = TEST_STEP_EVENT_MASK
 
@@ -33,10 +33,7 @@ class TestTraceVar < Test::Unit::TestCase
            '$V ',
            '$my_var = 6',
            'Note: we are stopped *after* the above location.',
-           '-- ',
-           'z = 3',
-           '-- ',
-           'd.stop']
+          ]
     compare_output(out, d, cmds)
     end
 

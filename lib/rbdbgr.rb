@@ -64,8 +64,9 @@ class Debugger
       |m| 
       @trace_filter << @core.method(m)
     end
-    @trace_filter << @trace_filter.method(:set_trace_func)
-    @trace_filter << Kernel.method(:set_trace_func)
+    @trace_filter << @trace_filter.method(:add_trace_func)
+    @trace_filter << @trace_filter.method(:remove_trace_func)
+    @trace_filter << Kernel.method(:add_trace_func)
 
     # Run user debugger command startup files.
     add_startup_files unless @settings[:nx]
@@ -133,12 +134,16 @@ class Debugger
 
   # Set core's trace-event processor to run
   def start
-    @trace_filter.set_trace_func(@core.event_proc)
+    @trace_filter.add_trace_func(@core.event_proc)
   end
   
   # Remove all of our trace events
   def stop(opts={})
-    @trace_filter.set_trace_func(nil)
+    # FIXME: should do something in the middle when
+    # we have the ability to remove *our* specific hook
+    # @trace_filter.set_trace_func(nil)
+    # @trace_filter.remove_trace_func
+    clear_trace_func
   end
 
   def add_command_file(cmdfile, stderr=$stderr)
