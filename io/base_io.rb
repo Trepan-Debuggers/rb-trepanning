@@ -11,15 +11,13 @@
 
 class Debugger
 
-  unless defined?(NotImplementedMessage)
-    NotImplementedMessage = 'This method must be overriden in a subclass'
-  end
+  NotImplementedMessage ||= 'This method must be overriden in a subclass'
   
   class InputBase
     attr_reader   :input
     attr_reader   :line_edit
 
-    DEFAULT_OPTS = {
+    DEFAULT_OPTS ||= {
       :line_edit => false,
     }
 

@@ -19,7 +19,7 @@ def run_debugger(testname, ruby_file, dbgr_opts='', args='', outfile=nil)
 
   FileUtils.rm(outfile) if File.exist?(outfile)
 
-  cmd = "%s --nx --command %s %s %s %s >%s" %
+  cmd = "%s --nx --command %s %s '%s' %s >%s" %
     [dbgr_path, cmdfile, dbgr_opts, programfile, args, outfile]
   
   system(cmd)
@@ -29,6 +29,10 @@ def run_debugger(testname, ruby_file, dbgr_opts='', args='', outfile=nil)
   to_file    = outfile
   # todate    = time.ctime(os.stat(tofile).st_mtime)
   to_lines   = File.open(to_file).readlines()
+
+  # Seems to be a bug in LCS in that it will return a diff even if two
+  # files are the same.
+  return true if from_lines == to_lines
 
   sdiffs = Diff::LCS.sdiff(from_lines, to_lines)
 

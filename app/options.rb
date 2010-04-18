@@ -24,8 +24,8 @@ require 'optparse'
 module Rbdbgr
   require_relative 'default'
 
-  VERSION = '0.01'
-  PROGRAM = 'rbdbgr'
+  VERSION ||= '0.01'
+  PROGRAM ||= 'rbdbgr'
 
   def show_version
     "#{PROGRAM} version #{VERSION}"

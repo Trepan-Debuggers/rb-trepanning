@@ -9,7 +9,7 @@ require_relative '../io/string_array'
 # Interface when reading debugger scripts
 class Debugger::ScriptInterface < Debugger::Interface
 
-  DEFAULT_OPTS = {
+  DEFAULT_OPTS ||= {
     :abort_on_error => true,
     :confirm_val    => false,
     :verbose        => false

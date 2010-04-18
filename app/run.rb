@@ -13,7 +13,7 @@ module Rbdbgr
     # Make sure Ruby script syntax checks okay.
     # Otherwise we get a load message that looks like rbdbgr has 
     # a problem. 
-    output = `#{ruby_path} -c #{program_to_debug} 2>&1`
+    output = `#{ruby_path} -c #{program_to_debug.inspect} 2>&1`
     if $?.exitstatus != 0 and RUBY_PLATFORM !~ /mswin/
       puts output
       exit $?.exitstatus 
