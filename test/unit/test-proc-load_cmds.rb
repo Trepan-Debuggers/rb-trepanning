@@ -8,6 +8,7 @@ class TestCmdProcessorLoadCmds < Test::Unit::TestCase
 
   def setup
     @proc = Debugger::CmdProcessor.new(Debugger::MockCore.new())
+    @proc.instance_variable_set('@settings', {})
   end
 
   # See that we have can load up commands

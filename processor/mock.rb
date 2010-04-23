@@ -27,6 +27,10 @@ module MockDebugger
       @intf                 = [Debugger::UserInterface.new]
       @core                 = Debugger::Core.new(self)
       @trace_filter         = []
+
+      # Don't allow user commands in mocks.
+      @core.processor.settings[:user_cmd_dir] = nil 
+
     end
 
   end
@@ -78,4 +82,7 @@ end
 
 if __FILE__ == $0
   dbgr = MockDebugger::MockDebugger.new
+  p dbgr.settings
+  puts '=' * 10
+  p dbgr.core.processor.settings
 end

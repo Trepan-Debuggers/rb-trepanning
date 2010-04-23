@@ -1,3 +1,4 @@
+  require_relative '../app/default'
 class Debugger
   class CmdProcessor
 
@@ -22,6 +23,8 @@ class Debugger
       :timer         => false,     # show elapsed time between events
       :traceprint    => false,     # event tracing printing
       :tracebuffer   => false,     # save events to a trace buffer.
+      :user_cmd_dir  => File.join(Rbdbgr::HOME_DIR, 'rbdbgr', 'command'),
+                                   # User command directory
       :width         => (ENV['COLUMNS'] || '80').to_i,
     } unless defined?(DEFAULT_SETTINGS)
   end

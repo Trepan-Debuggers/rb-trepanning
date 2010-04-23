@@ -12,9 +12,11 @@ class Debugger
       @commands = {}
       @aliases = {}
 
-      cmd_dir = File.expand_path(File.join(File.dirname(__FILE__),
-                                           'command'))
-      load_debugger_commands(cmd_dir)
+      cmd_dirs = [ File.join(File.dirname(__FILE__), 'command') ]
+      cmd_dirs <<  @settings[:user_cmd_dir] if @settings[:user_cmd_dir]
+      cmd_dirs.each do |cmd_dir| 
+          load_debugger_commands(cmd_dir) if File.directory?(cmd_dir)
+        end
     end
 
     # Loads in debugger commands by require'ing each ruby file in the
@@ -49,6 +51,7 @@ end
 if __FILE__ == $0
   cmdproc = Debugger::CmdProcessor.new
   cmddir = File.join(File.dirname(__FILE__), 'command')
+  cmdproc.instance_variable_set('@settings', {})
   cmdproc.load_cmds_initialize
   puts cmdproc.commands.keys.sort.join("\n")
   puts '=' * 20
