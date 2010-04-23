@@ -17,8 +17,6 @@ class Debugger
 
     # SEE ALSO attr's in require_relative's of loop above.
 
-    attr_reader   :aliases         # Hash[String] of command names
-                                   # indexed by alias name
     attr_reader   :core            # Debugger core object
     attr_reader   :current_command # Current command getting run, a String.
     attr_reader   :dbgr            # Debugger instance (via
@@ -97,13 +95,9 @@ class Debugger
       # Start with empty thread and frame info.
       frame_teardown 
 
-      # Load up debugger commands. Sets @commands, @aliases
-      cmd_dir = File.expand_path(File.join(File.dirname(__FILE__),
-                                           'command'))
-      load_debugger_commands(cmd_dir)
-
       # Run initialization routines for each of the "submodule"s.
-      %w(breakpoint display eventbuf frame running validate
+      # load_cmds has to come first.
+      %w(load_cmds breakpoint display eventbuf frame running validate
          ).each do |submod|
         self.send("#{submod}_initialize")
       end
