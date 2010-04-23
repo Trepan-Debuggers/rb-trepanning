@@ -192,8 +192,6 @@ class Debugger
       @unconditional_prehooks.run
       return if !breakpoint? && stepping_skip?
 
-      # Finally check step count
-
       @leave_cmd_loop = false
       print_location unless @settings[:traceprint]
       if 'trace-var' == @core.event 

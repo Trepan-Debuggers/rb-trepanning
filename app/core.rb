@@ -104,7 +104,7 @@ class Debugger
       @hook_arg = arg
 
       if @settings[:debug_core_events]
-        puts "event #{event} #{@frame.source_container.inspect} #{@frame.source_location.inspect}"
+        msg "event #{event} #{@frame.source_container.inspect} #{@frame.source_location.inspect}"
       end
       @processor.process_commands(@frame)
 

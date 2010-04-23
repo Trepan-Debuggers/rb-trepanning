@@ -102,14 +102,11 @@ class Debugger
       return true if @core.step_count < 0
 
       if @settings[:'debugskip']
-        puts "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.inspect}" 
-        puts "nl  : #{@next_level},    ssize : #{@stack_size}" 
-        puts "nt  : #{@next_thread},   thread: #{Thread.current}" 
+        msg "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.inspect}" 
+        msg "step_count  : #{@core.step_count}" 
+        msg "next_level  : #{@next_level},    ssize : #{@stack_size}" 
+        msg "next_thread : #{@next_thread},   thread: #{Thread.current}" 
       end
-
-      # I think these events are important enough event that we always want
-      # to stop on them.
-      # return false if UNMASKABLE_EVENTS.member?(@core.event)
 
       return true if 
         !frame || (@next_level < @frame.stack_size &&
@@ -139,7 +136,7 @@ class Debugger
             true
           end
           
-        puts("condition_met: #{condition_met}, last: #{@last_pos}, " +
+        msg("condition_met: #{condition_met}, last: #{@last_pos}, " +
              "new: #{new_pos}, different #{@different_pos.inspect}") if 
           @settings[:'debugskip']
         skip_val = (@last_pos == new_pos) && @different_pos || !condition_met
