@@ -144,7 +144,6 @@ end
 
 def install(spec, *opts)
   args = ['gem', 'install', "pkg/#{spec.name}-#{spec.version}.gem"] + opts
-  args.unshift 'sudo' unless 0 == Process.uid
   system(*args)
 end
 
