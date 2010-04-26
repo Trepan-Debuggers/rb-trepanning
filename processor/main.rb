@@ -18,6 +18,9 @@ class Debugger
     # SEE ALSO attr's in require_relative's of loop above.
 
     attr_reader   :core            # Debugger core object
+    attr_reader   :cmd_argstr      # Current command args, a String.
+                                   # This is current_command with the command
+                                   # name removed from the beginning.
     attr_reader   :current_command # Current command getting run, a String.
     attr_reader   :dbgr            # Debugger instance (via
                                    # Debugger::Core instance)
@@ -36,6 +39,7 @@ class Debugger
     attr_accessor :next_thread     # Thread. If non-nil then in
                                    # stepping the thread has to be
                                    # this thread.
+    attr_reader   :cmd_name        # command name before rea
     attr_reader   :settings        # Hash[:symbol] of command
                                    # processor settings
 
@@ -221,11 +225,18 @@ class Debugger
       unless eval_command
         args = current_command.split
         return false if args.size == 0
-        cmd_name = args[0]
-        cmd_name = @aliases[cmd_name] if @aliases.member?(cmd_name)
-        if @commands.member?(cmd_name)
-          cmd = @commands[cmd_name]
-          if ok_for_running(cmd, cmd_name, args.size-1)
+        @cmd_name = args[0]
+        run_cmd_name = 
+          if @aliases.member?(@cmd_name)
+            @aliases[@cmd_name] 
+          else
+            @cmd_name
+          end
+            
+        if @commands.member?(run_cmd_name)
+          cmd = @commands[run_cmd_name]
+          if ok_for_running(cmd, run_cmd_name, args.size-1)
+            @cmd_argstr = current_command[@cmd_name.size..-1].lstrip
             cmd.run(args) 
             @last_command = current_command
           end
