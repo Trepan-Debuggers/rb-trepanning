@@ -9,7 +9,7 @@ class Debugger::Command::RestartCommand < Debugger::Command
       'restart - Restart debugger and program via an exec
     call. All state is lost, and new copy of the debugger is used.'
     
-    CATEGORY     = 'support'
+    CATEGORY     = 'running'
     MAX_ARGS     = 0  # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = '(Hard) restart of program via exec()'

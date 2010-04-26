@@ -17,7 +17,7 @@ same as "set auto ...". For example "set autolist" is the same
 as "set auto list".
 '
 
-    CATEGORY      = 'data'
+    CATEGORY      = 'support'
     NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'Modify parts of the debugger environment'

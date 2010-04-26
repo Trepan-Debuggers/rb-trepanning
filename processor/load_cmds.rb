@@ -5,12 +5,15 @@ class Debugger
                                    # indexed by alias name
     attr_reader   :commands        # Hash[String] of command objects
                                    # indexed by name
+    attr_reader   :macros          # Hash[String] of Proc objects 
+                                   # indexed by macro name.
     
     # Load up debugger commands from builtin and user directories
     # Sets @commands, @aliases
     def load_cmds_initialize
       @commands = {}
       @aliases = {}
+      @macros = {}
 
       cmd_dirs = [ File.join(File.dirname(__FILE__), 'command') ]
       cmd_dirs <<  @settings[:user_cmd_dir] if @settings[:user_cmd_dir]

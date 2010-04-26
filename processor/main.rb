@@ -223,8 +223,17 @@ class Debugger
           false
         end
       unless eval_command
+
+        # Expand macros. FIXME: put in a procedure
         args = current_command.split
-        return false if args.size == 0
+        while true do
+          macro_cmd_name = args[0]
+          return false if args.size == 0
+          break unless @macros.member?(macro_cmd_name)
+          current_command = @macros[macro_cmd_name].call(*args[1..-1])
+          args = current_command.split
+        end
+
         @cmd_name = args[0]
         run_cmd_name = 
           if @aliases.member?(@cmd_name)
