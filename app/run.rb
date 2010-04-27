@@ -33,8 +33,9 @@ module Rbdbgr
     dollar_0_tracker = lambda {|val| $program_name = val} 
     trace_var(:$0, dollar_0_tracker)
 
-    dbgr.debugger do
-      dbgr.core.processor.hidelevels[Thread.current] = 
+    dbgr.debugger(:hide_stack=>true) do
+      dbgr.core.processor.hide_level = 
+        dbgr.core.processor.hidelevels[Thread.current] = 
         RubyVM::ThreadFrame.current.stack_size + 1
       Kernel::load program_to_debug
     end
