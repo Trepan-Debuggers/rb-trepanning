@@ -97,7 +97,13 @@ class Debugger
 
       @threads2frames   ||= {}  # or do we want = {} ? 
       @threads2frames[@current_thread] = @top_frame
-
+      @hide_level         = 
+        if @settings[:debugstack]
+          0
+        else
+          @hidelevels[@current_thread]
+        end
+      
       frame_eval_remap if 'EVAL' == @frame.type
     end
 
@@ -111,12 +117,7 @@ class Debugger
       @remap_container = {}
       @remap_iseq      = {}
       @hidelevels      = Hash.new(0) # Set default value to 0
-      @hide_level      = 
-        if @settings[:debugstack]
-          0
-        else
-          @hidelevels[Thread.current]
-        end
+      @hide_level      = 0
     end
 
     def get_frame(frame_num, absolute_pos)
