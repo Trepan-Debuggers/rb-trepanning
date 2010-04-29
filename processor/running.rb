@@ -98,7 +98,7 @@ class Debugger
     end
 
     def stepping_skip?
-      
+
       return true if @core.step_count < 0
 
       if @settings[:'debugskip']

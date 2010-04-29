@@ -188,7 +188,12 @@ class Debugger
       frame_setup(frame)
 
       @unconditional_prehooks.run
-      return if !breakpoint? && stepping_skip?
+      if breakpoint?
+        @last_pos = [@frame.source_container, frame_line,
+                     @stack_size, @current_thread]
+      else
+        return if stepping_skip?
+      end
 
       @leave_cmd_loop = false
       print_location unless @settings[:traceprint]
