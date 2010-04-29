@@ -7,11 +7,11 @@ require_relative '../substitute'
 class Debugger::SubSubcommand::SetSubstituteString < Debugger::SubSubcommand
   unless defined?(HELP)
     HELP         = 
-'set substitute FROM_FILE TO_TFILE
+'set substitute FROM-FILE STRING-VAR
 
-Add a substitution rule replacing FROM_FILE into TO_FILE in source
-file names.  If a substitution rule was previously set for FROM, the
-old rule is replaced by the new one.
+Use the contents of string variable STRING-VAR as the source text for
+FROM-FILE.  If a substitution rule was previously set for FROM-FILE,
+the old rule is replaced by the new one.
 
 If "." is given for FROM_FILE, the current instruction sequence name is used.'
     MIN_ABBREV   = 'st'.size  
