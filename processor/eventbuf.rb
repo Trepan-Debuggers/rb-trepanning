@@ -78,7 +78,15 @@ class Debugger
         end
 
       same_loc = (container == last_container && location == last_location)
-      mess = "#{item.event} #{item.type} #{item.method} "
+      mess = "#{item.event} "
+      mess +=
+        if %w(c-return return).member?(item.event)
+          "#{item.method} => #{item.arg.inspect}" + (same_loc ? '' : "\n\t")
+        elsif 'c-call' == item.event
+          "#{item.method} "
+        else
+          "#{item.type} #{item.method} "
+        end
       mess += "#{container} at line #{location}" unless same_loc
 
       if item.iseq # && long_format
