@@ -7,6 +7,7 @@ class Debugger::Subcommand::SetWidth < Debugger::Subcommand
     IN_LIST      = true
     MIN_ABBREV   = 'wid'.size
     NAME         = File.basename(__FILE__, '.rb')
+    PREFIX       = %w(set width)
   end
 
   def run(args)
@@ -19,29 +20,21 @@ class Debugger::Subcommand::SetWidth < Debugger::Subcommand
     end
   end
 
+  alias restore_command restore_command_from_settings
+
 end
 
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  require_relative '../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
-  # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('set')
   subcommand = Debugger::Subcommand::SetWidth.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
-
-  def subcommand.msg(message)
-    puts message
-  end
-  def subcommand.msg_nocr(message)
-    print message
-  end
-  def subcommand.errmsg(message)
-    puts message
-  end
   subcommand.run(%w(20))
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
+  puts
+  puts '-' * 20
+  puts subcommand.restore_command()
 end

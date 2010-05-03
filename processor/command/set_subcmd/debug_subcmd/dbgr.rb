@@ -3,14 +3,15 @@ require_relative '../../base/subsubcmd'
 
 class Debugger::SubSubcommand::SetDebugDbgr < Debugger::SetBoolSubSubcommand
   unless defined?(HELP)
-    HELP        = 'Set debugging debugger
+    HELP        = 'set debug dbgr [on|off]
 
-Global variables $rbdbgr_cmdproc and $rbdbgr_frame are set to the current 
-values of @frame and self when the command processor was entered.
-'
+Facilitates debugging the debugger. Global variables $rbdbgr_cmdproc
+and $rbdbgr_frame are set to the current values of @frame and self
+when the command processor was entered.  '
+
     MIN_ABBREV  = 'db'.size
     NAME        = File.basename(__FILE__, '.rb')
-    PREFIX      = %w(set debug skip)
+    PREFIX      = %w(set debug dbgr)
     SHORTHELP   = 'Set debugging debugger'
   end
 
@@ -42,4 +43,6 @@ if __FILE__ == $0
   debugx_cmd.run([name])
   debugx_cmd.run([name, 'on'])
   debugx_cmd.run([name, 'off'])
+  puts '-' * 10
+  puts debugx_cmd.restore_command()
 end

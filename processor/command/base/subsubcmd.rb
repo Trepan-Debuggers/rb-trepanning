@@ -72,6 +72,12 @@ class Debugger
     def run(args)
       run_set_bool(args)
     end
+    def restore_command
+      setting = @name.gsub(/^set/,'')
+      prefix  = self.class.const_get(:PREFIX).join(' ')
+      val     = settings[setting.to_sym] ? 'on' : 'off'
+      "#{prefix} #{val}"
+    end
   end
 
   class ShowBoolSubSubcommand < SubSubcommand

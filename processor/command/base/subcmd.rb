@@ -60,6 +60,11 @@ class Debugger
       return(@proc.confirm(msg, default))
     end
 
+    def restore_command_from_settings
+      prefix = self.class.const_get(:PREFIX).join(' ')
+      "#{prefix} #{settings[@name]}"
+    end
+
     # Set a Boolean-valued debugger setting. 
     def run_set_bool(args, default=true)
       onoff_arg = args.size < 3 ? 'on' : args[2]

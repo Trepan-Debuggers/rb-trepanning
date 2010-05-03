@@ -45,5 +45,6 @@ if __FILE__ == $0
   subcmd_name = Debugger::Subcommand::SetAutoList::PREFIX[1..-1].join('')
   autox_cmd.run([subcmd_name])
   autox_cmd.run([subcmd_name, 'off'])
-
+  puts '-' * 10
+  puts autox_cmd.restore_command()
 end

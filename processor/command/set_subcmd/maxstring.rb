@@ -24,6 +24,8 @@ the output is intended to be formated as is.
                 DEFAULT_MIN, nil)
   end
 
+  alias restore_command restore_command_from_settings
+
 end
 
 if __FILE__ == $0
@@ -37,4 +39,6 @@ if __FILE__ == $0
   subcommand.run(%w(100))
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
+  puts '-' * 20
+  puts subcommand.restore_command()
 end
