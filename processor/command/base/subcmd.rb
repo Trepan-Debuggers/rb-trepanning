@@ -62,7 +62,7 @@ class Debugger
 
     def restore_command_from_settings
       prefix = self.class.const_get(:PREFIX).join(' ')
-      "#{prefix} #{settings[@name]}"
+      ["#{prefix} #{settings[@name]}"]
     end
 
     # Set a Boolean-valued debugger setting. 

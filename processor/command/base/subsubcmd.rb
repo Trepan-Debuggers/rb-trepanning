@@ -76,7 +76,7 @@ class Debugger
       setting = @name.gsub(/^set/,'')
       prefix  = self.class.const_get(:PREFIX).join(' ')
       val     = settings[setting.to_sym] ? 'on' : 'off'
-      "#{prefix} #{val}"
+      ["#{prefix} #{val}"]
     end
   end
 

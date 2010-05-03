@@ -63,5 +63,5 @@ if __FILE__ == $0
   subcmd.run([cmd_name])
   %w(off on 0 1).each { |arg| subcmd.run([cmd_name, arg]) }
   puts '-' * 10
-  puts subcmd.restore_command()
+  puts subcmd.restore_command.join("\n")
 end

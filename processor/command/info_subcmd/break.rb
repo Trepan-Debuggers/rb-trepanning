@@ -60,6 +60,22 @@ EOH
     end
   end
 
+  def restore_command
+    bpmgr = @proc.brkpts
+    bpmgr.list.inject([]) do |res, bp|
+      iseq = bp.iseq
+      next unless 'file' == iseq.source_container[0]
+      loc = iseq.source_container[1] + ':'
+      loc += 
+        # if 'line' == bp.type
+          iseq.offset2lines(bp.offset)[0].to_s
+        # else
+        #  'O' + bp.offset.to_s
+        # end
+      res << "break #{loc}"
+    end
+  end
+
   def run(args)
     verbose = false
     unless args.empty?
@@ -115,14 +131,31 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  require_relative '../../subcmd'
   name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('info')
   subcommand = Debugger::Subcommand::InfoBreak.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
 
-  name = File.basename(__FILE__, '.rb')
+  puts '-' * 20
+  subcommand.run(%w(info break))
+  puts '-' * 20
   subcommand.summary_help(name)
+  puts
+  puts '-' * 20
+
+  require 'thread_frame'
+  tf = RubyVM::ThreadFrame.current
+  pc_offset = tf.pc_offset
+  def foo
+    5 
+  end
+  
+  brk_cmd = dbgr.core.processor.commands['break']
+  brk_cmd.run(['break', "O#{pc_offset}"])
+  cmd.run(%w(info break))
+  puts '-' * 20
+  brk_cmd.run(['break', 'foo'])
+  subcommand.run(%w(info break))
+  puts '-' * 20
+  p subcommand.restore_command
+
 end
