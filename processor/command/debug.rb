@@ -15,6 +15,8 @@ Enter the debugger recursively on RUBY-CODE."
     NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'recursive debugging of an expression'
+
+    EXTRA_DEBUG_SETUP_CALLS = 4
   end
 
   def run(args)
@@ -22,11 +24,8 @@ Enter the debugger recursively on RUBY-CODE."
     frame      = @proc.frame  # gets messed up in recursive call
     arg_str    = args[1..-1].join(' ')
     hidelevels = @proc.hidelevels[th]
-    
 
-    # FIXME save/restore hidelevels so "where" doesn't show debugger
     stack_diff = RubyVM::ThreadFrame.current.stack_size - frame.stack_size 
-    @proc.hidelevels[th] += stack_diff + 1
 
     # Ignore tracing in support routines:
     tf = @proc.core.dbgr.trace_filter 
@@ -36,26 +35,36 @@ Enter the debugger recursively on RUBY-CODE."
       tf << m unless tf.member?(m)
     end
 
+    @proc.hidelevels[th] += stack_diff + EXTRA_DEBUG_SETUP_CALLS
+
+    # Values we need to save before munging them
     old_tracing            = th.tracing
     old_exec_event_tracing = th.exec_event_tracing
-    old_step_count         = @proc.core.step_count
+    old_mutex              = @proc.core.mutex 
     old_next_level         = @proc.next_level
+    old_step_count         = @proc.core.step_count
 
-    msg 'ENTERING RECURSIVE DEBUGGER'
+    msg 'ENTERING NESTED DEBUGGER'
+
+    # Things we need to do to allow entering the debugger again
+    @proc.core.mutex       = Mutex.new
     th.tracing             = false
     th.exec_event_tracing  = false
     @proc.core.step_count  = 0
     @proc.next_level       = 32000
     retval = @proc.debug_eval(arg_str)
+
+    # Restore munged values
     th.exec_event_tracing  = old_exec_event_tracing
     th.tracing             = old_tracing
-    msg 'LEAVING RECURSIVE DEBUGGER'
-    msg "R=> #{retval.inspect}"
+    @proc.core.mutex       = old_mutex
     @proc.frame_setup(frame)
     @proc.hidelevels[th]   = hidelevels
     @proc.core.step_count  = old_step_count
     @proc.next_level       = old_next_level
     @proc.print_location
+    msg 'LEAVING NESTED DEBUGGER'
+    msg "R=> #{retval.inspect}"
   end
 end
 

@@ -17,7 +17,7 @@ class Debugger
 
     # SEE ALSO attr's in require_relative's of loop above.
 
-    attr_reader   :core            # Debugger core object
+    attr_accessor :core            # Debugger core object
     attr_reader   :cmd_argstr      # Current command args, a String.
                                    # This is current_command with the command
                                    # name removed from the beginning.
@@ -192,7 +192,7 @@ class Debugger
         @last_pos = [@frame.source_container, frame_line,
                      @stack_size, @current_thread]
       else
-        return if stepping_skip?
+        return if stepping_skip? || @stack_size <= @hide_level
       end
 
       @leave_cmd_loop = false

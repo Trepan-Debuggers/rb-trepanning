@@ -18,11 +18,13 @@ class Debugger
     attr_reader   :event        # String - event which triggering event
                                 # processor
     attr_reader   :event_proc   # Proc of method event_processor
-    attr_reader   :frame        # ThreadFrame instance
-    attr_reader   :hook_arg     # 'arg' passed from trace hook
-    attr_accessor :processor    # Debugger::CmdProc instance
     attr_accessor :exception    # Return exception to pass back. A 'raise'
                                 # command can set this.
+    attr_reader   :frame        # ThreadFrame instance
+    attr_reader   :hook_arg     # 'arg' passed from trace hook
+    attr_accessor :mutex        # mutex to lock out other threads from
+                                # entering debugger while we are in it.
+    attr_accessor :processor    # Debugger::CmdProc instance
     attr_reader   :settings     # Hash of things you can configure
     attr_accessor :step_count   # Fixnum. Negative means no tracing,
                                 # 0 means stop on next event, 1 means 
@@ -69,7 +71,9 @@ class Debugger
     def initialize(debugger, settings={})
       @dbgr         = debugger
       @exception    = nil
+      @mutex        = Mutex.new
       @settings     = CORE_DEFAULT_SETTINGS.merge(settings)
+
       @step_count   = @settings[:step_count]
       @step_events  = @settings[:step_events]
       @async_events = @settings[:async_events]
@@ -83,62 +87,64 @@ class Debugger
 
     # A trace-hook processor with the interface a trace hook should have.
     def event_processor(event, frame, arg=nil)
-      # FIXME: Block all other threads
+
+      return_exception = nil
       # FIXME: check for breakpoints or other unmaskable events. 
       # For now there are none.
-
-      @frame = frame
-      while @frame.type == 'IFUNC'
-        @frame = @frame.prev
-      end
-
-      if @step_count > 0
-        @step_count -= 1
-        return
-      elsif @step_count < 0 && ! @unmaskable_events.member?(event)
-        return
-      end
-
-      @event    = event
-      @frame    = frame
-      @hook_arg = arg
-
-      if @settings[:debug_core_events]
-        msg "event #{event} #{@frame.source_container.inspect} #{@frame.source_location.inspect}"
-      end
-      @processor.process_commands(@frame)
-
-      # FIXME: There should be a Trace.event_mask which should return the first
-      # mask that matches the given trace hook.
-      if @step_count < 0
-        # If we are continuing, no need to stop at stepping events.
-        Trace.event_masks[0] &= ~STEPPING_EVENT_MASK 
-      else
-        # Set to trace only those events we are interested in.  
-
-        # Don't step/trace into Ruby routines called from here in the code
-        # below (e.g. "trace_hooks").
-        step_count_save = step_count
-        @step_count     = -1 
-
-        unless @event_proc == dbgr.trace_filter.hook_proc
-          dbgr.trace_filter.add_trace_func(@event_proc) 
+      
+      @mutex.synchronize do
+        @frame = frame
+        while @frame.type == 'IFUNC'
+          @frame = @frame.prev
         end
+        
+        if @step_count > 0
+          @step_count -= 1
+          break
+        elsif @step_count < 0 && ! @unmaskable_events.member?(event)
+          break
+        end
+
+        @event    = event
+        @frame    = frame
+        @hook_arg = arg
+        
+        if @settings[:debug_core_events]
+          msg "event #{event} #{@frame.source_container.inspect} #{@frame.source_location.inspect}"
+        end
+        @processor.process_commands(@frame)
+        
+        # FIXME: There should be a Trace.event_mask which should return the first
+        # mask that matches the given trace hook.
+        if @step_count < 0
+          # If we are continuing, no need to stop at stepping events.
+          Trace.event_masks[0] &= ~STEPPING_EVENT_MASK 
+        else
+          # Set to trace only those events we are interested in.  
           
-        # FIXME: this doesn't work. Bug in rb-trace? 
-        # Trace.event_masks[0] = @step_events | @async_events
-        RubyVM::TraceHook::trace_hooks[0].event_mask = 
-          @step_events | @async_events
-        @step_count = step_count_save
+          # Don't step/trace into Ruby routines called from here in the code
+          # below (e.g. "trace_hooks").
+          step_count_save = step_count
+          @step_count     = -1 
+          
+          unless @event_proc == dbgr.trace_filter.hook_proc
+            dbgr.trace_filter.add_trace_func(@event_proc) 
+          end
+          
+          # FIXME: this doesn't work. Bug in rb-trace? 
+          # Trace.event_masks[0] = @step_events | @async_events
+          RubyVM::TraceHook::trace_hooks[0].event_mask = 
+            @step_events | @async_events
+          @step_count = step_count_save
+        end
+        
+        # Nil out variables just in case...
+        
+        return_exception = @exception
+        @frame = @event = @arg = @exception = nil
+
       end
-
-      # Nil out variables just in case...
-
-      exception = @exception
-      @frame = @event = @arg = @exception = nil
-
-      # FIXME: unblock other threads
-      return exception if exception
+      return return_exception 
     end
 
     # A Ruby 1.8-style event processor. We don't use file, line, id, bind. 
