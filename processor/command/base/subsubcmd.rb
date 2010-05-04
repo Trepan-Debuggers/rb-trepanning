@@ -85,4 +85,11 @@ class Debugger
       run_show_bool(string_in_show)
     end
   end
+
+  class ShowIntSubSubcommand < SubSubcommand
+    def run(args)
+      run_show_int
+    end
+  end
+
 end

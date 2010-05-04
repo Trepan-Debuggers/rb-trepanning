@@ -7,6 +7,7 @@ class Debugger::Subcommand::SetBasename < Debugger::SetBoolSubcommand
     IN_LIST    = true
     MIN_ABBREV = 'ba'.size
     NAME       = File.basename(__FILE__, '.rb')
+    PREFIX     = %w(set basename)
   end
 
 end
@@ -14,7 +15,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  require_relative '../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code

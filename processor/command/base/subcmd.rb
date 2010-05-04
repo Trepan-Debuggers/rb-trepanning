@@ -15,7 +15,7 @@ class Debugger
   class Subcommand  < Command
 
     NotImplementedMessage = 
-      "This method must be overriden in a subclass" unless 
+      "This method must be overridden in a subclass" unless 
       defined?(NotImplementedMessage)
 
     attr_reader :name
@@ -69,7 +69,7 @@ class Debugger
     def run_set_bool(args, default=true)
       onoff_arg = args.size < 3 ? 'on' : args[2]
       begin
-        settings[@name] = @proc.get_onoff(onoff_arg)
+        settings[subcmd_setting_key] = @proc.get_onoff(onoff_arg)
         run_show_bool
       rescue NameError, TypeError
       end
@@ -87,22 +87,22 @@ class Debugger
                              :msg_on_error => msg_on_error
                              )
       if val
-        settings[@name] = val
+        settings[subcmd_setting_key] = val
         run_show_int
       end
     end
 
     # Generic subcommand showing a boolean-valued debugger setting.
     def run_show_bool(what=nil)
-      val = show_onoff(settings[@name])
+      val = show_onoff(settings[subcmd_setting_key])
       what = @name unless what
       msg("%s is %s." % [what, val])
     end
 
     # Generic subcommand integer value display
     def run_show_int(what=nil)
-      val = settings[@name]
-      what = subcmd_prefix_string unless what
+      val = settings[subcmd_setting_key]
+      what = self.class.const_get(:PREFIX)[1..-1].join(' ') unless what
       msg("%s is %d." % [what, val])
     end
 
@@ -132,6 +132,10 @@ class Debugger
         
     def subcmd_prefix_string
       self.class.const_get(:PREFIX).join(' ')
+    end
+
+    def subcmd_setting_key
+      self.class.const_get(:PREFIX)[1..-1].join('').to_sym
     end
 
     # Return 'on' for true and 'off' for false, and ?? for anything else.

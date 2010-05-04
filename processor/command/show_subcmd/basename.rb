@@ -6,6 +6,7 @@ class Debugger::Subcommand::ShowBasename < Debugger::ShowBoolSubcommand
     HELP = "Show only file basename in showing file names"
     MIN_ABBREV = 'ba'.size
     NAME       = File.basename(__FILE__, '.rb')
+    PREFIX     = %w(show basename)
   end
 
 end
@@ -13,7 +14,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  require_relative '../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code

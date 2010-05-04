@@ -32,6 +32,7 @@ override this setting."
     IN_LIST      = true
     MIN_ABBREV   = 'dif'.size
     NAME         = File.basename(__FILE__, '.rb')
+    PREFIX       = %w(set different)
     SHORT_HELP   = "Set to make sure 'next/step' move to a new position."
   end
 
@@ -49,7 +50,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  require_relative '../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code

@@ -5,6 +5,7 @@ class Debugger::Subcommand::ShowDifferent < Debugger::ShowBoolSubcommand
   unless defined?(HELP)
     HELP = "Show status of 'set different'"
     MIN_ABBREV   = 'dif'.size
+    PREFIX       = %w(show different)
     NAME         = File.basename(__FILE__, '.rb')
   end
 
@@ -22,7 +23,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  require_relative '../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
