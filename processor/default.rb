@@ -16,7 +16,7 @@ class Debugger
       :debugstack    => false,     # How hidden outer debugger stack frames
 
       :listsize      => 10,        # Number of lines in list 
-      :maximumstring => 150,       # Strings which are larger than this
+      :maxstring => 150,           # Strings which are larger than this
                                    # will be truncated to this length when
                                    # printed
       :prompt        => '(rbdbgr): ',
@@ -25,7 +25,7 @@ class Debugger
       :tracebuffer   => false,     # save events to a trace buffer.
       :user_cmd_dir  => File.join(Rbdbgr::HOME_DIR, 'rbdbgr', 'command'),
                                    # User command directory
-      :maximumwidth  => (ENV['COLUMNS'] || '80').to_i,
+      :maxwidth       => (ENV['COLUMNS'] || '80').to_i,
     } unless defined?(DEFAULT_SETTINGS)
   end
 end

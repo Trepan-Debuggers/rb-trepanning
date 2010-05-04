@@ -108,7 +108,7 @@ Type "help" followed by command name for full documentation.
         category == @proc.commands[cmd_name].category
       end.sort
 
-      width = settings[:maximumwidth]
+      width = settings[:maxwidth]
       return columnize_commands(cmds)
     end
         

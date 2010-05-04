@@ -20,7 +20,7 @@ and should return a command string to use in its place.
   def run(args)
     macro_name = args[1]
     proc_argstr = @proc.cmd_argstr[macro_name.size..-1].lstrip
-    proc_obj = @proc.debug_eval(proc_argstr, @proc.settings[:maximumstring])
+    proc_obj = @proc.debug_eval(proc_argstr, @proc.settings[:maxstring])
     if proc_obj
       if proc_obj.is_a?(Proc)
         @proc.macros[macro_name] = proc_obj

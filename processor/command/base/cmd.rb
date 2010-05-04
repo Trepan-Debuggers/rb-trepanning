@@ -27,13 +27,13 @@ class Debugger
 
     # List commands arranged in an aligned columns
     def columnize_commands(commands)
-      width = settings[:maximumwidth]
+      width = settings[:maxwidth]
       Columnize::columnize(commands, width, ' ' * 4, 
                            true, true, ' ' * 2).chomp
     end
 
     def columnize_numbers(commands)
-      width = settings[:maximumwidth]
+      width = settings[:maxwidth]
       Columnize::columnize(commands, width, ', ',
                            false, false, ' ' * 2).chomp
     end

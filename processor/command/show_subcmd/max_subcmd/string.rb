@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require_relative '../../base/subsubcmd'
 
-class Debugger::Subcommand::ShowMaximumString < Debugger::ShowIntSubSubcommand
+class Debugger::Subcommand::ShowMaxString < Debugger::ShowIntSubSubcommand
   unless defined?(HELP)
     HELP = 'Show the number of characters in a string before truncating.
 
@@ -11,7 +11,7 @@ see. However if the string has an embedded newline then we will assume
 the output is intended to be formated as.'
     MIN_ABBREV   = 'st'.size
     NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(show maximum string)
+    PREFIX       = %w(show max string)
   end
 
 end
@@ -23,13 +23,13 @@ if __FILE__ == $0
   # FIXME: DRY the below code
   dbgr, show_cmd = MockDebugger::setup('show')
   testcmdMgr     = Debugger::Subcmd.new(show_cmd)
-  max_cmd        = Debugger::SubSubcommand::ShowMaximum.new(dbgr.core.processor, 
-                                                            show_cmd)
-
-  cmd_name       = Debugger::SubSubcommand::ShowMaximumString::PREFIX.join('')
-  maxx_cmd       = Debugger::SubSubcommand::ShowMaximumString.new(show_cmd.proc,
-                                                                  max_cmd,
-                                                                  cmd_name)
+  max_cmd        = Debugger::SubSubcommand::ShowMax.new(dbgr.core.processor, 
+                                                        show_cmd)
+  
+  cmd_name       = Debugger::SubSubcommand::ShowMaxString::PREFIX.join('')
+  maxx_cmd       = Debugger::SubSubcommand::ShowMaxString.new(show_cmd.proc,
+                                                              max_cmd,
+                                                              cmd_name)
 
   # require_relative '../../../../lib/rbdbgr'
   # dbgr = Debugger.new(:set_restart => true)

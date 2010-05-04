@@ -33,9 +33,9 @@ class Debugger::Subcommand::InfoLocals < Debugger::Subcommand
             msg "No local variables defined."
           else
             msg "Local variable names:"
-            width = settings[:maximumwidth]
+            width = settings[:maxwidth]
             mess = Columnize::columnize(local_names, 
-                                        @proc.settings[:maximumwidth], ', ',
+                                        @proc.settings[:maxwidth], ', ',
                                         false, true, ' ' * 2).chomp
             msg mess
           end
