@@ -62,7 +62,7 @@ class Debugger
 
     def restore_command_from_settings
       prefix = 
-      ["#{subcmd_prefix_string} #{settings[@name]}"]
+      ["#{subcmd_prefix_string} #{settings[subcmd_setting_key]}"]
     end
 
     # Set a Boolean-valued debugger setting. 

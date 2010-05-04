@@ -3,17 +3,16 @@ require_relative '../../base/subsubcmd'
 
 class Debugger::SubSubcommand::SetMaxString < Debugger::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Set max[imum] st[ring] NUMBER
+    HELP         = 'Set max st[ring] NUMBER
 
 Sometimes the string representation of an object is very long. This
 setting limits how much of the string representation you want to
 see. However if the string has an embedded newline then we will assume
 the output is intended to be formated as is.
 '
-    IN_LIST      = true
-    MIN_ABBREV   = 'st'.size
-    NAME         = File.basename(__FILE__, '.rb')
     DEFAULT_MIN  = 10
+    MIN_ABBREV   = 'str'.size
+    NAME         = File.basename(__FILE__, '.rb')
     PREFIX       = %w(set max string)
     SHORT_HELP   = "Set maximum # chars in a string before truncation"
   end
@@ -22,7 +21,7 @@ the output is intended to be formated as is.
     args.shift
     args = %W(#{DEFAULT_MIN}) if args.empty?
     run_set_int(args.join(' '),
-                "The 'set maximum string' command requires number at least 10", 
+                "The 'set maximum string' command requires number at least #{DEFAULT_MIN}", 
                 DEFAULT_MIN, nil)
   end
 
@@ -35,7 +34,7 @@ if __FILE__ == $0
   require_relative '../../../mock'
   dbgr, set_cmd = MockDebugger::setup('set')
   max_cmd       = Debugger::SubSubcommand::SetMax.new(dbgr.core.processor, 
-                                                          set_cmd)
+                                                      set_cmd)
   # FIXME: remove the 'join' below
   cmd_name      = Debugger::SubSubcommand::SetMaxString::PREFIX.join('')
   subcmd        = Debugger::SubSubcommand::SetMaxString.new(set_cmd.proc, 

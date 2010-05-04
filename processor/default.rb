@@ -8,7 +8,6 @@ class Debugger
       :autolist      => false,     # Run 'list' 
 
       :basename      => false,     # Show basename of filenames only
-      :btlimit       => 16,        # backtrace limit
       :different     => 'nostack', # stop *only* when  different position? 
 
       :debugexcept   => true,      # Internal debugging of command exceptions
@@ -16,16 +15,17 @@ class Debugger
       :debugstack    => false,     # How hidden outer debugger stack frames
 
       :listsize      => 10,        # Number of lines in list 
-      :maxstring => 150,           # Strings which are larger than this
+      :maxstack      => 16,        # backtrace limit
+      :maxstring     => 150,       # Strings which are larger than this
                                    # will be truncated to this length when
                                    # printed
+      :maxwidth       => (ENV['COLUMNS'] || '80').to_i,
       :prompt        => '(rbdbgr): ',
       :timer         => false,     # show elapsed time between events
       :traceprint    => false,     # event tracing printing
       :tracebuffer   => false,     # save events to a trace buffer.
       :user_cmd_dir  => File.join(Rbdbgr::HOME_DIR, 'rbdbgr', 'command'),
                                    # User command directory
-      :maxwidth       => (ENV['COLUMNS'] || '80').to_i,
     } unless defined?(DEFAULT_SETTINGS)
   end
 end

@@ -7,7 +7,7 @@ class Debugger
 
     DEFAULT_STACK_TRACE_SETTINGS = {
       :basename     => false,   # Basename only for files?
-      :btlimit      => 16,     # How many entries to show? nil means all
+      :maxstack     => 16,      # How many entries to show? nil means all
       :count        => nil,     # How many entries to show? nil means all
       :current_pos  => 0,       # Where are we in the stack?
       :show_pc      => false,   # Show PC offset?
@@ -162,13 +162,13 @@ class Debugger
     # Print `count' frame entries
     def print_stack_trace(frame, opts={})
       opts    = DEFAULT_STACK_TRACE_SETTINGS.merge(opts)
-      btlimit = opts[:btlimit]
+      maxstack = opts[:maxstack]
       n       = frame.stack_size
       n       = [n, opts[:count]].min if opts[:count]
-      if n > (btlimit * 2)
-        print_stack_trace_from_to(0, btlimit-1, frame, opts)
-        msg "... %d levels ..." % (n - btlimit*2)
-        print_stack_trace_from_to(n - btlimit, n-1, frame, opts)
+      if n > (maxstack * 2)
+        print_stack_trace_from_to(0, maxstack-1, frame, opts)
+        msg "... %d levels ..." % (n - maxstack*2)
+        print_stack_trace_from_to(n - maxstack, n-1, frame, opts)
       else
         print_stack_trace_from_to(0, n-1, frame, opts)
       end
@@ -246,7 +246,7 @@ if __FILE__ == $0
   puts '=' * 30
   eval("eval('print_stack_trace(RubyVM::ThreadFrame.current)')")
   puts '=' * 30
-  eval("eval('print_stack_trace(RubyVM::ThreadFrame.current, :btlimit => 2)')")
+  eval("eval('print_stack_trace(RubyVM::ThreadFrame.current, :maxstack => 2)')")
   puts '=' * 30
   1.times do |a; b|
     print_stack_trace(RubyVM::ThreadFrame::current)

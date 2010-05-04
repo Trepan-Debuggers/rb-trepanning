@@ -44,13 +44,13 @@ Examples:
     stack_size = @proc.top_frame.stack_size - hide_level
     opts = {
       :basename    => @proc.settings[:basename],
-      :btlimit     => @proc.settings[:btlimit],
       :current_pos => @proc.frame_index,
+      :maxstack    => @proc.settings[:maxstack],
       :show_pc     => @proc.settings[:show_pc]
     }
     opts[:count] = 
       if args.size > 1
-        opts[:btlimit] = @proc.get_int(args[1], 
+        opts[:maxstack] = @proc.get_int(args[1], 
                                        :cmdname   => 'where',
                                        :max_value => stack_size)
       else
