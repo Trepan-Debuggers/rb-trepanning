@@ -8,6 +8,7 @@ class Debugger::Subcommand::SetReturn < Debugger::Subcommand
     IN_LIST      = true
     MIN_ABBREV   = 'ret'.size
     NAME         = File.basename(__FILE__, '.rb')
+    PREFIX       = %w(set return)
   end
 
   include Debugger::Frame

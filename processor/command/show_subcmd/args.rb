@@ -6,6 +6,7 @@ class Debugger::Subcommand::ShowArgs < Debugger::Subcommand
     HELP = 'Show argument list to give program when it is restarte..'
     MIN_ABBREV   = 'ar'.size
     NAME         = File.basename(__FILE__, '.rb')
+    PREFIX       = %w(show args)
   end
 
   def run(args)

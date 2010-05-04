@@ -7,6 +7,7 @@ class Debugger::Subcommand::ShowEvents < Debugger::Subcommand
     HELP         = 'Show trace events we may stop on.'
     MIN_ABBREV   = 'ev'.size
     NAME         = File.basename(__FILE__, '.rb')
+    PREFIX       = %w(show events)
   end
 
   # FIXME: this really should be a subcommand of "set trace"

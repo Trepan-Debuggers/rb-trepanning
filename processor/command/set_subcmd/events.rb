@@ -21,8 +21,14 @@ Examples:
 "
     MIN_ABBREV   = 'ev'.size
     NAME         = File.basename(__FILE__, '.rb')
+    PREFIX       = %w(set events)
     SHORT_HELP   = 'Set trace events we may stop on.'
   end
+
+  ## FIXME
+  ## def restore_command
+  ##   won't work here: alias restore_command restore_command_from_settings
+  ## end
 
   def run(args)
     unless args.size <= 2
@@ -42,7 +48,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  require_relative '../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
@@ -58,4 +63,8 @@ if __FILE__ == $0
     subcommand.run(%w(set events) + events)
     puts 'bitmask: %09b, events: %s ' % [dbgr.core.step_events, events.inspect]
   end
+  ## FIXME
+  ## puts '-' * 20
+  ## puts subcommand.restore_command()
+
 end

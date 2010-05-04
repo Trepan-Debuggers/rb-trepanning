@@ -10,6 +10,8 @@ class Debugger::Subcommand::SetBasename < Debugger::SetBoolSubcommand
     PREFIX     = %w(set basename)
   end
 
+  alias restore_command restore_command_from_settings
+
 end
 
 if __FILE__ == $0
@@ -30,4 +32,9 @@ if __FILE__ == $0
   subcommand.run(['set', name])
   subcommand.run(['set', name, 'off'])
   subcommand.run(['set', name, 'on'])
+  subcommand.summary_help(name)
+  puts
+  puts '-' * 20
+  puts subcommand.restore_command()
+
 end

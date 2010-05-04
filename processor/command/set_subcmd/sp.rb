@@ -7,6 +7,7 @@ class Debugger::Subcommand::SetSp < Debugger::Subcommand
     IN_LIST      = true
     MIN_ABBREV   = 'sp'.size
     NAME         = File.basename(__FILE__, '.rb')
+    PREFIX       = %w(set sp)
   end
 
   def run(args)

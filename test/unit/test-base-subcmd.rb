@@ -38,6 +38,17 @@ class TestBaseCommandHelp < Test::Unit::TestCase
     @exit_subcmd.run_set_int('', 'testing 1 2 3')
     assert_equal(1, $errors.size)
     assert_equal(Fixnum, @exit_subcmd.settings[:maxwidth].class)
+    @cmds.each do |cmd|
+      cmd_obj = cmd[1]
+      next unless cmd_obj.is_a?(Debugger::SubcommandMgr)
+      cmd_obj.subcmds.subcmds.each do |name, subcmd_obj|
+        %w(HELP NAME PREFIX).each do |attr|
+          assert_equal(true, subcmd_obj.class.constants.member?(attr.to_sym),
+                       "Constant #{attr} should be defined in \"#{cmd_obj.name} #{subcmd_obj.name}\"")
+        end
+      end
+        
+    end
   end
 
   def test_show_on_off

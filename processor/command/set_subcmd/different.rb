@@ -36,6 +36,8 @@ override this setting."
     SHORT_HELP   = "Set to make sure 'next/step' move to a new position."
   end
 
+  alias restore_command restore_command_from_settings
+
   def run(args)
     if args.size == 3 && 'nostack' == args[2]
       @proc.settings[:different] = 'nostack'
@@ -45,6 +47,7 @@ override this setting."
     end
     @proc.different_pos = @proc.settings[:different]
   end
+
 end
 
 if __FILE__ == $0
@@ -59,4 +62,7 @@ if __FILE__ == $0
 
   subcommand.run_show_bool
   subcommand.summary_help(name)
+  puts
+  puts '-' * 20
+  puts subcommand.restore_command()
 end
