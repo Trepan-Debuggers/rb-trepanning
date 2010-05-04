@@ -11,9 +11,7 @@ class Debugger
     end
 
     def debug_eval_with_exception(str, max_fake_filename=15)
-      b = @frame.binding if @frame 
-      b ||= binding
-      filename = fake_eval_filename(str, max_fake_filename)
+      filename, b = get_binding_and_filename(str, max_fake_filename)
       eval(str, b, filename)
     end
 
@@ -46,8 +44,12 @@ class Debugger
     end
     
     def get_binding_and_filename(str, maxlen)
-      b = @frame.binding if @frame 
-      b ||= binding
+      b = 
+        begin
+          @frame.binding
+        rescue
+          binding
+        end
       filename = fake_eval_filename(str, maxlen)
       return [filename, b]
     end

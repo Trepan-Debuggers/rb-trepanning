@@ -31,6 +31,7 @@ Enter the debugger recursively on RUBY-CODE."
     tf = @proc.core.dbgr.trace_filter 
     [self.method(:run), @proc.method(:debug_eval),
      @proc.method(:debug_eval_with_exception),
+     @proc.method(:get_binding_and_filename),
      @proc.method(:fake_eval_filename)].each do |m|
       tf << m unless tf.member?(m)
     end
@@ -47,11 +48,15 @@ Enter the debugger recursively on RUBY-CODE."
     msg 'ENTERING NESTED DEBUGGER'
 
     # Things we need to do to allow entering the debugger again
+    @proc.debug_nest      += 1
     @proc.core.mutex       = Mutex.new
     th.tracing             = false
     th.exec_event_tracing  = false
     @proc.core.step_count  = 0
     @proc.next_level       = 32000
+
+    settings[:prompt] = "%srbdbgr%s: " % ['(' * @proc.debug_nest,
+                                          ')' * @proc.debug_nest]
     retval = @proc.debug_eval(arg_str)
 
     # Restore munged values
@@ -63,6 +68,9 @@ Enter the debugger recursively on RUBY-CODE."
     @proc.core.step_count  = old_step_count
     @proc.next_level       = old_next_level
     @proc.print_location
+    @proc.debug_nest      -= 1
+    settings[:prompt] = "%srbdbgr%s: " % ['(' * @proc.debug_nest,
+                                          ')' * @proc.debug_nest]
     msg 'LEAVING NESTED DEBUGGER'
     msg "R=> #{retval.inspect}"
   end

@@ -68,7 +68,9 @@ class Debugger
       return nil unless 'EVAL' == frame.type && frame.iseq
       prev = frame.prev
       return nil unless prev && 'CFUNC' == prev.type && 'eval' == prev.method
-      prev.sp 3 
+      retval = prev.sp 3 
+      retval = $1 if retval =~ /^\(eval "(.+)"\)/
+      retval
     end
     module_function :eval_string
 

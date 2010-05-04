@@ -17,13 +17,15 @@ class Debugger
 
     # SEE ALSO attr's in require_relative's of loop above.
 
-    attr_accessor :core            # Debugger core object
+    attr_reader   :core            # Debugger core object
     attr_reader   :cmd_argstr      # Current command args, a String.
                                    # This is current_command with the command
                                    # name removed from the beginning.
     attr_reader   :current_command # Current command getting run, a String.
     attr_reader   :dbgr            # Debugger instance (via
                                    # Debugger::Core instance)
+    attr_accessor :debug_nest      # Number of nested debugs. Used in showing
+                                   # prompt.
     attr_accessor :different_pos   # Same type as settings[:different] 
                                    # this is the temporary value for the
                                    # next stop while settings is the default
@@ -76,6 +78,7 @@ class Debugger
 
     def initialize(core, settings={})
       @core            = core
+      @debug_nest      = 1
       @dbgr            = core.dbgr
       @hidelevels      = {}
       @last_command    = nil
