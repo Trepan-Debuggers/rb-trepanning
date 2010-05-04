@@ -20,7 +20,7 @@ shown and ... indicates it has been truncated."
   end
   
   def run(args)
-    msg @proc.debug_eval(@proc.cmd_argstr, @proc.settings[:maxstring])
+    msg @proc.debug_eval(@proc.cmd_argstr, @proc.settings[:maximumstring])
   end
 end
         

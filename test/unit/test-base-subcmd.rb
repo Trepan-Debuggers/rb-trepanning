@@ -37,7 +37,7 @@ class TestBaseCommandHelp < Test::Unit::TestCase
     assert_equal([], $errors)
     @exit_subcmd.run_set_int('', 'testing 1 2 3')
     assert_equal(1, $errors.size)
-    assert_equal(Fixnum, @exit_subcmd.settings[:width].class)
+    assert_equal(Fixnum, @exit_subcmd.settings[:maximumwidth].class)
   end
 
   def test_show_on_off

@@ -61,8 +61,8 @@ class Debugger
     end
 
     def restore_command_from_settings
-      prefix = self.class.const_get(:PREFIX).join(' ')
-      ["#{prefix} #{settings[@name]}"]
+      prefix = 
+      ["#{subcmd_prefix_string} #{settings[@name]}"]
     end
 
     # Set a Boolean-valued debugger setting. 
@@ -102,7 +102,7 @@ class Debugger
     # Generic subcommand integer value display
     def run_show_int(what=nil)
       val = settings[@name]
-      what = @name unless what
+      what = subcmd_prefix_string unless what
       msg("%s is %d." % [what, val])
     end
 
@@ -130,6 +130,9 @@ class Debugger
       @proc.settings
     end
         
+    def subcmd_prefix_string
+      self.class.const_get(:PREFIX).join(' ')
+    end
 
     # Return 'on' for true and 'off' for false, and ?? for anything else.
     def show_onoff(bool)
