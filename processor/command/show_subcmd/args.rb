@@ -3,7 +3,7 @@ require_relative '../base/subcmd'
 
 class Debugger::Subcommand::ShowArgs < Debugger::Subcommand
   unless defined?(HELP)
-    HELP = 'Show argument list to give program when it is restarte..'
+    HELP = 'Show argument list to give program when it is restarted'
     MIN_ABBREV   = 'ar'.size
     NAME         = File.basename(__FILE__, '.rb')
     PREFIX       = %w(show args)

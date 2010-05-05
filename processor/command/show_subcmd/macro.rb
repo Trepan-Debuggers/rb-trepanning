@@ -10,7 +10,15 @@ class Debugger::Subcommand::ShowMacro < Debugger::Subcommand
   end
 
   def run(args)
-    if @proc.macros.empty?
+    if args.size > 2
+      args[2..-1].each do |macro_name|
+        if @proc.macros.member?(macro_name)
+          msg "%s: %s" % [macro_name, @proc.macros[macro_name]]
+        else
+          msg "%s is not a defined macro" % macro_name
+        end
+      end
+    elsif @proc.macros.empty?
       msg "No macros defined."
     else
       msg columnize_commands(@proc.macros.keys.sort)
@@ -31,4 +39,6 @@ if __FILE__ == $0
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
+  subcommand.run(%w(show macro))
+  subcommand.run(%w(show macro u foo))
 end

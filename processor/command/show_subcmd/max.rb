@@ -4,7 +4,7 @@ require_relative '../base/subsubmgr'
 
 class Debugger::SubSubcommand::ShowMax < Debugger::SubSubcommandMgr
   unless defined?(HELP)
-    HELP   = 'Show "maximum length" settings.'
+    HELP   = 'Show "maximum length" settings'
     NAME   = File.basename(__FILE__, '.rb')
     PREFIX = %w(show max)
   end

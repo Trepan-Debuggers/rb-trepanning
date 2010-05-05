@@ -1,4 +1,3 @@
-require 'columnize'
 require_relative 'base/cmd'
 class Debugger::Command::HelpCommand < Debugger::Command
 

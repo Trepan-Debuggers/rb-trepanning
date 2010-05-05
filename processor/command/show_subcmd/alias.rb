@@ -15,13 +15,20 @@ all aliases"
   end
 
   def run(args)
-    if @proc.aliases.empty?
+    if args.size > 2
+      args[2..-1].each do |alias_name|
+        if @proc.aliases.member?(alias_name)
+          msg "%s: %s" % [alias_name, @proc.aliases[alias_name]]
+        else
+          msg "%s is not a defined alias" % alias_name
+        end
+      end
+    elsif @proc.aliases.empty?
       msg "No aliases defined."
     else
       msg columnize_commands(@proc.aliases.keys.sort)
     end
   end
-
 end
 
 if __FILE__ == $0
@@ -32,8 +39,10 @@ if __FILE__ == $0
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
   subcommand = Debugger::Subcommand::ShowAlias.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
+  puts 
+  subcommand.run(%w(show alias))
+  subcommand.run(%w(show alias u foo))
 end
