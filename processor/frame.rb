@@ -83,7 +83,7 @@ class Debugger
         return 0 unless pc_offset
         @frame.iseq.offset2lines(pc_offset)[0]
       else
-        @frame.source_location[0]
+        (@frame.source_location && @frame.source_location[0]) || 0
       end
     end
 

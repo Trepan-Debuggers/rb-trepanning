@@ -86,14 +86,14 @@ class Debugger
         iseq = frame.iseq
         args = if 'CFUNC' == frame.type
                  c_params(frame)
-               else
+               elsif iseq
                  all_param_names(iseq).join(', ')
                end
         s += frame.method
         if %w(CFUNC METHOD).member?(frame.type)
           s += "(#{args})"
         elsif %w(BLOCK LAMBDA TOP EVAL).member?(frame.type)
-          s += " |#{args}|" unless args.empty?
+          s += " |#{args}|" unless args.nil? || args.empty?
         else
           s += "(#{all_param_names(iseq)})" 
         end
