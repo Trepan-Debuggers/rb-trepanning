@@ -9,6 +9,15 @@ class Debugger::Command::MacroCommand < Debugger::Command
 
 Define NAME as a debugger macro. Debugger macros get a list of arguments
 and should return a command string to use in its place.
+
+For example, the following can be used debug a debugger command,
+assuming 'set debug dbgr' is set:
+
+  macro dbgcmd Proc.new{|*args| \"
+     debug $rbdbgr_cmdproc.commands['\#{args[0]}'].run(\#{args.inspect})\"}
+
+With the above, 'dbgcmd list 5' will debug the debugger 'list' command 
+on the command 'list 5'.
 "
 
     CATEGORY      = 'support'
@@ -24,6 +33,7 @@ and should return a command string to use in its place.
     if proc_obj
       if proc_obj.is_a?(Proc)
         @proc.macros[macro_name] = proc_obj
+        msg "Macro #{macro_name} defined"
       else
         errmsg "Expecting a Proc object; got: #{proc_argstr}"
       end

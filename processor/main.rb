@@ -239,7 +239,17 @@ class Debugger
           return false if args.size == 0
           break unless @macros.member?(macro_cmd_name)
           current_command = @macros[macro_cmd_name].call(*args[1..-1])
-          args = current_command.split
+          msg current_command if settings[:debugmacro]
+          if current_command.is_a?(Array) && 
+              current_command.any {|val| !val.is_a?(String)}
+            args = current_command
+          elsif current_command.is_a?(String)
+            args = current_command.split
+          else
+            errmsg("macro #{macro_cmd_name} should return an Array " +
+                   "of Strings or a String. Got #{current_command.inspect}")
+            return false
+          end
         end
 
         @cmd_name = args[0]

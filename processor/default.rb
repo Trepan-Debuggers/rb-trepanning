@@ -11,6 +11,7 @@ class Debugger
       :different     => 'nostack', # stop *only* when  different position? 
 
       :debugexcept   => true,      # Internal debugging of command exceptions
+      :debugmacro    => false,     # debugging macros
       :debugskip     => false,     # Internal debugging of step/next skipping
       :debugstack    => false,     # How hidden outer debugger stack frames
 

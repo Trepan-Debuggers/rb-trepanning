@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::ShowDebugStack < Debugger::ShowBoolSubSubcommand
+class Debugger::SubSubcommand::ShowDebugMacro < Debugger::ShowBoolSubSubcommand
   unless defined?(HELP)
-    HELP        = "Show complete stack including possibly setup stack from rbdbgr"
+    HELP        = "Show debugging macros"
     MIN_ABBREV  = 'st'.size
     NAME        = File.basename(__FILE__, '.rb')
-    PREFIX      = %w(show debug stack)
+    PREFIX      = %w(show debug macro)
   end
 
 end
@@ -22,8 +22,8 @@ if __FILE__ == $0
                                                            show_cmd)
 
   # FIXME: remove the 'join' below
-  cmd_name        = Debugger::SubSubcommand::ShowDebugStack::PREFIX.join('')
-  debugx_cmd      = Debugger::SubSubcommand::ShowDebugStack.new(show_cmd.proc, 
+  cmd_name        = Debugger::SubSubcommand::ShowDebugMacro::PREFIX.join('')
+  debugx_cmd      = Debugger::SubSubcommand::ShowDebugMacro.new(show_cmd.proc, 
                                                                 debug_cmd,
                                                                 cmd_name)
 
