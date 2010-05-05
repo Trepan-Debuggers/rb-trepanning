@@ -85,6 +85,14 @@ class Debugger
       @unmaskable_events = %w(brkpt raise switch vm)
     end
 
+    def step_events_list
+      if 0 == @step_events
+        return nil
+      else
+        Trace.bitmask2events(@step_events).join(', ')
+      end
+    end
+
     # A trace-hook processor with the interface a trace hook should have.
     def event_processor(event, frame, arg=nil)
 

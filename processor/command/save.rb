@@ -16,15 +16,15 @@ class Debugger::Command::SaveCommand < Debugger::Command
     if args.size > 1
     end
     @proc.commands.each do |cmd_name, cmd_obj|
-      cmd_obj.restore_command if cmd_obj.respond_to?(:restore_command)
+      cmd_obj.save_command if cmd_obj.respond_to?(:save_command)
       next unless cmd_obj.is_a?(Debugger::SubcommandMgr)
       cmd_obj.subcmds.subcmds.each do |subcmd_name, subcmd_obj|
-        puts subcmd_obj.restore_command if 
-          subcmd_obj.respond_to?(:restore_command)
+        puts subcmd_obj.save_command if 
+          subcmd_obj.respond_to?(:save_command)
         next unless subcmd_obj.is_a?(Debugger::SubSubcommandMgr)
         subcmd_obj.subcmds.subcmds.each do |subsubcmd_name, subsubcmd_obj|
-        puts subsubcmd_obj.restore_command if 
-            subsubcmd_obj.respond_to?(:restore_command)
+        puts subsubcmd_obj.save_command if 
+            subsubcmd_obj.respond_to?(:save_command)
         end
       end
     end

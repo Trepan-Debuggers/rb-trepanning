@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-require 'trace'
 require_relative '../base/subcmd'
 
 class Debugger::Subcommand::ShowEvents < Debugger::Subcommand
@@ -12,22 +11,20 @@ class Debugger::Subcommand::ShowEvents < Debugger::Subcommand
 
   # FIXME: this really should be a subcommand of "set trace"
   def run(args)
-    event_bitmask = @proc.core.step_events
-    if event_bitmask == 0
-      msg('No events trapped.')
+    step_events_list = @proc.core.step_events_list
+    if step_events_list
+      msg 'Trace events we may stop on:'
+      msg "\t" + step_events_list
     else
-      msg('Trace events we may stop on:')
-      msg("\t" + Trace.bitmask2events(event_bitmask).join(', '))
+      msg 'No events trapped.'
     end
   end
-
 
 end
 
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  require_relative '../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
@@ -35,15 +32,6 @@ if __FILE__ == $0
   subcommand = Debugger::Subcommand::ShowEvents.new(cmd)
   testcmdMgr = Debugger::Subcmd.new(subcommand)
 
-  def subcommand.msg(message)
-    puts message
-  end
-  def subcommand.msg_nocr(message)
-    print message
-  end
-  def subcommand.errmsg(message)
-    puts message
-  end
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
   puts

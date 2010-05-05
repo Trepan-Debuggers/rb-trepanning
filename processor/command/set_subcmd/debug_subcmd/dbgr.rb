@@ -44,5 +44,5 @@ if __FILE__ == $0
   debugx_cmd.run([name, 'on'])
   debugx_cmd.run([name, 'off'])
   puts '-' * 10
-  puts debugx_cmd.restore_command()
+  puts debugx_cmd.save_command
 end

@@ -43,6 +43,6 @@ if __FILE__ == $0
   subcmd_name = Debugger::Subcommand::SetAutoIrb::PREFIX[1..-1].join('')
   autox_cmd.run([subcmd_name])
   autox_cmd.run([subcmd_name, 'off'])
-  puts autox_cmd.restore_command.join("\n")
+  puts autox_cmd.save_command.join("\n")
 
 end

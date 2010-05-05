@@ -36,7 +36,7 @@ override this setting."
     SHORT_HELP   = "Set to make sure 'next/step' move to a new position."
   end
 
-  alias restore_command restore_command_from_settings
+  alias save_command save_command_from_settings
 
   def run(args)
     if args.size == 3 && 'nostack' == args[2]
@@ -64,5 +64,5 @@ if __FILE__ == $0
   subcommand.summary_help(name)
   puts
   puts '-' * 20
-  puts subcommand.restore_command()
+  puts subcommand.save_command
 end

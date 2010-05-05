@@ -47,7 +47,7 @@ if __FILE__ == $0
 
   subcmd.run([cmd_name])
   %w(off on 1 0).each { |arg| subcmd.run([cmd_name, arg]) }
-  puts subcmd.restore_command()
+  puts subcmd.save_command()
 
 end
 

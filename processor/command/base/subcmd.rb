@@ -60,11 +60,6 @@ class Debugger
       return(@proc.confirm(msg, default))
     end
 
-    def restore_command_from_settings
-      prefix = 
-      ["#{subcmd_prefix_string} #{settings[subcmd_setting_key]}"]
-    end
-
     # Set a Boolean-valued debugger setting. 
     def run_set_bool(args, default=true)
       onoff_arg = args.size < 3 ? 'on' : args[2]
@@ -124,6 +119,11 @@ class Debugger
       name = opts.member?(:name)  ? opts[:name]  : @name
       val  = opts.member?(:value) ? opts[:value] : settings[name] 
       msg("%s is %s." % [what, val])
+    end
+
+    def save_command_from_settings
+      prefix = 
+      ["#{subcmd_prefix_string} #{settings[subcmd_setting_key]}"]
     end
 
     def settings

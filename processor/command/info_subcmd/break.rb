@@ -60,7 +60,7 @@ EOH
     end
   end
 
-  def restore_command
+  def save_command
     bpmgr = @proc.brkpts
     bpmgr.list.inject([]) do |res, bp|
       iseq = bp.iseq
@@ -156,6 +156,6 @@ if __FILE__ == $0
   brk_cmd.run(['break', 'foo'])
   subcommand.run(%w(info break))
   puts '-' * 20
-  p subcommand.restore_command
+  p subcommand.save_command
 
 end

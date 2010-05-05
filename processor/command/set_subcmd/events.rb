@@ -25,10 +25,11 @@ Examples:
     SHORT_HELP   = 'Set trace events we may stop on.'
   end
 
-  ## FIXME
-  ## def restore_command
-  ##   won't work here: alias restore_command restore_command_from_settings
-  ## end
+  def save_command
+    step_events_list = @proc.core.step_events_list
+    step_events_list = 'brkpt' unless step_events_list
+    ["#{subcmd_prefix_string} #{step_events_list}"]
+  end
 
   def run(args)
     unless args.size <= 2
@@ -63,8 +64,7 @@ if __FILE__ == $0
     subcommand.run(%w(set events) + events)
     puts 'bitmask: %09b, events: %s ' % [dbgr.core.step_events, events.inspect]
   end
-  ## FIXME
-  ## puts '-' * 20
-  ## puts subcommand.restore_command()
+  puts '-' * 20
+  puts subcommand.save_command()
 
 end

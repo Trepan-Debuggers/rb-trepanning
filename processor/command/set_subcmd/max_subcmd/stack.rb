@@ -18,7 +18,7 @@ class Debugger::Subcommand::SetMaxStack < Debugger::SubSubcommand
                 DEFAULT_MIN, nil)
   end
 
-  alias restore_command restore_command_from_settings
+  alias save_command save_command_from_settings
 
 end
 
@@ -55,5 +55,5 @@ if __FILE__ == $0
   require_relative '../../../../lib/rbdbgr'
   dbgr = Debugger.new(:set_restart => true)
   dbgr.debugger
-  puts subcmd.restore_command()
+  puts subcmd.save_command
 end

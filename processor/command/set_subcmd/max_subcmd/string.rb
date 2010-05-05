@@ -25,7 +25,7 @@ the output is intended to be formated as is.
                 DEFAULT_MIN, nil)
   end
 
-  alias restore_command restore_command_from_settings
+  alias save_command save_command_from_settings
 
 end
 
@@ -48,5 +48,5 @@ if __FILE__ == $0
   subcmd.summary_help(name)
   puts
   puts '-' * 20
-  puts subcmd.restore_command()
+  puts subcmd.save_command
 end
