@@ -10,8 +10,6 @@ class Debugger::Subcommand::SetBasename < Debugger::SetBoolSubcommand
     PREFIX     = %w(set basename)
   end
 
-  alias save_command save_command_from_settings
-
 end
 
 if __FILE__ == $0

@@ -70,6 +70,8 @@ class Debugger
 
     # Run user debugger command startup files.
     add_startup_files unless @settings[:nx]
+    add_command_file(@settings[:restore_profile]) if 
+      @settings[:restore_profile] && File.readable?(@settings[:restore_profile])
   end
 
   # To call from inside a Ruby program, there is one-time setup that 

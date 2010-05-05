@@ -8,11 +8,13 @@ module Rbdbgr
 
   # Default settings for a Debugger class object
   DEFAULT_SETTINGS = {
-    :cmdproc_opts => {},    # Default Debugger::CmdProcessor settings
-    :core_opts    => {},    # Default Debugger::Core settings
-    :initial_dir  => nil,   # Current directory run when "restart" is given
-    :nx           => false, # Don't run user startup file (e.g. .rbdbgrc)
-    :restart_argv => []     # Command run when "restart" is given
+    :cmdproc_opts    => {},    # Default Debugger::CmdProcessor settings
+    :core_opts       => {},    # Default Debugger::Core settings
+    :delete_restore  => true,  # Delete restore profile after reading? 
+    :initial_dir     => nil,   # Current directory run when "restart" is given
+    :nx              => false, # Don't run user startup file (e.g. .rbdbgrc)
+    :restart_argv    => [],    # Command run when "restart" is given
+    :restore_profile => nil    # Profile used to set/restore debugger state
   } unless defined?(DEFAULT_SETTINGS)
 
   # Default settings for Debugger run from the command line.

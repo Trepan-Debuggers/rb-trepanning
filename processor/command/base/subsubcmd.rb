@@ -72,11 +72,10 @@ class Debugger
     def run(args)
       run_set_bool(args)
     end
+
     def save_command
-      setting = @name.gsub(/^set/,'')
-      prefix  = self.class.const_get(:PREFIX).join(' ')
-      val     = settings[setting.to_sym] ? 'on' : 'off'
-      ["#{prefix} #{val}"]
+      val     = settings[subcmd_setting_key] ? 'on' : 'off'
+      ["#{subcmd_prefix_string} #{val}"]
     end
   end
 

@@ -122,7 +122,6 @@ class Debugger
     end
 
     def save_command_from_settings
-      prefix = 
       ["#{subcmd_prefix_string} #{settings[subcmd_setting_key]}"]
     end
 
@@ -161,6 +160,11 @@ class Debugger
   class SetBoolSubcommand < Subcommand
     def run(args)
       run_set_bool(args)
+    end
+
+    def save_command
+      val     = settings[subcmd_setting_key] ? 'on' : 'off'
+      ["#{subcmd_prefix_string} #{val}"]
     end
   end
 

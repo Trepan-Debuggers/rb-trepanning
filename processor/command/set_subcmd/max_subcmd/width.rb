@@ -15,13 +15,9 @@ Set number of characters the debugger thinks are in a line.'
 
   def run(args)
     args.shift
-    if args.size >= 3 
-      run_set_int(args[2..-1].join(' '),
-                  "The 'width' command requires a line width", 
-                  0, nil)
-    else
-      errmsg "Too few arguments - the 'width' command requires a line width"
-    end
+    run_set_int(args.join(' '),
+                "The 'width' command requires a line width", 
+                0, nil)
   end
 
   alias save_command save_command_from_settings

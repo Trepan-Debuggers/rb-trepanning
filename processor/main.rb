@@ -214,7 +214,7 @@ class Debugger
           @dbgr.stop
           raise
         rescue Exception => exc
-          errmsg("Internal debugger error: #{exc}.inspect")
+          errmsg("Internal debugger error: #{exc.inspect}")
           exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end
       end

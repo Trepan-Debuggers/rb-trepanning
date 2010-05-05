@@ -14,6 +14,10 @@
 #      Don’t execute commands  found in any initialization
 #      files, e.g. <tt>.rdebugrc</tt>.
 #
+#<tt>--restore=PROFILE</tt>::
+#      Debugger command file which restores debugger settings,
+#      resumably saved before a 'restart' debugger command.
+#
 #<tt>--version</tt>::
 #      Show the version number.
 #
@@ -75,6 +79,13 @@ EOB
           end
         else
           stderr.puts "\"#{dir}\" is not a directory. Option --cd ignored."
+        end
+      end
+      opts.on("--restore PROFILE", String, 
+              "Restore debugger state using PROFILE") do |profile|
+        if File.readable?(profile)
+          options[:restore_profile] = profile
+          stderr.puts "Debugger command file #{profile} is not readable. --restore option ignored."
         end
       end
       opts.on_tail("--help", "Show this message") do
