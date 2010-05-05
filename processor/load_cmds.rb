@@ -49,6 +49,28 @@ class Debugger
       end
     end
 
+    # Looks up cmd_array[0] in @commands and runs that. We do lots of 
+    # validity testing on cmd_array.
+    def run_cmd(cmd_array)
+      unless cmd_array.is_a?(Array)
+        errmsg "run_cmd argument should be an Array, got: #{cmd_array.class}"
+        return
+      end
+      if cmd_array.detect{|item| !item.is_a?(String)}
+        errmsg "run_cmd argument Array should only contain strings. " + 
+          "Got #{cmd_array.inspect}"
+        return
+      end
+      if cmd_array.empty?
+        errmsg "run_cmd Array should have at least one item. " + 
+          "Got: #{cmd_array.inspect}"
+        return
+      end
+      cmd_name = cmd_array[0]
+      if @commands.member?(cmd_name)
+        @commands[cmd_name].run(cmd_array)
+      end
+    end
   end
 end
 if __FILE__ == $0
@@ -56,7 +78,21 @@ if __FILE__ == $0
   cmddir = File.join(File.dirname(__FILE__), 'command')
   cmdproc.instance_variable_set('@settings', {})
   cmdproc.load_cmds_initialize
-  puts cmdproc.commands.keys.sort.join("\n")
+  require 'columnize'
+  puts Columnize.columnize(cmdproc.commands.keys.sort)
   puts '=' * 20
-  puts cmdproc.aliases.keys.sort.join("\n")
+  puts Columnize.columnize(cmdproc.aliases.keys.sort)
+  puts '=' * 20
+
+  def cmdproc.errmsg(mess)
+    puts "** #{mess}"
+  end
+
+  def cmdproc.msg(mess)
+    puts mess
+  end
+
+  cmdproc.run_cmd('foo')  # Invalid - not an Array
+  cmdproc.run_cmd([])     # Invalid - empty Array
+  cmdproc.run_cmd(['list', 5])  # Invalid - nonstring arg
 end

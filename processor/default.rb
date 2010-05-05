@@ -22,6 +22,8 @@ class Debugger
                                    # printed
       :maxwidth       => (ENV['COLUMNS'] || '80').to_i,
       :prompt        => '(rbdbgr): ',
+      :save_cmdfile  => nil,       # If set, debugger command file to be
+                                   # used on restart
       :timer         => false,     # show elapsed time between events
       :traceprint    => false,     # event tracing printing
       :tracebuffer   => false,     # save events to a trace buffer.

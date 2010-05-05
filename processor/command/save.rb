@@ -18,8 +18,9 @@ class Debugger::Command::SaveCommand < Debugger::Command
       if args.size > 1
         args[1]
       else
-        File.join(Dir.tmpdir, 
-                  Dir::Tmpname.make_tmpname(['rbdbgr-save', '.txt'], nil))
+        @proc.settings[:save_cmdfile] ||
+          File.join(Dir.tmpdir, 
+                    Dir::Tmpname.make_tmpname(['rbdbgr-save', '.txt'], nil))
       end
     begin
       save_file = File.open(save_filename, 'w')

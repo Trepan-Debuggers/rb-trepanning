@@ -26,11 +26,13 @@ class Debugger::Command::RestartCommand < Debugger::Command
              "Adding Ruby interpreter."])
         argv.unshift Rbdbgr::ruby_path
       end
-      @proc.commands['show'].run(%w(show args))
+      @proc.run_cmd(%w(show args))
       if not confirm('Restart (exec)?', false)
         msg "Restart not confirmed"
       else
         msg 'Restarting...'
+        @proc.run_cmd(%w(save))
+        argv.unshift
         # FIXME: Run atexit finalize routines?
         Dir.chdir(dbgr.initial_dir) if dbgr.initial_dir
         exec(*argv)
