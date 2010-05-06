@@ -28,6 +28,17 @@ class TestCmdProcessor < Test::Unit::TestCase
     assert cmd_obj.respond_to?(:run), 'Command should have a run method'
   end
 
+  def test_compute_prompt
+    assert_equal('(rbdbgr): ', @cmdproc.compute_prompt)
+    Thread.new{ assert_equal('(rbdbgr@55): ', @cmdproc.compute_prompt.gsub(/@\d+/, '@55'))}.join
+    x = Thread.new{ Thread.pass; x = 1 }
+    assert_equal('(rbdbgr@main): ', @cmdproc.compute_prompt)
+    x.join
+    @cmdproc.debug_nest += 1
+    assert_equal('((rbdbgr)): ', @cmdproc.compute_prompt)
+    @cmdproc.debug_nest -= 1
+  end
+
   # See that each command has required constants defined.  Possibly in
   # a strongly-typed language we wouldn't need to do much of this.
   def test_command_class_vars

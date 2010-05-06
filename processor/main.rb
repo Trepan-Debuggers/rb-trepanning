@@ -17,10 +17,11 @@ class Debugger
 
     # SEE ALSO attr's in require_relative's of loop above.
 
-    attr_reader   :core            # Debugger core object
+    attr_reader   :cmd_name        # command name before alias or macro resolution
     attr_reader   :cmd_argstr      # Current command args, a String.
                                    # This is current_command with the command
                                    # name removed from the beginning.
+    attr_reader   :core            # Debugger core object
     attr_reader   :current_command # Current command getting run, a String.
     attr_reader   :dbgr            # Debugger instance (via
                                    # Debugger::Core instance)
@@ -34,14 +35,14 @@ class Debugger
                                    # the command loop (which often continues to 
                                    # run the debugged program). 
     attr_accessor :line_no         # Last line shown in "list" command
-    attr_accessor :pass_exception  # Pass an exception back 
     attr_accessor :next_level      # Fixnum. frame.stack_size has to
                                    # be <= than this.  If next'ing,
                                    # this will be > 0.
     attr_accessor :next_thread     # Thread. If non-nil then in
                                    # stepping the thread has to be
                                    # this thread.
-    attr_reader   :cmd_name        # command name before rea
+    attr_accessor :pass_exception  # Pass an exception back 
+    attr_accessor :prompt          # String print before requesting input
     attr_reader   :settings        # Hash[:symbol] of command
                                    # processor settings
 
@@ -124,6 +125,20 @@ class Debugger
         Pathname.new(filename).cleanpath.to_s
     end
 
+    def compute_prompt
+      thread_str = 
+        if 1 == Thread.list.size
+          ''
+        elsif Thread.current == Thread.main
+          '@main'
+        else
+          "@#{Thread.current.object_id}"
+        end
+      "%s#{settings[:prompt]}%s%s: " % 
+        ['(' * @debug_nest, thread_str, ')' * @debug_nest]
+      
+    end
+
     # Check that we meed the criteria that cmd specifies it needs
     def ok_for_running(cmd, name, nargs)
       # TODO check execution_set against execution status.
@@ -197,6 +212,8 @@ class Debugger
       else
         return if stepping_skip? || @stack_size <= @hide_level
       end
+
+      @prompt = compute_prompt
 
       @leave_cmd_loop = false
       print_location unless @settings[:traceprint]
@@ -300,12 +317,23 @@ if __FILE__ == $0
   require_relative '../lib/rbdbgr'
   dbg =  Debugger.new(:nx => true)
   dbg.core.processor.msg('I am main')
-  dbg.core.processor.errmsg('Whoa!')
-  cmds = dbg.core.processor.commands
-  p dbg.core.processor.aliases
+  cmdproc = dbg.core.processor
+  cmdproc.errmsg('Whoa!')
+  cmds = cmdproc.commands
+  p cmdproc.aliases
   cmd_name, cmd_obj = cmds.first
   puts cmd_obj.class.const_get(:HELP)
   puts cmd_obj.class.const_get(:SHORT_HELP)
+
+  puts cmdproc.compute_prompt
+  Thread.new{ puts cmdproc.compute_prompt }.join
+
+  x = Thread.new{ Thread.pass; x = 1 }
+  puts cmdproc.compute_prompt
+  x.join
+  cmdproc.debug_nest += 1
+  puts cmdproc.compute_prompt
+
 
   if ARGV.size > 0
     dbg.core.processor.msg('Enter "q" to quit')

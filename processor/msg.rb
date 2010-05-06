@@ -16,8 +16,9 @@ class Debugger
     end
 
     def read_command()
-      @dbgr.intf[-1].read_command(@settings[:prompt])
+      @dbgr.intf[-1].read_command(@prompt)
     end
+
     def safe_rep(str)
       safe_repr(str, @settings[:maxstring])
     end
