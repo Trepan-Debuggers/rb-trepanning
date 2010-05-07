@@ -18,6 +18,31 @@ class Debugger
       return line.gsub(/^\s+/, '').chomp
     end
 
+    def loc_and_text(loc, frame, line_no, source_container)
+      if source_container[0] != 'file'
+        via = loc
+        while source_container[0] != 'file' && frame.prev do
+          frame            = frame.prev
+          source_container = frame_container(frame, false)
+        end
+        if source_container[0] == 'file'
+          line_no  = frame.source_location[0]
+          filename  = source_container[1]
+          loc      += " via #{canonic_file(filename)}:#{line_no}"
+          text      = line_at(filename, line_no)
+        end
+      else
+        container = source_container[1]
+        map_file, map_line = LineCache::map_file_line(container, line_no)
+        if [container, line_no] != [map_file, map_line]
+          loc += " remapped #{canonic_file(map_file)}:#{map_line}"
+        end
+        
+        text  = line_at(container, line_no)
+      end
+      [loc, line_no, text]
+    end
+
     def print_location
       if %w(c-call call).member?(@core.event)
         # FIXME: Fix Ruby so we don't need this workaround? 
@@ -38,41 +63,12 @@ class Debugger
                     (EVENT2ICON[@core.event] || @core.event)
                   end
       @line_no  = frame_line
-      filename  = source_container[1]
-      canonic_filename = 
-        if (0 == filename.index('(eval')) && @frame.prev &&
-            (eval_str = Debugger::Frame.eval_string(@frame.prev))
-          'eval ' + safe_repr(eval_str, 15)
-        else
-          canonic_file(filename)
-        end
-      loc = "#{canonic_filename}:#{line_no}"
 
-      # FIXME: put some of the below into a helper routine
-      # See also duplicate code in list.rb and use in info_subcmd/thread.
-      if source_container[0] != 'file'
-        frame = @frame
-        via = loc
-        while source_container[0] != 'file' && frame.prev do
-          frame            = frame.prev
-          source_container = frame_container(frame, false)
-        end
-        if source_container[0] == 'file'
-          @line_no  = frame.source_location[0]
-          filename  = source_container[1]
-          loc      += " via #{canonic_file(filename)}:#{@line_no}"
-          text      = line_at(filename, @line_no)
-        end
-      else
-        container = source_container[1]
-        map_file, map_line = LineCache::map_file_line(container, @line_no)
-        if [container, @line_no] != [map_file, map_line]
-          loc += " remapped #{canonic_file(map_file)}:#{map_line}"
-        end
-        
-        text  = line_at(container, @line_no)
-      end
+      loc = source_location_info(source_container, @line_no, @frame)
+      loc, @line_no, text = loc_and_text(loc, @frame, @line_no, 
+                                         source_container)
       msg "#{ev} (#{loc})"
+
       if %w(return c-return).member?(@core.event)
         retval = Debugger::Frame.value_returned(@frame, @core.event)
         msg 'R=> %s' % retval.inspect 
@@ -83,5 +79,19 @@ class Debugger
         @line_no -= 1
       end
     end
+
+    def source_location_info(source_container, line_no, frame)
+      filename  = source_container[1]
+      canonic_filename = 
+        if (0 == filename.index('(eval')) && frame.prev &&
+            (eval_str = Debugger::Frame.eval_string(frame.prev))
+          'eval ' + safe_repr(eval_str, 15)
+        else
+          canonic_file(filename)
+        end
+      loc = "#{canonic_filename}:#{line_no}"
+      return loc
+    end # source_location_info
+
   end
 end

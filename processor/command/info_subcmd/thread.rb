@@ -16,17 +16,22 @@ class Debugger::Subcommand::InfoThread < Debugger::Subcommand
     Thread.list.each_with_index do |th, i|
       if th == Thread.current
         frame = @proc.frame
+        line_no = @proc.frame_line
         mark = '+'
       else
         # FIXME: check don't show blocked waiting to run hook
         frame = th.threadframe
+        line_no = (frame.source_location && frame.source_location[0]) || 0
         mark = ' '
       end
       frame_info = format_stack_call(frame, {})
 
-      # FIXME: print location via routine in location.rb
-      msg("%s %2d %d %s\n\t%s" % 
-          [mark, i, th.object_id, th.inspect, frame_info])
+
+      source_container = @proc.frame_container(frame, false)
+      loc = @proc.source_location_info(source_container, line_no, frame)
+
+      msg("%s %2d %d %s\n\t%s\n\t%s" % 
+          [mark, i, th.object_id, th.inspect, frame_info, loc])
     end
   end
 
