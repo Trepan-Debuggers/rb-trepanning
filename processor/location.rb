@@ -49,7 +49,7 @@ class Debugger
       loc = "#{canonic_filename}:#{line_no}"
 
       # FIXME: put some of the below into a helper routine
-      # See also duplicate code in list.rb
+      # See also duplicate code in list.rb and use in info_subcmd/thread.
       if source_container[0] != 'file'
         frame = @frame
         via = loc
