@@ -32,6 +32,9 @@ module Rbdbgr
       iseq.source_container[1] =~ /^#{dirname}/
     }
     rejected = {}
+    # SCRIPT_ISEQS__ is updated automatically.  Dup copy is to make
+    # sure we we aren't iterating over something that some other
+    # process, thread or hook is filling.
     script_iseqs = SCRIPT_ISEQS__.dup
     script_iseqs.each do |name, iseqs|
       ary = iseqs.select(&match_block)
