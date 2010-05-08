@@ -10,6 +10,7 @@ class Debugger
       :basename      => false,     # Show basename of filenames only
       :different     => 'nostack', # stop *only* when  different position? 
 
+      :debugdbgr     => false,     # Debugging the debugger
       :debugexcept   => true,      # Internal debugging of command exceptions
       :debugmacro    => false,     # debugging macros
       :debugskip     => false,     # Internal debugging of step/next skipping

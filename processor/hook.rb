@@ -3,6 +3,7 @@ class Debugger
     # Command processor hooks.
     attr_reader   :autoirb_hook
     attr_reader   :autolist_hook
+    attr_reader   :debug_dbgr_hook
     attr_reader   :display_hook
     attr_reader   :timer_hook
     attr_reader   :trace_hook
@@ -64,6 +65,16 @@ class Debugger
       irb_cmd = commands['irb']
       @autoirb_hook  = ['autoirb', 
                         Proc.new{|*args| irb_cmd.run(['irb']) if irb_cmd}]
+
+      @debug_dbgr_hook = ['dbgdbgr',
+                          Proc.new{|*args| 
+                            if settings[:debugdbgr]
+                              $rbdbgr_cmdproc  = self
+                              $rbdbgr_frame    = frame
+                            else
+                              $rbdbgr_cmdproc  = nil
+                              $rbdbgr_frame    = nil
+                            end}]
 
       display_cmd = commands['display']
       @display_hook   = ['display', 

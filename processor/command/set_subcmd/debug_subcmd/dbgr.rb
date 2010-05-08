@@ -12,12 +12,13 @@ when the command processor was entered.  '
     MIN_ABBREV  = 'db'.size
     NAME        = File.basename(__FILE__, '.rb')
     PREFIX      = %w(set debug dbgr)
-    SHORTHELP   = 'Set debugging debugger'
+    SHORT_HELP  = 'Set debugging debugger'
   end
 
   def run(args)
-    $rbdbgr_cmdproc  = @proc
-    $rbdbgr_frame    = @proc.frame
+    super
+    @proc.cmdloop_prehooks.insert_if_new(-1, *@proc.debug_dbgr_hook)
+    @proc.debug_dbgr_hook[1].call
   end
 
 end
@@ -25,7 +26,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  require_relative '../../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
