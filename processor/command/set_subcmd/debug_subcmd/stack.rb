@@ -11,7 +11,7 @@ class Debugger::SubSubcommand::SetDebugStack < Debugger::SetBoolSubSubcommand
 
   def run(args)
     super
-    @hide_level  = 
+    @proc.hide_level  = 
       if @proc.settings[:debugstack]
         0
       else

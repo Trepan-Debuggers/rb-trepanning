@@ -99,11 +99,8 @@ class Debugger
       return_exception = nil
       # FIXME: check for breakpoints or other unmaskable events. 
       # For now there are none.
-      
-      @mutex.synchronize do
-        ## debug:
-        ## puts "#{frame.source_container[1]}:#{frame.source_location[0]}:in `#{frame.method}' #{event}"
 
+      @mutex.synchronize do
         @frame = frame
         while @frame.type == 'IFUNC'
           @frame = @frame.prev
@@ -119,8 +116,10 @@ class Debugger
         @event    = event
         @hook_arg = arg
         
+        ### debug:
+        ### puts "#{frame.source_container[1]}:#{frame.source_location[0]}:in `#{frame.method}' #{event}" # if %w(line).member?(event)
         @processor.process_commands(@frame)
-        
+                
         # FIXME: There should be a Trace.event_mask which should return the first
         # mask that matches the given trace hook.
         if @step_count < 0
@@ -136,6 +135,7 @@ class Debugger
           
           unless @event_proc == dbgr.trace_filter.hook_proc
             dbgr.trace_filter.add_trace_func(@event_proc) 
+            ## debug: p '+++1', @event_proc, dbgr.trace_filter.hook_proc
           end
           
           # FIXME: this doesn't work. Bug in rb-trace? 

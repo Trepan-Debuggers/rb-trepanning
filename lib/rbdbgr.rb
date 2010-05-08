@@ -72,6 +72,11 @@ class Debugger
     add_startup_files unless @settings[:nx]
     add_command_file(@settings[:restore_profile]) if 
       @settings[:restore_profile] && File.readable?(@settings[:restore_profile])
+
+    at_exit do 
+      clear_trace_func
+      @intf[-1].close 
+    end
   end
 
   # To call from inside a Ruby program, there is one-time setup that 

@@ -16,7 +16,6 @@ class Debugger::UserInterface < Debugger::Interface
   FILE_HISTORY = '.rbdbgr_hist' unless defined?(FILE_HISTORY)
 
   def initialize(inp=nil, out=nil, opts={})
-    at_exit { finalize }
     super(inp, out, opts)
     @input = if inp.class.ancestors.member?(Debugger::InputBase)
                inp

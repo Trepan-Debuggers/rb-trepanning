@@ -292,8 +292,8 @@ class Debugger
     end
     
     def validate_initialize
-      top_srcdir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-      @dbgr_script_iseqs, @dbgr_iseqs = filter_scripts(top_srcdir)
+      ## top_srcdir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+      ## @dbgr_script_iseqs, @dbgr_iseqs = filter_scripts(top_srcdir)
     end
   end
 end
