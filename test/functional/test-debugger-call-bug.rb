@@ -12,7 +12,6 @@ class TestDebuggerCallBug < Test::Unit::TestCase
       mydbgr = Debugger.new()
       mydbgr.core.processor.define_singleton_method(:process_commands) do
         |frame|
-        return if @core.event == 'return'  # STILL have a bug somewhere
         # p [frame.source_container, frame.source_location, @core.event].flatten
         $calls << [frame.source_container, frame.source_location].flatten
       end
