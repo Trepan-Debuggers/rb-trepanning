@@ -3,7 +3,7 @@ require 'test/unit'
 require_relative '../../app/disassemble'
 
 # Test Debugger:CmdProcessor
-class TestLibDisassemble < Test::Unit::TestCase
+class TestAppDisassemble < Test::Unit::TestCase
 
   include Debugger::Disassemble
 

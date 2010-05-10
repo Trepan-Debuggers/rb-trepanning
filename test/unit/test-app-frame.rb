@@ -3,7 +3,7 @@ require 'test/unit'
 require_relative '../../app/frame'
 require 'thread_frame'
 
-class TestLibFrame < Test::Unit::TestCase
+class TestAppFrame < Test::Unit::TestCase
 
   include Debugger::Frame
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 require_relative '../base/subcmd'
-require_relative '../../../app/frame' #
+require_relative '../../../app/thread'
+require_relative '../../../app/frame'
 
 class Debugger::Subcommand::InfoThread < Debugger::Subcommand
   unless defined?(HELP)
@@ -11,8 +12,20 @@ class Debugger::Subcommand::InfoThread < Debugger::Subcommand
     PREFIX       = %w(info thread)
   end
 
-  include Debugger::Frame # For format_stack_call
-  def run(args)
+  include Debugger::ThreadHelper
+  include Debugger::Frame # To show stack
+
+  def get_frame_from_thread(th)
+    if th == Thread.current
+      @proc.frame
+    else
+      # FIXME: Check to see if we are blocked on entry to debugger.
+      # If so, walk back frames.
+      th.threadframe
+    end
+  end
+
+  def list_threads(verbose=false)
     Thread.list.each_with_index do |th, i|
       main_str = 
         if th == Thread.main
@@ -23,12 +36,11 @@ class Debugger::Subcommand::InfoThread < Debugger::Subcommand
       frame, line_no, mark = 
         if th == Thread.current
           [@proc.frame, @proc.frame_line, '+']
-      else
-        # FIXME: check don't show blocked waiting to run hook
+        else
           [th.threadframe, 
            (@proc.frame.source_location && @proc.frame.source_location[0]),
            ' ']
-      end
+        end
       frame_info = format_stack_call(frame, {})
 
       source_container = @proc.frame_container(frame, false)
@@ -36,6 +48,24 @@ class Debugger::Subcommand::InfoThread < Debugger::Subcommand
 
       msg("%s %2d %s%d %s\n\t%s\n\t%s" % 
           [mark, i, main_str, th.object_id, th.inspect, frame_info, loc])
+    end
+  end
+
+  def run(args)
+    if args.size == 2
+      list_threads
+    elsif args.size > 2
+      args[2..-1].each do |id_or_num_str|
+        num = @proc.get_int_noerr(id_or_num_str)
+        if num
+          th = get_thread(num)
+          if th
+            frame = get_frame_from_thread(th)
+            print_stack_trace(frame, {})
+          end
+        end
+      end
+    else
     end
   end
 
@@ -61,5 +91,9 @@ if __FILE__ == $0
   Thread.new do 
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
     cmd.run(cmd_args)
+    puts '-' * 10
+    cmd.run(cmd_args + [0])
+    puts '-' * 10
+    cmd.run(cmd_args + [1])
   end.join
 end

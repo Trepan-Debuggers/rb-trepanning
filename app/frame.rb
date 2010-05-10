@@ -1,6 +1,5 @@
 require_relative 'util'
 
-include Rbdbgr
 class Debugger
 
   module Frame

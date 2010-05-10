@@ -3,7 +3,7 @@ require 'test/unit'
 require_relative '../../app/brkpt'
 require 'thread_frame'
 
-class TestLibBrkpt < Test::Unit::TestCase
+class TestAppBrkpt < Test::Unit::TestCase
 
   def test_basic
     tf = RubyVM::ThreadFrame.current

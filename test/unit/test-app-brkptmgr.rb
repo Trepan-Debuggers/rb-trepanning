@@ -4,7 +4,7 @@ require_relative '../../app/brkptmgr'
 require_relative '../../app/brkpt'
 require 'thread_frame'
 
-class TestLibBrkptMgr < Test::Unit::TestCase
+class TestLibAppBrkptMgr < Test::Unit::TestCase
 
   def test_basic
     tf = RubyVM::ThreadFrame.current
