@@ -14,24 +14,28 @@ class Debugger::Subcommand::InfoThread < Debugger::Subcommand
   include Debugger::Frame # For format_stack_call
   def run(args)
     Thread.list.each_with_index do |th, i|
-      if th == Thread.current
-        frame = @proc.frame
-        line_no = @proc.frame_line
-        mark = '+'
+      main_str = 
+        if th == Thread.main
+          '(main thread) '
+          else
+          ''
+        end
+      frame, line_no, mark = 
+        if th == Thread.current
+          [@proc.frame, @proc.frame_line, '+']
       else
         # FIXME: check don't show blocked waiting to run hook
-        frame = th.threadframe
-        line_no = (frame.source_location && frame.source_location[0]) || 0
-        mark = ' '
+          [th.threadframe, 
+           (@proc.frame.source_location && @proc.frame.source_location[0]),
+           ' ']
       end
       frame_info = format_stack_call(frame, {})
-
 
       source_container = @proc.frame_container(frame, false)
       loc = @proc.source_location_info(source_container, line_no, frame)
 
-      msg("%s %2d %d %s\n\t%s\n\t%s" % 
-          [mark, i, th.object_id, th.inspect, frame_info, loc])
+      msg("%s %2d %s%d %s\n\t%s\n\t%s" % 
+          [mark, i, main_str, th.object_id, th.inspect, frame_info, loc])
     end
   end
 
@@ -53,4 +57,9 @@ if __FILE__ == $0
   cmd_args = ['info', name]
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
   cmd.run(cmd_args)
+  puts '-' * 20
+  Thread.new do 
+    cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+    cmd.run(cmd_args)
+  end.join
 end
