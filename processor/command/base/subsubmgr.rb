@@ -130,7 +130,6 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
     else
       matches = @subcmds.list.grep(/^#{key_str}/).sort
       if matches.empty?
-        p @subcmds.list
         errmsg("No #{name} subcommands found matching /^#{subcmd_name}/. Try \"help #{@name}\".")
         return nil
       elsif 1 == matches.size

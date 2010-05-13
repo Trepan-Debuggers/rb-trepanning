@@ -32,6 +32,12 @@ class Debugger
   attr_accessor :trace_filter # Procs/Methods we ignore.
 
   def initialize(settings={})
+
+    # FIXME: Tracing through intialization code is slow. Need to figure
+    # out better ways to do this. 
+    th = Thread.current
+    th.exec_event_tracing  = true
+
     @settings = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
     @input  ||= @settings[:input]
     @output ||= @settings[:output]
@@ -41,7 +47,6 @@ class Debugger
       add_command_file(cmdfile)
     end if @settings.member?(:cmdfiles)
     @core     = Core.new(self, @settings[:core_opts])
-
     if @settings[:initial_dir]
       Dir.chdir(@settings[:initial_dir])
     else
@@ -77,6 +82,7 @@ class Debugger
       clear_trace_func
       @intf[-1].close 
     end
+    th.exec_event_tracing  = false
   end
 
   # To call from inside a Ruby program, there is one-time setup that 
@@ -130,12 +136,16 @@ class Debugger
       # one more position farther back.
       @core.debugger(1) 
     else
-      # Set to stop on the next event after this returns.
-      step_count_save   = @core.step_count
-      @core.step_count  = -1 
+      # FIXME: do better saving/restoring event_exec_tracing.
+      th = Thread.current
+      th.exec_event_tracing  = true
+
       @trace_filter.set_trace_func(@core.event_proc)
       Trace.event_masks[0] |= @core.step_events
-      @core.step_count = step_count_save
+      th.exec_event_tracing  = false
+
+      # Set to stop on the next event after this returns.
+      @core.step_count = 0
     end
   end
 

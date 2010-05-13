@@ -3,7 +3,7 @@ require 'test/unit'
 require_relative '../../app/util'
 
 class TestAppUtil < Test::Unit::TestCase
-  include Rbdbgr
+  include Debugger::Util
   def test_safe_repr
     string = 'The time has come to talk of many things.'
     assert_equal(string, safe_repr(string, 50))

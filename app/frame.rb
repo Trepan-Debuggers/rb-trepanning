@@ -12,6 +12,8 @@ class Debugger
       :show_pc      => false,   # Show PC offset?
     } unless defined?(DEFAULT_STACK_TRACE_SETTINGS)
 
+    include Debugger::Util
+
     def all_param_names(iseq, delineate=true)
       return '' unless iseq
       params = param_names(iseq, 0, iseq.argc-1, '')
@@ -161,13 +163,13 @@ class Debugger
     # Print `count' frame entries
     def print_stack_trace(frame, opts={})
       opts    = DEFAULT_STACK_TRACE_SETTINGS.merge(opts)
-      maxstack = opts[:maxstack]
+      halfstack = opts[:maxstack] / 2
       n       = frame.stack_size
       n       = [n, opts[:count]].min if opts[:count]
-      if n > (maxstack * 2)
-        print_stack_trace_from_to(0, maxstack-1, frame, opts)
-        msg "... %d levels ..." % (n - maxstack*2)
-        print_stack_trace_from_to(n - maxstack, n-1, frame, opts)
+      if n > (halfstack * 2)
+        print_stack_trace_from_to(0, halfstack-1, frame, opts)
+        msg "... %d levels ..." % (n - halfstack*2)
+        print_stack_trace_from_to(n - halfstack, n-1, frame, opts)
       else
         print_stack_trace_from_to(0, n-1, frame, opts)
       end
