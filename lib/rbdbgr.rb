@@ -227,8 +227,10 @@ class Debugger
 
   def self.debug(opts={}, &block)
     opts = {:hide_stack => true}.merge(opts)
-    $rbdbgr = Debugger.new(opts)
-    $rbdbgr.trace_filter << self.method(:debug)
+    unless defined?($rbdbgr) && $rbdbgr.is_a?(Debugger)
+      $rbdbgr = Debugger.new(opts)
+      $rbdbgr.trace_filter << self.method(:debug)
+    end
     $rbdbgr.debugger(opts, &block)
   end
 
@@ -241,7 +243,10 @@ class Debugger
 end
 
 module Kernel
+  # Same as Debugger.debug. 
+  # FIXME figure out a way to remove duplication.
   def rbdbgr(opts={}, &block)
+    opts = {:hide_stack => true}.merge(opts)
     unless defined?($rbdbgr) && $rbdbgr.is_a?(Debugger)
       $rbdbgr = Debugger.new
       $rbdbgr.trace_filter << self.method(:rbdbgr)
