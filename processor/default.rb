@@ -17,7 +17,7 @@ class Debugger
       :debugstack    => false,     # How hidden outer debugger stack frames
 
       :listsize      => 10,        # Number of lines in list 
-      :maxstack      => 16,        # backtrace limit
+      :maxstack      => 10,        # backtrace limit
       :maxstring     => 150,       # Strings which are larger than this
                                    # will be truncated to this length when
                                    # printed

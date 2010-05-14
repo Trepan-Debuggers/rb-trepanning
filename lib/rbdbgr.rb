@@ -117,13 +117,21 @@ class Debugger
 
   #   :immediate -  boolean. If true, mmediate stop rather than wait
   #                          for an event
-  #   :hide_stack - boolean. If true, omit stack frames before the debugger call
+  #
+  #   :hide_stack - boolean. If true, omit stack frames before the
+  #                          debugger call
+  # 
+  #   :debugme    - boolean. Allow tracing into this routine. You
+  #                          generally won't want this. It slows things
+  #                          down horribly.
+
   def debugger(opts={}, &block)
     # FIXME: one option we may want to pass is the initial trace filter.
     if opts[:hide_stack]
       @core.processor.hidelevels[Thread.current] = 
         RubyVM::ThreadFrame.current.stack_size
     end
+    th = Thread.current
     if block
       start
       # I don't think yield or block.call is quite right.
@@ -134,15 +142,25 @@ class Debugger
       # Stop immediately, but don't show in the call stack the
       # the position of the call we make below, i.e. set the frame
       # one more position farther back.
+      # FIXME: do better saving/restoring event_exec_tracing.
+      unless opts[:debugme]
+        old_exec_event_tracing = th.exec_event_tracing
+        th.exec_event_tracing  = true 
+      end
+      @trace_filter.set_trace_func(@core.event_proc) 
+      Trace.event_masks[0] |= @core.step_events
+      th.exec_event_tracing  = old_exec_event_tracing unless opts[:debugme]
       @core.debugger(1) 
     else
       # FIXME: do better saving/restoring event_exec_tracing.
-      th = Thread.current
-      th.exec_event_tracing  = true
+      unless opts[:debugme]
+        old_exec_event_tracing = th.exec_event_tracing
+        th.exec_event_tracing  = true 
+      end
 
       @trace_filter.set_trace_func(@core.event_proc)
       Trace.event_masks[0] |= @core.step_events
-      th.exec_event_tracing  = false
+      th.exec_event_tracing  = old_exec_event_tracing unless opts[:debugme]
 
       # Set to stop on the next event after this returns.
       @core.step_count = 0
@@ -219,6 +237,16 @@ class Debugger
     $rbdbgr.core.processor.settings[:different] = false
     # Perhaps we should do a remap file to string right here? 
     $rbdbgr.debugger(opts) { eval(string) }
+  end
+end
+
+module Kernel
+  def rbdbgr(opts={}, &block)
+    unless defined?($rbdbgr) && $rbdbgr.is_a?(Debugger)
+      $rbdbgr = Debugger.new
+      $rbdbgr.trace_filter << self.method(:rbdbgr)
+    end
+    $rbdbgr.debugger(opts, &block)
   end
 end
 
