@@ -95,7 +95,7 @@ class Debugger
       @current_thread     = @frame.thread
       @stack_size         = @frame.stack_size
 
-      @threads2frames   ||= {}  # or do we want = {} ? 
+      @threads2frames   ||= {} 
       @threads2frames[@current_thread] = @top_frame
       @hide_level         = 
         if @settings[:debugstack]
@@ -146,33 +146,43 @@ class Debugger
       [frame, frame_num]
     end
 
-  # # The dance we have to do to set debugger frame state to
-  # #    `frame', which is in the thread with id `thread_id'. We may
-  # #    need to the hide initial debugger frames.
-  # def find_and_set_debugged_frame(frame, thread_id)
+    def get_frame_from_thread(th)
+      if th == Thread.current
+        @threads2frames[th]
+      else
+        # FIXME: Check to see if we are blocked on entry to debugger.
+        # If so, walk back frames.
+        @threads2frames[th] ||= th.threadframe
+      end
+    end
 
-  #   thread = threading._active[thread_id]
-  #   thread_name = thread.getName()
-  #   if (!@settings['dbg_pydbgr'] &&
-  #       thread_name == Mthread.current_thread_name())
-  #     # The frame we came in on ('current_thread_name') is
-  #     # the same as the one we want to switch to. In this case
-  #     # we need to some debugger frames are in this stack so 
-  #     # we need to remove them.
-  #     newframe = Mthread.find_debugged_frame(frame)
-  #     frame = newframe unless newframe
-  #   end
-  #   ## FIXME: else: we might be blocked on other threads which are
-  #   # about to go into the debugger it not for the fact this one got there
-  #   # first. Possibly in the future we want
-  #   # to hide the blocks into threading of that locking code as well. 
+  # The dance we have to do to set debugger frame state to
+  #    `frame', which is in the thread with id `thread_id'. We may
+  #    need to the hide initial debugger frames.
+  def find_and_set_debugged_frame(th, position)
 
-  #   # Set stack to new frame
-  #   @frame, @curindex = Mcmdproc.get_stack(frame, nil, self.proc)
-  #   @proc.stack, @proc.curindex = self.stack, self.curindex
+    thread = threading._active[thread_id]
+    thread_name = thread.getName()
+    if (!@settings['dbg_pydbgr'] &&
+        thread_name == Mthread.current_thread_name())
+      # The frame we came in on ('current_thread_name') is
+      # the same as the one we want to switch to. In this case
+      # we need to some debugger frames are in this stack so 
+      # we need to remove them.
+      newframe = Mthread.find_debugged_frame(frame)
+      frame = newframe unless newframe
+    end
+    ## FIXME: else: we might be blocked on other threads which are
+    # about to go into the debugger it not for the fact this one got there
+    # first. Possibly in the future we want
+    # to hide the blocks into threading of that locking code as well. 
 
-  #   # @frame_thread_name = thread_name
-  # end
+    # Set stack to new frame
+    @frame, @curindex = Mcmdproc.get_stack(frame, nil, self.proc)
+    @proc.stack, @proc.curindex = self.stack, self.curindex
+
+    # @frame_thread_name = thread_name
+  end
   end
 end
 

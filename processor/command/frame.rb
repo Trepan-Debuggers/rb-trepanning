@@ -73,42 +73,6 @@ See also 'up', 'down' 'where' and 'info thread'.
     end
   end
 
-  # See if `name_or_id' is either a thread name or a thread id.
-  # The frame of that id/name is returned, or None if name_or_id is
-  # invalid.
-  def get_from_thread_name_or_id(name_or_id, report_error=true)
-    # FIXME: for now this is what we do.
-    return nil, nil
-
-    # FIXME: the below is a slight port of pydbgr
-    thread_id = @proc.get_int_noerr(name_or_id)
-    unless thread_id
-      # Must be a "frame" command with frame name, not a frame
-      # number (or invalid command).
-      name2id = map_thread_names()
-      if name_or_id == '.'
-        name_or_id = current_thread_name()
-      end
-      thread_id = name2id.get(name_or_id)
-      unless thread_id
-        errmsg("I don't know about thread name %s." % name_or_id)
-        return nil, nil
-      end
-      # Above we should have set thread_id. Now see if we can
-      # find it.
-      # FIXME: This is for Python.
-      threads   = sys._current_frames()
-      frame     = threads.get(thread_id)
-      if !frame && report_error
-        errmsg("I don't know about thread number %s (%d)." %
-               name_or_id, thread_id)
-        ## self.info_thread_terse()
-        return nil, nil
-      end
-      return frame, thread_id
-    end
-  end
-
   # Run a frame command. This routine is a little complex
   # because we allow a number parameter variations.
   def run(args)
@@ -116,33 +80,27 @@ See also 'up', 'down' 'where' and 'info thread'.
       # Form is: "frame" which means "frame 0"
       position_str = '0'
     elsif args.size == 2
-      # Form is: "frame {position | thread}
+      # Form is: "frame position"
+      position_str = args[1]
+    elsif args.size == 3
+      # Form is: frame <position> <thread> 
       name_or_id = args[1]
-      frame, thread_id = get_from_thread_name_or_id(name_or_id,
-                                                    false)
-      if !frame
-        # Form should be: frame position
-        position_str = name_or_id
+      thread_str = args[2]
+      th = @proc.get_thread_from_string(thread_str)
+      if th
+        @proc.frame_setup(th.threadframe)
+        return
       else
-        # Form should be: "frame thread" which means
-        # "frame thread 0"
-        position_str = '0'
-        ## FIXME:
-        ## @proc.find_and_set_debugged_frame(frame, thread_id)
+        # FIXME: Give suitable error message was given
       end
-      # elsif args.size == 3
-      #   # Form is: frame <thread> <position>
-      #   name_or_id = args[1]
-      #   position_str = args[2]
-      #   frame, thread_id = get_from_thread_name_or_id(name_or_id)
-      #   if !frame
-      #     # Error message was given in routine
-      #     return
-      #     find_and_set_debugged_frame(frame, thread_id)
-      #   end
-      one_arg_run(position_str)
-      return false
+    else
+      # Form should be: "frame thread" which means
+      # "frame thread 0"
+      position_str = '0'
+      ## FIXME:
+      ## @proc.find_and_set_debugged_frame(frame, thread_id)
     end
+    one_arg_run(position_str)
   end
 end
 

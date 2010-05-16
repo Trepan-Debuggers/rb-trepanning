@@ -1,8 +1,9 @@
 # Debugger command input validation routines.
 # A String is usually passed in.
 
-require_relative '../app/file'
 require_relative '../app/condition'
+require_relative '../app/file'
+require_relative '../app/thread'
 class Debugger
   class CmdProcessor
 
@@ -10,6 +11,7 @@ class Debugger
     attr_reader :dbgr_iseqs
 
     include Rbdbgr
+    include Debugger::ThreadHelper
 
     def confirm(msg, default)
       @dbgr.intf[-1].confirm(msg, default)
@@ -102,6 +104,21 @@ class Debugger
       nil
     rescue 
       nil
+    end
+
+    def get_thread_from_string(id_or_num_str)
+      if id_or_num_str == '.'
+        Thread.current
+      elsif id_or_num_str.downcase == 'm'
+        Thread.main
+      else
+        num = get_int_noerr(id_or_num_str)
+        if num
+          get_thread(num)
+        else
+          nil
+        end
+      end
     end
 
     # Return the instruction sequence associated with string

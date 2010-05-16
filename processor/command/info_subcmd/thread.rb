@@ -5,25 +5,34 @@ require_relative '../../../app/frame'
 
 class Debugger::Subcommand::InfoThread < Debugger::Subcommand
   unless defined?(HELP)
-    HELP         = 'Show frame(s) for threads'
+    HELP         = 
+'info thread [THREAD-ARG1 THREAD-ARG2.. ]
+
+Show frame information for thread(s). If no thread arguments are
+given, then the top frame information is shown for all threads.
+
+If arguments are given, each number should be either the object id of
+the thread, a position number in the list of threads, "M", or ".".  The
+object id and list position are given when "info thread" is run.  The
+name "M" in upper- or lower- case refers to the "main thread" and "."
+refers to the current thread.
+
+Examples:
+   info thread             # Show summary frame information
+   info thread M           # information for main thread
+   info thread .           # information for current thread
+   info thread 1 2 m       # information for thread in list 1, 2, and main
+   info thread 92562770    # ifnormation for thread with object id 92562770
+'
     MIN_ABBREV   = 'thr'.size 
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
     PREFIX       = %w(info thread)
+    SHORT_HELP   = 'Show frame(s) for threads'
   end
 
   include Debugger::ThreadHelper
   include Debugger::Frame # To show stack
-
-  def get_frame_from_thread(th)
-    if th == Thread.current
-      @proc.frame
-    else
-      # FIXME: Check to see if we are blocked on entry to debugger.
-      # If so, walk back frames.
-      th.threadframe
-    end
-  end
 
   def list_threads(verbose=false)
     Thread.list.each_with_index do |th, i|
@@ -56,13 +65,10 @@ class Debugger::Subcommand::InfoThread < Debugger::Subcommand
       list_threads
     elsif args.size > 2
       args[2..-1].each do |id_or_num_str|
-        num = @proc.get_int_noerr(id_or_num_str)
-        if num
-          th = get_thread(num)
-          if th
-            frame = get_frame_from_thread(th)
-            print_stack_trace(frame, {})
-          end
+        th = @proc.get_thread_from_string(id_or_num_str)
+        if th
+          frame = @proc.get_frame_from_thread(th)
+          print_stack_trace(frame, {:maxstack => settings[:maxstack]})
         end
       end
     else
