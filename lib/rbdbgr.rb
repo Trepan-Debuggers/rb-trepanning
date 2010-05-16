@@ -32,6 +32,12 @@ class Debugger
   attr_accessor :trace_filter # Procs/Methods we ignore.
 
   def initialize(settings={})
+
+    # FIXME: Tracing through intialization code is slow. Need to figure
+    # out better ways to do this. 
+    th = Thread.current
+    th.exec_event_tracing  = true
+
     @settings = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
     @input  ||= @settings[:input]
     @output ||= @settings[:output]
@@ -41,7 +47,6 @@ class Debugger
       add_command_file(cmdfile)
     end if @settings.member?(:cmdfiles)
     @core     = Core.new(self, @settings[:core_opts])
-
     if @settings[:initial_dir]
       Dir.chdir(@settings[:initial_dir])
     else
@@ -77,6 +82,7 @@ class Debugger
       clear_trace_func
       @intf[-1].close 
     end
+    th.exec_event_tracing  = false
   end
 
   # To call from inside a Ruby program, there is one-time setup that 
@@ -111,13 +117,21 @@ class Debugger
 
   #   :immediate -  boolean. If true, mmediate stop rather than wait
   #                          for an event
-  #   :hide_stack - boolean. If true, omit stack frames before the debugger call
+  #
+  #   :hide_stack - boolean. If true, omit stack frames before the
+  #                          debugger call
+  # 
+  #   :debugme    - boolean. Allow tracing into this routine. You
+  #                          generally won't want this. It slows things
+  #                          down horribly.
+
   def debugger(opts={}, &block)
     # FIXME: one option we may want to pass is the initial trace filter.
     if opts[:hide_stack]
       @core.processor.hidelevels[Thread.current] = 
         RubyVM::ThreadFrame.current.stack_size
     end
+    th = Thread.current
     if block
       start
       # I don't think yield or block.call is quite right.
@@ -128,14 +142,28 @@ class Debugger
       # Stop immediately, but don't show in the call stack the
       # the position of the call we make below, i.e. set the frame
       # one more position farther back.
+      # FIXME: do better saving/restoring event_exec_tracing.
+      unless opts[:debugme]
+        old_exec_event_tracing = th.exec_event_tracing
+        th.exec_event_tracing  = true 
+      end
+      @trace_filter.set_trace_func(@core.event_proc) 
+      Trace.event_masks[0] |= @core.step_events
+      th.exec_event_tracing  = old_exec_event_tracing unless opts[:debugme]
       @core.debugger(1) 
     else
-      # Set to stop on the next event after this returns.
-      step_count_save   = @core.step_count
-      @core.step_count  = -1 
+      # FIXME: do better saving/restoring event_exec_tracing.
+      unless opts[:debugme]
+        old_exec_event_tracing = th.exec_event_tracing
+        th.exec_event_tracing  = true 
+      end
+
       @trace_filter.set_trace_func(@core.event_proc)
       Trace.event_masks[0] |= @core.step_events
-      @core.step_count = step_count_save
+      th.exec_event_tracing  = old_exec_event_tracing unless opts[:debugme]
+
+      # Set to stop on the next event after this returns.
+      @core.step_count = 0
     end
   end
 
@@ -199,8 +227,10 @@ class Debugger
 
   def self.debug(opts={}, &block)
     opts = {:hide_stack => true}.merge(opts)
-    $rbdbgr = Debugger.new(opts)
-    $rbdbgr.trace_filter << self.method(:debug)
+    unless defined?($rbdbgr) && $rbdbgr.is_a?(Debugger)
+      $rbdbgr = Debugger.new(opts)
+      $rbdbgr.trace_filter << self.method(:debug)
+    end
     $rbdbgr.debugger(opts, &block)
   end
 
@@ -209,6 +239,19 @@ class Debugger
     $rbdbgr.core.processor.settings[:different] = false
     # Perhaps we should do a remap file to string right here? 
     $rbdbgr.debugger(opts) { eval(string) }
+  end
+end
+
+module Kernel
+  # Same as Debugger.debug. 
+  # FIXME figure out a way to remove duplication.
+  def rbdbgr(opts={}, &block)
+    opts = {:hide_stack => true}.merge(opts)
+    unless defined?($rbdbgr) && $rbdbgr.is_a?(Debugger)
+      $rbdbgr = Debugger.new
+      $rbdbgr.trace_filter << self.method(:rbdbgr)
+    end
+    $rbdbgr.debugger(opts, &block)
   end
 end
 

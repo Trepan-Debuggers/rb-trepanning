@@ -6,7 +6,7 @@ class Debugger::SubSubcommand::SetMax < Debugger::SubSubcommandMgr
   unless defined?(HELP)
     HELP   = 'Set maximum length for things which may have unbounded size'
     NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %w(set maximum)
+    PREFIX = %w(set max)
   end
 
   # def run(args)
