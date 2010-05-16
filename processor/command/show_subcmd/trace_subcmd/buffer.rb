@@ -50,7 +50,7 @@ the earliest position recorded may move around.)
       first, last = parse_show_buffer_args(args[1..-1])
 
       return unless first
-      @proc.eventbuf_print(first, last, settings[:maximumwidth])
+      @proc.eventbuf_print(first, last, settings[:maxwidth])
     else
       super
     end
