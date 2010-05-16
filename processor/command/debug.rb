@@ -55,8 +55,7 @@ Enter the debugger recursively on RUBY-CODE."
     @proc.core.step_count  = 0
     @proc.next_level       = 32000
 
-    settings[:prompt] = "%srbdbgr%s: " % ['(' * @proc.debug_nest,
-                                          ')' * @proc.debug_nest]
+    RubyVM::ThreadFrame.current.trace_off = false
     retval = @proc.debug_eval(arg_str)
 
     # Restore munged values
@@ -69,8 +68,6 @@ Enter the debugger recursively on RUBY-CODE."
     @proc.next_level       = old_next_level
     @proc.print_location
     @proc.debug_nest      -= 1
-    settings[:prompt] = "%srbdbgr%s: " % ['(' * @proc.debug_nest,
-                                          ')' * @proc.debug_nest]
     msg 'LEAVING NESTED DEBUGGER'
     msg "R=> #{retval.inspect}"
   end
