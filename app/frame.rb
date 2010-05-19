@@ -77,20 +77,31 @@ class Debugger
 
     def format_stack_call(frame, opts)
       # FIXME: prettify 
-      s = "#{frame.type} "
+      s = "#{frame.type}"
       s += if opts[:class]
-             "#{opts[:class]}#"
+             " #{opts[:class]}#"
            else
-             "#{eval('self.class', frame.binding)}#" 
+             begin 
+               obj = eval('self', frame.binding)
+             rescue
+               ''
+             else
+               if obj
+                 " #{obj.class}#" 
+               else
+                 ''
+               end
+             end
            end
-      if frame.method and frame.type != 'IFUNC'
+      meth = frame.method
+      if meth and frame.type != 'IFUNC'
         iseq = frame.iseq
         args = if 'CFUNC' == frame.type
                  c_params(frame)
                elsif iseq
                  all_param_names(iseq).join(', ')
                end
-        s += frame.method
+        s += meth
         if %w(CFUNC METHOD).member?(frame.type)
           s += "(#{args})"
         elsif %w(BLOCK LAMBDA TOP EVAL).member?(frame.type)
@@ -100,6 +111,8 @@ class Debugger
         end
       end
       s
+    rescue ThreadFrameError
+      'invalid frame'
     end
 
     def format_stack_entry(frame, opts={})

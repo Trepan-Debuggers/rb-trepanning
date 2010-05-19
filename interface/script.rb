@@ -59,7 +59,7 @@ class Debugger::ScriptInterface < Debugger::Interface
              "%s%s" % [prefix, msg]
            end
     msg(mess)
-    # FIXME: should we just set an flag and report eof? to be more
+    # FIXME: should we just set a flag and report eof? to be more
     # consistent with File and IO?
     raise IOError if @opts[:abort_on_error]
   end
