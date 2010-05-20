@@ -12,6 +12,7 @@ class Debugger
 
     include Rbdbgr
     include Debugger::ThreadHelper
+    include Debugger::Condition
 
     def confirm(msg, default)
       @dbgr.intf[-1].confirm(msg, default)

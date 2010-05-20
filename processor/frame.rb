@@ -146,13 +146,25 @@ class Debugger
       [frame, frame_num]
     end
 
+    def get_nonsync_frame(tf)
+      if (tf.stack_size > 10)
+        check_frames = (0..5).map{|i| tf.prev(i).method}
+        if check_frames == 
+            %w(synchronize event_processor IFUNC call trace_hook IFUNC)
+          return tf.prev(6)
+        end
+      end
+      tf
+    end
+
     def get_frame_from_thread(th)
       if th == Thread.current
         @threads2frames[th]
       else
         # FIXME: Check to see if we are blocked on entry to debugger.
         # If so, walk back frames.
-        @threads2frames[th] ||= th.threadframe
+        tf = get_nonsync_frame(th.threadframe)
+        @threads2frames = tf
       end
     end
 

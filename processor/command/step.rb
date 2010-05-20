@@ -7,6 +7,7 @@ class Debugger::Command::StepCommand < Debugger::Command
     HELP =
 "step[+|=|-|<|>|!|<>] [into] [EVENT-NAME...] [count]
 step until EXPRESSION
+step thread
 step to METHOD-NAME
 step over 
 step out
@@ -50,7 +51,8 @@ Examples:
   step until a > b
   step over   # same as 'next'
   step out    # same as 'finish'
-
+  step thread # step stopping only in the current thread. Is the same
+              # as step until Thread.current.object_id == #object_id
 
 Related and similar is the 'next' (step over) and 'finish' (step out)
 commands.  All of thsee are slower than running to a breakpoint.
@@ -74,6 +76,7 @@ See also the commands:
     }
   end
 
+  include Debugger::Condition
   # This method runs the command
   def run(args) # :nodoc
     opts = @proc.parse_next_step_suffix(args[0])
@@ -105,6 +108,10 @@ See also the commands:
           opts[:different_pos] = false
           step_count = 0
         end
+      elsif 'thread' == args[1]
+        condition = "Thread.current.object_id == #{Thread.current.object_id}"
+        opts[:different_pos] = false
+        step_count = 0
       else
         count_str = args[1]
         int_opts = {
