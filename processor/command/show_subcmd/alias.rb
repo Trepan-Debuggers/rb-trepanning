@@ -6,7 +6,7 @@ class Debugger::Subcommand::ShowAlias < Debugger::Subcommand
     HELP = "show alias [NAME1 NAME2 ...] 
 
 If aliases names are given, show their definition. If left blank, show
-all aliases"
+all alias names"
 
     MIN_ABBREV = 'al'.size
     NAME       = File.basename(__FILE__, '.rb')
@@ -26,6 +26,7 @@ all aliases"
     elsif @proc.aliases.empty?
       msg "No aliases defined."
     else
+      msg "List of aliases names currently defined:"
       msg columnize_commands(@proc.aliases.keys.sort)
     end
   end
