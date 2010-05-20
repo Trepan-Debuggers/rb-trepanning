@@ -49,7 +49,6 @@ See also 'down' and 'frame'.
       return false unless count
     end
     @proc.adjust_frame(count, false)
-    return false
   end
 end
 
