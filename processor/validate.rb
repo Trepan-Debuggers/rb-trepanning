@@ -171,7 +171,14 @@ class Debugger
           if iseq
             # Got name and possibly position
             name = first
-            args.empty? ? 'o0' : args.shift
+            if args.empty? 
+              # FIXME: *Still* have a bug stopping at offset 0.
+              # So stop at next offset after 0.
+              # 'o0' 
+              "o#{@frame.iseq.offsetlines.keys.sort[1]}"
+            else
+              args.shift
+            end
           else
             iseq = @frame.iseq unless container
             first
