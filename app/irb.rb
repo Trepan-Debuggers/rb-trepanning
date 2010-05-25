@@ -27,6 +27,7 @@ module IRB # :nodoc:
     end
 
     class Continue < DebuggerResumeCommand ; end
+    class Finish   < DebuggerResumeCommand ; end
     class Next     < DebuggerResumeCommand ; end
     class Quit     < DebuggerResumeCommand ; end
     class Step     < DebuggerResumeCommand ; end
@@ -48,11 +49,18 @@ module IRB # :nodoc:
 
   end
   if defined?(ExtendCommandBundle)
-    [['cont', :Continue],
-     ['dbgr', :Dbgr],
-     ['n',    :Next],
-     ['step', :Step],
-     ['q',    :Quit]].each do |command, sym|
+    # New irb Commands which are the same name as their debugger
+    # counterpart
+    %w(Dbgr Finish Step).each do |name|
+      command = name.downcase
+      sym     = name.to_sym
+      ExtendCommandBundle.def_extend_command command, sym
+    end
+    # New irb Commands which are the slightly different from their
+    # debugger counterpart
+    [['cont',   :Continue],
+     ['n',      :Next],
+     ['q',      :Quit]].each do |command, sym|
       ExtendCommandBundle.def_extend_command command, sym
     end
   end

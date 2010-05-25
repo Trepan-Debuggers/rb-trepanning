@@ -72,14 +72,16 @@ But arguments have to be quoted because irb will evaluate them:
     end
 
     case cont
-    when :cont
+    when :continue
       @proc.continue
-    when :step
-      @proc.step # (1, {})
+    when :finish
+      @proc.finish 
     when :next
       @proc.next # (1, {})
     when :quit
       @proc.quit
+    when :step
+      @proc.step # (1, {})
     else
       @proc.print_location
     end

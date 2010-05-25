@@ -28,8 +28,9 @@ if __FILE__ == $0
   require_relative '../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
-  cmd.run([name])
-  cmd.run([name, '1+2'])
+  arg_str = '1 + 2'
+  cmd.proc.instance_variable_set('@cmd_argstr', arg_str)
+  cmd.run([name, arg_str])
   cmdproc = dbgr.core.processor
   cmds = dbgr.core.processor.commands
 end
