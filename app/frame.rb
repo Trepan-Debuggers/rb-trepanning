@@ -131,8 +131,14 @@ class Debugger
           end
         end
       if frame.source_location
+        s += 
+          if opts[:maxwidth] && s.size > opts[:maxwidth]
+            "\n\t"
+          else
+            ' '
+          end
         if frame.source_location.size == 1
-          s += " at line #{frame.source_location[0]}" if 
+          s += "at line #{frame.source_location[0]}" if 
             frame.source_location[0] != 0
         else
           s += " at lines #{frame.source_location}"

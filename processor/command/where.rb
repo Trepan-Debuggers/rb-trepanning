@@ -46,6 +46,7 @@ Examples:
       :basename    => @proc.settings[:basename],
       :current_pos => @proc.frame_index,
       :maxstack    => @proc.settings[:maxstack],
+      :maxwidth    => @proc.settings[:maxwidth],
       :show_pc     => @proc.settings[:show_pc]
     }
     opts[:count] = 
