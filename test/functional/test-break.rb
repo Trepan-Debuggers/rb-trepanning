@@ -60,6 +60,27 @@ class TestBreak < Test::Unit::TestCase
            'xx ',
            'z = 8+1']
     compare_output(out, d, cmds)
+
+    # Stepping after a breakpoint should not stay at same location.
+    cmds = ['set basename on',
+            'continue ' + (__LINE__ + 8).to_s, 
+            'continue']
+    dbg = strarray_setup(cmds)
+    dbg.start
+    ########### b3 ###############
+    a = 1
+    b = 2
+    c = 3
+    d = 4
+    e = 5
+    ##############################
+    dbg.stop
+    out = ['-- ',
+           'a = 1',
+           'basename is on.',
+           'xx ',
+           'd = 4' ]
+    compare_output(out, dbg, cmds)
   end
     
 end

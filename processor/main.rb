@@ -48,8 +48,9 @@ class Debugger
 
     # The following are used in to force stopping at a different line
     # number. FIXME: could generalize to a position object.
-    attr_accessor :last_pos       # Last position. 4-Tuple: of
-                                  # [location, container, stack_size, current_thread]
+    attr_accessor :last_pos       # Last position. 6-Tuple: of
+                                  # [location, container, stack_size, 
+                                  #  current_thread, pc_offset]
 
 
     unless defined?(EVENT2ICON)
@@ -83,7 +84,7 @@ class Debugger
       @dbgr            = core.dbgr
       @hidelevels      = {}
       @last_command    = nil
-      @last_pos        = [nil, nil, nil, nil]
+      @last_pos        = [nil, nil, nil, nil, nil, nil]
       @next_level      = 32000
       @next_thread     = nil
 
@@ -208,7 +209,8 @@ class Debugger
       @unconditional_prehooks.run
       if breakpoint?
         @last_pos = [@frame.source_container, frame_line,
-                     @stack_size, @current_thread]
+                     @stack_size, @current_thread, @core.event, 
+                     @frame.pc_offset]
       else
         return if stepping_skip? || @stack_size <= @hide_level
       end

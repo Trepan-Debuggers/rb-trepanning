@@ -113,9 +113,15 @@ class Debugger
                    Thread.current == @next_thread)
 
       new_pos = [@frame.source_container, frame_line,
-                 @stack_size, @current_thread]
+                 @stack_size, @current_thread, @core.event, @frame.pc_offset]
 
       skip_val = @stop_events && !@stop_events.member?(@core.event)
+
+      # If the last stop was a breakpoint, don't stop again if we are at
+      # the same location.
+      skip_val |= (@last_pos[4] == 'brkpt' && 
+                   @core.event != 'brkpt' &&
+                   @frame.pc_offset == @last_pos[5])
 
       if @settings[:'debugskip']
         puts "skip: #{skip_val.inspect}, last: #{@last_pos}, new: #{new_pos}" 
@@ -139,7 +145,8 @@ class Debugger
         msg("condition_met: #{condition_met}, last: #{@last_pos}, " +
              "new: #{new_pos}, different #{@different_pos.inspect}") if 
           @settings[:'debugskip']
-        skip_val = (@last_pos == new_pos) && @different_pos || !condition_met
+        skip_val = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
+                    !condition_met)
       end
 
       @last_pos = new_pos if !@stop_events || @stop_events.member?(@core.event)
