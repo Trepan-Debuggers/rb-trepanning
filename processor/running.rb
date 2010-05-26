@@ -118,9 +118,9 @@ class Debugger
       skip_val = @stop_events && !@stop_events.member?(@core.event)
 
       # If the last stop was a breakpoint, don't stop again if we are at
-      # the same location.
+      # the same location with a line event.
       skip_val |= (@last_pos[4] == 'brkpt' && 
-                   @core.event != 'brkpt' &&
+                   @core.event == 'line' &&
                    @frame.pc_offset == @last_pos[5])
 
       if @settings[:'debugskip']
