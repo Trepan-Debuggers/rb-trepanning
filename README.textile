@@ -2,7 +2,7 @@ A modular, testable debugger for Ruby 1.9. A total rewrite of _ruby-debug_.
 
 __In order to use this debugger, you'll need a patched Ruby 1.9 and some additional packages. See the "installation instructions.":http://wiki.github.com/rocky/rbdbgr/how-to-install-rbdbgr__
 
-I realize installations is a bit of a pain. Right now this debugger is geared more for those who are willing to roll up their sleeves and help out than for novices.
+I realize installation is a bit of a pain. Right now this debugger is geared more for those who are willing to roll up their sleeves and help out than for novices.
 
 Assuming the above checks out... 
 
