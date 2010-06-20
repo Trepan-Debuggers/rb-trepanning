@@ -1,20 +1,8 @@
 A modular, testable debugger for Ruby 1.9. A total rewrite of _ruby-debug_.
 
-__In order to use this debugger, you'll need a patched Ruby 1.9 and some additional packages.__
+__In order to use this debugger, you'll need a patched Ruby 1.9 and some additional packages. See the "installation instructions.":http://wiki.github.com/rocky/rbdbgr/how-to-install-rbdbgr__
 
-Apply ["threadframe-ruby-1.9.patch":http://github.com/rocky/rb-threadframe/blob/master/threadframe-ruby-1.9.patch] to the Ruby 1.9 source. Build Ruby 1.9 and install that. Next build and install ["rb-threadframe":http://github.com/rocky/rb-threadframe], which gives access to stack frames. It has a number of other cool extensions to the _Thread_, _RubyVM:InstructionSequence_, _Proc_, and _Method_ classes.
-
-Also, you need columnize which should be gem installable:
-
-bc. gem install columnize
-
-Also you need linecache for Ruby 1.9. Unfortunately there are several out there. Use the _ruby-1.9_ branch from _linecache_: 
-
-bc. svn co svn://rubyforge.org/var/svn/rocky-hacks/linecache/branches/ruby-1.9
-
-Finally you need ["rb-trace":http://github.com/rocky/rb-trace].
-
-I realize this is a bit of work to do. Right now this debugger is geared more for those who are willing to roll up their sleeves and help out than for novices.
+I realize installation is a bit of a pain. Right now this debugger is geared more for those who are willing to roll up their sleeves and help out than for novices.
 
 Assuming the above checks out... 
 
