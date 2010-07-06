@@ -50,9 +50,11 @@ local table (size: 6, argc: 1 [opts: 0, rest: -1, post: 0, block: -1] s1)
 0004 putnil           
 '
   [[-1, []], [2, [2]], [10, [0, 4]]].each do |pc_offset, brkpts|
-    puts '-' * 20
+    puts '-' * 40
     puts mark_disassembly(dis_string, true, pc_offset, brkpts).join("\n")
   end
   puts mark_disassembly(dis_string, false, 2).join("\n")
-  p disassemble_split(dis_string)
+  puts '-' * 40
+  require 'pp'
+  PP.pp(disassemble_split(dis_string), $stdout)
 end

@@ -7,7 +7,7 @@ require_relative '../substitute'
 class Debugger::SubSubcommand::SetSubstituteString < Debugger::SubSubcommand
   unless defined?(HELP)
     HELP         = 
-'set substitute FROM-FILE STRING-VAR
+'set substitute string FROM-FILE STRING-VAR
 
 Use the contents of string variable STRING-VAR as the source text for
 FROM-FILE.  If a substitution rule was previously set for FROM-FILE,
