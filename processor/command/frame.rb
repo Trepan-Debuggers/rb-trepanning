@@ -10,19 +10,18 @@ class Debugger::Command::FrameCommand < Debugger::Command
 "frame [thread-Name] [frame-number]
     
 Change the current frame to frame `frame-number' if specified, or the
-current frame, 0, if no frame number specified.
+most-recent frame, 0, if no frame number specified.
 
 If a thread name or thread number is given, change the current frame
 to a frame in that thread. Dot (.) can be used to indicate the name of
 the current frame the debugger is stopped in.
 
-A negative number indicates the position from the other or 
-least-recently-entered end.  So 'frame -1' moves to the oldest frame,
-and 'frame 0' moves to the newest frame. Any variable or expression
-that evaluates to a number can be used as a position, however due to
-parsing limitations, the position expression has to be seen as a single
-blank-delimited parameter. That is, the expression '(5*3)-1' is okay
-while '( (5 * 3) - 1 )' isn't.
+A negative number indicates the position from the other or
+least-recently-entered end.  So 'frame -1' moves to the oldest frame.
+Any variable or expression that evaluates to a number can be used as a
+position, however due to parsing limitations, the position expression
+has to be seen as a single blank-delimited parameter. That is, the
+expression '(5*3)-1' is okay while '( (5 * 3) - 1 )' isn't.
 
 Examples:
    frame     # Set current frame at the current stopping point
