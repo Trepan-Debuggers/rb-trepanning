@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # A base class for debugger subcommands of subcommands.
 #
-# Note: don't end classname with Command (capital C) since main
-# will think this a command name like QuitCommand 
-#                                         ^
+# Note: don't end classname with Command (capital C as in SubCommand),
+# since main will think this a command name like QuitCommand 
+#                                                    ^   
 
 # Base Class for Debugger subcommands. We pull in some helper
 # functions for command from module cmdfns.
@@ -16,15 +16,7 @@ class Debugger
   class SubSubcommand  < Subcommand
     def initialize(cmd, parent, name)
       @cmd    = cmd
-
-      # By default the name of the subcommand will be the name of the
-      # last part of module (e.g. "args" in "info.args" or "basename"
-      # in "shows.basename"). However it *is* possible for one to change
-      # that -- perhaps one may want to put several subcommands into 
-      # a single file. So in those cases, one will have to set @name
-      # accordingly by other means.
       @name   = name
-
       @parent = parent
       @proc   = parent.proc
     end
@@ -90,5 +82,20 @@ class Debugger
       run_show_int
     end
   end
+end
 
+if __FILE__ == $0
+  # Demo it.
+  require_relative '../../mock'
+  require_relative '../../subcmd'
+  name = File.basename(__FILE__, '.rb')
+
+  # FIXME: DRY the below code
+  dbgr, info_cmd = MockDebugger::setup('info')
+  testcmdMgr = Debugger::Subcmd.new(info_cmd)
+  cmd_name   = 'testing'
+  infox_cmd  = Debugger::SubSubcommand.new(info_cmd.proc,
+                                           info_cmd,
+                                           cmd_name)
+  infox_cmd.settings
 end

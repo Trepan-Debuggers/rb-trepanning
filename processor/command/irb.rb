@@ -25,6 +25,9 @@ But arguments have to be quoted because irb will evaluate them:
   dbgr info program     # wrong!
   dbgr info, program    # wrong!
   dbgr(info, program)   # What I say 3 times is wrong!
+
+Here then is a loop to query VM stack values:
+  (-1..1).each {|i| dbgr(\"info reg sp \#{i}\")}
 "
 
     CATEGORY     = 'support'

@@ -249,8 +249,8 @@ class Debugger
         else
           false
         end
-      unless eval_command
 
+      unless eval_command
         # Expand macros. FIXME: put in a procedure
         args = current_command.split
         while true do
