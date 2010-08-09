@@ -64,7 +64,7 @@ module Rbdbgr
 
   # Path name of Ruby interpreter we were invoked with.
   def ruby_path
-    File.join(%w(bindir RUBY_INSTALL_NAME).map{|k| Config::CONFIG[k]})
+    File.join(%w(bindir RUBY_INSTALL_NAME).map{|k| RbConfig::CONFIG[k]})
   end
   module_function :ruby_path
 

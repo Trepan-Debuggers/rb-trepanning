@@ -8,8 +8,8 @@ require 'rake/testtask'
 rake_dir = File.dirname(__FILE__)
 
 require 'rbconfig'
-RUBY_PATH = File.join(Config::CONFIG['bindir'],  
-                      Config::CONFIG['RUBY_INSTALL_NAME'])
+RUBY_PATH = File.join(RbConfig::CONFIG['bindir'],  
+                      RbConfig::CONFIG['RUBY_INSTALL_NAME'])
 
 def run_standalone_ruby_file(directory)
   puts ('*' * 10) + ' ' + directory + ' ' + ('*' * 10)

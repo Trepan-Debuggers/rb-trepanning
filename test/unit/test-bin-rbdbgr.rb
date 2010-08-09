@@ -15,13 +15,13 @@ class TestBinRbdbgr < Test::Unit::TestCase
 
     # Let us test that we get *exactly* the same configuration as we
     # have in this. I'm a ball buster.
-    cmd = "#{rb_path} -rrbconfig -e 'puts Marshal.dump(Config::CONFIG)'"
+    cmd = "#{rb_path} -rrbconfig -e 'puts Marshal.dump(RbConfig::CONFIG)'"
     rb_config = Marshal.load(`#{cmd}`)
-    assert_equal(Config::CONFIG, rb_config,
+    assert_equal(RbConfig::CONFIG, rb_config,
                  "#{rb_path} config doesn't match got:
 #{rb_config.pretty_inspect}
 expected: 
-#{Config::CONFIG.pretty_inspect}
+#{RbConfig::CONFIG.pretty_inspect}
 ")
   end
 
