@@ -31,9 +31,13 @@ class Debugger
     # execution.
     def finish(level_count=0, opts={})
       step(0, opts)
-      @next_level      = @frame.stack_size - level_count
-      @next_thread     = Thread.current
-      @stop_events     = Set.new(%w(return))
+      @next_level        = @frame.stack_size - level_count
+      @next_thread       = Thread.current
+      @stop_events       = Set.new(%w(return))
+
+      # Try high-speed (run-time-assisted) method
+      @frame.trace_off   = true  # No more tracing in this frame
+      @frame.return_stop = true  # don't need to 
     end
     # Does whatever needs to be done to set to "next" program
     # execution.
