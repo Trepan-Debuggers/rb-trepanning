@@ -104,8 +104,7 @@ class Display
     rescue
       return "No symbol \"#{@arg}\" in current context."
     end
-    # FIXME: use @fmt to format val
-    s = "%3d: %s = %s" % [@number, @arg, val]
+    s = "#{self.format(false)} = #{val}"
     return s
   end
 

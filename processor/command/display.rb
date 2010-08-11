@@ -51,7 +51,7 @@ EOH
         errmsg('Error evaluating "%s" in the current frame' % expr)
         return
       end
-      msg(dp.format(false))
+      msg(dp.to_s(@proc.frame))
       @proc.cmdloop_prehooks.insert_if_new(5, *@proc.display_hook)
     end
   end
