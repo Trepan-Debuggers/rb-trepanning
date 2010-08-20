@@ -139,28 +139,17 @@ class Debugger
       stop
       return ret
     elsif opts[:immediate]
-      # Stop immediately, but don't show in the call stack the
-      # the position of the call we make below, i.e. set the frame
-      # one more position farther back.
-      # FIXME: do better saving/restoring event_exec_tracing.
-      unless opts[:debugme]
-        old_exec_event_tracing = th.exec_event_tracing
-        th.exec_event_tracing  = true 
-      end
+      # Stop immediately after this method returns. But if opts[:debugme]
+      # is set, we can stop in this method.
+      RubyVM::ThreadFrame::current.trace_off = true unless opts[:debugme]
       @trace_filter.set_trace_func(@core.event_proc) 
       Trace.event_masks[0] |= @core.step_events
-      th.exec_event_tracing  = old_exec_event_tracing unless opts[:debugme]
       @core.debugger(1) 
     else
-      # FIXME: do better saving/restoring event_exec_tracing.
-      unless opts[:debugme]
-        old_exec_event_tracing = th.exec_event_tracing
-        th.exec_event_tracing  = true 
-      end
+      RubyVM::ThreadFrame::current.trace_off = true unless opts[:debugme]
 
       @trace_filter.set_trace_func(@core.event_proc)
       Trace.event_masks[0] |= @core.step_events
-      th.exec_event_tracing  = old_exec_event_tracing unless opts[:debugme]
 
       # Set to stop on the next event after this returns.
       @core.step_count = 0
