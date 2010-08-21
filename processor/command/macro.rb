@@ -39,7 +39,7 @@ See also 'show macro'.
     if proc_obj
       if proc_obj.is_a?(Proc)
         @proc.macros[macro_name] = proc_obj
-        msg "Macro #{macro_name} defined"
+        msg "Macro \"#{macro_name}\" defined."
       else
         errmsg "Expecting a Proc object; got: #{proc_argstr}"
       end

@@ -4,7 +4,15 @@ require_relative 'helper'
 
 class Debugger::Subcommand::InfoRegistersSp < Debugger::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show the value of the VM stack pointer (SP).
+    HELP         = 'Show information about the VM stack pointer (SP).
+
+usage: 
+   info register sp [NUMBER NUMBER ...|size]
+
+With no arguments, all SP values for the current frame of the debugged
+program are shown.  If a number is given, then the entry at that
+location is shown. If "size" is given, then we show the number items
+in the stack of the current frame.
 
 The VM uses a stack to store temporary values in computations. For
 example to compute "a + b", the values of "a" and "b" are pushed onto
@@ -22,7 +30,17 @@ See also "info register LFP"'
 
   include Registers
   def run(args)
-    register_array_index(PREFIX[-1], args)
+    if args.size == 0
+      0.upto(@proc.frame.sp_size) do |i|
+        msg "%s%d: %s" % [' ' * 2, i, @proc.frame.sp(i).inspect]
+      end if @proc.frame.sp_size
+    elsif args.size == 1 and 'size' == args[0] 
+      msg "Number of stack items in frame is #{@proc.frame.sp_size}."
+    else
+      args.each do |arg|
+        register_array_index(PREFIX[-1], arg, @proc.frame.sp_size)
+      end
+    end
   end
 end
 
@@ -40,10 +58,17 @@ if __FILE__ == $0
                                                             info_cmd,
                                                             cmd_name)
   infox_cmd.summary_help(name)
+  puts
   # require_relative '../../../../lib/rbdbgr'
   # dbgr = Debugger.new(:set_restart => true)
   # dbgr.debugger
   infox_cmd.run([])
+  puts
+  %w(0 1 10).each do |val|
+    infox_cmd.run([val])
+    puts '-' * 40
+  end
+  infox_cmd.run(['size'])
 
   name = File.basename(__FILE__, '.rb')
 end
