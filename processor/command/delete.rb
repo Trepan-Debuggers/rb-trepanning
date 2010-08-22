@@ -18,7 +18,7 @@ number.
 
     CATEGORY      = 'breakpoints'
     NAME          = File.basename(__FILE__, '.rb')
-    SHORT_HELP    = 'Disable some breakpoints'
+    SHORT_HELP    = 'Delete some breakpoints'
   end
   
   def run(args)
