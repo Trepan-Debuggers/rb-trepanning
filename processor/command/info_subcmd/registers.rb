@@ -11,8 +11,9 @@ If a register name given, only only that register is show.
 Examples:
   info registers     # show all registers
   info register pc   # show only the pc register
-  info reg sp        # show stack pointer register: sp(0)
-  info reg sp 1      # show sp(1)
+  info reg sp        # show all stack pointer registers
+  info reg sp 1 3    # show sp(1) and sp(3)
+  info reg sp size   # show sp size
   info reg lfp       # show lfp(0)
 '
 
