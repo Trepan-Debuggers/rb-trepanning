@@ -31,7 +31,7 @@ See also "info register LFP"'
   include Registers
   def run(args)
     if args.size == 0
-      0.upto(@proc.frame.sp_size) do |i|
+      0.upto(@proc.frame.sp_size-1) do |i|
         msg "%s%d: %s" % [' ' * 2, i, @proc.frame.sp(i).inspect]
       end if @proc.frame.sp_size
     elsif args.size == 1 and 'size' == args[0] 
