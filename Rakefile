@@ -102,6 +102,7 @@ task :default => :test
 FILES = FileList[
   'README.textile',
   'LICENSE',
+  'ChangeLog',
   'Rakefile',
   'app/*',
   'bin/*',
@@ -110,7 +111,7 @@ FILES = FileList[
   'io/*',
   'lib/*',
   'processor/**/*.rb',
-  # 'test/**/*.rb',
+  'test/**/*.rb',
 ]                        
 
 spec = Gem::Specification.new do |spec|
