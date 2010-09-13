@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # Splits String dissasemble_str into an array for for each
 # line. Line(s) that Fixnum pc_offset matches at the beginning of the
 # line will have prefix "--> " added, otherwise the line will have " "

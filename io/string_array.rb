@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+
 # Simulate I/O using lists of strings.
 
 require_relative 'base_io'

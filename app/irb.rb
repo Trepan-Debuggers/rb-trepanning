@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # This code comes more or less from ruby-debug.
 require 'irb'
 module IRB # :nodoc:

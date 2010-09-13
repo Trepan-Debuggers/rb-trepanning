@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 class Debugger
   class CmdProcessor
     # Command processor hooks.

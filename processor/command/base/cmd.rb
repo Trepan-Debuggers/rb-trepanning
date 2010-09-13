@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # Base class of all commands. Code common to all commands is here.
 # Note: don't end classname with Command (capital C) since main
 # will think this a command name like QuitCommand 

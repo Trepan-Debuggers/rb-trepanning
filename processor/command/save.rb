@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'tmpdir'
 require_relative 'base/cmd'
 class Debugger::Command::SaveCommand < Debugger::Command

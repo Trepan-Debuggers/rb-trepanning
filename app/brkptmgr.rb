@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'set'
 require_relative 'brkpt'
 class BreakpointMgr

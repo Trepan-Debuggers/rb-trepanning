@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# -*- Ruby -*-
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # Invoke debugger from the command line. 
 require_relative '../app/run'
 require_relative '../app/options'

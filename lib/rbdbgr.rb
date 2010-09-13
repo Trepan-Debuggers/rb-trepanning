@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'trace'                          # Trace filtering
 require 'thread_frame'
 require_relative '../app/core'           # core event-handling mechanism

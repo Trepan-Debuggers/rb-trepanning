@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+
 # Interface when communicating with the user in the same process as
 # the debugged program.
 

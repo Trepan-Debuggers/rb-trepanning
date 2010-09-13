@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # I/O related command processor methods
 require_relative '../app/util'
 class Debugger

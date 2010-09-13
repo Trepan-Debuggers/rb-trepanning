@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 class Debugger
   attr_accessor :trace_filter # Procs/Methods we ignore.
   def initialize(opts={})

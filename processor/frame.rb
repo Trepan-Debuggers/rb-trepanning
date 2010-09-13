@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'tempfile'
 require 'linecache'
 require_relative '../app/frame'

@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # The main "driver" class for a command processor. Other parts of the 
 # command class and debugger command objects are pulled in from here.
 

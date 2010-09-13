@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # A place for the default settings
 # This could be put elsewhere but it is expected that this will grow
 # get quite large.

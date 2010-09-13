@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 require_relative '../../../app/thread'
 require_relative '../../../app/frame'

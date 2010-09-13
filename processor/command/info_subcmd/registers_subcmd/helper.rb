@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 module Registers
   def register_array_index(name, args, max_value=nil)
     if args.size == 0

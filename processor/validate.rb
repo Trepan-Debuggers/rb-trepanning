@@ -1,5 +1,7 @@
-# Debugger command input validation routines.
-# A String is usually passed in.
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+
+# Debugger command input validation routines.  A String type is
+# usually passed in as the argument to validation routines.
 
 require_relative '../app/condition'
 require_relative '../app/file'

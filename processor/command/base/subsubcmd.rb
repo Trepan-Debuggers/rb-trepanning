@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # A base class for debugger subcommands of subcommands.
 #
 # Note: don't end classname with Command (capital C as in SubCommand),

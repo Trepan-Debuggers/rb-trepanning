@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # -*- coding: utf-8 -*-
 require 'linecache'
 require_relative 'base/cmd'

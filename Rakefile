@@ -101,6 +101,7 @@ task :default => :test
 
 FILES = FileList[
   'README.textile',
+  'LICENSE',
   'Rakefile',
   'app/*',
   'bin/*',
@@ -115,10 +116,14 @@ FILES = FileList[
 spec = Gem::Specification.new do |spec|
   spec.name = 'rbdbgr'
   spec.homepage = 'http://wiki.github.com/rocky/rbdbgr'
-  spec.summary = 'Modular Ruby 1.9 Debugger'
+  spec.summary = 'Modular Ruby 1.9.2 Debugger'
 
-  spec.description = "A modular, testable, Ruby debugger using some of the best ideas from ruby-debug, other debuggers and Ruby Rails. 
-Some of the core debugger concepts have been rethought. As a result perhaps there are some of this may be experimental."
+  spec.description = "A modular, testable, Ruby debugger using some of the best ideas from ruby-debug, other debuggers, and Ruby Rails. 
+
+Some of the core debugger concepts have been rethought. As a result, some of this may be experimental.
+
+This version works only with a patched version of Ruby 1.9.2 and rb-threadframe.
+"
 
   spec.version = '0.0.1'
   spec.author = "R. Bernstein"
@@ -129,9 +134,9 @@ Some of the core debugger concepts have been rethought. As a result perhaps ther
   spec.files = FILES.to_a
 
   spec.date = Time.now
-  spec.add_dependency('rb-threadframe', '>= 0.2')
-  spec.add_dependency('rb-trace', '>= 0.1')
-  spec.add_dependency('linecache')
+  spec.add_dependency('rb-threadframe', '>= 0.32')
+  spec.add_dependency('rb-trace', '>= 0.2')
+  spec.add_dependency('linecache-tf')
   
   spec.has_rdoc = true
   spec.extra_rdoc_files = ['README.textile']

@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # For recording hook events in a buffer for review later. Make use of
 # Trace::Buffer for this prupose.
 require 'trace'

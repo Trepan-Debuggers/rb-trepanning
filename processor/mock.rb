@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # Mock setup for commands.
 require_relative 'main'
 require_relative '../app/core'

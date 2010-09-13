@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # classes to support communication to and from the debugger.  This
 # communcation might be to/from another process or another computer.
 # And reading may be from a debugger command script.

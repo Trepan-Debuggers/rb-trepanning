@@ -1,3 +1,4 @@
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 class Debugger
   module ThreadHelper
     # Return the thread at position num or object_id num.
