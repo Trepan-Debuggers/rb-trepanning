@@ -1,5 +1,9 @@
 2010-09-13  rocky <rockyb@rubyforge.org>
 
+	* ChangeLog, Rakefile: Include tests in package.
+
+2010-09-13  rocky <rockyb@rubyforge.org>
+
 	* data/irbrc: One more file
 
 2010-09-13  rocky <rockyb@rubyforge.org>

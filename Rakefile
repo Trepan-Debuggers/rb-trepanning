@@ -102,6 +102,7 @@ task :default => :test
 FILES = FileList[
   'README.textile',
   'LICENSE',
+  'NEWS',
   'ChangeLog',
   'Rakefile',
   'app/*',
