@@ -1,4 +1,5 @@
 # -*- Ruby -*-
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # We use this as the default startup file for irb inside rbdbgr
 # Down the line we will have a way for folks to add/override this
 # with their own file.
