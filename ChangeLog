@@ -1,3 +1,12 @@
+2010-09-16  rocky <rockyb@rubyforge.org>
+
+	* Rakefile: Update version. gemcutter doesn't allow repushing with
+	same version.
+
+2010-09-16  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, Rakefile: Need a dependency on columnize
+
 2010-09-13  rocky <rockyb@rubyforge.org>
 
 	* ChangeLog, Rakefile: Include NEWS in package.
