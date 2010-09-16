@@ -127,7 +127,7 @@ Some of the core debugger concepts have been rethought. As a result, some of thi
 This version works only with a patched version of Ruby 1.9.2 and rb-threadframe.
 "
 
-  spec.version = '0.0.1'
+  spec.version = '0.0.2'
   spec.author = "R. Bernstein"
   spec.email = "rockyb@rubyforge.org"
   spec.platform = Gem::Platform::RUBY
