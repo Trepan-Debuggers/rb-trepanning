@@ -139,6 +139,7 @@ This version works only with a patched version of Ruby 1.9.2 and rb-threadframe.
   spec.add_dependency('rb-threadframe', '>= 0.32')
   spec.add_dependency('rb-trace', '>= 0.2')
   spec.add_dependency('linecache-tf')
+  spec.add_dependency('columnize')
   
   spec.has_rdoc = true
   spec.extra_rdoc_files = ['README.textile']
