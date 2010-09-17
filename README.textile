@@ -2,11 +2,11 @@ A modular, testable debugger for Ruby 1.9.2. A total rewrite of _ruby-debug_.
 
 __In order to use this debugger, you'll need a patched Ruby 1.9.2 and some additional packages. See the "installation instructions.":http://wiki.github.com/rocky/rbdbgr/how-to-install-rbdbgr__
 
-Right now this debugger is geared more for those who are willing to roll up their sleeves and help out than for novices.
+Right now this debugger is beta code.
 
-A google group mailing list for this debugger can be found at http://groups.google.com/group/ruby-debugger
+There is a "google group mailing list:http://groups.google.com/group/ruby-debugger" for this debugger.
 
-If the rbdbgr is installed, here is how you can run:
+If rbdbgr is installed, here is how to run:
 
 bc.  rbdbgr ruby-program [program]
 
