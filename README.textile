@@ -1,12 +1,12 @@
-A modular, testable debugger for Ruby 1.9. A total rewrite of _ruby-debug_.
+A modular, testable debugger for Ruby 1.9.2. A total rewrite of _ruby-debug_.
 
-__In order to use this debugger, you'll need a patched Ruby 1.9 and some additional packages. See the "installation instructions.":http://wiki.github.com/rocky/rbdbgr/how-to-install-rbdbgr__
+__In order to use this debugger, you'll need a patched Ruby 1.9.2 and some additional packages. See the "installation instructions.":http://wiki.github.com/rocky/rbdbgr/how-to-install-rbdbgr__
 
-I realize installation is a bit of a pain. Right now this debugger is geared more for those who are willing to roll up their sleeves and help out than for novices.
+Right now this debugger is geared more for those who are willing to roll up their sleeves and help out than for novices.
 
-Assuming the above checks out... 
+A google group mailing list for this debugger can be found at http://groups.google.com/group/ruby-debugger
 
-Running if the rbdbgr gem is installed:
+If the rbdbgr is installed, here is how you can run:
 
 bc.  rbdbgr ruby-program [program]
 
@@ -50,6 +50,4 @@ Due to the line-event orientation in ruby-debug, it occasionally it was convenie
 bc.  # ... work, work, work 
  mydbg.debugger(:immediate=>true) # enter debugger here 
  # ... work, work, work
-
-
 
