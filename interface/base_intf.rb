@@ -44,7 +44,7 @@ class Debugger
     end
 
     # Common routine for reporting debugger error messages.
-    def errmsg(str, prefix='*** ')
+    def errmsg(str, prefix='* ')
       if str.is_a?(Array)
         str.each{|s| errmsg(s)}
       else

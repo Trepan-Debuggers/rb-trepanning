@@ -63,8 +63,8 @@ class TestRaise < Test::Unit::TestCase
     d.stop # ({:remove => true})
     out = ['-- ', 'begin',
            '-- ', 'x = 1',
-           '*** "[5]" does not inherit Exception.',
-           '*** "NotanError" does not inherit Exception.',
+           '* "[5]" does not inherit Exception.',
+           '* "NotanError" does not inherit Exception.',
            '-- ', 'y = 2',
            '-- ', 'd.stop']
     compare_output(out, d, cmds)
