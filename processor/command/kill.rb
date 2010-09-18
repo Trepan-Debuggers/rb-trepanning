@@ -6,9 +6,8 @@ class Debugger::Command::KillCommand < Debugger::Command
     HELP = 
 "Kill execution of program being debugged.
 
-Equivalent of Process.kill('KILL', <pid>) where <pid> is Process.pid, the current
-debugged process. This is an unmaskable signal. When all else fails, e.g. in
-thread code, use this.
+Equivalent of Process.kill('KILL', Process.pid). This is an unmaskable
+signal. When all else fails, e.g. in thread code, use this.
 
 If 'unconditionally' is given, no questions are asked. Otherwise, if
 we are in interactive mode, we'll prompt to make sure."
