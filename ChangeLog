@@ -1,3 +1,29 @@
+2010-09-17  rocky <rockyb@rubyforge.org>
+
+	* processor/command/kill.rb: See above
+
+2010-09-17  rocky <rockyb@rubyforge.org>
+
+	* processor/command/kill.rb: See before.
+
+2010-09-17  rocky <rockyb@rubyforge.org>
+
+	* processor/command/kill.rb: Help string correction. (Remove
+	remnants of the days when this was Python.)
+
+2010-09-17  rocky <rockyb@rubyforge.org>
+
+	* README.textile: Small tweaks in README.textile
+
+2010-09-17  rocky <rockyb@rubyforge.org>
+
+	* README.textile: Revise to add google group and for 1.9.2 (as
+	opposed to 1.9).
+
+2010-09-16  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, Rakefile: Add dependency for diff-lcs
+
 2010-09-16  rocky <rockyb@rubyforge.org>
 
 	* Rakefile: Update version. gemcutter doesn't allow repushing with

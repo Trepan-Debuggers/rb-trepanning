@@ -45,7 +45,13 @@ class Debugger
 
     # Common routine for reporting debugger error messages.
     def errmsg(str, prefix='*** ')
-      return msg("%s%s" % [prefix, str])
+      if str.is_a?(Array)
+        str.each{|s| errmsg(s)}
+      else
+        str.split("\n").each do |s|
+          msg("%s%s" % [prefix, s])
+        end
+      end
     end
 
     def finalize(last_wishes=nil)
