@@ -15,7 +15,7 @@ we are in interactive mode, we'll prompt to make sure."
     CATEGORY     = 'running'
     MAX_ARGS     = 1  # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
-    SHORT_HELP  = 'Send this process a POSIX signal ("9" for "kill -9")'
+    SHORT_HELP  = 'Send this process a POSIX signal (default "9" is "kill -9")'
   end
     
   # This method runs the command
