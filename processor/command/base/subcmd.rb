@@ -6,12 +6,12 @@
 # will think this a command name like QuitCommand 
 #                                         ^
 
-# Base Class for Debugger subcommands. We pull in some helper
+# Base Class for Trepan subcommands. We pull in some helper
 # functions for command from module cmdfns.
 
 require_relative 'cmd'
 
-class Debugger
+class Trepan
 
   class Subcommand  < Command
 
@@ -194,7 +194,7 @@ if __FILE__ == $0
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   p cmds.keys
-  subcmd = Debugger::Subcommand.new(cmds['exit'])
+  subcmd = Trepan::Subcommand.new(cmds['exit'])
   def subcmd.msg(message)
     puts message
   end

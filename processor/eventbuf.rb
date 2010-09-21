@@ -4,7 +4,7 @@
 require 'trace'
 require 'linecache'
 
-class Debugger
+class Trepan
   class CmdProcessor
 
     attr_reader :eventbuf
@@ -114,7 +114,7 @@ class Debugger
 end
 if __FILE__ == $0
   # Demo it.
-  cmdproc = Debugger::CmdProcessor.new
+  cmdproc = Trepan::CmdProcessor.new
   cmdproc.eventbuf_initialize(5)
 
   def cmdproc.msg(mess)

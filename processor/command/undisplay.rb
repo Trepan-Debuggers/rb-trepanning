@@ -3,7 +3,7 @@
 require_relative 'base/cmd'
 
 # undisplay display-number...
-class Debugger::Command::UndisplayCommand < Debugger::Command
+class Trepan::Command::UndisplayCommand < Trepan::Command
     
   unless defined?(HELP)
     HELP = <<EOH

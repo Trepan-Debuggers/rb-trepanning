@@ -3,7 +3,7 @@
 require_relative '../base/subcmd'
 require_relative '../../../app/frame'
 
-class Debugger::Subcommand::InfoArgs < Debugger::Subcommand
+class Trepan::Subcommand::InfoArgs < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = 'Show argument variables of the current stack frame'
     MIN_ABBREV   = 'ar'.size 
@@ -12,7 +12,7 @@ class Debugger::Subcommand::InfoArgs < Debugger::Subcommand
     PREFIX       = %w(info args)
   end
 
-  include Debugger::Frame
+  include Trepan::Frame
   def run(args)
     if 'CFUNC' == @proc.frame.type
       argc = @proc.frame.argc
@@ -48,8 +48,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Debugger::Subcommand::InfoArgs.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::InfoArgs.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)

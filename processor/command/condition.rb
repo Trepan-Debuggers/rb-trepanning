@@ -5,7 +5,7 @@ require_relative '../breakpoint'
 require_relative '../../app/brkpt'
 require_relative '../../app/condition'
 
-class Debugger::Command::ConditionCommand < Debugger::Command
+class Trepan::Command::ConditionCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 
@@ -29,7 +29,7 @@ Examples:
     SHORT_HELP    = 'Specify breakpoint number N to break only if COND is true'
   end
 
-  include Debugger::Condition
+  include Trepan::Condition
 
   def run(args)
     bpnum = @proc.get_an_int(args[1])

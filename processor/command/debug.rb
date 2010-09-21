@@ -3,7 +3,7 @@
 require 'thread_frame'
 require_relative 'base/cmd'
 
-class Debugger::Command::DebugCommand < Debugger::Command
+class Trepan::Command::DebugCommand < Trepan::Command
   unless defined?(HELP)
     HELP =
 "debug RUBY-CODE

@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::SetSp < Debugger::Subcommand
+class Trepan::Subcommand::SetSp < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = 'Set a stack pointer register'
     IN_LIST      = true
@@ -43,9 +43,9 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Debugger::Subcommand::SetSp.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  dbgr, cmd = MockTrepan::setup('set')
+  subcommand = Trepan::Subcommand::SetSp.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   def subcommand.msg(message)
     puts message

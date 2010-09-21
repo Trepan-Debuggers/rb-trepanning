@@ -2,10 +2,10 @@
 require 'test/unit'
 require_relative '../../app/disassemble'
 
-# Test Debugger:CmdProcessor
+# Test Trepan::CmdProcessor
 class TestAppDisassemble < Test::Unit::TestCase
 
-  include Debugger::Disassemble
+  include Trepan::Disassemble
 
   def setup
     @dis_string='

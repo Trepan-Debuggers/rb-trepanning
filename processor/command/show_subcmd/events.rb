@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::ShowEvents < Debugger::Subcommand
+class Trepan::Subcommand::ShowEvents < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = 'Show trace events we may stop on.'
     MIN_ABBREV   = 'ev'.size
@@ -30,8 +30,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::ShowEvents.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::ShowEvents.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)

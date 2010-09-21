@@ -2,9 +2,11 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 require_relative '../../app/disassemble'
+require_relative '../../app/file'
 
-class Debugger::Command::DisassembleCommand < Debugger::Command
-    include Debugger::Disassemble
+class Trepan::Command::DisassembleCommand < Trepan::Command
+    include Trepan::Disassemble
+    include Rbdbgr
 
   unless defined?(HELP)
     HELP = 

@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 require_relative '../trace'
-class Debugger::SubSubcommand::SetTraceVar < Debugger::SubSubcommand
+class Trepan::SubSubcommand::SetTraceVar < Trepan::SubSubcommand
   unless defined?(HELP)
     HELP         = 
 "set trace var GLOBAL_VARIABLE
@@ -44,14 +44,14 @@ if __FILE__ == $0
   # FIXME: DRY the below code
   dbgr, set_cmd = MockDebugger::setup('set')
   set_cmd.proc.send('frame_initialize')
-  testcmdMgr = Debugger::Subcmd.new(set_cmd)
-  cmd_name   = Debugger::SubSubcommand::SetTraceVar::PREFIX.join('')
-  setx_cmd   = Debugger::SubSubcommand::SetTraceVar.new(set_cmd.proc, 
-                                                        set_cmd,
-                                                        cmd_name)
+  testcmdMgr = Trepan::Subcmd.new(set_cmd)
+  cmd_name   = Trepan::SubSubcommand::SetTraceVar::PREFIX.join('')
+  setx_cmd   = Trepan::SubSubcommand::SetTraceVar.new(set_cmd.proc, 
+                                                      set_cmd,
+                                                      cmd_name)
   setx_cmd.run([])
   # require_relative '../../../../lib/bdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   eval('set_cmd.proc.frame_setup(RubyVM::ThreadFrame::current); setx_cmd.run([])')
 

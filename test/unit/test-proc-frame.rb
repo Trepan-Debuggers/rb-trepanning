@@ -9,13 +9,13 @@ require_relative '../../app/mock'
 $errors = []
 $msgs   = []
 
-# Test Debugger:CmdProcessor Frame portion
+# Test Trepan::CmdProcessor Frame portion
 class TestCmdProcessorFrame < Test::Unit::TestCase
 
   def setup
     $errors = []
     $msgs   = []
-    @proc    = Debugger::CmdProcessor.new(Debugger::MockCore.new())
+    @proc    = Trepan::CmdProcessor.new(Trepan::MockCore.new())
     @proc.frame_index = 0
     class << @proc
       def errmsg(msg)

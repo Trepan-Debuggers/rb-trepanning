@@ -3,7 +3,7 @@
 require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
 
-class Debugger::SubSubcommand::InfoRegisters < Debugger::SubSubcommandMgr
+class Trepan::SubSubcommand::InfoRegisters < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     HELP         = 
 'List of contents for the registers of the current stack frame.
@@ -62,8 +62,8 @@ if __FILE__ == $0
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   info_cmd = cmds['info']
-  command = Debugger::SubSubcommand::InfoRegisters.new(dbgr.core.processor,
-                                                       info_cmd)
+  command = Trepan::SubSubcommand::InfoRegisters.new(dbgr.core.processor,
+                                                     info_cmd)
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['info', name]
   info_cmd.instance_variable_set('@last_args', cmd_args)

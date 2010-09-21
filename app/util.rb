@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-class Debugger
+class Trepan
   module Util
 
   :module_function # All functions below are easily publically accessible
@@ -23,7 +23,7 @@ class Debugger
 end
 
 if __FILE__ == $0
-  include Debugger::Util
+  include Trepan::Util
   string = 'The time has come to talk of many things.'
   puts safe_repr(string, 50)
   puts safe_repr(string, 17)

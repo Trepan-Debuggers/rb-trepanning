@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::ReloadCommand < Debugger::Subcommand
+class Trepan::Subcommand::ReloadCommand < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = 'Reload debugger commmands from debugger directories'
     MIN_ABBREV   = 'co'.size # Note we have "info file"
@@ -26,8 +26,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd  = MockDebugger::setup('reload')
-  subcommand = Debugger::Subcommand::ReloadCommand.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::ReloadCommand.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)

@@ -5,11 +5,11 @@ require_relative '../../processor/main' # Have to include before frame!
 require_relative '../../processor/eval'
 require_relative '../../app/mock'
 
-# Test Debugger:CmdProcessor Eval portion
+# Test Trepan::CmdProcessor Eval portion
 class TestProcEval < Test::Unit::TestCase
 
   def test_basic
-    cmdp = Debugger::CmdProcessor.new(Debugger::MockCore.new())
+    cmdp = Trepan::CmdProcessor.new(Trepan::MockCore.new())
     assert_equal('(eval "x = 1; y = 2")',
                  cmdp.fake_eval_filename('x = 1; y = 2'))
     assert_equal('(eval "x = 1;"...)',

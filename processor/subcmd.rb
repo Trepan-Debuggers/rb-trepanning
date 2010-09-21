@@ -1,7 +1,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # gdb-like subcommand processing.
 
-class Debugger
+class Trepan
   class Subcmd
 
     attr_reader :subcmds
@@ -111,7 +111,7 @@ if __FILE__ == $0
   require_relative 'mock'
   require_relative 'command/base/cmd'
 
-  class Debugger::TestCommand < Debugger::Command
+  class Trepan::TestCommand < Trepan::Command
     
     HELP = 'Help string string for testing'
     CATEGORY = 'data'
@@ -135,8 +135,8 @@ if __FILE__ == $0
     def run(args); puts 'test testing run' end
   end
 
-  d = MockDebugger::MockDebugger.new
-  testcmd    = Debugger::TestCommand.new(nil)
+  d = MockTrepan::MockTrepan.new
+  testcmd    = Trepan::TestCommand.new(nil)
   # testcmd.debugger = d
   testcmd.proc     = d.core.processor
   # testcmdMgr = Subcmd.new('test', testcmd)

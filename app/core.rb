@@ -4,18 +4,18 @@ require 'thread_frame'
 require 'trace'
 # require_relative '../../rb-trace/app/trace'
 require_relative '../processor/main'
-class Debugger
-  # This class contains the Debugger core routines, such as an event
+class Trepan
+  # This class contains the Trepan core routines, such as an event
   # processor which is responsible of handling what to do when an event is
   # triggered.
   # 
-  # See also 'rdbgr' the top-level Debugger class and command-line routine
+  # See also 'rdbgr' the top-level Trepan class and command-line routine
   # which ultimately will call this.
 
   class Core
     attr_accessor :async_events # bitmask of asyncronous events - used all
                                 # the time
-    attr_reader   :dbgr         # Debugger instance
+    attr_reader   :dbgr         # Trepan instance
     attr_reader   :event        # String - event which triggering event
                                 # processor
     attr_reader   :event_proc   # Proc of method event_processor
@@ -25,7 +25,7 @@ class Debugger
     attr_reader   :hook_arg     # 'arg' passed from trace hook
     attr_accessor :mutex        # mutex to lock out other threads from
                                 # entering debugger while we are in it.
-    attr_accessor :processor    # Debugger::CmdProc instance
+    attr_accessor :processor    # Trepan::CmdProc instance
     attr_reader   :settings     # Hash of things you can configure
     attr_accessor :step_count   # Fixnum. Negative means no tracing,
                                 # 0 means stop on next event, 1 means 
@@ -192,7 +192,7 @@ class Debugger
 end
 if __FILE__ == $0
   require_relative '../lib/rbdbgr'
-  dbg = Debugger.new()
+  dbg = Trepan.new()
   if ARGV.size > 0
     def foo(dbg)
       p 'foo here'

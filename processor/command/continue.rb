@@ -2,7 +2,7 @@
 require_relative 'base/cmd'
 require_relative '../running'
 require_relative '../../app/brkpt' # FIXME: possibly temporary
-class Debugger::Command::ContinueCommand < Debugger::Command
+class Trepan::Command::ContinueCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 

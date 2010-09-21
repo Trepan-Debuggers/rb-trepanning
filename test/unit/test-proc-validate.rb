@@ -8,13 +8,13 @@ require_relative '../../app/mock'
 $errors = []
 $msgs   = []
 
-# Test Debugger:CmdProcessor Validation portion
+# Test Trepan::CmdProcessor Validation portion
 class TestValidate < Test::Unit::TestCase
 
   def setup
     $errors = []
     $msgs   = []
-    @proc    = Debugger::CmdProcessor.new(Debugger::MockCore.new())
+    @proc    = Trepan::CmdProcessor.new(Trepan::MockCore.new())
 
     class << @proc
       def errmsg(msg)
@@ -70,9 +70,9 @@ class TestValidate < Test::Unit::TestCase
     def foo; 5 end
     
     # require_relative '../../lib/rbdbgr'
-    # dbgr = Debugger.new(:set_restart => true)
+    # dbgr = Trepan.new(:set_restart => true)
     # FIXME: 'foo', 'errmsg'
-    ['Array#map', 'Debugger::CmdProcessor.new'
+    ['Array#map', 'Trepan::CmdProcessor.new'
     ].each do |str|
       # dbgr.debugger if 'foo' == str
       assert_equal(true, @proc.method?(str),

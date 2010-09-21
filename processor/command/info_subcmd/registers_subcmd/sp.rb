@@ -3,7 +3,7 @@
 require_relative '../../base/subsubcmd'
 require_relative 'helper'
 
-class Debugger::Subcommand::InfoRegistersSp < Debugger::SubSubcommand
+class Trepan::Subcommand::InfoRegistersSp < Trepan::SubSubcommand
   unless defined?(HELP)
     HELP         = 'Show information about the VM stack pointer (SP).
 
@@ -53,15 +53,15 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, info_cmd = MockDebugger::setup('info')
-  testcmdMgr = Debugger::Subcmd.new(info_cmd)
-  cmd_name   = Debugger::SubSubcommand::InfoRegistersSp::PREFIX.join('')
-  infox_cmd  = Debugger::SubSubcommand::InfoRegistersSp.new(info_cmd.proc, 
-                                                            info_cmd,
-                                                            cmd_name)
+  testcmdMgr = Trepan::Subcmd.new(info_cmd)
+  cmd_name   = Trepan::SubSubcommand::InfoRegistersSp::PREFIX.join('')
+  infox_cmd  = Trepan::SubSubcommand::InfoRegistersSp.new(info_cmd.proc, 
+                                                          info_cmd,
+                                                          cmd_name)
   infox_cmd.summary_help(name)
   puts
   # require_relative '../../../../lib/rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   infox_cmd.run([])
   puts

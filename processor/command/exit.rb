@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
-class Debugger::Command::ExitCommand < Debugger::Command
+class Trepan::Command::ExitCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 

@@ -3,7 +3,7 @@
 
 # A base class for a debugger interface.
 
-class Debugger
+class Trepan
 
   unless defined?(NotImplementedMessage)
     NotImplementedMessage = 'This method must be overriden in a subclass'
@@ -40,7 +40,7 @@ class Debugger
     # Called when a dangerous action is about to be done to make sure
     # it's okay. `prompt' is printed; user response is returned.
     def confirm(prompt, default=false)
-      raise RuntimeError, Debugger::NotImplementedMessage
+      raise RuntimeError, Trepan::NotImplementedMessage
     end
 
     # Common routine for reporting debugger error messages.
@@ -83,7 +83,7 @@ class Debugger
     end
 
     def read_command( prompt)
-      raise RuntimeError, Debugger::NotImplementedMessage
+      raise RuntimeError, Trepan::NotImplementedMessage
     end
 
     def readline(prompt='')

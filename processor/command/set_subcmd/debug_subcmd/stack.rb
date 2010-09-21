@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::SetDebugStack < Debugger::SetBoolSubSubcommand
+class Trepan::SubSubcommand::SetDebugStack < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     HELP = "Set display of complete stack including possibly setup stack from rbdbgr"
     MIN_ABBREV  = 'st'.size
@@ -29,15 +29,15 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, set_cmd  = MockDebugger::setup('set')
-  debug_cmd      = Debugger::SubSubcommand::SetDebug.new(dbgr.core.processor, 
+  debug_cmd      = Trepan::SubSubcommand::SetDebug.new(dbgr.core.processor, 
                                                         set_cmd)
   # FIXME: remove the 'join' below
-  cmd_name       = Debugger::SubSubcommand::SetDebugStack::PREFIX.join('')
-  debugx_cmd     = Debugger::SubSubcommand::SetDebugStack.new(set_cmd.proc, 
+  cmd_name       = Trepan::SubSubcommand::SetDebugStack::PREFIX.join('')
+  debugx_cmd     = Trepan::SubSubcommand::SetDebugStack.new(set_cmd.proc, 
                                                               debug_cmd,
                                                               cmd_name)
   # require_relative '../../../../lib rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   debugx_cmd.run([name])
   debugx_cmd.run([name, 'off'])

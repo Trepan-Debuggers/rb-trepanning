@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::SetDifferent < Debugger::SetBoolSubcommand
+class Trepan::Subcommand::SetDifferent < Trepan::SetBoolSubcommand
   unless defined?(HELP)
     HELP = "
 set different [on|off|nostack]
@@ -56,8 +56,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Debugger::Subcommand::SetDifferent.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::SetDifferent.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   subcommand.run_show_bool
   subcommand.summary_help(name)

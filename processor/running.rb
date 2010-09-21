@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../app/core'
-class Debugger
+class Trepan
   class CmdProcessor
 
     attr_accessor :stop_condition  # String or nil. When not nil

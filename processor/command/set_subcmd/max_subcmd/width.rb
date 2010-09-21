@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::SetMaxWidth < Debugger::SubSubcommand
+class Trepan::SubSubcommand::SetMaxWidth < Trepan::SubSubcommand
   unless defined?(HELP)
     HELP         = 'Set max[imum] width NUMBER
 
@@ -31,12 +31,12 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   dbgr, set_cmd = MockDebugger::setup('set')
-  max_cmd       = Debugger::SubSubcommand::SetMax.new(dbgr.core.processor, 
+  max_cmd       = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
                                                       set_cmd)
-  cmd_name      = Debugger::SubSubcommand::SetMaxWidth::PREFIX.join('')
-  subcmd        = Debugger::SubSubcommand::SetMaxWidth.new(set_cmd.proc,
-                                                           max_cmd,
-                                                           cmd_name)
+  cmd_name      = Trepan::SubSubcommand::SetMaxWidth::PREFIX.join('')
+  subcmd        = Trepan::SubSubcommand::SetMaxWidth.new(set_cmd.proc,
+                                                         max_cmd,
+                                                         cmd_name)
   subcmd.run(['max', 'width'])
   subcmd.run(%w(set max width 0))
   subcmd.run(%w(set max width 20))

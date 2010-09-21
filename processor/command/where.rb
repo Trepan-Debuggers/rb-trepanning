@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
-class Debugger::Command::WhereCommand < Debugger::Command
+class Trepan::Command::WhereCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 
@@ -29,7 +29,7 @@ Examples:
   end
 
   require_relative '../../app/frame'
-  include Debugger::Frame
+  include Trepan::Frame
 
   # This method runs the command
   def run(args) # :nodoc

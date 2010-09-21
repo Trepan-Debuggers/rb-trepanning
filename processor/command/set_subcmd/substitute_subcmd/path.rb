@@ -3,7 +3,7 @@
 require_relative '../../base/subsubcmd'
 require_relative '../substitute'
 
-class Debugger::SubSubcommand::SetSubstitutePath < Debugger::SubSubcommand
+class Trepan::SubSubcommand::SetSubstitutePath < Trepan::SubSubcommand
   unless defined?(HELP)
     HELP         = 
 'Add a substitution rule replacing FROM into TO in source file names.
@@ -40,13 +40,13 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, set_cmd = MockDebugger::setup('set')
-  testcmdMgr = Debugger::Subcmd.new(set_cmd)
-  cmd_name   = Debugger::SubSubcommand::SetSubstitutePath::PREFIX.join('')
-  setx_cmd   = Debugger::SubSubcommand::SetSubstitutePath.new(set_cmd.proc, 
-                                                              set_cmd,
-                                                              cmd_name)
+  testcmdMgr = Trepan::Subcmd.new(set_cmd)
+  cmd_name   = Trepan::SubSubcommand::SetSubstitutePath::PREFIX.join('')
+  setx_cmd   = Trepan::SubSubcommand::SetSubstitutePath.new(set_cmd.proc, 
+                                                            set_cmd,
+                                                            cmd_name)
   # require_relative '../../../../lib/rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   setx_cmd.run([])
 

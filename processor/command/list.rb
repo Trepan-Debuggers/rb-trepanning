@@ -3,7 +3,7 @@
 require 'linecache'
 require_relative 'base/cmd'
 
-class Debugger::Command::ListCommand < Debugger::Command
+class Trepan::Command::ListCommand < Trepan::Command
   unless defined?(HELP)
     HELP = 
 "list[>] [MODULE] [FIRST [NUM]]

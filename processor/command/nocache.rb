@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
-class Debugger::Command::NoCacheCommand < Debugger::Command
+class Trepan::Command::NoCacheCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP         = "Remove getinlinecache instructions from instruction sequence."

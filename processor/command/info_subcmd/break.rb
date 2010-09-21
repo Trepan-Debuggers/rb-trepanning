@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::InfoBreak < Debugger::Subcommand
+class Trepan::Subcommand::InfoBreak < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = <<EOH
 info break [num1 ...] [verbose]
@@ -134,7 +134,7 @@ if __FILE__ == $0
   require_relative '../../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Debugger::Subcommand::InfoBreak.new(cmd)
+  subcommand = Trepan::Subcommand::InfoBreak.new(cmd)
 
   puts '-' * 20
   subcommand.run(%w(info break))

@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::ShowArgs < Debugger::Subcommand
+class Trepan::Subcommand::ShowArgs < Trepan::Subcommand
   unless defined?(HELP)
     HELP = 'Show argument list to give program when it is restarted'
     MIN_ABBREV   = 'ar'.size
@@ -27,8 +27,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
-  subcommand = Debugger::Subcommand::ShowWidth.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::ShowWidth.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   def subcommand.msg(message)
     puts message

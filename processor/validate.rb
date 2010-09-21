@@ -1,20 +1,20 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 
-# Debugger command input validation routines.  A String type is
+# Trepan command input validation routines.  A String type is
 # usually passed in as the argument to validation routines.
 
 require_relative '../app/condition'
 require_relative '../app/file'
 require_relative '../app/thread'
-class Debugger
+class Trepan
   class CmdProcessor
 
     attr_reader :dbgr_script_iseqs
     attr_reader :dbgr_iseqs
 
     include Rbdbgr
-    include Debugger::ThreadHelper
-    include Debugger::Condition
+    include Trepan::ThreadHelper
+    include Trepan::Condition
 
     def confirm(msg, default)
       @dbgr.intf[-1].confirm(msg, default)
@@ -336,7 +336,7 @@ if __FILE__ == $0
     require_relative 'main' # Have to include before defining CmdProcessor!
                             # FIXME
 
-    proc = Debugger::CmdProcessor.new(Debugger::MockCore.new())
+    proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
     proc.frame_setup(RubyVM::ThreadFrame.current)
     onoff = %w(1 0 on off)
     onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }
@@ -356,18 +356,18 @@ if __FILE__ == $0
     puts proc.parse_position_one_arg('tmpdir.rb').inspect
 
     puts '=' * 40
-    ['Array#map', 'Debugger::CmdProcessor.new',
+    ['Array#map', 'Trepan::CmdProcessor.new',
      'foo', 'proc.errmsg'].each do |str|
       puts "#{str} should be true: #{proc.method?(str).inspect}"
     end
     puts '=' * 40
     # require_relative '../lib/rbdbgr'
-    # dbgr = Debugger.new(:set_restart => true)
+    # dbgr = Trepan.new(:set_restart => true)
     # dbgr.debugger
 
     # FIXME:
     # Array#foo should be false: true
-    # Debugger::CmdProcessor.allocate should be false: true
+    # Trepan::CmdProcessor.allocate should be false: true
 
     ['food', '.errmsg'].each do |str|
       puts "#{str} should be false: #{proc.method?(str).inspect}"

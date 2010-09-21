@@ -25,8 +25,8 @@ module MockDebugger
     def initialize(settings={})
       @before_cmdloop_hooks = []
       @settings             = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
-      @intf                 = [Debugger::UserInterface.new]
-      @core                 = Debugger::Core.new(self)
+      @intf                 = [Trepan::UserInterface.new]
+      @core                 = Trepan::Core.new(self)
       @trace_filter         = []
 
       # Don't allow user commands in mocks.
@@ -40,7 +40,7 @@ module MockDebugger
   def setup(name, show_constants=true)
     if ARGV.size > 0 && ARGV[0] == 'debug'
       require_relative 'rbdbgr'
-      dbgr = Debugger.new
+      dbgr = Trepan.new
       dbgr.debugger
     else
       dbgr = MockDebugger.new

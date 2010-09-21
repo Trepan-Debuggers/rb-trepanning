@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::Subcommand::SetAutoIrb < Debugger::SetBoolSubSubcommand
+class Trepan::Subcommand::SetAutoIrb < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     HELP = "Set to automatically go into irb each time we enter the debugger"
     MIN_ABBREV = 'ir'.size
@@ -29,19 +29,19 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, set_cmd = MockDebugger::setup('set')
-  auto_cmd      = Debugger::SubSubcommand::SetAuto.new(dbgr.core.processor, 
-                                                       set_cmd)
+  dbgr, set_cmd = MockTrepan::setup('set')
+  auto_cmd      = Trepan::SubSubcommand::SetAuto.new(dbgr.core.processor, 
+                                                     set_cmd)
   # FIXME: remove the 'join' below
-  cmd_name      = Debugger::Subcommand::SetAutoIrb::PREFIX.join('')
-  autox_cmd     = Debugger::SubSubcommand::SetAutoIrb.new(set_cmd.proc, 
-                                                          auto_cmd,
-                                                          cmd_name)
+  cmd_name      = Trepan::Subcommand::SetAutoIrb::PREFIX.join('')
+  autox_cmd     = Trepan::SubSubcommand::SetAutoIrb.new(set_cmd.proc, 
+                                                        auto_cmd,
+                                                        cmd_name)
   # require_relative '../../../../lib/rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   set_cmd.proc.hook_initialize(set_cmd.proc.commands)
-  subcmd_name = Debugger::Subcommand::SetAutoIrb::PREFIX[1..-1].join('')
+  subcmd_name = Trepan::Subcommand::SetAutoIrb::PREFIX[1..-1].join('')
   autox_cmd.run([subcmd_name])
   autox_cmd.run([subcmd_name, 'off'])
   puts autox_cmd.save_command.join("\n")

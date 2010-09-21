@@ -7,7 +7,7 @@ require_relative 'base_io'
 
 # Simulate I/O using an array of strings. Sort of like StringIO, but
 # even simplier.
-class Debugger::StringArrayInput < Debugger::InputBase
+class Trepan::StringArrayInput < Trepan::InputBase
 
   def initialize(inp, opts={})
     super
@@ -55,7 +55,7 @@ end
 
 # Simulate I/O using an array of strings. Sort of like StringIO, but
 # even simplier.
-class Debugger::StringArrayOutput < Debugger::OutputBase
+class Trepan::StringArrayOutput < Trepan::OutputBase
 
   def initialize(out=[], opts={})
     super 
@@ -114,7 +114,7 @@ end
 
 # Demo
 if __FILE__ == $0
-  inp  = Debugger::StringArrayInput.open(['Now is the time', 'for all good men'])
+  inp  = Trepan::StringArrayInput.open(['Now is the time', 'for all good men'])
   line = inp.readline
   p line
   line = inp.readline
@@ -125,7 +125,7 @@ if __FILE__ == $0
     puts 'EOF hit on read'
   end
 
-  out = Debugger::StringArrayOutput.open
+  out = Trepan::StringArrayOutput.open
   p out.output
 #    line = io.readline('Type some more characters: ')
   out.writeline('Hello, world!')

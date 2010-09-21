@@ -8,7 +8,7 @@ def run_debugger(testname, ruby_file, dbgr_opts='', args='', outfile=nil)
   progdir    = File.join(srcdir, %w(.. example)) 
   
   dbgr_dir   = File.join(srcdir, %w(.. ..))
-  dbgr_short = File.join(%w(bin rbdbgr))
+  dbgr_short = File.join(%w(bin trepan))
   dbgr_path  = File.join(dbgr_dir, dbgr_short)
 
   rightfile  = File.join(datadir, "#{testname}.right")

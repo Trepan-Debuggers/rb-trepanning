@@ -4,13 +4,13 @@
 require 'test/unit'
 require_relative '../../interface/user'
 
-# Tests Debugger::UserInterface
+# Tests Trepan::UserInterface
 class TestInterfaceUser < Test::Unit::TestCase
 
   # Test UserInterface.confirm()
   def test_confirm
     
-    user_intf = Debugger::UserInterface.new
+    user_intf = Trepan::UserInterface.new
     def user_intf.readline(prompt)
       $response_answer
     end

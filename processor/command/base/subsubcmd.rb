@@ -6,13 +6,13 @@
 # since main will think this a command name like QuitCommand 
 #                                                    ^   
 
-# Base Class for Debugger subcommands. We pull in some helper
+# Base Class for Trepan subcommands. We pull in some helper
 # functions for command from module cmdfns.
 
 require_relative 'cmd'
 require_relative 'subcmd'
 
-class Debugger
+class Trepan
 
   class SubSubcommand  < Subcommand
     def initialize(cmd, parent, name)
@@ -93,10 +93,10 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, info_cmd = MockDebugger::setup('info')
-  testcmdMgr = Debugger::Subcmd.new(info_cmd)
+  testcmdMgr = Trepan::Subcmd.new(info_cmd)
   cmd_name   = 'testing'
-  infox_cmd  = Debugger::SubSubcommand.new(info_cmd.proc,
-                                           info_cmd,
-                                           cmd_name)
+  infox_cmd  = Trepan::SubSubcommand.new(info_cmd.proc,
+                                         info_cmd,
+                                         cmd_name)
   infox_cmd.settings
 end

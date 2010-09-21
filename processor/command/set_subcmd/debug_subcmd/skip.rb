@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::SetDebugSkip < Debugger::SetBoolSubSubcommand
+class Trepan::SubSubcommand::SetDebugSkip < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     HELP        = 'Set debugging of statement skip logic'
     MIN_ABBREV  = 'sk'.size
@@ -19,15 +19,15 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, dbg_cmd  = MockDebugger::setup('set')
-  debug_cmd      = Debugger::SubSubcommand::SetDebug.new(dbgr.core.processor, 
+  debug_cmd      = Trepan::SubSubcommand::SetDebug.new(dbgr.core.processor, 
                                                         dbg_cmd)
   # FIXME: remove the 'join' below
-  cmd_name       = Debugger::SubSubcommand::SetDebugSkip::PREFIX.join('')
-  debugx_cmd     = Debugger::SubSubcommand::SetDebugSkip.new(dbg_cmd.proc, 
-                                                              debug_cmd,
-                                                              cmd_name)
+  cmd_name       = Trepan::SubSubcommand::SetDebugSkip::PREFIX.join('')
+  debugx_cmd     = Trepan::SubSubcommand::SetDebugSkip.new(dbg_cmd.proc, 
+                                                            debug_cmd,
+                                                            cmd_name)
   # require_relative '../../../../lib/rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   debugx_cmd.run([name])
   debugx_cmd.run([name, 'on'])

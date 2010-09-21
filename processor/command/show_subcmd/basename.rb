@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::ShowBasename < Debugger::ShowBoolSubcommand
+class Trepan::Subcommand::ShowBasename < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
     HELP = "Show only file basename in showing file names"
     MIN_ABBREV = 'ba'.size
@@ -19,8 +19,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
-  subcommand = Debugger::Subcommand::ShowBasename.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::ShowBasename.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   subcommand.run_show_bool
   name = File.basename(__FILE__, '.rb')

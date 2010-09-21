@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::SetBasename < Debugger::SetBoolSubcommand
+class Trepan::Subcommand::SetBasename < Trepan::SetBoolSubcommand
   unless defined?(HELP)
     HELP = "Set to show only file basename in showing file names"
     IN_LIST    = true
@@ -20,14 +20,14 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Debugger::Subcommand::SetBasename.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::SetBasename.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   subcommand.run_show_bool
   subcommand.summary_help(name)
 
   # require 'rbdbgr'
-  # Debugger.debug(:set_restart => true)
+  # Trepan.debug(:set_restart => true)
   subcommand.run(['set', name])
   subcommand.run(['set', name, 'off'])
   subcommand.run(['set', name, 'on'])

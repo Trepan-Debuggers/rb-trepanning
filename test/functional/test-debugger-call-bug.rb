@@ -2,14 +2,14 @@
 require 'test/unit'
 require_relative '../../lib/rbdbgr'
 
-class TestDebuggerCallBug < Test::Unit::TestCase
+class TestTrepanCallBug < Test::Unit::TestCase
 
   def test_debugger_call_bug
     $calls = []
     mydbgr = nil
     2.times do
       x = 1
-      mydbgr = Debugger.new()
+      mydbgr = Trepan.new()
       mydbgr.core.processor.define_singleton_method(:process_commands) do
         |frame|
         # p [frame.source_container, frame.source_location, @core.event].flatten

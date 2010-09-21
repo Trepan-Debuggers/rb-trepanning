@@ -3,7 +3,7 @@
 require_relative '../base/subcmd'
 require_relative '../../../app/frame'
 
-class Debugger::Subcommand::SetReturn < Debugger::Subcommand
+class Trepan::Subcommand::SetReturn < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = 'Set the value that will be returned in the current method'
     IN_LIST      = true
@@ -12,7 +12,7 @@ class Debugger::Subcommand::SetReturn < Debugger::Subcommand
     PREFIX       = %w(set return)
   end
 
-  include Debugger::Frame
+  include Trepan::Frame
 
   def run(args)
     event = @proc.core.event
@@ -32,9 +32,9 @@ class Debugger::Subcommand::SetReturn < Debugger::Subcommand
       p $!
       return
     end
-    ret_val = Debugger::Frame.value_returned(@proc.frame, event)
+    ret_val = Trepan::Frame.value_returned(@proc.frame, event)
     msg('Return value was: %s' % ret_val.inspect)
-    Debugger::Frame.set_return_value(@proc.frame, event, new_val)
+    Trepan::Frame.set_return_value(@proc.frame, event, new_val)
     msg('New value is: %s' % new_val.inspect)
   end
 
@@ -47,9 +47,9 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Debugger::Subcommand::SetReturn.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  dbgr, cmd = MockTrepan::setup('set')
+  subcommand = Trepan::Subcommand::SetReturn.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   def subcommand.msg(message)
     puts message

@@ -7,7 +7,7 @@ require_relative '../../app/mock'
 class TestCmdProcessorLoadCmds < Test::Unit::TestCase
 
   def setup
-    @proc = Debugger::CmdProcessor.new(Debugger::MockCore.new())
+    @proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
     @proc.instance_variable_set('@settings', {})
   end
 

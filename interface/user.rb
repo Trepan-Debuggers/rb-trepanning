@@ -13,16 +13,16 @@ require_relative '../io/input'
 
 # Interface when communicating with the user in the same
 # process as the debugged program.
-class Debugger::UserInterface < Debugger::Interface
+class Trepan::UserInterface < Trepan::Interface
 
   FILE_HISTORY = '.rbdbgr_hist' unless defined?(FILE_HISTORY)
 
   def initialize(inp=nil, out=nil, opts={})
     super(inp, out, opts)
-    @input = if inp.class.ancestors.member?(Debugger::InputBase)
+    @input = if inp.class.ancestors.member?(Trepan::InputBase)
                inp
              else
-               Debugger::UserInput.open(inp)
+               Trepan::UserInput.open(inp)
              end
   end
 
@@ -67,7 +67,7 @@ end
 
 # Demo
 if __FILE__ == $0
-  intf = Debugger::UserInterface.new
+  intf = Trepan::UserInterface.new
   intf.errmsg("Houston, we have a problem here!")
   if ARGV.size > 0
     begin

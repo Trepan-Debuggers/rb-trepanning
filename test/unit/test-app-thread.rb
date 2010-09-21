@@ -3,7 +3,7 @@ require 'test/unit'
 require_relative '../../app/thread'
 
 class TestAppThread < Test::Unit::TestCase
-  include Debugger::ThreadHelper
+  include Trepan::ThreadHelper
 
   def test_basic
     Object::Thread.new do 

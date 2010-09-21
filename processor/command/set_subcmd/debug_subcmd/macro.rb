@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::SetDebugMacro < Debugger::SetBoolSubSubcommand
+class Trepan::SubSubcommand::SetDebugMacro < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     HELP = "Set macro debugging"
     MIN_ABBREV  = 'macro'.size
@@ -18,16 +18,16 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, set_cmd  = MockDebugger::setup('set')
-  debug_cmd      = Debugger::SubSubcommand::SetDebug.new(dbgr.core.processor, 
+  dbgr, set_cmd  = MockTrepan::setup('set')
+  debug_cmd      = Trepan::SubSubcommand::SetDebug.new(dbgr.core.processor, 
                                                         set_cmd)
   # FIXME: remove the 'join' below
-  cmd_name       = Debugger::SubSubcommand::SetDebugMacro::PREFIX.join('')
-  debugx_cmd     = Debugger::SubSubcommand::SetDebugMacro.new(set_cmd.proc, 
-                                                              debug_cmd,
-                                                              cmd_name)
+  cmd_name       = Trepan::SubSubcommand::SetDebugMacro::PREFIX.join('')
+  debugx_cmd     = Trepan::SubSubcommand::SetDebugMacro.new(set_cmd.proc, 
+                                                            debug_cmd,
+                                                            cmd_name)
   # require_relative '../../../../lib rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   debugx_cmd.run([name])
   debugx_cmd.run([name, 'off'])

@@ -1,7 +1,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'util'
 
-class Debugger
+class Trepan
 
   module Frame
 
@@ -13,7 +13,7 @@ class Debugger
       :show_pc      => false,   # Show PC offset?
     } unless defined?(DEFAULT_STACK_TRACE_SETTINGS)
 
-    include Debugger::Util
+    include Trepan::Util
 
     def all_param_names(iseq, delineate=true)
       return '' unless iseq
@@ -211,7 +211,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
-  include Debugger::Frame
+  include Trepan::Frame
   def msg(msg)
     puts msg
   end

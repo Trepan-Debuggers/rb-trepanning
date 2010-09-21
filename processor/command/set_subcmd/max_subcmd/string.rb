@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::SetMaxString < Debugger::SubSubcommand
+class Trepan::SubSubcommand::SetMaxString < Trepan::SubSubcommand
   unless defined?(HELP)
     HELP         = 'Set max st[ring] NUMBER
 
@@ -34,13 +34,13 @@ if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
   dbgr, set_cmd = MockDebugger::setup('set')
-  max_cmd       = Debugger::SubSubcommand::SetMax.new(dbgr.core.processor, 
-                                                      set_cmd)
+  max_cmd       = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
+                                                    set_cmd)
   # FIXME: remove the 'join' below
-  cmd_name      = Debugger::SubSubcommand::SetMaxString::PREFIX.join('')
-  subcmd        = Debugger::SubSubcommand::SetMaxString.new(set_cmd.proc, 
-                                                            max_cmd,
-                                                            cmd_name)
+  cmd_name      = Trepan::SubSubcommand::SetMaxString::PREFIX.join('')
+  subcmd        = Trepan::SubSubcommand::SetMaxString.new(set_cmd.proc, 
+                                                          max_cmd,
+                                                          cmd_name)
   subcmd.run([])
   subcmd.run(%w(0))
   subcmd.run(%w(20))

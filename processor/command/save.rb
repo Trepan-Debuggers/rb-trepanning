@@ -1,7 +1,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'tmpdir'
 require_relative 'base/cmd'
-class Debugger::Command::SaveCommand < Debugger::Command
+class Trepan::Command::SaveCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 
@@ -33,11 +33,11 @@ class Debugger::Command::SaveCommand < Debugger::Command
     save_file.puts "#\n# Commands to restore rbdbgr environment\n#\n"
     @proc.commands.each do |cmd_name, cmd_obj|
       cmd_obj.save_command if cmd_obj.respond_to?(:save_command)
-      next unless cmd_obj.is_a?(Debugger::SubcommandMgr)
+      next unless cmd_obj.is_a?(Trepan::SubcommandMgr)
       cmd_obj.subcmds.subcmds.each do |subcmd_name, subcmd_obj|
         save_file.puts subcmd_obj.save_command if 
           subcmd_obj.respond_to?(:save_command)
-        next unless subcmd_obj.is_a?(Debugger::SubSubcommandMgr)
+        next unless subcmd_obj.is_a?(Trepan::SubSubcommandMgr)
         subcmd_obj.subcmds.subcmds.each do |subsubcmd_name, subsubcmd_obj|
         save_file.puts subsubcmd_obj.save_command if 
             subsubcmd_obj.respond_to?(:save_command)

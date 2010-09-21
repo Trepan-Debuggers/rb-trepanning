@@ -19,10 +19,10 @@ SCRIPT_ISEQS__ = {} unless
 ISEQS__        = {} unless 
   defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
-class Debugger
+class Trepan
   VERSION = '0.0.4'
 
-  attr_accessor :core         # access to Debugger::Core instance
+  attr_accessor :core         # access to Trepan::Core instance
   attr_accessor :intf         # Array. The way the outside world
                               # interfaces with us.  An array, so that
                               # interfaces can be stacked.
@@ -44,7 +44,7 @@ class Debugger
     @input  ||= @settings[:input]
     @output ||= @settings[:output]
 
-    @intf     = [Debugger::UserInterface.new(@input, @output)]
+    @intf     = [Trepan::UserInterface.new(@input, @output)]
     @settings[:cmdfiles].each do |cmdfile|
       add_command_file(cmdfile)
     end if @settings.member?(:cmdfiles)
@@ -90,9 +90,9 @@ class Debugger
   # To call from inside a Ruby program, there is one-time setup that 
   # needs to be done first:
   #    require 'rbdbgr'
-  #    mydbg = Debugger.new()
+  #    mydbg = Trepan.new()
   # or if you haven't mucked around with $0 and ARGV, you might try:
-  #    mydbg = Debugger.new(:set_restart=>true))
+  #    mydbg = Trepan.new(:set_restart=>true))
   # which will tell the debugger how to "restart" the program.
   #
   # If you want a synchronous stop in your program call to the
@@ -183,13 +183,13 @@ class Debugger
         return
       end
     end
-    @intf << Debugger::ScriptInterface.new(cmdfile, @output)
+    @intf << Trepan::ScriptInterface.new(cmdfile, @output)
   end
 
   def add_startup_files()
     seen = {}
-    cwd_initfile = File.join('.', CMD_INITFILE_BASE)
-    [cwd_initfile, CMD_INITFILE].each do |initfile|
+    cwd_initfile = File.join('.', Rbdbgr::CMD_INITFILE_BASE)
+    [cwd_initfile, Rbdbgr::CMD_INITFILE].each do |initfile|
       full_initfile_path = File.expand_path(initfile)
       next if seen[full_initfile_path]
       add_command_file(full_initfile_path) if File.readable?(full_initfile_path)
@@ -202,14 +202,14 @@ class Debugger
   # two-step process in one step. That is, instead of
   #  
   #  require 'rbdbgr'
-  #  mydbg = Debugger.new()
+  #  mydbg = Trepan.new()
   #  ... 
   #  mydbg.debugger
 
   # You can run:
   #  require 'rbdbgr'
   # ...
-  #  Debugger.debug
+  #  Trepan.debug
   #
   # See debugger for options that can be passed. By default :hide_stack is
   # set.
@@ -218,15 +218,15 @@ class Debugger
 
   def self.debug(opts={}, &block)
     opts = {:hide_stack => true}.merge(opts)
-    unless defined?($rbdbgr) && $rbdbgr.is_a?(Debugger)
-      $rbdbgr = Debugger.new(opts)
+    unless defined?($rbdbgr) && $rbdbgr.is_a?(Trepan)
+      $rbdbgr = Trepan.new(opts)
       $rbdbgr.trace_filter << self.method(:debug)
     end
     $rbdbgr.debugger(opts, &block)
   end
 
   def self.debug_str(string, opts = DEFAULT_DEBUG_STR_SETTINGS)
-    $rbdbgr = Debugger.new(opts) unless $rbdbgr && $rbdbgr.is_a?(Debugger)
+    $rbdbgr = Trepan.new(opts) unless $rbdbgr && $rbdbgr.is_a?(Trepan)
     $rbdbgr.core.processor.settings[:different] = false
     # Perhaps we should do a remap file to string right here? 
     $rbdbgr.debugger(opts) { eval(string) }
@@ -234,12 +234,12 @@ class Debugger
 end
 
 module Kernel
-  # Same as Debugger.debug. 
+  # Same as Trepan.debug. 
   # FIXME figure out a way to remove duplication.
   def rbdbgr(opts={}, &block)
     opts = {:hide_stack => true}.merge(opts)
-    unless defined?($rbdbgr) && $rbdbgr.is_a?(Debugger)
-      $rbdbgr = Debugger.new
+    unless defined?($rbdbgr) && $rbdbgr.is_a?(Trepan)
+      $rbdbgr = Trepan.new
       $rbdbgr.trace_filter << self.method(:rbdbgr)
     end
     $rbdbgr.debugger(opts, &block)
@@ -253,7 +253,7 @@ if __FILE__ == $0
   puts 'block debugging...'
   # It is imagined that there are all sorts of command-line options here.
   # (I have a good imagination.)
-  Debugger.debug(:set_restart=>true) {
+  Trepan.debug(:set_restart=>true) {
     a = 2
     b = square(a)
     p "square of #{a} is #{b}"

@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-class Debugger
+class Trepan
   class CmdProcessor
 
     def debug_eval(str, max_fake_filename=15)
@@ -60,7 +60,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  cmdp = Debugger::CmdProcessor.new
+  cmdp = Trepan::CmdProcessor.new
   puts cmdp.fake_eval_filename('x = 1; y = 2')
   puts cmdp.fake_eval_filename('x = 1; y = 2', 7)
   x = 1

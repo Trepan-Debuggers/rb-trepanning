@@ -4,23 +4,23 @@ require_relative '../../processor/main'
 require_relative '../../app/core'
 
 # Mock debugger stub. FIXME: put in comment helper routine.
-class Debugger
+class Trepan
 end
 
-# Test Debugger::CmdProcessor
+# Test Trepan::CmdProcessor
 class TestSubCmdHelp < Test::Unit::TestCase
 
   def setup
-    @dbg     = Debugger.new
-    @core    = Debugger::Core.new(@dbg)
-    @cmdproc = @core.processor = Debugger::CmdProcessor.new(@core)
+    @dbg     = Trepan.new
+    @core    = Trepan::Core.new(@dbg)
+    @cmdproc = @core.processor = Trepan::CmdProcessor.new(@core)
     @cmds    = @cmdproc.instance_variable_get('@commands')
   end
 
   # See that subcommand class constants exist.
   def test_required_class_constants
     @cmds.each do |cmd_name, cmd|
-      if cmd.is_a?(Debugger::SubcommandMgr)
+      if cmd.is_a?(Trepan::SubcommandMgr)
         cmd.subcmds.subcmds.each do |subcmd_name, subcmd|
           where = "of subcommand #{subcmd_name} in command #{cmd_name}"
           %w(HELP NAME SHORT_HELP).each do

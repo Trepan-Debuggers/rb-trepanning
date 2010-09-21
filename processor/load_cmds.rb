@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-class Debugger
+class Trepan
   class CmdProcessor
 
     attr_reader   :aliases         # Hash[String] of command names
@@ -25,7 +25,7 @@ class Debugger
 
     # Loads in debugger commands by require'ing each ruby file in the
     # 'command' directory. Then a new instance of each class of the 
-    # form Debugger::xxCommand is added to @commands and that array
+    # form Trepan::xxCommand is added to @commands and that array
     # is returned.
 
     def load_debugger_commands(cmd_dir)
@@ -33,10 +33,11 @@ class Debugger
         require rb
       end if File.directory?(cmd_dir)
       # Instantiate each Command class found by the above require(s).
-      Debugger::Command.constants.grep(/.Command$/).each do |command|
+      ### p Trepan::Command.constants ## REMOVE ME
+      Trepan::Command.constants.grep(/.Command$/).each do |command|
         # Note: there is probably a non-eval way to instantiate the
         # command, but I don't know it. And eval works.
-        new_cmd = "Debugger::Command::#{command}.new(self)"
+        new_cmd = "Trepan::Command::#{command}.new(self)"
         cmd = self.instance_eval(new_cmd)
 
         # Add to list of commands and aliases.
@@ -75,7 +76,7 @@ class Debugger
   end
 end
 if __FILE__ == $0
-  cmdproc = Debugger::CmdProcessor.new
+  cmdproc = Trepan::CmdProcessor.new
   cmddir = File.join(File.dirname(__FILE__), 'command')
   cmdproc.instance_variable_set('@settings', {})
   cmdproc.load_cmds_initialize

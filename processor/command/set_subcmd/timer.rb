@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subsubcmd'
 
-class Debugger::Subcommand::SetTimer < Debugger::SetBoolSubcommand
+class Trepan::Subcommand::SetTimer < Trepan::SetBoolSubcommand
   unless defined?(HELP)
     HELP = "set timer [on|off|0|1]
 
@@ -53,14 +53,14 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, set_cmd = MockDebugger::setup('set')
-  subcommand    = Debugger::Subcommand::SetTimer.new(set_cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand    = Trepan::Subcommand::SetTimer.new(set_cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   subcommand.run_show_bool
   subcommand.summary_help(name)
 
   # require 'rbdbgr'
-  # Debugger.debug(:set_restart => true)
+  # Trepan.debug(:set_restart => true)
   subcommand.run(['set', name])
   subcommand.run(['set', name, 'off'])
   subcommand.run(['set', name, 'on'])

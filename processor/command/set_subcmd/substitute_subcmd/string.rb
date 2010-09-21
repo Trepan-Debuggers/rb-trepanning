@@ -5,7 +5,7 @@ require 'linecache'
 require_relative '../../base/subsubcmd'
 require_relative '../substitute'
 
-class Debugger::SubSubcommand::SetSubstituteString < Debugger::SubSubcommand
+class Trepan::SubSubcommand::SetSubstituteString < Trepan::SubSubcommand
   unless defined?(HELP)
     HELP         = 
 'set substitute string FROM-FILE STRING-VAR
@@ -57,13 +57,13 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, set_cmd = MockDebugger::setup('set')
-  testcmdMgr = Debugger::Subcmd.new(set_cmd)
-  cmd_name   = Debugger::SubSubcommand::SetSubstituteString::PREFIX.join('')
-  setx_cmd   = Debugger::SubSubcommand::SetSubstituteString.new(set_cmd.proc, 
-                                                                set_cmd,
-                                                                cmd_name)
+  testcmdMgr = Trepan::Subcmd.new(set_cmd)
+  cmd_name   = Trepan::SubSubcommand::SetSubstituteString::PREFIX.join('')
+  setx_cmd   = Trepan::SubSubcommand::SetSubstituteString.new(set_cmd.proc, 
+                                                              set_cmd,
+                                                              cmd_name)
   # require_relative '../../../../lib/rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   setx_cmd.run([])
 

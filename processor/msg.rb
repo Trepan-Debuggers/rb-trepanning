@@ -1,8 +1,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 # I/O related command processor methods
 require_relative '../app/util'
-class Debugger
-  include Rbdbgr
+class Trepan
   class CmdProcessor
     def errmsg(message)
       @dbgr.intf[-1].errmsg(safe_rep(message))

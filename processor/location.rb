@@ -2,7 +2,7 @@
 require 'linecache'
 require_relative 'msg'
 require_relative '../app/frame'
-class Debugger
+class Trepan
   class CmdProcessor
     attr_accessor :reload_on_change
     include Frame
@@ -71,7 +71,7 @@ class Debugger
       msg "#{ev} (#{loc})"
 
       if %w(return c-return).member?(@core.event)
-        retval = Debugger::Frame.value_returned(@frame, @core.event)
+        retval = Trepan::Frame.value_returned(@frame, @core.event)
         msg 'R=> %s' % retval.inspect 
       end
       
@@ -85,7 +85,7 @@ class Debugger
       filename  = source_container[1]
       canonic_filename = 
         if (0 == filename.index('(eval')) && frame.prev &&
-            (eval_str = Debugger::Frame.eval_string(frame.prev))
+            (eval_str = Trepan::Frame.eval_string(frame.prev))
           'eval ' + safe_repr(eval_str, 15)
         else
           canonic_file(filename)

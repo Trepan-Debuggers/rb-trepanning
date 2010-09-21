@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-class Debugger
+class Trepan
   class CmdProcessor
     # Command processor hooks.
     attr_reader   :autoirb_hook
@@ -105,10 +105,10 @@ class Debugger
 end
 if __FILE__ == $0
   # Demo it.
-  hooks = Debugger::CmdProcessor::Hook.new
+  hooks = Trepan::CmdProcessor::Hook.new
   hooks.run(5)
   hook1 = Proc.new {|name, a| puts "#{name} called with #{a}"}
-  hooks = Debugger::CmdProcessor::Hook.new()
+  hooks = Trepan::CmdProcessor::Hook.new()
   hooks.insert(-1, 'hook1', hook1)
   p hooks.list
   hooks.insert_if_new(-1, 'hook1', hook1)

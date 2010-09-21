@@ -4,7 +4,7 @@ require_relative '../base/subcmd'
 require_relative '../../../app/thread'
 require_relative '../../../app/frame'
 
-class Debugger::Subcommand::InfoThread < Debugger::Subcommand
+class Trepan::Subcommand::InfoThread < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = 
 'info thread [THREAD-ARG1 THREAD-ARG2.. ]
@@ -32,8 +32,8 @@ Examples:
     SHORT_HELP   = 'Show frame(s) for threads'
   end
 
-  include Debugger::ThreadHelper
-  include Debugger::Frame # To show stack
+  include Trepan::ThreadHelper
+  include Trepan::Frame # To show stack
 
   def list_threads(verbose=false)
     Thread.list.each_with_index do |th, i|

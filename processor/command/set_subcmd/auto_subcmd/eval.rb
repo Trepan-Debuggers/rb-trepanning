@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::SetAutoEval < Debugger::SetBoolSubSubcommand
+class Trepan::SubSubcommand::SetAutoEval < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     HELP = "Evaluate unrecognized debugger commands.
 
@@ -48,17 +48,17 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, set_cmd = MockDebugger::setup('set')
-  auto_cmd      = Debugger::SubSubcommand::SetAuto.new(dbgr.core.processor, 
-                                                        set_cmd)
+  dbgr, set_cmd = MockTrepan::setup('set')
+  auto_cmd      = Trepan::SubSubcommand::SetAuto.new(dbgr.core.processor, 
+                                                     set_cmd)
 
   # FIXME: remove the 'join' below
-  cmd_name      = Debugger::SubSubcommand::SetAutoEval::PREFIX.join('')
-  subcmd        = Debugger::SubSubcommand::SetAutoEval.new(set_cmd.proc, 
-                                                           auto_cmd,
-                                                           cmd_name)
+  cmd_name      = Trepan::SubSubcommand::SetAutoEval::PREFIX.join('')
+  subcmd        = Trepan::SubSubcommand::SetAutoEval.new(set_cmd.proc, 
+                                                         auto_cmd,
+                                                         cmd_name)
   # require_relative '../../../../lib/rbdbgr'
-  # Debugger.debug(:set_restart => true)
+  # Trepan.debug(:set_restart => true)
 
   subcmd.run([cmd_name])
   %w(off on 0 1).each { |arg| subcmd.run([cmd_name, arg]) }

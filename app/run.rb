@@ -19,7 +19,7 @@ module Rbdbgr
       puts output
       exit $?.exitstatus 
     end
-    # print "\032\032starting\n" if Debugger.annotate and Debugger.annotate > 2
+    # print "\032\032starting\n" if Trepan.annotate and Trepan.annotate > 2
 
     dbgr.trace_filter << self.method(:debug_program)
     dbgr.trace_filter << Kernel.method(:load)

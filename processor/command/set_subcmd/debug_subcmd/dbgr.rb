@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::SetDebugDbgr < Debugger::SetBoolSubSubcommand
+class Trepan::SubSubcommand::SetDebugDbgr < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     HELP        = 'set debug dbgr [on|off]
 
@@ -31,15 +31,15 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, dbg_cmd  = MockDebugger::setup('set')
-  debug_cmd      = Debugger::SubSubcommand::SetDebug.new(dbgr.core.processor, 
+  debug_cmd      = Trepan::SubSubcommand::SetDebug.new(dbgr.core.processor, 
                                                         dbg_cmd)
   # FIXME: remove the 'join' below
-  cmd_name       = Debugger::SubSubcommand::SetDebugDbgr::PREFIX.join('')
-  debugx_cmd     = Debugger::SubSubcommand::SetDebugDbgr.new(dbg_cmd.proc, 
-                                                              debug_cmd,
-                                                              cmd_name)
+  cmd_name       = Trepan::SubSubcommand::SetDebugDbgr::PREFIX.join('')
+  debugx_cmd     = Trepan::SubSubcommand::SetDebugDbgr.new(dbg_cmd.proc, 
+                                                           debug_cmd,
+                                                           cmd_name)
   # require_relative '../.././../lib/rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   debugx_cmd.run([name])
   debugx_cmd.run([name, 'on'])

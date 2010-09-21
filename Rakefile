@@ -133,16 +133,29 @@ task :check => %w(check:lib check:processor check:commands).map{|c| c.to_sym}
 desc "Test everything - same as test."
 task :default => :test
 
+desc "Generate the gemspec"
+task :generate do
+  puts gemspec.to_ruby
+end
+
+desc "Validate the gemspec"
+task :gemspec do
+  gemspec.validate
+end
+
 # ---------  RDoc Documentation ------
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "rbdbgr #{Debugger::VERSION} Documentation"
+  rdoc.title    = "rbdbgr #{Trepan::VERSION} Documentation"
 
-  rdoc.rdoc_files.include('lib/*.rb', 'app/*.rb', 'bin/rbdbgr')
+  rdoc.rdoc_files.include('lib/*.rb', 'app/*.rb', 'bin/trepan')
 end
 desc "Same as rdoc"
 task :doc => :rdoc
+
+desc "Remove built files"
+task :clean => [:clobber_package, :clobber_rdoc]
 
 task :clobber_package do
   FileUtils.rm_rf File.join(ROOT_DIR, 'pkg')

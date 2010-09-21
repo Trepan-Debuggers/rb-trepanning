@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 require_relative '../../app/condition'
-class Debugger::Command::StepCommand < Debugger::Command
+class Trepan::Command::StepCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP =
@@ -77,7 +77,7 @@ See also the commands:
     }
   end
 
-  include Debugger::Condition
+  include Trepan::Condition
   # This method runs the command
   def run(args) # :nodoc
     opts = @proc.parse_next_step_suffix(args[0])

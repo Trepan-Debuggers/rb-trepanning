@@ -3,7 +3,7 @@
 require 'linecache'
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::InfoFile < Debugger::Subcommand
+class Trepan::Subcommand::InfoFile < Trepan::Subcommand
   unless defined?(HELP)
     DEFAULT_FILE_ARGS = %w(size sha1)
 
@@ -143,8 +143,8 @@ if __FILE__ == $0
     name = File.basename(__FILE__, '.rb')
     # FIXME: DRY the below code
     dbgr, cmd = MockDebugger::setup('info')
-    subcommand = Debugger::Subcommand::InfoFile.new(cmd)
-    testcmdMgr = Debugger::Subcmd.new(subcommand)
+    subcommand = Trepan::Subcommand::InfoFile.new(cmd)
+    testcmdMgr = Trepan::Subcmd.new(subcommand)
     
     [%w(info file nothere),
      %w(info file .),

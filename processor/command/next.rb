@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 
-class Debugger::Command::NextCommand < Debugger::Command
+class Trepan::Command::NextCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 

@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::InfoRegistersPc < Debugger::SubSubcommand
+class Trepan::SubSubcommand::InfoRegistersPc < Trepan::SubSubcommand
   unless defined?(HELP)
     HELP         = 'Show the value of the VM program counter (PC).
 
@@ -29,13 +29,13 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, info_cmd = MockDebugger::setup('info')
-  testcmdMgr = Debugger::Subcmd.new(info_cmd)
-  cmd_name   = Debugger::SubSubcommand::InfoRegistersPc::PREFIX.join('')
-  infox_cmd  = Debugger::SubSubcommand::InfoRegistersPc.new(info_cmd.proc, 
-                                                            info_cmd,
-                                                            cmd_name)
+  testcmdMgr = Trepan::Subcmd.new(info_cmd)
+  cmd_name   = Trepan::SubSubcommand::InfoRegistersPc::PREFIX.join('')
+  infox_cmd  = Trepan::SubSubcommand::InfoRegistersPc.new(info_cmd.proc, 
+                                                          info_cmd,
+                                                          cmd_name)
   # require_relative '../../../../rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   infox_cmd.run([])
 

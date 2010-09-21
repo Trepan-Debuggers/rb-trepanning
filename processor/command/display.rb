@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 
-class Debugger::Command::DisplayCommand < Debugger::Command
+class Trepan::Command::DisplayCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = <<EOH

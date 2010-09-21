@@ -2,9 +2,9 @@
 require_relative 'base/cmd'
 require_relative '../../app/frame'
 
-class Debugger::Command::FrameCommand < Debugger::Command
+class Trepan::Command::FrameCommand < Trepan::Command
 
-  include Debugger::Frame
+  include Trepan::Frame
 
   unless defined?(HELP)
     HELP = 

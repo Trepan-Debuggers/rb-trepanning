@@ -5,7 +5,7 @@ require 'thread_frame'
 
 class TestAppFrame < Test::Unit::TestCase
 
-  include Debugger::Frame
+  include Trepan::Frame
 
   def test_app_frame
     frame = RubyVM::ThreadFrame.current

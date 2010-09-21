@@ -4,9 +4,9 @@ require_relative 'subcmd'
 require_relative '../../subcmd'
 require_relative '../../help'
 
-class Debugger::SubSubcommandMgr < Debugger::Subcommand
+class Trepan::SubSubcommandMgr < Trepan::Subcommand
 
-  include Debugger::Help
+  include Trepan::Help
 
   unless defined?(CATEGORY)
     CATEGORY      = 'status'
@@ -18,7 +18,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
   end
 
   attr_accessor :pname
-  attr_accessor :subcmds  # Array of instantiated Debugger::Subcommand objects
+  attr_accessor :subcmds  # Array of instantiated Trepan::Subcommand objects
 
   # Initialize show subcommands. Note: instance variable name
   # has to be setcmds ('set' + 'cmds') for subcommand completion
@@ -27,7 +27,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
   def initialize(proc, parent)
     name     = obj_const(self, :NAME)
     @name    = name.to_sym
-    @subcmds = Debugger::Subcmd.new(self)
+    @subcmds = Trepan::Subcmd.new(self)
     @parent  = parent
     @pname   = parent.name
     @proc    = parent.proc
@@ -50,7 +50,7 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
   # files are excluded via an array set in initialize.  For each of
   # the remaining files, we import them and scan for class names
   # inside those files and for each class name, we will create an
-  # instance of that class. The set of DebuggerCommand class instances
+  # instance of that class. The set of TrepanCommand class instances
   # form set of possible debugger commands.
   def load_debugger_subsubcommands(name, obj)
 
@@ -69,8 +69,8 @@ class Debugger::SubSubcommandMgr < Debugger::Subcommand
       cmd_name = "#{pname}#{subname.downcase}"
       subclass_name = "#{@pname.capitalize}#{subname}"
       next unless 
-        Debugger::SubSubcommand.constants.member?(subclass_name.to_sym)
-      cmd = self.instance_eval("Debugger::SubSubcommand::" + subclass_name + 
+        Trepan::SubSubcommand.constants.member?(subclass_name.to_sym)
+      cmd = self.instance_eval("Trepan::SubSubcommand::" + subclass_name + 
                                ".new(self, @parent, '#{cmd_name}')")
       @subcmds.add(cmd, cmd_name)
     end
@@ -170,13 +170,13 @@ if __FILE__ == $0
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   cmd  = cmds['info']
-  Debugger::SubSubcommandMgr.new(dbgr.core.processor, cmd)
+  Trepan::SubSubcommandMgr.new(dbgr.core.processor, cmd)
   puts cmd.help(%w(help info registers))
   puts '=' * 40
   puts cmd.help(%w(help info registers *))
   puts '=' * 40
   # FIXME
   # require_relative '../../lib/rbdbgr'
-  # Debugger.debug(:set_restart => true)
+  # Trepan.debug(:set_restart => true)
   # puts cmd.help(%w(help info registers p.*))
 end

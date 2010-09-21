@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::ShowAutoList < Debugger::ShowBoolSubSubcommand
+class Trepan::SubSubcommand::ShowAutoList < Trepan::ShowBoolSubSubcommand
   unless defined?(HELP)
     HELP = "Show running a 'list' command each time we enter the debugger"
     MIN_ABBREV   = 'l'.size
@@ -20,16 +20,16 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, show_cmd = MockDebugger::setup('show')
-  testcmdMgr     = Debugger::Subcmd.new(show_cmd)
-  auto_cmd       = Debugger::SubSubcommand::ShowAuto.new(dbgr.core.processor, 
-                                                         show_cmd)
+  testcmdMgr     = Trepan::Subcmd.new(show_cmd)
+  auto_cmd       = Trepan::SubSubcommand::ShowAuto.new(dbgr.core.processor, 
+                                                       show_cmd)
 
   # FIXME: remove the 'join' below
-  cmd_name       = Debugger::SubSubcommand::ShowAutoList::PREFIX.join('')
-  autox_cmd      = Debugger::SubSubcommand::ShowAutoList.new(show_cmd.proc, auto_cmd,
-                                                             cmd_name)
+  cmd_name       = Trepan::SubSubcommand::ShowAutoList::PREFIX.join('')
+  autox_cmd      = Trepan::SubSubcommand::ShowAutoList.new(show_cmd.proc, auto_cmd,
+                                                           cmd_name)
   # require_relative '../../../../lib/rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   autox_cmd.run([])
 

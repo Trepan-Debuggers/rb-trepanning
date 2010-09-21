@@ -2,7 +2,7 @@
 require_relative 'base/cmd'
 require_relative '../breakpoint'
 require_relative '../../app/brkpt'
-class Debugger::Command::BreakCommand < Debugger::Command
+class Trepan::Command::BreakCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 

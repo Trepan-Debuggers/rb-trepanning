@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::InfoProgram < Debugger::Subcommand
+class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = 'Information about debugged program and its environment'
     MIN_ABBREV   = 'pr'.size
@@ -44,8 +44,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Debugger::Subcommand::InfoProgram.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::InfoProgram.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   subcommand.run_show_bool
   name = File.basename(__FILE__, '.rb')

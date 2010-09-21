@@ -3,7 +3,7 @@
 require_relative 'base/cmd'
 require_relative '../breakpoint'
 require_relative '../../app/brkpt'
-class Debugger::Command::DisableCommand < Debugger::Command
+class Trepan::Command::DisableCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 
@@ -46,6 +46,6 @@ if __FILE__ == $0
   break_cmd = cmds['break']
   break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
   # require_relative '../../lib/rbdbgr'
-  # Debugger.debug(:set_restart => true)
+  # Trepan.debug(:set_restart => true)
   cmd.run([name, '1'])
 end

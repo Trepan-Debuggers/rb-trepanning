@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::SubSubcommand::ShowAutoEval < Debugger::ShowBoolSubSubcommand
+class Trepan::SubSubcommand::ShowAutoEval < Trepan::ShowBoolSubSubcommand
   unless defined?(HELP)
     HELP = "set auto eval [ON|OFF]
 
@@ -23,15 +23,15 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, show_cmd = MockDebugger::setup('show')
-  testcmdMgr     = Debugger::Subcmd.new(show_cmd)
-  auto_cmd       = Debugger::SubSubcommand::ShowAuto.new(dbgr.core.processor, 
-                                                         show_cmd)
+  testcmdMgr     = Trepan::Subcmd.new(show_cmd)
+  auto_cmd       = Trepan::SubSubcommand::ShowAuto.new(dbgr.core.processor, 
+                                                       show_cmd)
   # FIXME: remove the 'join' below
-  cmd_name       = Debugger::SubSubcommand::ShowAutoEval::PREFIX.join('')
-  autox_cmd      = Debugger::SubSubcommand::ShowAutoEval.new(show_cmd.proc, auto_cmd,
-                                                             cmd_name)
+  cmd_name       = Trepan::SubSubcommand::ShowAutoEval::PREFIX.join('')
+  autox_cmd      = Trepan::SubSubcommand::ShowAutoEval.new(show_cmd.proc, auto_cmd,
+                                                           cmd_name)
   # require_relative '../../../../lib/rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   autox_cmd.run([])
 

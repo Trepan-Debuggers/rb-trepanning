@@ -3,7 +3,7 @@
 require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
 
-class Debugger::SubSubcommand::ShowTrace < Debugger::SubSubcommandMgr 
+class Trepan::SubSubcommand::ShowTrace < Trepan::SubSubcommandMgr 
 
   unless defined?(HELP)
     HELP = "Show event tracing printing"
@@ -20,8 +20,8 @@ if __FILE__ == $0
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   show_cmd = cmds['show']
-  command = Debugger::SubSubcommand::ShowTrace.new(dbgr.core.processor, 
-                                                   show_cmd)
+  command = Trepan::SubSubcommand::ShowTrace.new(dbgr.core.processor, 
+                                                 show_cmd)
 
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['show', name]

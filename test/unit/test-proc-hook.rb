@@ -8,7 +8,7 @@ class TestProcHook < Test::Unit::TestCase
   def test_basic
     @args = []
     hook1 = Proc.new {|name, a| @args << [name, a]}
-    hooks = Debugger::CmdProcessor::Hook.new()
+    hooks = Trepan::CmdProcessor::Hook.new()
     assert_equal(true, hooks.empty?)
     hooks.insert(-1, 'hook1', hook1)
     hooks.run

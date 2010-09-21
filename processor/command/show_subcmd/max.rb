@@ -3,7 +3,7 @@
 require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
 
-class Debugger::SubSubcommand::ShowMax < Debugger::SubSubcommandMgr
+class Trepan::SubSubcommand::ShowMax < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     HELP   = 'Show "maximum length" settings'
     NAME   = File.basename(__FILE__, '.rb')
@@ -20,12 +20,12 @@ if __FILE__ == $0
   dbgr = MockDebugger::MockDebugger.new
   cmds = dbgr.core.processor.commands
   show_cmd = cmds['show']
-  command = Debugger::SubSubcommand::ShowMax.new(dbgr.core.processor, 
+  command = Trepan::SubSubcommand::ShowMax.new(dbgr.core.processor, 
                                                  show_cmd)
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['show', name]
   show_cmd.instance_variable_set('@last_args', cmd_args)
   # require_relative '../../../lib/rbdbgr'
-  # Debugger.debug(:set_restart => true)
+  # Trepan.debug(:set_restart => true)
   command.run(cmd_args)
 end

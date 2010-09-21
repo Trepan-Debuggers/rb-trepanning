@@ -7,11 +7,11 @@
 
 require_relative 'base_io'
 
-class Debugger
+class Trepan
 
   # Debugger user/command-oriented input possibly attached to IO-style
   # input or GNU Readline.
-  class UserInput < Debugger::InputBase
+  class UserInput < Trepan::InputBase
 
     def initialize(inp, opts={})
       @opts      = DEFAULT_OPTS.merge(opts)
@@ -29,7 +29,7 @@ class Debugger
     # Read a line of input. EOFError will be raised on EOF.  
     # 
     # Note that we don't support prompting first. Instead, arrange
-    # to call Debugger::Output.write() first with the prompt. 
+    # to call Trepan::Output.write() first with the prompt. 
     def readline
       # FIXME we don't do command completion.
       raise EOFError if eof?
@@ -53,14 +53,14 @@ class Debugger
         inp ||= STDIN
         inp = File.new(inp, 'r') if inp.is_a?(String)
         opts[:line_edit] = false unless
-          inp.respond_to?(:isatty) && inp.isatty && Debugger::GNU_readline?
+          inp.respond_to?(:isatty) && inp.isatty && Trepan::GNU_readline?
         self.new(inp, opts)
       end
     end
   end
 end
 
-def Debugger::GNU_readline?
+def Trepan::GNU_readline?
   begin
     require 'readline'
     return true
@@ -71,18 +71,18 @@ end
     
 # Demo
 if __FILE__ == $0
-  puts 'Have GNU is: %s'  % Debugger::GNU_readline?
-  inp = Debugger::UserInput.open(__FILE__, :line_edit => false)
+  puts 'Have GNU is: %s'  % Trepan::GNU_readline?
+  inp = Trepan::UserInput.open(__FILE__, :line_edit => false)
   line = inp.readline
   puts line
   inp.close
   filename = 'input.py'
   begin
-    Debugger::UserInput.open(filename)
+    Trepan::UserInput.open(filename)
   rescue
     puts "Can't open #{filename} for reading: #{$!}"
   end
-  inp = Debugger::UserInput.open(__FILE__, :line_edit => false)
+  inp = Trepan::UserInput.open(__FILE__, :line_edit => false)
   while true
     begin
       inp.readline
@@ -97,7 +97,7 @@ if __FILE__ == $0
   end
 
   if ARGV.size > 0
-    inp = Debugger::UserInput.open
+    inp = Trepan::UserInput.open
     begin
       print "Type some characters: "
       line = inp.readline()

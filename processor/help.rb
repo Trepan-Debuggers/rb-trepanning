@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-class Debugger
+class Trepan
   module Help
 
     def abbrev_stringify(name, min_abbrev)
@@ -48,7 +48,7 @@ end
 
 if __FILE__ == $0
   class TestClass
-    include Debugger::Help
+    include Trepan::Help
     HELP       = 'TestClass HELP.
 
 Long description goes here.'

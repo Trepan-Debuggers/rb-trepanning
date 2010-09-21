@@ -4,7 +4,7 @@ require 'rake'
 require 'rubygems' unless 
   Object.const_defined?(:Gem)
 require File.dirname(__FILE__) + "/lib/rbdbgr" unless 
-  Object.const_defined?(:'Debugger')
+  Object.const_defined?(:'Trepan')
 
 FILES = FileList[
   'README.textile',
@@ -41,20 +41,20 @@ EOF
   spec.author       = 'R. Bernstein'
   spec.bindir       = 'bin'
   spec.email        = 'rockyb@rubyforge.net'
-  spec.executables = ['rbdbgr']
+  spec.executables = ['trepan']
   spec.files        = FILES.to_a  
   spec.has_rdoc     = true
   spec.homepage     = 'http://wiki.github.com/rocky/rbdbgr'
-  spec.name         = 'rbdbgr'
+  spec.name         = 'trepan'
   spec.license      = 'MIT'
   spec.platform     = Gem::Platform::RUBY
   spec.require_path = 'lib'
   spec.required_ruby_version = '= 1.9.2'
   spec.summary      = 'Modular Ruby 1.9.2 Debugger'
-  spec.version      = Debugger::VERSION
+  spec.version      = Trepan::VERSION
 
   # Make the readme file the start page for the generated html
   spec.rdoc_options += %w(--main README)
-  spec.rdoc_options += ['--title', "Columnize #{LineCache::VERSION} Documentation"]
+  spec.rdoc_options += ['--title', "Trepan #{Trepan::VERSION} Documentation"]
 
 end

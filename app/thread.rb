@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-class Debugger
+class Trepan
   module ThreadHelper
     # Return the thread at position num or object_id num.
     def get_thread(num)
@@ -12,7 +12,7 @@ end
 
 # Demo it.
 if __FILE__ == $0
-  include Debugger::ThreadHelper
+  include Trepan::ThreadHelper
   Object::Thread.new do 
     [2, -2, 0, 1, -1,
      Thread.main.object_id, 

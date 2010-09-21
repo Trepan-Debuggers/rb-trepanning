@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/submgr'
 
-class Debugger::Command::SetCommand < Debugger::SubcommandMgr
+class Trepan::Command::SetCommand < Trepan::SubcommandMgr
   unless defined?(HELP)
     HELP =
 'Modifies parts of the debugger environment.

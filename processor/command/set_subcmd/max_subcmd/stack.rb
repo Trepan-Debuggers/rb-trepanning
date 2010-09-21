@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
-class Debugger::Subcommand::SetMaxStack < Debugger::SubSubcommand
+class Trepan::Subcommand::SetMaxStack < Trepan::SubSubcommand
   unless defined?(HELP)
     HELP         = 'Set number of backtrace lines the debugger will show'
     DEFAULT_MIN  = 3
@@ -27,23 +27,23 @@ if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
   dbgr, set_cmd = MockDebugger::setup('set')
-  max_cmd       = Debugger::SubSubcommand::SetMax.new(dbgr.core.processor, 
-                                                      set_cmd)
+  max_cmd       = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
+                                                    set_cmd)
   # FIXME: remove the 'join' below
-  cmd_name      = Debugger::SubSubcommand::SetMaxStack::PREFIX.join('')
-  subcmd        = Debugger::SubSubcommand::SetMaxStack.new(set_cmd.proc, 
-                                                           max_cmd,
-                                                           cmd_name)
+  cmd_name      = Trepan::SubSubcommand::SetMaxStack::PREFIX.join('')
+  subcmd        = Trepan::SubSubcommand::SetMaxStack.new(set_cmd.proc, 
+                                                         max_cmd,
+                                                         cmd_name)
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, set_cmd = MockDebugger::setup('set')
-  max_cmd       = Debugger::SubSubcommand::SetMax.new(dbgr.core.processor, 
+  dbgr, set_cmd = MockTrepan::setup('set')
+  max_cmd       = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
                                                       set_cmd)
-  cmd_name      = Debugger::SubSubcommand::SetMaxStack::PREFIX.join('')
-  subcmd        = Debugger::SubSubcommand::SetMaxStack.new(set_cmd.proc,
-                                                           max_cmd,
-                                                           cmd_name)
+  cmd_name      = Trepan::SubSubcommand::SetMaxStack::PREFIX.join('')
+  subcmd        = Trepan::SubSubcommand::SetMaxStack.new(set_cmd.proc,
+                                                         max_cmd,
+                                                         cmd_name)
 
   subcmd.run(%w(stack))
   subcmd.run(%w(stack 0))
@@ -54,7 +54,7 @@ if __FILE__ == $0
   puts '-' * 20
 
   require_relative '../../../../lib/rbdbgr'
-  dbgr = Debugger.new(:set_restart => true)
+  dbgr = Trepan.new(:set_restart => true)
   dbgr.debugger
   puts subcmd.save_command
 end

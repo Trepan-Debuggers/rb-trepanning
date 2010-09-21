@@ -6,7 +6,7 @@ require_relative '../../processor/command/exit'
 require_relative '../../processor/command/base/subcmd'
 
 # Mock debugger stub. FIXME: put in comment helper routine.
-class Debugger
+class Trepan
 end
 
 $errors = []
@@ -15,12 +15,12 @@ class TestBaseCommandHelp < Test::Unit::TestCase
   def setup
     $errors   = []
     $msgs     = []
-    @dbg      = Debugger.new
-    @core     = Debugger::Core.new(@dbg)
-    @cmdproc  = @core.processor = Debugger::CmdProcessor.new(@core)
+    @dbg      = Trepan.new
+    @core     = Trepan::Core.new(@dbg)
+    @cmdproc  = @core.processor = Trepan::CmdProcessor.new(@core)
     @cmds     = @cmdproc.instance_variable_get('@commands')
     @exit_cmd = @cmds['exit']
-    @exit_subcmd = Debugger::Subcommand.new(@exit_cmd)
+    @exit_subcmd = Trepan::Subcommand.new(@exit_cmd)
     def @exit_subcmd.msg(message)
       $msgs << message
     end
@@ -39,7 +39,7 @@ class TestBaseCommandHelp < Test::Unit::TestCase
     assert_equal(1, $errors.size)
     assert_equal(Fixnum, @exit_subcmd.settings[:maxwidth].class)
     @cmds.each do |cmd_name, cmd_obj|
-      next unless cmd_obj.is_a?(Debugger::SubcommandMgr)
+      next unless cmd_obj.is_a?(Trepan::SubcommandMgr)
       cmd_obj.subcmds.subcmds.each do |subcmd_name, subcmd_obj|
         %w(HELP NAME PREFIX).each do |attr|
           assert_equal(true, subcmd_obj.class.constants.member?(attr.to_sym),

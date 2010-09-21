@@ -4,7 +4,7 @@ require 'trace'
 require 'columnize'
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::SetEvents < Debugger::Subcommand
+class Trepan::Subcommand::SetEvents < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = "set events {event-name[,] ...}
 
@@ -54,8 +54,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Debugger::Subcommand::SetEvents.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::SetEvents.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)

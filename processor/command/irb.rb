@@ -2,7 +2,7 @@
 require 'irb'
 require_relative 'base/cmd'
 require_relative '../../app/irb'
-class Debugger::Command::IRBCommand < Debugger::Command
+class Trepan::Command::IRBCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 

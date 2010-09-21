@@ -1,7 +1,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 
-class Debugger::Command::UpCommand < Debugger::Command
+class Trepan::Command::UpCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 
@@ -22,7 +22,7 @@ See also 'down' and 'frame'.
   end
   
   require_relative '../../app/frame'
-  include Debugger::Frame
+  include Trepan::Frame
 
   # Run 'up' command. 
   def run(args)

@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/submgr'
 
-class Debugger::Command::ShowCommand < Debugger::SubcommandMgr
+class Trepan::Command::ShowCommand < Trepan::SubcommandMgr
   unless defined?(HELP)
     HELP =
 'Generic command for showing things about the debugger.  You can

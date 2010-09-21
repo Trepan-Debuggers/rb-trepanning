@@ -13,7 +13,7 @@ require 'pathname'  # For cleanpath
 end
 require_relative '../app/brkptmgr'
 
-class Debugger
+class Trepan
   class CmdProcessor
 
     # SEE ALSO attr's in require_relative's of loop above.
@@ -22,10 +22,10 @@ class Debugger
     attr_reader   :cmd_argstr      # Current command args, a String.
                                    # This is current_command with the command
                                    # name removed from the beginning.
-    attr_reader   :core            # Debugger core object
+    attr_reader   :core            # Trepan core object
     attr_reader   :current_command # Current command getting run, a String.
-    attr_reader   :dbgr            # Debugger instance (via
-                                   # Debugger::Core instance)
+    attr_reader   :dbgr            # Trepan instance (via
+                                   # Trepan::Core instance)
     attr_accessor :debug_nest      # Number of nested debugs. Used in showing
                                    # prompt.
     attr_accessor :different_pos   # Same type as settings[:different] 
@@ -306,9 +306,9 @@ class Debugger
       errmsg('Undefined command: "%s". Try "help".' % cmd_name)
     end
 
-    # FIXME: Allow access to both Debugger::CmdProcessor and Debugger
+    # FIXME: Allow access to both Trepan::CmdProcessor and Trepan
     # for index [] and []=.
-    # If there is a Debugger::CmdProcessor setting that would take precidence.
+    # If there is a Trepan::CmdProcessor setting that would take precidence.
     # def settings
     #   @settings.merge(@dbgr.settings) # wrong because this doesn't allow []=
     # end
@@ -318,7 +318,7 @@ end
 if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
   require_relative '../lib/rbdbgr'
-  dbg =  Debugger.new(:nx => true)
+  dbg =  Trepan.new(:nx => true)
   dbg.core.processor.msg('I am main')
   cmdproc = dbg.core.processor
   cmdproc.errmsg('Whoa!')

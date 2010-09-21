@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'rbconfig'
-load File.join(File.dirname(__FILE__), %w(.. .. bin rbdbgr))
+load File.join(File.dirname(__FILE__), %w(.. .. bin trepan))
 
-# Test bin/rbdbgr Module methods
+# Test bin/trepan Module methods
 class TestBinRbdbgr < Test::Unit::TestCase
 
   include Rbdbgr

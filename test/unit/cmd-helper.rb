@@ -8,9 +8,9 @@ require_relative '../../processor/frame'
 module UnitHelper
 
   def common_setup
-    @dbg      = Debugger.new(:nx => true)
-    @core     = Debugger::Core.new(@dbg)
-    @cmdproc  = @core.processor = Debugger::CmdProcessor.new(@core)
+    @dbg      = Trepan.new(:nx => true)
+    @core     = Trepan::Core.new(@dbg)
+    @cmdproc  = @core.processor = Trepan::CmdProcessor.new(@core)
     @cmds     = @cmdproc.commands
 
     def @cmdproc.msg(message)

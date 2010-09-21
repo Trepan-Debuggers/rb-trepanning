@@ -22,7 +22,7 @@ if File.basename(__FILE__) == File.basename($0)
     # below is the simplest thing I can come up with so far.
     options = copy_default_options
     opts    = setup_options(options)
-    Debugger::ARGV = ARGV.clone
+    Trepan::ARGV = ARGV.clone
     rest = opts.parse! ARGV
 
     rbdbgr_path = File.expand_path($0)
@@ -32,9 +32,9 @@ if File.basename(__FILE__) == File.basename($0)
 
     # FIXME: do we need to test defined? 
     # FIXME: Should (some of) these be instance variables?
-    Debugger::RUBY_PATH    = ruby_path
-    Debugger::RBDBGR_PATH  = rbdbgr_path
-    Debugger::RBDBGR_FILE  = __FILE__
+    Trepan::RUBY_PATH    = ruby_path
+    Trepan::RBDBGR_PATH  = rbdbgr_path
+    Trepan::RBDBGR_FILE  = __FILE__
 
     if ARGV.empty?
       if options[:version] || options[:help]
@@ -48,16 +48,16 @@ if File.basename(__FILE__) == File.basename($0)
     program_to_debug = ARGV.shift
     program_to_debug = whence_file(program_to_debug) unless 
       File.exist?(program_to_debug)
-    Debugger::PROG_SCRIPT = program_to_debug
+    Trepan::PROG_SCRIPT = program_to_debug
 
     # Set global so others may use this debugger.
-    $rbdbgr = Debugger.new(:restart_argv => 
-                           explicit_restart_argv(Debugger::ARGV),
+    $rbdbgr = Trepan.new(:restart_argv => 
+                           explicit_restart_argv(Trepan::ARGV),
                            :cmdfiles    => options[:cmdfiles],
                            :initial_dir => options[:chdir],
                            :nx          => options[:nx],
                            )
-    debug_program($rbdbgr, Debugger::RUBY_PATH, 
+    debug_program($rbdbgr, Trepan::RUBY_PATH, 
                   File.expand_path(program_to_debug))
   end
 end

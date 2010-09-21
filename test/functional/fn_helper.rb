@@ -12,13 +12,13 @@ module FnTestHelper
 
   # Common setup to create a debugger with String Array I/O attached
   def strarray_setup(debugger_cmds, insn_stepping=false)
-    stringin               = Debugger::StringArrayInput.open(debugger_cmds)
-    stringout              = Debugger::StringArrayOutput.open
+    stringin               = Trepan::StringArrayInput.open(debugger_cmds)
+    stringout              = Trepan::StringArrayOutput.open
     d_opts                 = {:input  => stringin, :output => stringout,
                               :nx     => true}
     d_opts[:core_opts]     = {:step_events => TEST_STEP_EVENT_MASK}
     d_opts[:core_opts][:step_events] ||= INSN_EVENT_MASK if insn_stepping
-    d                      = Debugger.new(d_opts)
+    d                      = Trepan.new(d_opts)
 
     # Remove vm and switch from unmaskable events to increase predictability
     # of test results
@@ -42,7 +42,7 @@ module FnTestHelper
 
   def compare_output(right, d, debugger_cmds)
     # require_relative '../../lib/rbdbgr'
-    # Debugger.debug(:set_restart => true)
+    # Trepan.debug(:set_restart => true)
     got = filter_line_cmd(d.intf[-1].output.output)
     if got != right
       got.each_with_index do |got_line, i|

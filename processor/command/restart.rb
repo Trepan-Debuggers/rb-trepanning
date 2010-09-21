@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 require_relative '../../app/run'
-class Debugger::Command::RestartCommand < Debugger::Command
+class Trepan::Command::RestartCommand < Trepan::Command
 
   unless defined?(HELP)
     ALIASES      = %w(R run)

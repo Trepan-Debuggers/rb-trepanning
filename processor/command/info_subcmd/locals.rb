@@ -4,7 +4,7 @@ require 'columnize'
 require_relative '../base/subcmd'
 require_relative '../../../app/frame'
 
-class Debugger::Subcommand::InfoLocals < Debugger::Subcommand
+class Trepan::Subcommand::InfoLocals < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = 'Show local variables of the current stack frame'
     MAX_ARGS     = 1
@@ -14,7 +14,7 @@ class Debugger::Subcommand::InfoLocals < Debugger::Subcommand
     PREFIX       = %w(info locals)
   end
 
-  include Debugger::Frame
+  include Trepan::Frame
   def get_local_names
     iseq = @proc.frame.iseq
     0.upto(iseq.local_size-2).map do
@@ -80,8 +80,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Debugger::Subcommand::InfoLocals.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::InfoLocals.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)

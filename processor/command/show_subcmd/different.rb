@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::ShowDifferent < Debugger::ShowBoolSubcommand
+class Trepan::Subcommand::ShowDifferent < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
     HELP = "Show status of 'set different'"
     MIN_ABBREV   = 'dif'.size
@@ -28,8 +28,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')
-  subcommand = Debugger::Subcommand::ShowDifferent.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::ShowDifferent.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   subcommand.run_show_bool
   name = File.basename(__FILE__, '.rb')

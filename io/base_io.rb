@@ -10,7 +10,7 @@
 # Some ideas originiated as part of Matt Fleming's 2006 Google Summer of
 # Code project.
 
-class Debugger
+class Trepan
 
   NotImplementedMessage ||= 'This method must be overriden in a subclass'
   
@@ -43,7 +43,7 @@ class Debugger
     # Read a line of input. EOFError will be raised on EOF.  
     #
     #   Note that we don't support prompting first. Instead, arrange
-    #  to call Debugger::Output.write() first with the prompt. If
+    #  to call Trepan::Output.write() first with the prompt. If
     # `use_raw' is set raw_input() will be used in that is supported
     #    by the specific input input. If this option is left None as is
     #    normally expected the value from the class initialization is

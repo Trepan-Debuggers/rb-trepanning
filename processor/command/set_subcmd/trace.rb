@@ -3,7 +3,7 @@
 require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
 
-class Debugger::SubSubcommand::SetTrace < Debugger::SubSubcommandMgr 
+class Trepan::SubSubcommand::SetTrace < Trepan::SubSubcommandMgr 
   unless defined?(HELP)
     HELP = "Set tracing of various sorts.
 
@@ -31,13 +31,13 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, set_cmd = MockDebugger::setup('set')
-  command = Debugger::SubSubcommand::SetTrace.new(dbgr.core.processor,
+  command = Trepan::SubSubcommand::SetTrace.new(dbgr.core.processor,
                                                   set_cmd)
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['set', name]
   set_cmd.instance_variable_set('@last_args', cmd_args)
   # require_relative '../../../lib/rbdbgr'
-  # Debugger.debug(:set_restart => true)
+  # Trepan.debug(:set_restart => true)
   command.run(cmd_args)
   command.run(['set', name, '*'])
 end

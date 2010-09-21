@@ -2,7 +2,7 @@
 require 'tempfile'
 require 'linecache'
 require_relative '../app/frame'
-class Debugger
+class Trepan
   class CmdProcessor
 
     attr_reader   :current_thread
@@ -63,7 +63,7 @@ class Debugger
 
     # If frame type is EVAL, set up to remap the string to a temporary file.
     def frame_eval_remap
-      to_str = Debugger::Frame::eval_string(@frame)
+      to_str = Trepan::Frame::eval_string(@frame)
       return nil unless to_str.is_a?(String)
 
       # All systems go!
@@ -205,7 +205,7 @@ if __FILE__ == $0
   require_relative '../app/mock'
   require_relative 'main'   # Have to include before defining CmdProcessor!
                             # FIXME
-  class Debugger::CmdProcessor
+  class Trepan::CmdProcessor
     def errmsg(msg)
       puts msg
     end
@@ -214,7 +214,7 @@ if __FILE__ == $0
     end
   end
 
-  proc = Debugger::CmdProcessor.new(Debugger::MockCore.new())
+  proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
   proc.frame_setup(RubyVM::ThreadFrame.current)
   proc.hidelevels = {}
   puts "stack size: #{proc.top_frame.stack_size}"

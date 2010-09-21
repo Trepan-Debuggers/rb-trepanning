@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::ShowMacro < Debugger::Subcommand
+class Trepan::Subcommand::ShowMacro < Trepan::Subcommand
   unless defined?(HELP)
     HELP = "Show defined macros"
     MIN_ABBREV = 'ma'.size
@@ -35,8 +35,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
-  subcommand = Debugger::Subcommand::ShowMacro.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::ShowMacro.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)

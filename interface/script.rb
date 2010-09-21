@@ -9,7 +9,7 @@ require_relative '../io/input'
 require_relative '../io/string_array'
 
 # Interface when reading debugger scripts
-class Debugger::ScriptInterface < Debugger::Interface
+class Trepan::ScriptInterface < Trepan::Interface
 
   DEFAULT_OPTS ||= {
     :abort_on_error => true,
@@ -24,11 +24,11 @@ class Debugger::ScriptInterface < Debugger::Interface
     at_exit { finalize }
     @script_name     = script_name
     @input_lineno    = 0
-    @input           = Debugger::UserInput.open(script_name,
+    @input           = Trepan::UserInput.open(script_name,
                                                 :line_edit => false)
     @buffer_output   = []
     unless opts[:verbose] or out
-      out = Debugger::StringArrayOutput.open(@buffer_output)
+      out = Trepan::StringArrayOutput.open(@buffer_output)
     end
     super(@input, out, @opts)
   end
@@ -97,7 +97,7 @@ end
 
 # Demo
 if __FILE__ == $0
-  intf = Debugger::ScriptInterface.new(__FILE__)
+  intf = Trepan::ScriptInterface.new(__FILE__)
   line = intf.readline()
   print "Line read: ", line
 end

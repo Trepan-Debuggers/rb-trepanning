@@ -4,7 +4,7 @@
 # line will have prefix "--> " added, otherwise the line will have " "
 # added to the beginning.  This array is returned.
 
-class Debugger
+class Trepan
   module Disassemble
     def mark_disassembly(disassembly_str, iseq_equal, pc_offset,
                          brkpt_offsets=[])
@@ -42,7 +42,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  include Debugger::Disassemble
+  include Trepan::Disassemble
   dis_string='
 local table (size: 6, argc: 1 [opts: 0, rest: -1, post: 0, block: -1] s1)
 [ 6] relative_feature<Arg>[ 5] c          [ 4] e          [ 3] file       [ 2] absolute_feature

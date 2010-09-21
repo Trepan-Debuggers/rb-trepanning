@@ -4,16 +4,16 @@ require_relative '../../processor/main'
 require_relative '../../app/core'
 
 # Mock debugger stub. FIXME: put in comment helper routine.
-class Debugger
+class Trepan
 end
 
-# Test Debugger:CmdProcessor
+# Test Trepan:CmdProcessor
 class TestCmdProcessor < Test::Unit::TestCase
 
   def setup
-    @dbg     = Debugger.new
-    @core    = Debugger::Core.new(@dbg)
-    @cmdproc = @core.processor = Debugger::CmdProcessor.new(@core)
+    @dbg     = Trepan.new
+    @core    = Trepan::Core.new(@dbg)
+    @cmdproc = @core.processor = Trepan::CmdProcessor.new(@core)
     @cmds    = @cmdproc.instance_variable_get('@commands')
   end
 
@@ -23,8 +23,8 @@ class TestCmdProcessor < Test::Unit::TestCase
     assert @cmds.keys.size > 0, 'Should have found at least one command'
     cmd_name, cmd_obj = @cmds.first
     assert cmd_name.is_a?(String), 'Should have string name for a command'
-    assert(cmd_obj.kind_of?(Debugger::Command), 
-           'Command should be a Debugger:Command')
+    assert(cmd_obj.kind_of?(Trepan::Command), 
+           'Command should be a Trapan::Command')
     assert cmd_obj.respond_to?(:run), 'Command should have a run method'
   end
 

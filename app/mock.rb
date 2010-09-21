@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-class Debugger
+class Trepan
   attr_accessor :trace_filter # Procs/Methods we ignore.
   def initialize(opts={})
     @trace_filter = []

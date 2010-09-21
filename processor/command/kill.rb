@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
-class Debugger::Command::KillCommand < Debugger::Command
+class Trepan::Command::KillCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = 

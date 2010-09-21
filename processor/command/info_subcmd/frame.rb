@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::InfoFrame < Debugger::Subcommand
+class Trepan::Subcommand::InfoFrame < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = 'Show all information about the selected frame'
     MIN_ABBREV   = 'fr'.size # Note we have "info file"
@@ -31,8 +31,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Debugger::Subcommand::InfoFrame.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::InfoFrame.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)

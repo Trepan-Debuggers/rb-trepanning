@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 require_relative '../trace'
-class Debugger::SubSubcommand::SetTracePrint < Debugger::SetBoolSubSubcommand
+class Trepan::SubSubcommand::SetTracePrint < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     HELP         = 
 "set trace print [on|off|1|0]
@@ -33,17 +33,17 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, set_cmd = MockDebugger::setup('set')
-  trace_cmd     = Debugger::SubSubcommand::SetTrace.new(dbgr.core.processor, 
+  dbgr, set_cmd = MockTrepan::setup('set')
+  trace_cmd     = Trepan::SubSubcommand::SetTrace.new(dbgr.core.processor, 
                                                         set_cmd)
 
   # FIXME: remove the 'join' below
-  cmd_name      = Debugger::SubSubcommand::SetTracePrint::PREFIX.join('')
-  subcmd        = Debugger::SubSubcommand::SetTracePrint.new(set_cmd.proc, 
-                                                             trace_cmd,
-                                                             cmd_name)
+  cmd_name      = Trepan::SubSubcommand::SetTracePrint::PREFIX.join('')
+  subcmd        = Trepan::SubSubcommand::SetTracePrint.new(set_cmd.proc, 
+                                                           trace_cmd,
+                                                           cmd_name)
   # require_relative '../../../../lib/rbdbgr'
-  # dbgr = Debugger.new(:set_restart => true)
+  # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
 
   subcmd.run([cmd_name])

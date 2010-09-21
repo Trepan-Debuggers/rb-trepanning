@@ -5,7 +5,7 @@
 # will think this a command name like QuitCommand 
 require 'columnize'
 
-class Debugger
+class Trepan
   class Command
     attr_accessor :core, :proc
 

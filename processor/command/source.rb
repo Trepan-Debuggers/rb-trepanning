@@ -6,7 +6,7 @@ require_relative 'base/cmd'
 require_relative '../../interface/script'
 # Mfile     = import_relative('file', '...lib', 'pydbgr')
 
-class Debugger::Command::SourceCommand < Debugger::Command
+class Trepan::Command::SourceCommand < Trepan::Command
   unless defined?(HELP)
     HELP = "source [-v][-Y|-N][-c] FILE
 
@@ -55,7 +55,7 @@ unless option -c is given.
     
     # Push a new debugger interface.
     intf = @proc.core.dbgr.intf
-    script_intf = Debugger::ScriptInterface.new(expanded_file,
+    script_intf = Trepan::ScriptInterface.new(expanded_file,
                                                 intf[-1].output,
                                                 opts)
     intf << script_intf

@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::ShowAlias < Debugger::Subcommand
+class Trepan::Subcommand::ShowAlias < Trepan::Subcommand
   unless defined?(HELP)
     HELP = "show alias [NAME1 NAME2 ...] 
 
@@ -40,7 +40,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
-  subcommand = Debugger::Subcommand::ShowAlias.new(cmd)
+  subcommand = Trepan::Subcommand::ShowAlias.new(cmd)
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)

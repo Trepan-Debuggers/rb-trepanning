@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../app/default'
-class Debugger
+class Trepan
   class CmdProcessor
 
     DEFAULT_SETTINGS = {
@@ -39,5 +39,5 @@ end
 if __FILE__ == $0
   # Show it:
   require 'pp'
-  PP.pp(Debugger::CmdProcessor::DEFAULT_SETTINGS)
+  PP.pp(Trepan::CmdProcessor::DEFAULT_SETTINGS)
 end

@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Debugger::Subcommand::InfoReturn < Debugger::Subcommand
+class Trepan::Subcommand::InfoReturn < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = 'Show the value about to be returned'
     MIN_ABBREV   = 'ret'.size # Note we have "info registers"
@@ -14,7 +14,7 @@ class Debugger::Subcommand::InfoReturn < Debugger::Subcommand
   def run(args)
     event = @proc.core.event
     if %w(return c-return).member?(event)
-      ret_val = Debugger::Frame.value_returned(@proc.frame, event)
+      ret_val = Trepan::Frame.value_returned(@proc.frame, event)
       msg('Return value: %s' % ret_val.inspect)
     else
       errmsg('You need to be in a return event to do this. Event is %s' % 
@@ -32,8 +32,8 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Debugger::Subcommand::InfoReturn.new(cmd)
-  testcmdMgr = Debugger::Subcmd.new(subcommand)
+  subcommand = Trepan::Subcommand::InfoReturn.new(cmd)
+  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
