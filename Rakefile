@@ -5,7 +5,41 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
 
-rake_dir = File.dirname(__FILE__)
+ROOT_DIR = File.dirname(__FILE__)
+require File.join(ROOT_DIR, '/lib/rbdbgr')
+
+def gemspec
+  @gemspec ||= eval(File.read('.gemspec'), binding, '.gemspec')
+end
+
+desc "Build the gem"
+task :package=>:gem
+task :gem=>:gemspec do
+  Dir.chdir(ROOT_DIR) do
+    sh "gem build .gemspec"
+    FileUtils.mkdir_p 'pkg'
+    FileUtils.mv "#{gemspec.name}-#{gemspec.version}.gem", 'pkg'
+  end
+end
+
+desc "Install the gem locally"
+task :install => :gem do
+  Dir.chdir(ROOT_DIR) do
+    sh %{gem install --local pkg/#{gemspec.name}-#{gemspec.version}}
+  end
+end
+
+desc "Test everything."
+test_task = task :test => :lib do 
+  Rake::TestTask.new(:test) do |t|
+    t.libs << './lib'
+    t.pattern = 'test/test-*.rb'
+    t.verbose = true
+  end
+end
+
+desc "same as test"
+task :check => :test
 
 require 'rbconfig'
 RUBY_PATH = File.join(RbConfig::CONFIG['bindir'],  
@@ -68,30 +102,30 @@ end
 
 desc "Run each library Ruby file in standalone mode."
 task :'check:app' do
-  run_standalone_ruby_file(File.join(%W(#{rake_dir} app)))
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} app)))
 end
 
 desc "Run each command in standalone mode."
 task :'check:commands' do
-  run_standalone_ruby_file(File.join(%W(#{rake_dir} processor command)))
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} processor command)))
 end
 
 desc "Run each processor Ruby file in standalone mode."
 task :'check:processor' do
-  run_standalone_ruby_file(File.join(%W(#{rake_dir} processor)))
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} processor)))
 end
 
 desc "Run each processor Ruby file in standalone mode."
 task :'check:unit' do
-  run_standalone_ruby_file(File.join(%W(#{rake_dir} test unit)))
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test unit)))
 end
 
 task :'check:functional' do
-  run_standalone_ruby_file(File.join(%W(#{rake_dir} test functional)))
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test functional)))
 end
 
 task :'check:integration' do
-  run_standalone_ruby_file(File.join(%W(#{rake_dir} test integration)))
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test integration)))
 end
 
 task :check => %w(check:lib check:processor check:commands).map{|c| c.to_sym}
@@ -99,72 +133,22 @@ task :check => %w(check:lib check:processor check:commands).map{|c| c.to_sym}
 desc "Test everything - same as test."
 task :default => :test
 
-FILES = FileList[
-  'README.textile',
-  'LICENSE',
-  'NEWS',
-  'ChangeLog',
-  'Rakefile',
-  'app/*',
-  'bin/*',
-  'data/*',
-  'interface/*',
-  'io/*',
-  'lib/*',
-  'processor/**/*.rb',
-  'test/**/*.rb',
-]                        
+# ---------  RDoc Documentation ------
+desc "Generate rdoc documentation"
+Rake::RDocTask.new("rdoc") do |rdoc|
+  rdoc.rdoc_dir = 'doc'
+  rdoc.title    = "rbdbgr #{Debugger::VERSION} Documentation"
 
-spec = Gem::Specification.new do |spec|
-  spec.name = 'rbdbgr'
-  spec.homepage = 'http://wiki.github.com/rocky/rbdbgr'
-  spec.summary = 'Modular Ruby 1.9.2 Debugger'
+  rdoc.rdoc_files.include('lib/*.rb', 'app/*.rb', 'bin/rbdbgr')
+end
+desc "Same as rdoc"
+task :doc => :rdoc
 
-  spec.description = "A modular, testable, Ruby debugger using some of the best ideas from ruby-debug, other debuggers, and Ruby Rails. 
-
-Some of the core debugger concepts have been rethought. As a result, some of this may be experimental.
-
-This version works only with a patched version of Ruby 1.9.2 and rb-threadframe.
-"
-
-  spec.version = '0.0.3'
-  spec.author = "R. Bernstein"
-  spec.email = "rockyb@rubyforge.org"
-  spec.platform = Gem::Platform::RUBY
-  spec.bindir = "bin"
-  spec.executables = ["rbdbgr"]
-  spec.files = FILES.to_a
-
-  spec.date = Time.now
-  spec.add_dependency('rb-threadframe', '>= 0.32')
-  spec.add_dependency('rb-trace', '>= 0.2')
-  spec.add_dependency('linecache-tf')
-  spec.add_dependency('columnize')
-  spec.add_dependency('diff-lcs') # For testing only
-  spec.has_rdoc = true
-  spec.extra_rdoc_files = ['README.textile']
+task :clobber_package do
+  FileUtils.rm_rf File.join(ROOT_DIR, 'pkg')
 end
 
-# Rake task to build the default package
-Rake::GemPackageTask.new(spec) do |pkg|
-  pkg.need_tar = true
+task :clobber_rdoc do
+  FileUtils.rm_rf File.join(ROOT_DIR, 'doc')
 end
 
-def install(spec, *opts)
-  args = ['gem', 'install', "pkg/#{spec.name}-#{spec.version}.gem"] + opts
-  system(*args)
-end
-
-desc 'Install locally'
-task :install => :package do
-  Dir.chdir(File::dirname(__FILE__)) do
-    # ri and rdoc take lots of time
-    install(spec, '--no-ri', '--no-rdoc')
-  end
-end    
-
-task :install_full => :package do
-  Dir.chdir(File::dirname(__FILE__)) do
-    install(spec)
-  end
-end    

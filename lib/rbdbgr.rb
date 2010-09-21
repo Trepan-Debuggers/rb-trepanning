@@ -20,6 +20,7 @@ ISEQS__        = {} unless
   defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
 class Debugger
+  VERSION = '0.0.4'
 
   attr_accessor :core         # access to Debugger::Core instance
   attr_accessor :intf         # Array. The way the outside world
@@ -116,7 +117,7 @@ class Debugger
   #
   # Some options
 
-  #   :immediate -  boolean. If true, mmediate stop rather than wait
+  #   :immediate -  boolean. If true, immediate stop rather than wait
   #                          for an event
   #
   #   :hide_stack - boolean. If true, omit stack frames before the

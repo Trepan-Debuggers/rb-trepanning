@@ -1,3 +1,19 @@
+2010-09-18  rocky <rockyb@rubyforge.org>
+
+	* interface/base_intf.rb, test/functional/test-raise.rb: Set error
+	message prefix again -- compromize by taking bashdb, zshdb, kshdb's
+	prefix
+
+2010-09-18  rocky <rockyb@rubyforge.org>
+
+	* interface/base_intf.rb, test/functional/test-raise.rb: Set error
+	message prefix like rubinius' prefix
+
+2010-09-18  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, interface/base_intf.rb: Expand errmsg to start each
+	line with "prefix" param and allow str to be an Array (of String)
+
 2010-09-17  rocky <rockyb@rubyforge.org>
 
 	* processor/command/kill.rb: See above
