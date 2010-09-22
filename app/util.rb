@@ -2,7 +2,7 @@
 class Trepan
   module Util
 
-  :module_function # All functions below are easily publically accessible
+  :module_function # All functions below are easily publicly accessible
 
     def safe_repr(str, max, suffix='...')
       if str.is_a?(String) && str.size > max && !str.index("\n")
