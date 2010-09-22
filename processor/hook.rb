@@ -70,11 +70,11 @@ class Trepan
       @debug_dbgr_hook = ['dbgdbgr',
                           Proc.new{|*args| 
                             if settings[:debugdbgr]
-                              $rbdbgr_cmdproc  = self
-                              $rbdbgr_frame    = frame
+                              $trepan_cmdproc  = self
+                              $trepan_frame    = frame
                             else
-                              $rbdbgr_cmdproc  = nil
-                              $rbdbgr_frame    = nil
+                              $trepan_cmdproc  = nil
+                              $trepan_frame    = nil
                             end}]
 
       display_cmd = commands['display']

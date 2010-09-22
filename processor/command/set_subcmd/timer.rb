@@ -59,7 +59,7 @@ if __FILE__ == $0
   subcommand.run_show_bool
   subcommand.summary_help(name)
 
-  # require 'rbdbgr'
+  # require 'trepanning'
   # Trepan.debug(:set_restart => true)
   subcommand.run(['set', name])
   subcommand.run(['set', name, 'off'])

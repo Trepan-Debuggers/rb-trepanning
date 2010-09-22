@@ -20,21 +20,21 @@ IRB.conf[:PROMPT][:SIMPLE] =
 puts "You are in a rbdbgr session. You should have access to program scope."
 puts "'dbgr', 'step', 'n', 'q', 'cont' commands have been added."
 
-if defined?($rbdbgr) && $rbdbgr
-   puts 'You should have access to debugger state via global variable $rbdbgr'
+if defined?($trepan) && $trepan
+   puts 'You should have access to debugger state via global variable $trepan'
 end
-if defined?($rbdbgr_frame) && $rbdbgr_frame
-   puts 'You should have access to the program frame via global variable $rbdbgr_frame'
+if defined?($trepan_frame) && $trepan_frame
+   puts 'You should have access to the program frame via global variable $trepan_frame'
 end
-if defined?($rbdbgr_cmdproc) && $rbdbgr_cmdproc
-   puts 'You should have access to the command processor via global variable $rbdbgr_cmdproc'
+if defined?($trepan_cmdproc) && $trepan_cmdproc
+   puts 'You should have access to the command processor via global variable $trepan_cmdproc'
 end
 
 # Monkeypatch to save the current IRB statement to be run and make the instruction sequence
 # "filename" unique. Possibly not needed.
 class IRB::Context
   def evaluate(line, line_no)
-    $rbdbgr_irb_statements = line
+    $trepan_irb_statements = line
     @line_no = line_no
     @eval_counter ||= 0
     container = 

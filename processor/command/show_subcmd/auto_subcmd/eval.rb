@@ -30,7 +30,7 @@ if __FILE__ == $0
   cmd_name       = Trepan::SubSubcommand::ShowAutoEval::PREFIX.join('')
   autox_cmd      = Trepan::SubSubcommand::ShowAutoEval.new(show_cmd.proc, auto_cmd,
                                                            cmd_name)
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   autox_cmd.run([])

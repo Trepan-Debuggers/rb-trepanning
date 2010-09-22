@@ -26,7 +26,7 @@ class TestappBrkpt < Test::Unit::TestCase
     assert_raises TypeError do 
       Breakpoint.new(0, 5)
     end
-    require_relative '../../lib/rbdbgr.rb'
+    require_relative '../../lib/trepanning.rb'
     b2 = Breakpoint.new(iseq, 0, :temp => true)
     assert_equal('t', b2.icon_char)
   end

@@ -361,7 +361,7 @@ if __FILE__ == $0
       puts "#{str} should be true: #{proc.method?(str).inspect}"
     end
     puts '=' * 40
-    # require_relative '../lib/rbdbgr'
+    # require_relative '../lib/trepanning'
     # dbgr = Trepan.new(:set_restart => true)
     # dbgr.debugger
 

@@ -15,10 +15,10 @@ module IRB # :nodoc:
           else
             'unknown'
           end
-        $rbdbgr_args = opts
-        $rbdbgr_command = 
-          if $rbdbgr_irb_statements 
-            $rbdbgr_irb_statements
+        $trepan_args = opts
+        $trepan_command = 
+          if $trepan_irb_statements 
+            $trepan_irb_statements
           else
             ([name] + opts).join(' ')
           end
@@ -37,14 +37,14 @@ module IRB # :nodoc:
     # execution. 
     class Dbgr
       def self.execute(conf, *opts)
-        $rbdbgr_command = 
+        $trepan_command = 
           if opts.size == 1 && opts[0].is_a?(String)
-            $rbdbgr_args = opts[0]
+            $trepan_args = opts[0]
           else
             opts.join(' ')
           end
         dbg_cmdproc = conf.workspace.instance_variable_get('@dbg_cmdproc')
-        dbg_cmdproc.run_command($rbdbgr_command)
+        dbg_cmdproc.run_command($trepan_command)
       end
     end
 

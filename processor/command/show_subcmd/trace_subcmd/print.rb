@@ -30,7 +30,7 @@ if __FILE__ == $0
   tb_cmd         = Trepan::SubSubcommand::ShowTracePrint.new(show_cmd.proc, 
                                                              trace_cmd,
                                                              cmd_name)
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   tb_cmd.run([])

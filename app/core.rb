@@ -191,7 +191,7 @@ class Trepan
   end
 end
 if __FILE__ == $0
-  require_relative '../lib/rbdbgr'
+  require_relative '../lib/trepanning'
   dbg = Trepan.new()
   if ARGV.size > 0
     def foo(dbg)

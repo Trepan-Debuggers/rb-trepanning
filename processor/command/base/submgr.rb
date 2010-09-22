@@ -170,7 +170,7 @@ if __FILE__ == $0
   Trepan::SubcommandMgr.new(dbgr.core.processor)
   puts cmd.help(%w(help set))
   puts '=' * 40
-  # require_relative '../../../lib/rbdbgr)
+  # require_relative '../../../lib/trepanning)
   # Trepan.debug(:set_restart => true)
   puts cmd.help(%w(help set *))
   puts '=' * 40

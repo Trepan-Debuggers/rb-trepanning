@@ -88,7 +88,7 @@ if __FILE__ == $0
                                                             set_cmd,
                                                             cmd_name)
   setx_cmd.run([])
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   eval('set_cmd.proc.frame_setup(RubyVM::ThreadFrame::current); setx_cmd.run([])')

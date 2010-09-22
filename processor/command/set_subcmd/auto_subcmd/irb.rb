@@ -37,7 +37,7 @@ if __FILE__ == $0
   autox_cmd     = Trepan::SubSubcommand::SetAutoIrb.new(set_cmd.proc, 
                                                         auto_cmd,
                                                         cmd_name)
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   set_cmd.proc.hook_initialize(set_cmd.proc.commands)

@@ -44,7 +44,7 @@ if __FILE__ == $0
   subcmd        = Trepan::SubSubcommand::SetTraceBuffer.new(set_cmd.proc, 
                                                             trace_cmd,
                                                             cmd_name)
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
 

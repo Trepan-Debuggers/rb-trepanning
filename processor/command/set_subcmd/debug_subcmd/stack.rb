@@ -4,7 +4,7 @@ require_relative '../../base/subsubcmd'
 
 class Trepan::SubSubcommand::SetDebugStack < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
-    HELP = "Set display of complete stack including possibly setup stack from rbdbgr"
+    HELP = "Set display of complete stack including possibly setup stack from trepanning"
     MIN_ABBREV  = 'st'.size
     NAME        = File.basename(__FILE__, '.rb')
     PREFIX      = %w(set debug stack)
@@ -36,7 +36,7 @@ if __FILE__ == $0
   debugx_cmd     = Trepan::SubSubcommand::SetDebugStack.new(set_cmd.proc, 
                                                               debug_cmd,
                                                               cmd_name)
-  # require_relative '../../../../lib rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   debugx_cmd.run([name])

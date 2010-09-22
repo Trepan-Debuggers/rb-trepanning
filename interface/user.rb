@@ -15,7 +15,7 @@ require_relative '../io/input'
 # process as the debugged program.
 class Trepan::UserInterface < Trepan::Interface
 
-  FILE_HISTORY = '.rbdbgr_hist' unless defined?(FILE_HISTORY)
+  FILE_HISTORY = '.trapan_hist' unless defined?(FILE_HISTORY)
 
   def initialize(inp=nil, out=nil, opts={})
     super(inp, out, opts)

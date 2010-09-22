@@ -53,7 +53,7 @@ if __FILE__ == $0
   puts
   puts '-' * 20
 
-  require_relative '../../../../lib/rbdbgr'
+  require_relative '../../../../lib/trepanning'
   dbgr = Trepan.new(:set_restart => true)
   dbgr.debugger
   puts subcmd.save_command

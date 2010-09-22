@@ -14,12 +14,12 @@ and should return a command string to use in its place.
 Here is a contrived example that shows how to issue 'finish' if we are in 
 method 'gcd' and 'step' otherwise:
 
-  macro step_unless_gcd Proc.new{|*args| \"$rbdbgr_frame.method == 'gcd' ? 'finish' : 'step'\"}
+  macro step_unless_gcd Proc.new{|*args| \"$trepan_frame.method == 'gcd' ? 'finish' : 'step'\"}
 
 Here is another real example. I use the following to debug a
 debugger command, assuming 'set debug dbgr' is set:
 
-  macro dbgcmd Proc.new{|*args| \"debug $rbdbgr_cmdproc.commands['\#{args[0]}'].run(\#{args.inspect})\"}
+  macro dbgcmd Proc.new{|*args| \"debug $trepan_cmdproc.commands['\#{args[0]}'].run(\#{args.inspect})\"}
 
 With the above, 'dbgcmd list 5' will debug the debugger 'list' command 
 on the command 'list 5'.

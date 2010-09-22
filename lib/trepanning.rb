@@ -89,7 +89,7 @@ class Trepan
 
   # To call from inside a Ruby program, there is one-time setup that 
   # needs to be done first:
-  #    require 'rbdbgr'
+  #    require 'trepanning'
   #    mydbg = Trepan.new()
   # or if you haven't mucked around with $0 and ARGV, you might try:
   #    mydbg = Trepan.new(:set_restart=>true))
@@ -201,13 +201,13 @@ class Trepan
   # calling using the object to invoke the debugger, we allow this
   # two-step process in one step. That is, instead of
   #  
-  #  require 'rbdbgr'
+  #  require 'trepanning'
   #  mydbg = Trepan.new()
   #  ... 
   #  mydbg.debugger
 
   # You can run:
-  #  require 'rbdbgr'
+  #  require 'trepanning'
   # ...
   #  Trepan.debug
   #
@@ -218,18 +218,19 @@ class Trepan
 
   def self.debug(opts={}, &block)
     opts = {:hide_stack => true}.merge(opts)
-    unless defined?($rbdbgr) && $rbdbgr.is_a?(Trepan)
-      $rbdbgr = Trepan.new(opts)
-      $rbdbgr.trace_filter << self.method(:debug)
+    unless defined?($trepanning) && $trepanning.is_a?(Trepan)
+      $trepanning = Trepan.new(opts)
+      $trepanning.trace_filter << self.method(:debug)
     end
-    $rbdbgr.debugger(opts, &block)
+    $trepanning.debugger(opts, &block)
   end
 
   def self.debug_str(string, opts = DEFAULT_DEBUG_STR_SETTINGS)
-    $rbdbgr = Trepan.new(opts) unless $rbdbgr && $rbdbgr.is_a?(Trepan)
-    $rbdbgr.core.processor.settings[:different] = false
+    $trepanning = Trepan.new(opts) unless 
+      $trepanning && $trepanning.is_a?(Trepan)
+    $trepanning.core.processor.settings[:different] = false
     # Perhaps we should do a remap file to string right here? 
-    $rbdbgr.debugger(opts) { eval(string) }
+    $trepanning.debugger(opts) { eval(string) }
   end
 end
 
@@ -238,11 +239,11 @@ module Kernel
   # FIXME figure out a way to remove duplication.
   def rbdbgr(opts={}, &block)
     opts = {:hide_stack => true}.merge(opts)
-    unless defined?($rbdbgr) && $rbdbgr.is_a?(Trepan)
-      $rbdbgr = Trepan.new
-      $rbdbgr.trace_filter << self.method(:rbdbgr)
+    unless defined?($trepanning) && $trepanning.is_a?(Trepan)
+      $trepanning = Trepan.new
+      $trepanning.trace_filter << self.method(:rbdbgr)
     end
-    $rbdbgr.debugger(opts, &block)
+    $trepanning.debugger(opts, &block)
   end
 end
 
@@ -260,7 +261,7 @@ if __FILE__ == $0
   }
 
   puts 'immediate debugging...'
-  $rbdbgr.debugger(:immediate => true)
+  $trepanning.debugger(:immediate => true)
   puts 'line after immediate'
   a = 3
   square(a)
@@ -270,7 +271,7 @@ if __FILE__ == $0
       @x = x
     end
   end
-  $rbdbgr.debugger
+  $trepanning.debugger
   m = MyClass.new(5)
   raise RuntimeError # To see how we handle post-mortem debugging.
 end

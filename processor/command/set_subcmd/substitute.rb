@@ -19,7 +19,7 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['set', name]
   set_cmd.instance_variable_set('@last_args', cmd_args)
-  # require_relative '../../../lib/rbdbgr'
+  # require_relative '../../../lib/trepanning'
   # Trepan.debug(:set_restart => true)
   command.run(cmd_args)
 end

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative '../../lib/rbdbgr'
+require_relative '../../lib/trepanning'
 
 class TestTrepanCallBug < Test::Unit::TestCase
 

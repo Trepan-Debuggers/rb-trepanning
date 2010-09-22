@@ -6,8 +6,8 @@ class Trepan::SubSubcommand::SetDebugDbgr < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     HELP        = 'set debug dbgr [on|off]
 
-Facilitates debugging the debugger. Global variables $rbdbgr_cmdproc
-and $rbdbgr_frame are set to the current values of @frame and self
+Facilitates debugging the debugger. Global variables $trepan_cmdproc
+and $trepan_frame are set to the current values of @frame and self
 when the command processor was entered.  '
 
     MIN_ABBREV  = 'db'.size
@@ -38,7 +38,7 @@ if __FILE__ == $0
   debugx_cmd     = Trepan::SubSubcommand::SetDebugDbgr.new(dbg_cmd.proc, 
                                                            debug_cmd,
                                                            cmd_name)
-  # require_relative '../.././../lib/rbdbgr'
+  # require_relative '../.././../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   debugx_cmd.run([name])

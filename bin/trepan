@@ -3,7 +3,7 @@
 # Invoke debugger from the command line. 
 require_relative '../app/run'
 require_relative '../app/options'
-require_relative '../lib/rbdbgr'
+require_relative '../lib/trepanning'
 
 # FIXME: the figure out how to run via gem installation.
 if File.basename(__FILE__) == File.basename($0)
@@ -16,7 +16,7 @@ if File.basename(__FILE__) == File.basename($0)
   # wrap all of this in a procedure as that would be defining
   # constants dynamically.
   1.times do 
-    | ; rbdbgr_path, program_to_debug |
+    | ; trepan_path, program_to_debug |
     # options = DEFAULT_CMDLINE_SETTINGS.merge({}) seems to change up
     # DEFAULT_CMDLINE_SETTINGS when options[:key] is changed. The
     # below is the simplest thing I can come up with so far.
@@ -25,15 +25,15 @@ if File.basename(__FILE__) == File.basename($0)
     Trepan::ARGV = ARGV.clone
     rest = opts.parse! ARGV
 
-    rbdbgr_path = File.expand_path($0)
+    trepan_path = File.expand_path($0)
     if RUBY_PLATFORM =~ /mswin/
-      rbdbgr_path += '.cmd' unless rbdbgr_path =~ /\.cmd$/i
+      trepan_path += '.cmd' unless trepan_path =~ /\.cmd$/i
     end
 
     # FIXME: do we need to test defined? 
     # FIXME: Should (some of) these be instance variables?
     Trepan::RUBY_PATH    = ruby_path
-    Trepan::RBDBGR_PATH  = rbdbgr_path
+    Trepan::TREPAN_PATH  = trepan_path
     Trepan::RBDBGR_FILE  = __FILE__
 
     if ARGV.empty?
@@ -51,13 +51,13 @@ if File.basename(__FILE__) == File.basename($0)
     Trepan::PROG_SCRIPT = program_to_debug
 
     # Set global so others may use this debugger.
-    $rbdbgr = Trepan.new(:restart_argv => 
+    $trepan = Trepan.new(:restart_argv => 
                            explicit_restart_argv(Trepan::ARGV),
                            :cmdfiles    => options[:cmdfiles],
                            :initial_dir => options[:chdir],
                            :nx          => options[:nx],
                            )
-    debug_program($rbdbgr, Trepan::RUBY_PATH, 
+    debug_program($trepan, Trepan::RUBY_PATH, 
                   File.expand_path(program_to_debug))
   end
 end

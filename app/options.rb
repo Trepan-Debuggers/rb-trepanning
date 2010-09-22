@@ -30,7 +30,7 @@ module Rbdbgr
   require_relative 'default'
 
   VERSION ||= '0.01'
-  PROGRAM ||= 'rbdbgr'
+  PROGRAM ||= 'trepanning'
 
   def show_version
     "#{PROGRAM} version #{VERSION}"

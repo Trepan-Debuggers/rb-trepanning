@@ -27,7 +27,7 @@ if __FILE__ == $0
                                                            cmd_name)
   
   name = File.basename(__FILE__, '.rb')
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   puts max_cmd.summary_help(maxx_cmd)

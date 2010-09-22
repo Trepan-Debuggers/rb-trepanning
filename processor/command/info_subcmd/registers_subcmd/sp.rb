@@ -60,7 +60,7 @@ if __FILE__ == $0
                                                           cmd_name)
   infox_cmd.summary_help(name)
   puts
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   infox_cmd.run([])

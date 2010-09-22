@@ -4,7 +4,7 @@ require_relative '../../base/subsubcmd'
 
 class Trepan::SubSubcommand::ShowDebugStack < Trepan::ShowBoolSubSubcommand
   unless defined?(HELP)
-    HELP        = "Show complete stack including possibly setup stack from rbdbgr"
+    HELP        = "Show complete stack including possibly setup stack from trepanning"
     MIN_ABBREV  = 'st'.size
     NAME        = File.basename(__FILE__, '.rb')
     PREFIX      = %w(show debug stack)

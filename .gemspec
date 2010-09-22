@@ -45,7 +45,7 @@ EOF
   spec.files        = FILES.to_a  
   spec.has_rdoc     = true
   spec.homepage     = 'http://wiki.github.com/rocky/rbdbgr'
-  spec.name         = 'trepanation'
+  spec.name         = 'trepanning'
   spec.license      = 'MIT'
   spec.platform     = Gem::Platform::RUBY
   spec.require_path = 'lib'

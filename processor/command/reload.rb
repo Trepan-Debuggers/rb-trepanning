@@ -20,7 +20,7 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
 
-  # require 'rbdbgr'
+  # require 'trepanning'
   # Trepan.debug(:set_restart => true)
   xx = Trepan::Command::ReloadCommand.new(cmd)
   cmd.run([name])

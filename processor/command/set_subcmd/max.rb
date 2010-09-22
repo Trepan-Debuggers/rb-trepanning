@@ -12,7 +12,7 @@ class Trepan::SubSubcommand::SetMax < Trepan::SubSubcommandMgr
 
   # def run(args)
   #   puts "foo"
-  #   require 'rbdbgr'
+  #   require 'trepanning'
   #   Trepan.debug
   #   super
   # end
@@ -29,7 +29,7 @@ if __FILE__ == $0
   cmd_args = ['set', name]
   set_cmd.instance_variable_set('@last_args', cmd_args)
   command.run(cmd_args)
-  require_relative '../../../lib/rbdbgr'
+  require_relative '../../../lib/trepanning'
   # Trepan.debug(:set_restart => true)
   command.run(['set', name, 'string', 30])
 end

@@ -26,7 +26,7 @@ if __FILE__ == $0
   maxx_cmd       = Trepan::SubSubcommand::ShowMaxStack.new(show_cmd.proc,
                                                            max_cmd,
                                                            cmd_name)
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   puts max_cmd.summary_help(maxx_cmd)

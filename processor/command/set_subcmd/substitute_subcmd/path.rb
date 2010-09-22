@@ -45,7 +45,7 @@ if __FILE__ == $0
   setx_cmd   = Trepan::SubSubcommand::SetSubstitutePath.new(set_cmd.proc, 
                                                             set_cmd,
                                                             cmd_name)
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   setx_cmd.run([])

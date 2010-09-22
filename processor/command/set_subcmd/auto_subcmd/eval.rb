@@ -57,7 +57,7 @@ if __FILE__ == $0
   subcmd        = Trepan::SubSubcommand::SetAutoEval.new(set_cmd.proc, 
                                                          auto_cmd,
                                                          cmd_name)
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # Trepan.debug(:set_restart => true)
 
   subcmd.run([cmd_name])

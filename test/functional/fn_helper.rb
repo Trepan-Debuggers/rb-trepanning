@@ -1,6 +1,6 @@
 require 'thread_frame'
 require 'trace'
-require_relative '../../lib/rbdbgr'
+require_relative '../../lib/trepanning'
 require_relative '../../io/string_array'
 
 module FnTestHelper
@@ -41,7 +41,7 @@ module FnTestHelper
   end
 
   def compare_output(right, d, debugger_cmds)
-    # require_relative '../../lib/rbdbgr'
+    # require_relative '../../lib/trepanning'
     # Trepan.debug(:set_restart => true)
     got = filter_line_cmd(d.intf[-1].output.output)
     if got != right

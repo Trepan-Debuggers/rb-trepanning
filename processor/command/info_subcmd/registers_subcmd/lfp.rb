@@ -44,7 +44,7 @@ if __FILE__ == $0
   infox_cmd  = Trepan::SubSubcommand::InfoRegistersSp.new(info_cmd.proc,
                                                           info_cmd,
                                                           cmd_name)
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   infox_cmd.run([])

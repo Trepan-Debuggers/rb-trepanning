@@ -21,7 +21,7 @@ class Trepan::Command::SaveCommand < Trepan::Command
       else
         @proc.settings[:save_cmdfile] ||
           File.join(Dir.tmpdir, 
-                    Dir::Tmpname.make_tmpname(['rbdbgr-save', '.txt'], nil))
+                    Dir::Tmpname.make_tmpname(['trepanning-save', '.txt'], nil))
       end
     begin
       save_file = File.open(save_filename, 'w')
@@ -30,7 +30,7 @@ class Trepan::Command::SaveCommand < Trepan::Command
       errmsg("System reports: #{exc.inspect}")
       return
     end
-    save_file.puts "#\n# Commands to restore rbdbgr environment\n#\n"
+    save_file.puts "#\n# Commands to restore trepanning environment\n#\n"
     @proc.commands.each do |cmd_name, cmd_obj|
       cmd_obj.save_command if cmd_obj.respond_to?(:save_command)
       next unless cmd_obj.is_a?(Trepan::SubcommandMgr)

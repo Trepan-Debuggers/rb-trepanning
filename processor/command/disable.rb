@@ -45,7 +45,7 @@ if __FILE__ == $0
   cmds = dbgr.core.processor.commands
   break_cmd = cmds['break']
   break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
-  # require_relative '../../lib/rbdbgr'
+  # require_relative '../../lib/trepanning'
   # Trepan.debug(:set_restart => true)
   cmd.run([name, '1'])
 end

@@ -8,7 +8,7 @@ There is a "google group mailing list:http://groups.google.com/group/ruby-debugg
 
 If rbdbgr is installed, here is how to run:
 
-bc.  rbdbgr ruby-program [program]
+bc.  trepination ruby-program [program]
 
 If your program needs options of its own:
 
@@ -40,10 +40,10 @@ which informs the debugger on how to restart the program (via the restart comman
 
 The above is really shorthand for something like:
 
-bc.  $rbdbgr = Trepan.new(:set_restart=>true) 
- $rbdbgr.debugger
+bc.  $trepan = Trepan.new(:set_restart=>true) 
+ $trepan.debugger
 
-The global variable $rbdbgr set holds debugger settings, such as "autolist" or "autoeval" settings and breakpoint information.
+The global variable $trepan set holds debugger settings, such as "autolist" or "autoeval" settings and breakpoint information.
 
 Due to the line-event orientation in ruby-debug, it occasionally it was convenient to add a synchronous stop in your program. I don't think that will as necessary here, but if you do call to the debugger at the point of the call rather than the subsequent stopping point, set opts[:immediate] to true. Example:
 
