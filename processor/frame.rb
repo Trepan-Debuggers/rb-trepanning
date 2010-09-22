@@ -169,33 +169,33 @@ class Trepan
       end
     end
 
-  # The dance we have to do to set debugger frame state to
-  #    `frame', which is in the thread with id `thread_id'. We may
-  #    need to the hide initial debugger frames.
-  def find_and_set_debugged_frame(th, position)
-
-    thread = threading._active[thread_id]
-    thread_name = thread.getName()
-    if (!@settings['dbg_pydbgr'] &&
-        thread_name == Mthread.current_thread_name())
-      # The frame we came in on ('current_thread_name') is
-      # the same as the one we want to switch to. In this case
-      # we need to some debugger frames are in this stack so 
-      # we need to remove them.
-      newframe = Mthread.find_debugged_frame(frame)
-      frame = newframe unless newframe
+    # The dance we have to do to set debugger frame state to
+    #    `frame', which is in the thread with id `thread_id'. We may
+    #    need to the hide initial debugger frames.
+    def find_and_set_debugged_frame(th, position)
+      
+      thread = threading._active[thread_id]
+      thread_name = thread.getName()
+      if (!@settings['dbg_pydbgr'] &&
+          thread_name == Mthread.current_thread_name())
+        # The frame we came in on ('current_thread_name') is
+        # the same as the one we want to switch to. In this case
+        # we need to some debugger frames are in this stack so 
+        # we need to remove them.
+        newframe = Mthread.find_debugged_frame(frame)
+        frame = newframe unless newframe
+      end
+      ## FIXME: else: we might be blocked on other threads which are
+      # about to go into the debugger it not for the fact this one got there
+      # first. Possibly in the future we want
+      # to hide the blocks into threading of that locking code as well. 
+      
+      # Set stack to new frame
+      @frame, @curindex = Mcmdproc.get_stack(frame, nil, self.proc)
+      @proc.stack, @proc.curindex = self.stack, self.curindex
+      
+      # @frame_thread_name = thread_name
     end
-    ## FIXME: else: we might be blocked on other threads which are
-    # about to go into the debugger it not for the fact this one got there
-    # first. Possibly in the future we want
-    # to hide the blocks into threading of that locking code as well. 
-
-    # Set stack to new frame
-    @frame, @curindex = Mcmdproc.get_stack(frame, nil, self.proc)
-    @proc.stack, @proc.curindex = self.stack, self.curindex
-
-    # @frame_thread_name = thread_name
-  end
   end
 end
 
