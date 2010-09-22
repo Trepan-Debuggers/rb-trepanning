@@ -30,13 +30,12 @@ task :install => :gem do
 end
 
 desc "Test everything."
-test_task = task :test => :lib do 
-  Rake::TestTask.new(:test) do |t|
-    t.libs << './lib'
-    t.pattern = 'test/test-*.rb'
-    t.verbose = true
-  end
+Rake::TestTask.new(:test) do |t|
+  t.libs << './lib'
+  t.pattern = 'test/test-*.rb'
+  t.verbose = true
 end
+task :test => :lib
 
 desc "same as test"
 task :check => :test

@@ -56,7 +56,7 @@ Examples:
               # as step until Thread.current.object_id == #object_id
 
 Related and similar is the 'next' (step over) and 'finish' (step out)
-commands.  All of thsee are slower than running to a breakpoint.
+commands.  All of these are slower than running to a breakpoint.
 
 See also the commands:
 'skip', 'jump' (there's no 'hop' yet), 'continue', 'return' and
