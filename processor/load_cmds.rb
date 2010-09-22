@@ -1,4 +1,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Trepan::CmdProcess that loads up debugger commands from builtin and
+# user directories.
+# Sets @commands, @aliases, @macros
 class Trepan
   class CmdProcessor
 
@@ -9,8 +12,7 @@ class Trepan
     attr_reader   :macros          # Hash[String] of Proc objects 
                                    # indexed by macro name.
     
-    # Load up debugger commands from builtin and user directories
-    # Sets @commands, @aliases
+    # "initialize" for multi-file class. Called from main.rb's "initialize".
     def load_cmds_initialize
       @commands = {}
       @aliases = {}

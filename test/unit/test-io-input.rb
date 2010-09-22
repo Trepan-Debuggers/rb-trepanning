@@ -2,12 +2,12 @@
 require 'test/unit'
 require_relative '../../io/input'
 
-# Test Trepan::CmdProcessor
+# Test Trepan::UserInput
 class TestIOInput < Test::Unit::TestCase
 
-  def test_TrepanInput
+  def test_UserInput
     inp = Trepan::UserInput.open(__FILE__)
-    assert inp, 'Should have gotten a TrepanInput object back'
+    assert inp, 'Should have gotten a Trepan::UserInput object back'
     line = inp.readline.chomp
     assert_equal '#!/usr/bin/env ruby', line
     assert_equal false, inp.eof?

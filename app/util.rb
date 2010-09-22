@@ -6,10 +6,11 @@ class Trepan
 
     def safe_repr(str, max, suffix='...')
       if str.is_a?(String) && str.size > max && !str.index("\n")
+        char = str[0..0]
         opt_quote = 
-          if '"' == str[0] || "'" == str[0] 
+          if '"' == char || "'" == char
             max -= 1
-            str[0]
+            char
           else
             ''
           end

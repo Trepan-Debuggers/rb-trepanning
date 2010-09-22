@@ -317,7 +317,7 @@ end
 
 if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
-  require_relative '../lib/trepanning'
+  require_relative '../lib/trepanation'
   dbg =  Trepan.new(:nx => true)
   dbg.core.processor.msg('I am main')
   cmdproc = dbg.core.processor
