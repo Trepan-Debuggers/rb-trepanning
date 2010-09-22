@@ -12,15 +12,16 @@
 
 class Trepan
 
-  NotImplementedMessage ||= 'This method must be overriden in a subclass'
+  NotImplementedMessage = 'This method must be overriden in a subclass' unless
+    defined?(NotImplementedMessage)
   
   class InputBase
     attr_reader   :input
     attr_reader   :line_edit
 
-    DEFAULT_OPTS ||= {
+    DEFAULT_OPTS = {
       :line_edit => false,
-    }
+    } unless defined?(DEFAULT_OPTS)
 
     def initialize(inp, opts={})
       @opts      = DEFAULT_OPTS.merge(opts)

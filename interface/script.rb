@@ -11,11 +11,11 @@ require_relative '../io/string_array'
 # Interface when reading debugger scripts
 class Trepan::ScriptInterface < Trepan::Interface
 
-  DEFAULT_OPTS ||= {
+  DEFAULT_OPTS = {
     :abort_on_error => true,
     :confirm_val    => false,
     :verbose        => false
-  }
+  } unless defined?(DEFAULT_OPTS)
   
   def initialize(script_name, out=nil, opts={})
 
