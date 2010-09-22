@@ -20,7 +20,7 @@ class Trepan
     end
 
     def safe_rep(str)
-      safe_repr(str, @settings[:maxstring])
+      Trepan::Util::safe_repr(str, @settings[:maxstring])
     end
   end
 end
