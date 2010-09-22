@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'thread_frame'
 require_relative '../../processor/load_cmds'
 require_relative '../../app/mock'
 
