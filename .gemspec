@@ -3,7 +3,7 @@
 require 'rake'
 require 'rubygems' unless 
   Object.const_defined?(:Gem)
-require File.dirname(__FILE__) + "/lib/rbdbgr" unless 
+require File.dirname(__FILE__) + "/lib/trepanning" unless 
   Object.const_defined?(:'Trepan')
 
 FILES = FileList[
