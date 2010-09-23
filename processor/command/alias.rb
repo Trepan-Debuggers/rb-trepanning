@@ -23,6 +23,8 @@ See also 'unalias'.
   def run(args)
     if args.size == 1
       @proc.commands['show'].run(%w(show alias))
+    elsif args.size == 2
+      @proc.commands['show'].run(%W(show alias #{args[1]}))
     else
       junk, al, command = args
       old_command = @proc.aliases[al]
@@ -36,7 +38,6 @@ See also 'unalias'.
         end
       else
         errmsg "You must alias to a command name, and '#{command}' isn't one."
-        errmsg "Run 'help *' for a list of commands"
       end
     end
   end
