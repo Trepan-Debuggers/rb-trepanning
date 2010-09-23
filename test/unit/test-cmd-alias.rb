@@ -2,6 +2,7 @@
 require 'test/unit'
 require_relative 'cmd-helper'
 require_relative '../../processor/command/alias'
+require_relative '../../processor/command/unalias'
 
 # Test commands alias and unalias
 class TestCommandAliasUnalias < Test::Unit::TestCase
