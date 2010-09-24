@@ -34,7 +34,7 @@ class TestDelete < Test::Unit::TestCase
            'va = 1',
            'basename is on.',
            "Breakpoint 1 set at line 28 in file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
-           "Deleted breakpoint 1"]
+           "Deleted breakpoint 1."]
     compare_output(out, d, cmds)
 
     # See that when we can delete a breakpoint but get to the next one.
@@ -63,7 +63,7 @@ class TestDelete < Test::Unit::TestCase
            "Evaluation of unrecognized debugger commands is on.",
            "Breakpoint 2 set at line 54 in file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
            "Breakpoint 3 set at line 56 in file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
-           "Deleted breakpoint 2",
+           "Deleted breakpoint 2.",
            "xx ",
            "vd = 4",
            "D=> 3"]

@@ -135,7 +135,7 @@ if __FILE__ == $0
     def run(args); puts 'test testing run' end
   end
 
-  d = MockTrepan::MockTrepan.new
+  d = MockDebugger::MockDebugger.new
   testcmd    = Trepan::TestCommand.new(nil)
   # testcmd.debugger = d
   testcmd.proc     = d.core.processor

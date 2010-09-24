@@ -110,6 +110,11 @@ task :'check:commands' do
 end
 
 desc "Run each processor Ruby file in standalone mode."
+task :'check:lib' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} lib)))
+end
+
+desc "Run each processor Ruby file in standalone mode."
 task :'check:processor' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} processor)))
 end

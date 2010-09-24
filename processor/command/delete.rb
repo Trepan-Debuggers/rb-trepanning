@@ -33,7 +33,7 @@ number.
     args.each do |num_str|
       i = @proc.get_an_int(num_str)
       success = @proc.delete_breakpoint_by_number(num_str.to_i, false) if i
-      msg('Deleted breakpoint %d' % i) if success
+      msg('Deleted breakpoint %d.' % i) if success
     end
   end
 end

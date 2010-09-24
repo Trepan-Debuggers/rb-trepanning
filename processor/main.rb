@@ -18,10 +18,10 @@ class Trepan
 
     # SEE ALSO attr's in require_relative's of loop above.
 
-    attr_reader   :cmd_name        # command name before alias or macro resolution
     attr_reader   :cmd_argstr      # Current command args, a String.
                                    # This is current_command with the command
                                    # name removed from the beginning.
+    attr_reader   :cmd_name        # command name before alias or macro resolution
     attr_reader   :core            # Trepan core object
     attr_reader   :current_command # Current command getting run, a String.
     attr_reader   :dbgr            # Trepan instance (via

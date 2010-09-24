@@ -63,6 +63,17 @@ if __FILE__ == $0
   cmdp = Trepan::CmdProcessor.new
   puts cmdp.fake_eval_filename('x = 1; y = 2')
   puts cmdp.fake_eval_filename('x = 1; y = 2', 7)
+
+  def cmdp.errmsg(msg)
+    puts "** #{msg}"
+  end
+  begin 
+    1/0
+  rescue Exception => exc
+    cmdp.exception_dump(exc, true, $!.backtrace)
+    puts '=' * 40
+  end
+
   x = 1
   require 'thread_frame'
   cmdp.instance_variable_set('@frame', RubyVM::ThreadFrame.current)
@@ -71,6 +82,7 @@ if __FILE__ == $0
   puts cmdp.debug_eval('x = "#{x}"')
   puts cmdp.debug_eval('x+')
   puts cmdp.debug_eval_no_errmsg('y+')
-  puts cmdp.debug_eval('x+')
+  puts '=' * 40
   puts cmdp.debug_eval('y = 1; x+', 4)
+  puts '=' * 40
 end
