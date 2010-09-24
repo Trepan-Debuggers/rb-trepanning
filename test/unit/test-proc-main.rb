@@ -29,13 +29,13 @@ class TestCmdProcessor < Test::Unit::TestCase
   end
 
   def test_compute_prompt
-    assert_equal('(rbdbgr): ', @cmdproc.compute_prompt)
-    Thread.new{ assert_equal('(rbdbgr@55): ', @cmdproc.compute_prompt.gsub(/@\d+/, '@55'))}.join
+    assert_equal('(trepan): ', @cmdproc.compute_prompt)
+    Thread.new{ assert_equal('(trepan@55): ', @cmdproc.compute_prompt.gsub(/@\d+/, '@55'))}.join
     x = Thread.new{ Thread.pass; x = 1 }
-    assert_equal('(rbdbgr@main): ', @cmdproc.compute_prompt)
+    assert_equal('(trepan@main): ', @cmdproc.compute_prompt)
     x.join
     @cmdproc.debug_nest += 1
-    assert_equal('((rbdbgr)): ', @cmdproc.compute_prompt)
+    assert_equal('((trepan)): ', @cmdproc.compute_prompt)
     @cmdproc.debug_nest -= 1
   end
 

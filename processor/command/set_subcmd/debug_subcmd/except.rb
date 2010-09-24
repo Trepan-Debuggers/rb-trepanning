@@ -26,7 +26,7 @@ if __FILE__ == $0
   debugx_cmd     = Trepan::SubSubcommand::SetDebugExcept.new(dbg_cmd.proc, 
                                                               debug_cmd,
                                                               cmd_name)
-  # require_relative '../../../../lib/rbdbgr'
+  # require_relative '../../../../lib/trepan'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   debugx_cmd.run([name, 'off'])

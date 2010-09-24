@@ -1,13 +1,13 @@
 # -*- Ruby -*-
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-# We use this as the default startup file for irb inside rbdbgr
+# We use this as the default startup file for irb inside trepan
 # Down the line we will have a way for folks to add/override this
 # with their own file.
 IRB.conf[:PROMPT_MODE] = :SIMPLE
 IRB.conf[:PROMPT][:SIMPLE] = 
-    {:PROMPT_C=>"rbdbgr ?> ",
-     :PROMPT_I=>"rbdbgr >> ",
-     :PROMPT_N=>"rbdbgr >> ",
+    {:PROMPT_C=>"trepan ?> ",
+     :PROMPT_I=>"trepan >> ",
+     :PROMPT_N=>"trepan >> ",
      :PROMPT_S=>nil,
      :RETURN=>"=> %s\n"}
 
@@ -17,7 +17,7 @@ IRB.conf[:PROMPT][:SIMPLE] =
 # But...
 #  dbgr info program    # wrong!
 # 
-puts "You are in a rbdbgr session. You should have access to program scope."
+puts "You are in a trepan session. You should have access to program scope."
 puts "'dbgr', 'step', 'n', 'q', 'cont' commands have been added."
 
 if defined?($trepan) && $trepan
