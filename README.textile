@@ -6,29 +6,29 @@ Right now this debugger is beta code.
 
 There is a "google group mailing list:http://groups.google.com/group/ruby-debugger" for this debugger.
 
-If rbdbgr is installed, here is how to run:
+If trepan is installed, here is how to run:
 
 bc.  trepination ruby-program [program]
 
 If your program needs options of its own:
 
-bc.  rbdbgr -- ruby-program [program args...]
+bc.  trepan -- ruby-program [program args...]
 
 If you want to run from the source tree you can do that too:
 
-bc.  cd place-where-rbdbgr-is-installed:
- ./bin/rbdbgr -- ruby-program [program args...]
+bc.  cd place-where-trepan-is-installed:
+ ./bin/trepan -- ruby-program [program args...]
 
 Running from inside _irb_:
 
-bc.  require 'rbdbgr' 
+bc.  require 'trepan' 
  Trepan.debug { your code }
 
 The return value from Trepan is the return value of the block, i.e. the final value in the block.
 
 You can run the same thing inside your Ruby program, but probably you don't want to give a block. Instead, you may want to have debugging start on the next statement in the code:
 
-bc.  require 'rbdbgr' 
+bc.  require 'trepan' 
  Trepan.debug # Don't stop here...
  work # but stop here.
 

@@ -3,19 +3,33 @@
 require_relative 'base/cmd'
 require_relative '../breakpoint'
 require_relative '../../app/brkpt'
+
+# disable breakpoint command. The difference however is that the
+# parameter to @proc.en_disable_breakpoint_by_number is different (set
+# as ENABLE_PARM below).
+#
+# NOTE: The enable command  subclasses this, so beware when changing! 
 class Trepan::Command::DisableCommand < Trepan::Command
 
-  unless defined?(HELP)
-    HELP = 
+  # Silence already initialized constant .. warnings
+  old_verbose = $VERBOSE  
+  $VERBOSE    = nil
+  HELP = 
       'disable [display] bpnumber [bpnumber ...]
     
 Disables the breakpoints given as a space separated list of breakpoint
 numbers. See also "info break" to get a list.
 '
 
-    CATEGORY      = 'breakpoints'
-    NAME          = File.basename(__FILE__, '.rb')
-    SHORT_HELP    = 'Disable some breakpoints'
+  CATEGORY      = 'breakpoints'
+  NAME          = File.basename(__FILE__, '.rb')
+  SHORT_HELP    = 'Disable some breakpoints'
+
+  $VERBOSE      = old_verbose 
+
+  def initialize(proc)
+    super
+    @enable_parm = false # true if enable 
   end
   
   def run(args)
@@ -29,8 +43,8 @@ numbers. See also "info break" to get a list.
     first = args.shift
     args.each do |num_str|
       i = @proc.get_an_int(num_str)
-      success = @proc.en_disable_breakpoint_by_number(num_str.to_i, false) if i
-      msg('Breakpoint %s disabled.' % i) if success
+      success = @proc.en_disable_breakpoint_by_number(i, @enable_parm) if i
+      msg("Breakpoint %s #{@name}d." % i) if success
     end
   end
 end
@@ -42,7 +56,7 @@ if __FILE__ == $0
   cmd.run([name])
   cmd.run([name, '1'])
   cmdproc = dbgr.core.processor
-  cmds = dbgr.core.processor.commands
+  cmds = cmdproc.commands
   break_cmd = cmds['break']
   break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
   # require_relative '../../lib/trepanning'

@@ -69,7 +69,7 @@ class TestValidate < Test::Unit::TestCase
   def test_method?
     def foo; 5 end
     
-    # require_relative '../../lib/rbdbgr'
+    # require_relative '../../lib/trepan'
     # dbgr = Trepan.new(:set_restart => true)
     # FIXME: 'foo', 'errmsg'
     ['Array#map', 'Trepan::CmdProcessor.new'

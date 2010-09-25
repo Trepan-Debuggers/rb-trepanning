@@ -30,9 +30,9 @@ module FnTestHelper
     return d
   end
 
-  unless defined?(RBDBGR_PROMPT)
-    RBDBGR_PROMPT = /^\(rbdbgr\): /
-    RBDBGR_LOC    = /.. \(.+:\d+\)/
+  unless defined?(TREPAN_PROMPT)
+    TREPAN_PROMPT = /^\(trepan\): /
+    TREPAN_LOC    = /.. \(.+:\d+\)/
   end
 
   # Return the caller's line number
@@ -70,16 +70,16 @@ module FnTestHelper
   def filter_line_cmd(a, show_prompt=false)
     # Remove debugger prompt
     a = a.map do |s|
-     s =~ RBDBGR_PROMPT ? nil : s
+     s =~ TREPAN_PROMPT ? nil : s
     end.compact unless show_prompt
 
     # Remove debugger location lines. 
     # For example: 
-    #   -- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
+    #   -- (/src/external-vcs/trepan/tmp/gcd.rb:4)
     # becomes:
     #   -- 
     a2 = a.map do |s|
-      s =~ RBDBGR_LOC ? s.gsub(/\(.+:\d+\)\n/, '').chomp : s.chomp
+      s =~ TREPAN_LOC ? s.gsub(/\(.+:\d+\)\n/, '').chomp : s.chomp
     end
 
     # Remove VM offset locations. 
@@ -100,18 +100,18 @@ if __FILE__ == $0
   include FnTestHelper
   strarray_setup(%w(eh bee see))
   puts get_lineno()
-  p '-- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)' =~ RBDBGR_LOC
-  p '(rbdbgr): exit' =~ RBDBGR_PROMPT
+  p '-- (/src/external-vcs/trepan/tmp/gcd.rb:4)' =~ TREPAN_LOC
+  p '(trepan): exit' =~ TREPAN_PROMPT
   output='
--- (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
-(rbdbgr): s
--- (/src/external-vcs/rbdbgr/tmp/gcd.rb:18)
-(rbdbgr): s
--- (/src/external-vcs/rbdbgr/tmp/gcd.rb:19)
-(rbdbgr): s
-.. (/src/external-vcs/rbdbgr/tmp/gcd.rb:0)
-(rbdbgr): s
--> (/src/external-vcs/rbdbgr/tmp/gcd.rb:4)
+-- (/src/external-vcs/trepan/tmp/gcd.rb:4)
+(trepan): s
+-- (/src/external-vcs/trepan/tmp/gcd.rb:18)
+(trepan): s
+-- (/src/external-vcs/trepan/tmp/gcd.rb:19)
+(trepan): s
+.. (/src/external-vcs/trepan/tmp/gcd.rb:0)
+(trepan): s
+-> (/src/external-vcs/trepan/tmp/gcd.rb:4)
 '.split(/\n/)
   puts filter_line_cmd(output)
   puts '-' * 10

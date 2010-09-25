@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Unit test for rbdbgr.interface.user
+# Unit test for trepan.interface.user
 
 require 'test/unit'
 require_relative '../../interface/user'

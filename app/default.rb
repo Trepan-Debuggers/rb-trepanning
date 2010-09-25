@@ -36,10 +36,10 @@ module Rbdbgr
       # Of course MS Windows has to be different
       HOME_DIR     =  (ENV['HOME'] || 
                        ENV['HOMEDRIVE'].to_s + ENV['HOMEPATH'].to_s).to_s
-      'rbdbgr.ini'
+      'trepan.ini'
     else
       HOME_DIR = ENV['HOME'].to_s
-      '.rbdbgrc'
+      '.trepanrc'
     end unless defined?(CMD_INITFILE_BASE)
   CMD_INITFILE = File.join(HOME_DIR, CMD_INITFILE_BASE) unless
     defined?(CMD_INITFILE)
