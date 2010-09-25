@@ -36,5 +36,6 @@ if __FILE__ == $0
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
   puts max_cmd.summary_help(maxx_cmd)
+  puts
   maxx_cmd.run([])
 end

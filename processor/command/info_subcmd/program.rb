@@ -47,7 +47,8 @@ if __FILE__ == $0
   subcommand = Trepan::Subcommand::InfoProgram.new(cmd)
   testcmdMgr = Trepan::Subcmd.new(subcommand)
 
-  subcommand.run_show_bool
   name = File.basename(__FILE__, '.rb')
+  subcommand.run([name])
   subcommand.summary_help(name)
+  puts
 end

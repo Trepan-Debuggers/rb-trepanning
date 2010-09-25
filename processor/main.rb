@@ -6,8 +6,8 @@ require 'linecache'
 require 'set'
 require 'pathname'  # For cleanpath
 
-%w(default display eventbuf eval load_cmds location frame hook msg 
-   validate).each do
+%w(default breakpoint display eventbuf eval load_cmds location frame hook msg 
+   running validate).each do
   |mod_str|
   require_relative mod_str
 end

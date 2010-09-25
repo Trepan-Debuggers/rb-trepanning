@@ -10,7 +10,6 @@ class Trepan::Command::PsCommand < Trepan::Command
 
 Print the value of the ARRAY in columns and sorted."
 
-    # ALIASES       = %w(p)
     CATEGORY      = 'data'
     MIN_ARGS      = 1  # Need least this many
     NAME          = File.basename(__FILE__, '.rb')

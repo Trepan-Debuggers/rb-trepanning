@@ -85,3 +85,11 @@ module Rbdbgr
   end
 end
 
+if __FILE__ == $0
+  # Demo it.
+  include  Rbdbgr
+  puts whence_file('irb')
+  puts whence_file('probably-does-not-exist')
+  puts ruby_path
+  p explicit_restart_argv(ARGV)
+end

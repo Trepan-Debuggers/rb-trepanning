@@ -28,6 +28,8 @@ See also the commands "quit" and "kill".'
       if args.size > 1 && args[1] == 'unconditionally'
         args.shift
         true
+      elsif args[0][-1..-1] == '!'
+        true
       else
         false
       end
