@@ -39,7 +39,7 @@ See also 'down' and 'frame'.
 
     # FIXME: move into @proc and test based on NEED_STACK.
     if not @proc.top_frame
-      errmsg("Program has no stack frame set.")
+      errmsg('No frames recorded.')
       return false
     end
 
@@ -52,7 +52,7 @@ See also 'down' and 'frame'.
       name_or_id = args[1]
       opts = {
         :msg_on_error => 
-        "The '#{NAME}' command argument must eval to an integer. Got: %s" % count_str,
+        "The '#{NAME}' command argument requires a frame number. Got: %s" % count_str,
         :min_value => -stack_size,
         :max_value => stack_size-1
       }
