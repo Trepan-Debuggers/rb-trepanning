@@ -3,7 +3,7 @@ require 'test/unit'
 require_relative '../../app/run'
 
 class TestAppRun < Test::Unit::TestCase
-  include Rbdbgr
+  include Trepanning
   def test_basic
     assert_equal(true, File.executable?(whence_file('irb')))
     ng = whence_file('probably-does-not-exist')

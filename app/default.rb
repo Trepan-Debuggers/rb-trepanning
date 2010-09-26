@@ -2,7 +2,7 @@
 # A place for the default settings
 # This could be put elsewhere but it is expected that this will grow
 # get quite large.
-module Rbdbgr
+module Trepanning
 
   # I am not sure if we need to sets of hashes, but we'll start out
   # that way.
@@ -48,7 +48,7 @@ end
 if __FILE__ == $0
   # Show it:
   require 'pp'
-  PP.pp(Rbdbgr::DEFAULT_SETTINGS)
+  PP.pp(Trepanning::DEFAULT_SETTINGS)
   puts '=' * 30
-  PP.pp(Rbdbgr::DEFAULT_CMDLINE_SETTINGS)
+  PP.pp(Trepanning::DEFAULT_CMDLINE_SETTINGS)
 end

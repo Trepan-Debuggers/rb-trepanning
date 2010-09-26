@@ -4,9 +4,9 @@ require 'rbconfig'
 load File.join(File.dirname(__FILE__), %w(.. .. bin trepan))
 
 # Test bin/trepan Module methods
-class TestBinRbdbgr < Test::Unit::TestCase
+class TestBinTrepan < Test::Unit::TestCase
 
-  include Rbdbgr
+  include Trepanning
 
   def test_ruby_path
     rb_path = ruby_path

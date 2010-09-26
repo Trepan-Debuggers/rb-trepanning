@@ -26,11 +26,11 @@
 #      Show invocation help and exit.
 
 require 'optparse'
-module Rbdbgr
+module Trepanning
   require_relative 'default'
 
-  Rbdbgr::VERSION = '0.0.4.git' unless defined?(Rbdbgr::VERSION)
-  Rbdbgr::PROGRAM = 'trepan' unless defined?(Rbdbgr::PROGRAM)
+  Trepanning::VERSION = '0.0.4.git' unless defined?(Trepanning::VERSION)
+  Trepanning::PROGRAM = 'trepan' unless defined?(Rbdbgr::PROGRAM)
 
   def show_version
     "#{PROGRAM} version #{VERSION}"

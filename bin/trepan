@@ -7,7 +7,7 @@ require_relative '../lib/trepanning'
 
 # FIXME: the figure out how to run via gem installation.
 if File.basename(__FILE__) == File.basename($0)
-  include Rbdbgr
+  include Trepanning
 
   # One way to get local variables is to create a block which is run
   # once.  

@@ -30,7 +30,7 @@ class Trepan
       :timer         => false,     # show elapsed time between events
       :traceprint    => false,     # event tracing printing
       :tracebuffer   => false,     # save events to a trace buffer.
-      :user_cmd_dir  => File.join(Rbdbgr::HOME_DIR, 'trepan', 'command'),
+      :user_cmd_dir  => File.join(Trepanning::HOME_DIR, 'trepan', 'command'),
                                    # User command directory
     } unless defined?(DEFAULT_SETTINGS)
   end

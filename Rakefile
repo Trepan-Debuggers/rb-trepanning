@@ -151,7 +151,7 @@ end
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "Trepanning #{Rbdbgr::VERSION} Documentation"
+  rdoc.title    = "Trepanning #{Trepanning::VERSION} Documentation"
 
   rdoc.rdoc_files.include('lib/*.rb', 'app/*.rb', 'bin/trepan')
 end

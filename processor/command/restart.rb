@@ -25,7 +25,7 @@ class Trepan::Command::RestartCommand < Trepan::Command
       unless File.executable?(argv[0])
         msg(["File #{argv[0]} not executable.",
              "Adding Ruby interpreter."])
-        argv.unshift Rbdbgr::ruby_path
+        argv.unshift Trepanning::ruby_path
       end
       @proc.run_cmd(%w(show args))
       if not confirm('Restart (exec)?', false)

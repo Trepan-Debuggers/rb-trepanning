@@ -8,7 +8,7 @@ SCRIPT_ISEQS__ = {} unless
 ISEQS__        = {} unless 
   defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
-module Rbdbgr
+module Trepanning
   def file_match_pat(filename)
     prefix = 
       if filename[0..0] == File::SEPARATOR
@@ -105,7 +105,7 @@ module Rbdbgr
 end
 # Demo it
 if __FILE__ == $0
-  include Rbdbgr
+  include Trepanning
   if !(ARGV.size == 1 && ARGV[0] == 'noload')
     ISEQS__        = {}
     SCRIPT_ISEQS__ = {}
