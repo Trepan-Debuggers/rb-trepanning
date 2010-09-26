@@ -29,8 +29,8 @@ require 'optparse'
 module Rbdbgr
   require_relative 'default'
 
-  VERSION ||= '0.01'
-  PROGRAM ||= 'trepanning'
+  Rbdbgr::VERSION = '0.0.4.git' unless defined?(Rbdbgr::VERSION)
+  Rbdbgr::PROGRAM = 'trepan' unless defined?(Rbdbgr::PROGRAM)
 
   def show_version
     "#{PROGRAM} version #{VERSION}"

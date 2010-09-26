@@ -20,7 +20,6 @@ ISEQS__        = {} unless
   defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
 class Trepan
-  VERSION = '0.0.4'
 
   attr_accessor :core         # access to Trepan::Core instance
   attr_accessor :intf         # Array. The way the outside world
