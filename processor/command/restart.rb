@@ -19,7 +19,7 @@ class Trepan::Command::RestartCommand < Trepan::Command
   # This method runs the command
   def run(args) # :nodoc
 
-    dbgr = @proc.core.dbgr
+    dbgr = @proc.dbgr
     argv = dbgr.restart_argv
     if argv and argv.size > 0
       unless File.executable?(argv[0])
