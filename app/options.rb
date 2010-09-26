@@ -65,7 +65,7 @@ EOB
         end
       end
       opts.on('--nx',
-              'Not run debugger initialization files (e.g. .rbdbgrc') do
+              "Do not run debugger initialization files (e.g. #{CMD_INITFILE}") do
         options[:nx] = true
       end
       # opts.on('--output FILE', String, "Name of file to record output") do |outfile| 
