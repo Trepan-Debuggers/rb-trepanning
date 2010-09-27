@@ -17,7 +17,7 @@ Set number of characters the debugger thinks are in a line.'
   def run(args)
     args.shift
     run_set_int(args.join(' '),
-                "The 'width' command requires a line width", 
+                "The '#{PREFIX.join(' ')}' command requires a line width", 
                 0, nil)
   end
 
@@ -33,13 +33,15 @@ if __FILE__ == $0
   dbgr, set_cmd = MockDebugger::setup('set')
   max_cmd       = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
                                                       set_cmd)
-  cmd_name      = Trepan::SubSubcommand::SetMaxWidth::PREFIX.join('')
+  cmd_ary       = Trepan::SubSubcommand::SetMaxWidth::PREFIX
+  cmd_name      = cmd_ary.join(' ')
   subcmd        = Trepan::SubSubcommand::SetMaxWidth.new(set_cmd.proc,
                                                          max_cmd,
                                                          cmd_name)
-  subcmd.run(['max', 'width'])
-  subcmd.run(%w(set max width 0))
-  subcmd.run(%w(set max width 20))
+  prefix_run = cmd_ary[1..-1]
+  subcmd.run(prefix_run)
+  subcmd.run(prefix_run + %w(0))
+  subcmd.run(prefix_run + %w(20))
   name = File.basename(__FILE__, '.rb')
   subcmd.summary_help(name)
   puts

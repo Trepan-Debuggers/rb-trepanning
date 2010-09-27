@@ -22,7 +22,7 @@ the output is intended to be formated as is.
     args.shift
     args = %W(#{DEFAULT_MIN}) if args.empty?
     run_set_int(args.join(' '),
-                "The 'set maximum string' command requires number at least #{DEFAULT_MIN}", 
+                "The '#{PREFIX.join(' ')}' command requires number at least #{DEFAULT_MIN}", 
                 DEFAULT_MIN, nil)
   end
 

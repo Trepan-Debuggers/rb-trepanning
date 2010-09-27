@@ -17,7 +17,7 @@ class Trepan
       :debugskip     => false,     # Internal debugging of step/next skipping
       :debugstack    => false,     # How hidden outer debugger stack frames
 
-      :listsize      => 10,        # Number of lines in list 
+      :maxlist       => 10,        # Number of source lines to list 
       :maxstack      => 10,        # backtrace limit
       :maxstring     => 150,       # Strings which are larger than this
                                    # will be truncated to this length when

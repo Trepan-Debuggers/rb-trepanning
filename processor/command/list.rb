@@ -185,7 +185,7 @@ disabled."
   end
     
   def run(args)
-    listsize = settings[:listsize]
+    listsize = settings[:maxlist]
     center_correction = 
       if args[0][-1..-1] == '>'
         0

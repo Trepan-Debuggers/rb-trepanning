@@ -15,7 +15,7 @@ class Trepan::Subcommand::SetMaxStack < Trepan::SubSubcommand
     args.shift
     args = %W(#{DEFAULT_MIN}) if args.empty?
     run_set_int(args.join(' '),
-                "The 'set maximum stack' command requires number at least #{DEFAULT_MIN}", 
+                "The '#{PREFIX.join(' ')}'command requires number at least #{DEFAULT_MIN}", 
                 DEFAULT_MIN, nil)
   end
 
@@ -37,24 +37,24 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, set_cmd = MockTrepan::setup('set')
+  dbgr, set_cmd = MockDebugger::setup('set')
   max_cmd       = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
                                                       set_cmd)
-  cmd_name      = Trepan::SubSubcommand::SetMaxStack::PREFIX.join('')
+  cmd_ary       = Trepan::SubSubcommand::SetMaxStack::PREFIX
+  cmd_name      = cmd_ary.join(' ')
   subcmd        = Trepan::SubSubcommand::SetMaxStack.new(set_cmd.proc,
                                                          max_cmd,
                                                          cmd_name)
 
-  subcmd.run(%w(stack))
-  subcmd.run(%w(stack 0))
-  subcmd.run(%w(stack 10))
+  prefix_run = cmd_ary[1..-1]
+  subcmd.run(prefix_run)
+  subcmd.run(prefix_run + %w(0))
+  subcmd.run(prefix_run + %w(10))
   name = File.basename(__FILE__, '.rb')
   subcmd.summary_help(name)
   puts
   puts '-' * 20
 
   require_relative '../../../../lib/trepanning'
-  dbgr = Trepan.new(:set_restart => true)
-  dbgr.debugger
   puts subcmd.save_command
 end
