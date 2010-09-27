@@ -4,7 +4,7 @@ __In order to use this debugger, you'll need a patched Ruby 1.9.2 and some addit
 
 Right now this debugger is beta code.
 
-There is a "google group mailing list:http://groups.google.com/group/ruby-debugger" for this debugger.
+There is a "google group mailing list:http://groups.google.com/group/ruby-debugger" for Ruby debuggers.
 
 If trepan is installed, here is how to run:
 
@@ -21,7 +21,7 @@ bc.  cd place-where-trepan-is-installed:
 
 Running from inside _irb_:
 
-bc.  require 'trepan' 
+bc.  require 'trepanning' 
  Trepan.debug { your code }
 
 The return value from Trepan is the return value of the block, i.e. the final value in the block.
@@ -50,4 +50,7 @@ Due to the line-event orientation in ruby-debug, it occasionally it was convenie
 bc.  # ... work, work, work 
  mydbg.debugger(:immediate=>true) # enter debugger here 
  # ... work, work, work
+
+There is extensive on-line help. Run "help" inside the debugger.
+
 
