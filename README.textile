@@ -8,7 +8,7 @@ There is a "google group mailing list:http://groups.google.com/group/ruby-debugg
 
 If trepan is installed, here is how to run:
 
-bc.  trepination ruby-program [program]
+bc.  trepin ruby-program [program]
 
 If your program needs options of its own:
 
