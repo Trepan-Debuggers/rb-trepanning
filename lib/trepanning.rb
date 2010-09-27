@@ -236,11 +236,11 @@ end
 module Kernel
   # Same as Trepan.debug. 
   # FIXME figure out a way to remove duplication.
-  def rbdbgr(opts={}, &block)
+  def trepan(opts={}, &block)
     opts = {:hide_stack => true}.merge(opts)
     unless defined?($trepanning) && $trepanning.is_a?(Trepan)
       $trepanning = Trepan.new
-      $trepanning.trace_filter << self.method(:rbdbgr)
+      $trepanning.trace_filter << self.method(:trepan)
     end
     $trepanning.debugger(opts, &block)
   end
