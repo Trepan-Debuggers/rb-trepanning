@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
-class Trepan::Command::WhereCommand < Trepan::Command
+class Trepan::Command::BacktraceCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"where [count]
+    NAME          = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [count]
 
 Print a stack trace, with the most recent frame at the top.  With a
 positive number, print at most many entries.  With a negative number
@@ -16,14 +17,14 @@ the context used for many debugger commands such as expression
 evaluation or source-line listing.
 
 Examples:
-   where    # Print a full stack trace
-   where 2  # Print only the top two entries
-   where -1 # Print a stack trace except the initial (least recent) call."
+   #{NAME}    # Print a full stack trace
+   #{NAME} 2  # Print only the top two entries
+   #{NAME} -1 # Print a stack trace except the initial (least recent) call."
+      HELP
 
-    ALIASES       = %w(bt backtrace)
+    ALIASES       = %w(bt where)
     CATEGORY      = 'stack'
     MAX_ARGS      = 1  # Need at most this many
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = true
     SHORT_HELP    = 'Print backtrace of stack frames'
   end
