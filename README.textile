@@ -6,7 +6,7 @@ Right now this debugger is beta code.
 
 There is a "google group mailing list:http://groups.google.com/group/ruby-debugger" for Ruby debuggers.
 
-If trepanning is installed, here is how to run:
+If rb-trepanning is installed, here is how to run:
 
 bc.  trepan ruby-program [program]
 
