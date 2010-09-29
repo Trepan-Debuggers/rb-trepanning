@@ -234,7 +234,7 @@ class Trepan
           @dbgr.stop
           raise
         rescue Exception => exc
-          errmsg("Internal debugger error: #{exc.inspect}")
+          msg("Internal debugger error: #{exc.inspect}")
           exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end
       end
@@ -294,6 +294,7 @@ class Trepan
       # Eval anything that's not a command or has been
       # requested to be eval'd
       if settings[:autoeval] || eval_command
+        ## eval_code(current_command, @settings[:maxstring])
         msg 'D=> ' + debug_eval(current_command).inspect
       else
         undefined_command(cmd_name)
