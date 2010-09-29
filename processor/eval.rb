@@ -24,6 +24,18 @@ class Trepan
       end
     end
 
+    # def eval_code(str, max_fake_filename)
+    #   obj = debug_eval(str, max_fake_filename)
+      
+    #   idx = @user_variables
+    #   @user_variables += 1
+      
+    #   str = "$d#{idx}"
+    #   Rubinius::Globals[str.to_sym] = obj
+    #   msg "#{str} = #{obj.inspect}"
+    #   obj
+    # end
+
     def exception_dump(e, stack_trace, backtrace)
       str = "#{e.class} Exception:\n\t#{e.message}"
       if stack_trace
