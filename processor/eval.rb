@@ -29,7 +29,7 @@ class Trepan
       if stack_trace
         str += "\n" + backtrace.map{|l| "\t#{l}"}.join("\n") rescue nil
       end
-      errmsg str
+      msg str
       # throw :debug_error
     end
 
@@ -67,6 +67,9 @@ if __FILE__ == $0
   def cmdp.errmsg(msg)
     puts "** #{msg}"
   end
+  def cmdp.msg(msg)
+    puts "** #{msg}"
+  end
   begin 
     1/0
   rescue Exception => exc
@@ -74,12 +77,13 @@ if __FILE__ == $0
     puts '=' * 40
   end
 
-  x = 1
+  x = 10
   require 'thread_frame'
   cmdp.instance_variable_set('@frame', RubyVM::ThreadFrame.current)
   cmdp.instance_variable_set('@settings', {:stack_trace_on_error => true})
-  def cmdp.errmsg(mess) ; puts mess end
+  def cmdp.msg(mess) ; puts mess end
   puts cmdp.debug_eval('x = "#{x}"')
+  puts '=' * 40
   puts cmdp.debug_eval('x+')
   puts cmdp.debug_eval_no_errmsg('y+')
   puts '=' * 40
