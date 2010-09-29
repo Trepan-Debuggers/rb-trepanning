@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rbconfig'
-module Rbdbgr
+module Trepanning
 
   :module_function # All functions below are easily publically accessible
 
@@ -87,7 +87,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  include  Rbdbgr
+  include  Trepanning
   puts whence_file('irb')
   puts whence_file('probably-does-not-exist')
   puts ruby_path

@@ -12,11 +12,11 @@ class Trepan
     end
 
     # Get line +line_number+ from file named +filename+. Return "\n"
-    # there was a problem. Leaking blanks are stripped off.
+    # there was a problem. Leading blanks are stripped off.
     def line_at(filename, line_number) # :nodoc:
       line = LineCache::getline(filename, line_number, @reload_on_change)
       return "\n" unless line
-      return line.gsub(/^\s+/, '').chomp
+      return line.lstrip.chomp
     end
 
     def loc_and_text(loc, frame, line_no, source_container)

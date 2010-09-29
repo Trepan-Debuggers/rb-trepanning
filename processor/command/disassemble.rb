@@ -6,7 +6,7 @@ require_relative '../../app/file'
 
 class Trepan::Command::DisassembleCommand < Trepan::Command
     include Trepan::Disassemble
-    include Rbdbgr
+    include Trepanning
 
   unless defined?(HELP)
     HELP = 

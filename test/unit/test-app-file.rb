@@ -17,7 +17,7 @@ end
 load 'tmpdir.rb'
 
 class TestAppFile < Test::Unit::TestCase
-  include Rbdbgr
+  include Trepanning
 
   def test_file_match_pat
     assert_equal('(?:^|[/])abc\.rb$', file_match_pat('abc.rb'))

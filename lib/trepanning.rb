@@ -20,7 +20,6 @@ ISEQS__        = {} unless
   defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
 class Trepan
-  VERSION = '0.0.4'
 
   attr_accessor :core         # access to Trepan::Core instance
   attr_accessor :intf         # Array. The way the outside world
@@ -40,7 +39,7 @@ class Trepan
     th = Thread.current
     th.exec_event_tracing  = true
 
-    @settings = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
+    @settings = Trepanning::DEFAULT_SETTINGS.merge(settings)
     @input  ||= @settings[:input]
     @output ||= @settings[:output]
 
@@ -188,8 +187,8 @@ class Trepan
 
   def add_startup_files()
     seen = {}
-    cwd_initfile = File.join('.', Rbdbgr::CMD_INITFILE_BASE)
-    [cwd_initfile, Rbdbgr::CMD_INITFILE].each do |initfile|
+    cwd_initfile = File.join('.', Trepanning::CMD_INITFILE_BASE)
+    [cwd_initfile, Trepanning::CMD_INITFILE].each do |initfile|
       full_initfile_path = File.expand_path(initfile)
       next if seen[full_initfile_path]
       add_command_file(full_initfile_path) if File.readable?(full_initfile_path)
@@ -237,11 +236,11 @@ end
 module Kernel
   # Same as Trepan.debug. 
   # FIXME figure out a way to remove duplication.
-  def rbdbgr(opts={}, &block)
+  def trepan(opts={}, &block)
     opts = {:hide_stack => true}.merge(opts)
     unless defined?($trepanning) && $trepanning.is_a?(Trepan)
       $trepanning = Trepan.new
-      $trepanning.trace_filter << self.method(:rbdbgr)
+      $trepanning.trace_filter << self.method(:trepan)
     end
     $trepanning.debugger(opts, &block)
   end

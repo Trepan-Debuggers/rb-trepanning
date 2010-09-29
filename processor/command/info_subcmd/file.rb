@@ -2,6 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'linecache'
 require_relative '../base/subcmd'
+require_relative '../../../app/file'
 
 class Trepan::Subcommand::InfoFile < Trepan::Subcommand
   unless defined?(HELP)
@@ -31,6 +32,8 @@ If no sub-options are given #{DEFAULT_FILE_ARGS.join(' ')} are assumed.
     NEED_STACK   = false
     PREFIX       = %w(info file)
   end
+
+  include Trepanning
   
   # Get file information
   def run(args)
@@ -150,7 +153,8 @@ if __FILE__ == $0
      %w(info file .),
      %w(info file),
      %w(info file file.rb),
-     %w(info file . lines sha1 sha1)].each do |args|
+     %w(info file . all),
+     %w(info file . lines size sha1 sha1)].each do |args|
       subcommand.run(args)
       puts '-' * 40
     end

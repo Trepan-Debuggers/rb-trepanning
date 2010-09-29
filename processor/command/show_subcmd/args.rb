@@ -11,7 +11,7 @@ class Trepan::Subcommand::ShowArgs < Trepan::Subcommand
   end
 
   def run(args)
-    dbgr = @proc.core.dbgr
+    dbgr = @proc.dbgr
     argv = dbgr.restart_argv
     msg("Restart directory: #{dbgr.initial_dir}") if dbgr.initial_dir
     msg("Restart args:\n\t#{argv.inspect}")
@@ -27,7 +27,7 @@ if __FILE__ == $0
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
-  subcommand = Trepan::Subcommand::ShowWidth.new(cmd)
+  subcommand = Trepan::Subcommand::ShowArgs.new(cmd)
   testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   def subcommand.msg(message)
@@ -42,4 +42,9 @@ if __FILE__ == $0
   subcommand.run([])
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
+  puts
+  dbgr.instance_variable_set('@initial_dir', Dir.pwd)
+  dbgr.restart_argv = ARGV
+  subcommand.run([])
+  
 end

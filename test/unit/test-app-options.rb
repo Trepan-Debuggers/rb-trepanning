@@ -8,7 +8,7 @@ require_relative '../../app/options'
 load 'tmpdir.rb'
 
 class TestAppStringIO < Test::Unit::TestCase
-  include Rbdbgr
+  include Trepanning
 
   def setup
     @options = DEFAULT_CMDLINE_SETTINGS.clone

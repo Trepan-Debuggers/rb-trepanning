@@ -19,13 +19,13 @@ class Trepan::Command::RestartCommand < Trepan::Command
   # This method runs the command
   def run(args) # :nodoc
 
-    dbgr = @proc.core.dbgr
+    dbgr = @proc.dbgr
     argv = dbgr.restart_argv
     if argv and argv.size > 0
       unless File.executable?(argv[0])
         msg(["File #{argv[0]} not executable.",
              "Adding Ruby interpreter."])
-        argv.unshift Rbdbgr::ruby_path
+        argv.unshift Trepanning::ruby_path
       end
       @proc.run_cmd(%w(show args))
       if not confirm('Restart (exec)?', false)

@@ -12,7 +12,7 @@ class Trepan
     attr_reader :dbgr_script_iseqs
     attr_reader :dbgr_iseqs
 
-    include Rbdbgr
+    include Trepanning
     include Trepan::ThreadHelper
     include Trepan::Condition
 

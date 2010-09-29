@@ -6,7 +6,7 @@ require 'rake/rdoctask'
 require 'rake/testtask'
 
 ROOT_DIR = File.dirname(__FILE__)
-require File.join(ROOT_DIR, '/lib/trepanning')
+require File.join %W(#{ROOT_DIR} app options)
 
 def gemspec
   @gemspec ||= eval(File.read('.gemspec'), binding, '.gemspec')
@@ -151,7 +151,7 @@ end
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "Trepanning #{Trepan::VERSION} Documentation"
+  rdoc.title    = "Trepanning #{Trepanning::VERSION} Documentation"
 
   rdoc.rdoc_files.include('lib/*.rb', 'app/*.rb', 'bin/trepan')
 end

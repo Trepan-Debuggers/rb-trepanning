@@ -26,11 +26,11 @@
 #      Show invocation help and exit.
 
 require 'optparse'
-module Rbdbgr
+module Trepanning
   require_relative 'default'
 
-  VERSION ||= '0.01'
-  PROGRAM ||= 'trepanning'
+  Trepanning::VERSION = '0.0.4.git' unless defined?(Trepanning::VERSION)
+  Trepanning::PROGRAM = 'trepan' unless defined?(Rbdbgr::PROGRAM)
 
   def show_version
     "#{PROGRAM} version #{VERSION}"
@@ -65,7 +65,7 @@ EOB
         end
       end
       opts.on('--nx',
-              'Not run debugger initialization files (e.g. .rbdbgrc') do
+              "Do not run debugger initialization files (e.g. #{CMD_INITFILE}") do
         options[:nx] = true
       end
       # opts.on('--output FILE', String, "Name of file to record output") do |outfile| 

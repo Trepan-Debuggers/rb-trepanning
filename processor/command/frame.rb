@@ -49,28 +49,24 @@ See also 'up', 'down' 'where' and 'info thread'.
   # The simple case: thread frame switching has been done or is
   # not needed and we have an explicit position number as a string
   def one_arg_run(position_str)
+    stack_size = @proc.top_frame.stack_size - @proc.hide_level
     opts={
       :msg_on_error => 
-      "The 'frame' command requires a frame number. Got: #{position_str}"
+      "The '#{NAME}' command requires a frame number. Got: #{position_str}",
+      :min_value => -stack_size,
+      :max_value => stack_size-1
     }
     frame_num = @proc.get_an_int(position_str, opts)
     return false unless frame_num
       
-    stack_size = @proc.top_frame.stack_size
-    if stack_size == 0
+    # FIXME: move into @proc and test based on NEED_STACK.
+    if not @proc.top_frame
       errmsg('No frames recorded.')
       return false
     end
         
-    if frame_num < -stack_size or frame_num > stack_size-1
-      errmsg(('Frame number has to be in the range %d to %d.' +
-              ' Got: %d (%s).') % [-stack_size, stack_size-1, 
-                                   frame_num, position_str])
-      return false
-    else
-      @proc.adjust_frame(frame_num, true)
-      return true
-    end
+    @proc.adjust_frame(frame_num, true)
+    return true
   end
 
   # Run a frame command. This routine is a little complex
