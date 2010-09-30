@@ -11,10 +11,38 @@ class Trepan
       @reload_on_change = nil
     end
 
+    def resolve_file_with_dir(path_suffix)
+      settings[:directory].split(/:/).each do |dir|
+        dir = 
+          if '$cwd' == dir
+            Dir.pwd
+          elsif '$cdir' == dir
+            @dbgr.initial_dir
+          else
+            dir
+          end
+        next unless dir && File.directory?(dir)
+        try_file = File.join(dir, path_suffix)
+        return try_file if File.readable?(try_file)
+      end
+      nil
+    end
+
     # Get line +line_number+ from file named +filename+. Return "\n"
     # there was a problem. Leading blanks are stripped off.
     def line_at(filename, line_number) # :nodoc:
       line = LineCache::getline(filename, line_number, @reload_on_change)
+      unless line
+        # Try using search directories (set with command "directory")
+        if filename[0..0] != File::SEPARATOR
+          try_filename = resolve_file_with_dir(filename) 
+          if try_filename && 
+              line = LineCache::getline(try_filename, line_number, 
+                                        @reload_on_change)
+            LineCache::remap_file(filename, try_filename)
+          end
+        end
+      end
       return "\n" unless line
       return line.lstrip.chomp
     end

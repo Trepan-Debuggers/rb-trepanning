@@ -283,7 +283,13 @@ class Trepan
       end
 
       # Next see if argument is a file name 
-      if LineCache::cached?(arg)
+      found = 
+        if arg[0..0] == File::SEPARATOR
+          LineCache::cached?(arg)
+        else
+          resolve_file_with_dir(arg)
+        end
+      if found
         return nil, [container && container[0], canonic_file(arg)], 1 
       else
         matches = find_scripts(arg)

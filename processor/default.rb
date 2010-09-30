@@ -16,6 +16,8 @@ class Trepan
       :debugmacro    => false,     # debugging macros
       :debugskip     => false,     # Internal debugging of step/next skipping
       :debugstack    => false,     # How hidden outer debugger stack frames
+      :directory     =>            # last-resort path-search for files
+                    '$cdir:$cwd',  # that are not fully qualified.
 
       :maxlist       => 10,        # Number of source lines to list 
       :maxstack      => 10,        # backtrace limit
