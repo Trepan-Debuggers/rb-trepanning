@@ -54,7 +54,7 @@ class TestCommandBreak < Test::Unit::TestCase
       assert_equal(true, @cmdproc.errmsgs.empty?,
                    @cmdproc.errmsgs)
       assert_equal(0, 
-                   @cmdproc.msgs[0] =~ /^Breakpoint #{i+5} set at VM offset \d+ of instruction sequence \"foo\",\n\tline \d+ in file .+\.$/,
+                   @cmdproc.msgs[0] =~ /Breakpoint #{i+5} set at line \d+ in file .+,\n\tVM offset \d+/,
                    @cmdproc.msgs[0])
       reset_cmdproc_vars
     end
