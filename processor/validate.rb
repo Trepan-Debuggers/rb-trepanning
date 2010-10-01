@@ -6,6 +6,10 @@
 require_relative '../app/condition'
 require_relative '../app/file'
 require_relative '../app/thread'
+
+require_relative 'location' # for resolve_file_with_dir
+require_relative 'msg'      # for errmsg, msg
+
 class Trepan
   class CmdProcessor
 
@@ -343,6 +347,7 @@ if __FILE__ == $0
                             # FIXME
 
     proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
+    proc.settings[:directory] = '$cwd'
     proc.frame_setup(RubyVM::ThreadFrame.current)
     onoff = %w(1 0 on off)
     onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }

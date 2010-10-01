@@ -318,7 +318,7 @@ end
 
 if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
-  require_relative '../lib/trepanation'
+  require_relative '../lib/trepanning'
   dbg =  Trepan.new(:nx => true)
   dbg.core.processor.msg('I am main')
   cmdproc = dbg.core.processor
@@ -332,9 +332,9 @@ if __FILE__ == $0
   puts cmdproc.compute_prompt
   Thread.new{ puts cmdproc.compute_prompt }.join
 
-  x = Thread.new{ Thread.pass; x = 1 }
+  th = Thread.new{ Thread.pass; x = 1 }
   puts cmdproc.compute_prompt
-  x.join
+  th.join
   cmdproc.debug_nest += 1
   puts cmdproc.compute_prompt
 
