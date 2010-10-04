@@ -6,7 +6,7 @@ class Trepan
   end
   class MockDebugger
     attr_reader :initial_dir
-    def initialize
+    def initialize(settings={})
       @initial_dir = '.'
     end
   end

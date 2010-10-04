@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require_relative '../../app/brkptmgr'
-require_relative '../../app/brkpt'
+require_relative '../../app/breakpoint'
 require 'thread_frame'
 
 class TestLibAppBrkptMgr < Test::Unit::TestCase
@@ -21,7 +21,7 @@ class TestLibAppBrkptMgr < Test::Unit::TestCase
     assert_equal(0, brkpts.size)
 
     # Try adding via << rather than .add
-    b2 = brkpts << Breakpoint.new(iseq, offsets[1], :temp => true)
+    b2 = brkpts << Trepanning::Breakpoint.new(iseq, offsets[1], :temp => true)
 
     assert_equal(nil, brkpts.find(iseq, offset, tf.binding))
     brkpts.reset

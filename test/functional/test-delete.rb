@@ -2,14 +2,14 @@
 require 'test/unit'
 require 'trace'
 require_relative 'fn_helper'
-require_relative '../../app/brkpt'
+require_relative '../../app/breakpoint'
 
 class TestDelete < Test::Unit::TestCase
 
   include FnTestHelper
 
   def setup
-    Breakpoint::reset
+    Trepanning::Breakpoint::reset
   end
 
   def test_delete

@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require_relative 'cmd-helper'
-require_relative '../../app/brkpt'
+require_relative '../../app/breakpoint'
 
 class TestCommandEnableDisable < Test::Unit::TestCase
 
   include UnitHelper
   def setup
-    Breakpoint::reset
+    Trepanning::Breakpoint::reset
     common_setup
     @break_cmd   = @cmds['break']
     @disable_cmd = @cmds['disable']
