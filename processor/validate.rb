@@ -163,12 +163,14 @@ class Trepan
       if container && position
         iseq = find_iseqs_with_lineno(container[1], position) || object_iseq(first)
         unless iseq
-          unless File.basename(@frame.iseq.source_container[1]) == 
+          if @frame.iseq && 
+              File.basename(@frame.iseq.source_container[1]) == 
               File.basename(container[1])
-            errmsg "Unable to find instruction sequence with #{position} in #{container[1]}"
+            iseq = @frame.iseq
+          else
+            errmsg "Unable to find instruction sequence for position #{position} in #{container[1]}"
             return [nil, nil, nil, true]
           end
-          iseq = @frame.iseq
         end
         use_offset = false 
       else

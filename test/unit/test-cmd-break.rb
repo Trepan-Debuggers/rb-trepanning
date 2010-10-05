@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
+require 'thread_frame'
 require_relative 'cmd-helper'
 
 class TestCommandBreak < Test::Unit::TestCase
@@ -12,7 +13,6 @@ class TestCommandBreak < Test::Unit::TestCase
   end
   
   def test_basic
-    require 'thread_frame'
     tf = RubyVM::ThreadFrame.current
     @cmdproc.frame_setup(tf)
     pc_offset = tf.pc_offset
@@ -55,6 +55,23 @@ class TestCommandBreak < Test::Unit::TestCase
                    @cmdproc.errmsgs)
       assert_equal(0, 
                    @cmdproc.msgs[0] =~ /Breakpoint #{i+5} set at line \d+ in file .+,\n\tVM offset \d+/,
+                   @cmdproc.msgs[0])
+      reset_cmdproc_vars
+    end
+  end
+
+  # Test setting a breakpoint at a line that can only be found using
+  # the parent instruction sequence, i.e. the line is not in the
+  # current instruction sequence.
+  def test_parent_breakpoint
+    xx = 5  # This is the line we set the breakpoint for.
+    1.times do
+      tf = RubyVM::ThreadFrame.current  
+      @cmdproc.frame_setup(tf)
+      @my_cmd.run([@name, (__LINE__-4).to_s])
+      assert_equal(true, @cmdproc.errmsgs.empty?, @cmdproc.errmsgs)
+      assert_equal(0, 
+                   @cmdproc.msgs[0] =~ /^Breakpoint \d+ set at line \d+ in file .+\n\tVM offset \d+ of instruction sequence \"test_parent_breakpoint\"\.$/,
                    @cmdproc.msgs[0])
       reset_cmdproc_vars
     end

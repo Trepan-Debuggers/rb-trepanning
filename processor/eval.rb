@@ -29,7 +29,7 @@ class Trepan
       if stack_trace
         str += "\n" + backtrace.map{|l| "\t#{l}"}.join("\n") rescue nil
       end
-      errmsg str
+      msg str
       # throw :debug_error
     end
 
