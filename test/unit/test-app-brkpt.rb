@@ -3,10 +3,7 @@ require 'test/unit'
 require_relative '../../app/breakpoint'
 require 'thread_frame'
 
-# FIXME: if TestappBrkpt is renamed TestAppBrkpt, then
-# test-cmd-break.rb which runs afterwared fails in a weird way.
-# Figure out what's going on.
-class TestappBrkpt < Test::Unit::TestCase
+class TestAppBrkpt < Test::Unit::TestCase
 
   def test_basic
     tf = RubyVM::ThreadFrame.current

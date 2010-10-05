@@ -8,6 +8,7 @@ class BreakpointMgr
 
   def initialize
     @list = []
+    @next_id = 1
     @set = Set.new
   end
 
@@ -43,6 +44,16 @@ class BreakpointMgr
   end
 
   def add(*args)
+    if args[2] 
+      unless args[2].member?(:id)
+        args[2][:id] = @next_id
+        @next_id += 1
+      end
+    else
+      args[2] = {:id => @next_id}
+      @next_id += 1
+    end
+
     brkpt = Trepanning::Breakpoint.new(*args)
     @list << brkpt
     @set.add(set_key(brkpt))

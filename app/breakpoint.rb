@@ -49,7 +49,7 @@ module Trepanning
       @offset = offset
 
       opts = BRKPT_DEFAULT_SETTINGS.merge(opts)
-      BRKPT_DEFAULT_SETTINGS.keys.each do |key|
+      opts.keys.each do |key|
         self.instance_variable_set('@'+key.to_s, opts[key])
       end
 
