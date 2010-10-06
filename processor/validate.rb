@@ -6,6 +6,10 @@
 require_relative '../app/condition'
 require_relative '../app/file'
 require_relative '../app/thread'
+
+require_relative 'location' # for resolve_file_with_dir
+require_relative 'msg'      # for errmsg, msg
+
 class Trepan
   class CmdProcessor
 
@@ -155,16 +159,18 @@ class Trepan
     # - the condition (by default 'true') to use for this breakpoint
     def breakpoint_position(args)
       first = args.shift
-      # FIXME:
-      name, container, position = nil, nil, nil # parse_position(first, nil, true)
+      name, container, position = parse_position(first, nil, true)
       if container && position
         iseq = find_iseqs_with_lineno(container[1], position) || object_iseq(first)
         unless iseq
-          unless @frame.iseq.source_container[1] == container[1]
-            errmsg "Unable to find instruction sequence with #{position} in #{container[1]}"
+          if @frame.iseq && 
+              File.basename(@frame.iseq.source_container[1]) == 
+              File.basename(container[1])
+            iseq = @frame.iseq
+          else
+            errmsg "Unable to find instruction sequence for position #{position} in #{container[1]}"
             return [nil, nil, nil, true]
           end
-          iseq = @frame.iseq
         end
         use_offset = false 
       else
@@ -247,22 +253,22 @@ class Trepan
     # Parse arg as [filename:]lineno | function | module
     # Make sure it works for C:\foo\bar.py:12
     def parse_position(arg, old_mod=nil, allow_offset = false)
-        colon = arg.rindex(':') 
-        if colon
-          # First handle part before the colon
-          arg1 = arg[0...colon].rstrip
+      colon = arg.rindex(':') 
+      if colon
+        # First handle part before the colon
+        arg1 = arg[0...colon].rstrip
           lineno_str = arg[colon+1..-1].lstrip
-          mf, container, lineno = parse_position_one_arg(arg1, old_mod, false, allow_offset)
-          return nil, nil, nil unless container
-          filename = canonic_file(arg1) 
-          # Next handle part after the colon
-          val = get_an_int(lineno_str)
-          lineno = val if val
-        else
-          mf, container, lineno = parse_position_one_arg(arg, old_mod, true, allow_offset)
-        end
-
-        return mf, container, lineno
+        mf, container, lineno = parse_position_one_arg(arg1, old_mod, false, allow_offset)
+        return nil, nil, nil unless container
+        filename = canonic_file(arg1) 
+        # Next handle part after the colon
+        val = get_an_int(lineno_str)
+        lineno = val if val
+      else
+        mf, container, lineno = parse_position_one_arg(arg, old_mod, true, allow_offset)
+      end
+      
+      return mf, container, lineno
     end
 
     # parse_position_one_arg(self,arg)->(module/function, container, lineno)
@@ -283,7 +289,13 @@ class Trepan
       end
 
       # Next see if argument is a file name 
-      if LineCache::cached?(arg)
+      found = 
+        if arg[0..0] == File::SEPARATOR
+          LineCache::cached?(arg)
+        else
+          resolve_file_with_dir(arg)
+        end
+      if found
         return nil, [container && container[0], canonic_file(arg)], 1 
       else
         matches = find_scripts(arg)
@@ -337,6 +349,7 @@ if __FILE__ == $0
                             # FIXME
 
     proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
+    proc.settings[:directory] = '$cwd'
     proc.frame_setup(RubyVM::ThreadFrame.current)
     onoff = %w(1 0 on off)
     onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }

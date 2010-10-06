@@ -2,14 +2,14 @@
 require 'test/unit'
 require 'trace'
 require_relative 'fn_helper'
-require_relative '../../app/brkpt'
+require_relative '../../app/breakpoint'
 
 class TestBreak < Test::Unit::TestCase
 
   include FnTestHelper
 
   def setup
-    Breakpoint::reset
+    Trepanning::Breakpoint::reset
   end
 
   def test_break_same_level
@@ -39,7 +39,7 @@ class TestBreak < Test::Unit::TestCase
     cmds = ['set basename on',
             'break ' + (__LINE__ + 8).to_s, 
             'break ' + (__LINE__ + 8).to_s, 
-            'disable 2',
+            'disable 1',
             'continue']
     d = strarray_setup(cmds)
     d.start
@@ -52,11 +52,11 @@ class TestBreak < Test::Unit::TestCase
     out = ['-- ',
            'x = 7',
            'basename is on.',
-           "Breakpoint 2 set at line 48 in file test-break.rb,\n" + 
+           "Breakpoint 1 set at line 48 in file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
-           "Breakpoint 3 set at line 49 in file test-break.rb,\n" + 
+           "Breakpoint 2 set at line 49 in file test-break.rb,\n" + 
            "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
-           "Breakpoint 2 disabled.",
+           "Breakpoint 1 disabled.",
            'xx ',
            'z = 8+1']
     compare_output(out, d, cmds)

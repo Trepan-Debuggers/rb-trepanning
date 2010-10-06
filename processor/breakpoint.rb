@@ -46,22 +46,30 @@ class Trepan
     # Does whatever needs to be done to set a breakpoint
     def breakpoint_line(line_number, iseq, temp=false)
       # FIXME: handle breakpoint conditions.
-      iseq = iseq.child_iseqs.detect do |iseq|
+      found_iseq = iseq.child_iseqs.detect do |iseq|
         iseq.lineoffsets.keys.member?(line_number) 
       end
+      unless found_iseq
+        found_iseq = iseq.parent
+        while found_iseq do
+          break if found_iseq.lineoffsets.keys.member?(line_number)
+          found_iseq = found_iseq.parent
+        end
+      end
       offset = 
-        if iseq 
+        if found_iseq 
           # FIXME
-          iseq.line2offsets(line_number)[1] || iseq.line2offsets(line_number)[0]
+          found_iseq.line2offsets(line_number)[1] || 
+            found_iseq.line2offsets(line_number)[0]
         else
           nil
         end
       unless offset
-        place = "in #{iseq.source_container.join(' ')} " if iseq 
+        place = "in #{iseq.source_container.join(' ')} " if found_iseq 
         errmsg("No line #{line_number} found #{place}for breakpoint.")
         return nil
       end
-      @brkpts.add(iseq, offset, :temp => temp)
+      @brkpts.add(found_iseq, offset, :temp => temp)
     end
 
     def breakpoint_offset(offset, iseq, temp=false)

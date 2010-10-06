@@ -2,17 +2,14 @@
 require 'test/unit'
 require 'trace'
 require_relative 'fn_helper'
-require_relative '../../app/brkpt'
+require_relative '../../app/breakpoint'
 
 class TestBreak < Test::Unit::TestCase
 
   include FnTestHelper
 
-  def setup
-    Breakpoint::reset
-  end
-
   def test_condition
+    file = File.basename(__FILE__)
 
     # See that we can next with parameter which is the same as 'next 1'
     cmds = ['set basename on',
@@ -30,7 +27,7 @@ class TestBreak < Test::Unit::TestCase
     out = ['-- ',
            'x = 6',
            'basename is on.',
-           "Breakpoint 1 set at line 26 in file test-condition.rb,\n" + 
+           "Breakpoint 1 set at line #{__LINE__-7} in file #{file},\n" + 
            "\tVM offset 55 of instruction sequence \"test_condition\"."
           ]
     compare_output(out, d, cmds)
@@ -38,7 +35,7 @@ class TestBreak < Test::Unit::TestCase
     # Try a condition that fails
     cmds = ['set basename on',
             'break ' + (__LINE__ + 7).to_s, 
-            'condition 2 x > 5',
+            'condition 1 x > 5',
             'continue']
     d = strarray_setup(cmds)
     d.start
@@ -51,7 +48,7 @@ class TestBreak < Test::Unit::TestCase
     out = ['-- ',
            'x = 6',
            'basename is on.',
-           "Breakpoint 2 set at line 47 in file test-condition.rb,\n" + 
+           "Breakpoint 1 set at line #{__LINE__-7} in file #{file},\n" + 
            "\tVM offset 55 of instruction sequence \"test_condition\".",
            'xx ',
            'y = 7']

@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'set'
-require_relative 'brkpt'
+require_relative 'breakpoint'
 class BreakpointMgr
 
   attr_reader :list
@@ -8,6 +8,7 @@ class BreakpointMgr
 
   def initialize
     @list = []
+    @next_id = 1
     @set = Set.new
   end
 
@@ -43,7 +44,17 @@ class BreakpointMgr
   end
 
   def add(*args)
-    brkpt = Breakpoint.new(*args)
+    if args[2] 
+      unless args[2].member?(:id)
+        args[2][:id] = @next_id
+        @next_id += 1
+      end
+    else
+      args[2] = {:id => @next_id}
+      @next_id += 1
+    end
+
+    brkpt = Trepanning::Breakpoint.new(*args)
     @list << brkpt
     @set.add(set_key(brkpt))
     return brkpt
@@ -112,7 +123,7 @@ if __FILE__ == $0
   p brkpts[2]
   bp_status(brkpts, 1)
   offset = frame.pc_offset
-  b2 = Breakpoint.new(iseq, offset)
+  b2 = Trepanning::Breakpoint.new(iseq, offset)
   brkpts << b2
   p brkpts.find(b2.iseq, b2.offset, nil)
   p brkpts[2]
@@ -125,10 +136,10 @@ if __FILE__ == $0
   # Two of the same breakpoints but delete 1 and see that the
   # other still stays
   offset = frame.pc_offset
-  b2 = Breakpoint.new(iseq, offset)
+  b2 = Trepanning::Breakpoint.new(iseq, offset)
   brkpts << b2
   bp_status(brkpts, 4)
-  b3 = Breakpoint.new(iseq, offset)
+  b3 = Trepanning::Breakpoint.new(iseq, offset)
   brkpts << b3
   bp_status(brkpts, 5)
   brkpts.delete_by_brkpt(b2)

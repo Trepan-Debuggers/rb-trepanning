@@ -234,7 +234,7 @@ class Trepan
           @dbgr.stop
           raise
         rescue Exception => exc
-          errmsg("Internal debugger error: #{exc.inspect}")
+          msg("Internal debugger error: #{exc.inspect}")
           exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end
       end
@@ -294,6 +294,7 @@ class Trepan
       # Eval anything that's not a command or has been
       # requested to be eval'd
       if settings[:autoeval] || eval_command
+        ## eval_code(current_command, @settings[:maxstring])
         msg 'D=> ' + debug_eval(current_command).inspect
       else
         undefined_command(cmd_name)
@@ -317,7 +318,7 @@ end
 
 if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
-  require_relative '../lib/trepanation'
+  require_relative '../lib/trepanning'
   dbg =  Trepan.new(:nx => true)
   dbg.core.processor.msg('I am main')
   cmdproc = dbg.core.processor
@@ -331,9 +332,9 @@ if __FILE__ == $0
   puts cmdproc.compute_prompt
   Thread.new{ puts cmdproc.compute_prompt }.join
 
-  x = Thread.new{ Thread.pass; x = 1 }
+  th = Thread.new{ Thread.pass; x = 1 }
   puts cmdproc.compute_prompt
-  x.join
+  th.join
   cmdproc.debug_nest += 1
   puts cmdproc.compute_prompt
 

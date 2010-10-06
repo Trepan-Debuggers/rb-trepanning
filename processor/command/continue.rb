@@ -1,7 +1,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 require_relative '../running'
-require_relative '../../app/brkpt' # FIXME: possibly temporary
+require_relative '../../app/breakpoint' # FIXME: possibly temporary
 class Trepan::Command::ContinueCommand < Trepan::Command
 
   unless defined?(HELP)

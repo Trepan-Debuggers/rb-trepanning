@@ -2,15 +2,11 @@
 require 'test/unit'
 require 'trace'
 require_relative 'fn_helper'
-require_relative '../../app/brkpt'
+require_relative '../../app/breakpoint'
 
 class TestDelete < Test::Unit::TestCase
 
   include FnTestHelper
-
-  def setup
-    Breakpoint::reset
-  end
 
   def test_delete
 
@@ -33,7 +29,7 @@ class TestDelete < Test::Unit::TestCase
     out = ['-- ',
            'va = 1',
            'basename is on.',
-           "Breakpoint 1 set at line 28 in file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
+           "Breakpoint 1 set at line #{__LINE__-8} in file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
            "Deleted breakpoint 1."]
     compare_output(out, d, cmds)
 
@@ -42,7 +38,7 @@ class TestDelete < Test::Unit::TestCase
             'set autoeval on',
             'break ' + (__LINE__ + 11).to_s, 
             'break ' + (__LINE__ + 12).to_s, 
-            'delete 2', 
+            'delete 1', 
             'continue',
             'va',
             'continue',
@@ -61,9 +57,9 @@ class TestDelete < Test::Unit::TestCase
            "va = 1",
            "basename is on.",
            "Evaluation of unrecognized debugger commands is on.",
-           "Breakpoint 2 set at line 54 in file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
-           "Breakpoint 3 set at line 56 in file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
-           "Deleted breakpoint 2.",
+           "Breakpoint 1 set at line #{__LINE__-10} in file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
+           "Breakpoint 2 set at line #{__LINE__-9} in file test-delete.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
+           "Deleted breakpoint 1.",
            "xx ",
            "vd = 4",
            "D=> 3"]

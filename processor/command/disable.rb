@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 require_relative '../breakpoint'
-require_relative '../../app/brkpt'
+require_relative '../../app/breakpoint'
 
 # disable breakpoint command. The difference however is that the
 # parameter to @proc.en_disable_breakpoint_by_number is different (set
