@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Trepan::Subcommand::InfoBreak < Trepan::Subcommand
+class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = <<EOH
 info breakpoints [num1 ...] [verbose]
