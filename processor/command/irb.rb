@@ -55,7 +55,7 @@ Here then is a loop to query VM stack values:
       throw :IRB_EXIT, :cont if $trepan_in_irb
     end
 
-    $trepan = @proc.core.dbgr 
+    $trepan = @proc.dbgr 
     if add_debugging
       $trepan_cmdproc  = @proc
       $trepan_frame    = @proc.frame

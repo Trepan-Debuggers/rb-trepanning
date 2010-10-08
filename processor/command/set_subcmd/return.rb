@@ -15,7 +15,7 @@ class Trepan::Subcommand::SetReturn < Trepan::Subcommand
   include Trepan::Frame
 
   def run(args)
-    event = @proc.core.event
+    event = @proc.event
     unless %w(return c-return).member?(event)
       errmsg('You need to be in a return event to do this. Event is %s' % 
              event)

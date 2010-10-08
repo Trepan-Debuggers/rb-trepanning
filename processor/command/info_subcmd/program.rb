@@ -13,7 +13,7 @@ class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
 
   def run(args)
     frame = @proc.frame
-    m = 'Program stop event: %s' % @proc.core.event
+    m = 'Program stop event: %s' % @proc.event
     m += 
       if frame.iseq
         '; PC offset %d of instruction sequence: %s' % 
@@ -22,9 +22,9 @@ class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
         '.'
       end
     msg m
-    if 'return' == @proc.core.event 
+    if 'return' == @proc.event 
       msg 'R=> %s' % @proc.frame.sp(1).inspect 
-    elsif 'raise' == @proc.core.event
+    elsif 'raise' == @proc.event
       msg @proc.core.hook_arg.inspect if @proc.core.hook_arg
     end
 

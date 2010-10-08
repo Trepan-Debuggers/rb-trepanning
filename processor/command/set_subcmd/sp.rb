@@ -13,7 +13,7 @@ class Trepan::Subcommand::SetSp < Trepan::Subcommand
 
   def run(args)
     # FIXME handle c-return
-    # unless %w(return c-return).member?(@proc.core.event)
+    # unless %w(return c-return).member?(@proc.event)
     if args.size < 4
       errmsg "Too few arguments - the 'sp' command requires number and a value"
       return

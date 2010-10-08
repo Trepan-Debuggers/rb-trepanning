@@ -107,7 +107,7 @@ class Trepan
       return true if @core.step_count < 0
 
       if @settings[:'debugskip']
-        msg "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.inspect}" 
+        msg "diff: #{@different_pos}, event : #{@event}, #{@stop_events.inspect}" 
         msg "step_count  : #{@core.step_count}" 
         msg "next_level  : #{@next_level},    ssize : #{@stack_size}" 
         msg "next_thread : #{@next_thread},   thread: #{Thread.current}" 
@@ -118,14 +118,14 @@ class Trepan
                    Thread.current == @next_thread)
 
       new_pos = [@frame.source_container, frame_line,
-                 @stack_size, @current_thread, @core.event, @frame.pc_offset]
+                 @stack_size, @current_thread, @event, @frame.pc_offset]
 
-      skip_val = @stop_events && !@stop_events.member?(@core.event)
+      skip_val = @stop_events && !@stop_events.member?(@event)
 
       # If the last stop was a breakpoint, don't stop again if we are at
       # the same location with a line event.
       skip_val |= (@last_pos[4] == 'brkpt' && 
-                   @core.event == 'line' &&
+                   @event == 'line' &&
                    @frame.pc_offset == @last_pos[5])
 
       if @settings[:'debugskip']
@@ -154,7 +154,7 @@ class Trepan
                     !condition_met)
       end
 
-      @last_pos = new_pos if !@stop_events || @stop_events.member?(@core.event)
+      @last_pos = new_pos if !@stop_events || @stop_events.member?(@event)
 
       unless skip_val
         # Set up the default values for the

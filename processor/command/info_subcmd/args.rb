@@ -32,7 +32,7 @@ class Trepan::Subcommand::InfoArgs < Trepan::Subcommand
           var_value = @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
           msg("#{var_name} = #{var_value}")
         end
-        unless 'call' == @proc.core.event and 0 == @proc.frame_index
+        unless 'call' == @proc.event and 0 == @proc.frame_index
           msg("Values may have change from the initial call values.")
         end
       end

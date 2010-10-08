@@ -12,7 +12,7 @@ class Trepan::Subcommand::InfoReturn < Trepan::Subcommand
   end
 
   def run(args)
-    event = @proc.core.event
+    event = @proc.event
     if %w(return c-return).member?(event)
       ret_val = Trepan::Frame.value_returned(@proc.frame, event)
       msg('Return value: %s' % ret_val.inspect)
