@@ -3,7 +3,6 @@
 .PHONY: all test
 
 all: test
-	rake $@
 
 check: 
 	rake test
