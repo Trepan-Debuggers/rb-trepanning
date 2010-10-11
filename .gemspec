@@ -32,6 +32,8 @@ A modular, testable, Ruby debugger using some of the best ideas from ruby-debug,
 Some of the core debugger concepts have been rethought. As a result, some of this may be experimental.
 
 This version works only with a patched version of Ruby 1.9.2 and rb-threadframe.
+
+See also rbx-trepanning for a version that works with Rubinius.
 EOF
   spec.add_dependency('rb-threadframe', '>= 0.32')
   spec.add_dependency('rb-trace', '>= 0.2')
