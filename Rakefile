@@ -60,28 +60,22 @@ task :ChangeLog do
 end
 
 desc 'Test units - the smaller tests'
-task :'test:unit' do |t|
-  Rake::TestTask.new(:'test:unit') do |t|
-    t.test_files = FileList['test/unit/**/test-*.rb']
-    # t.pattern = 'test/**/*test-*.rb' # instead of above
-    t.verbose = true
-  end
+Rake::TestTask.new(:'test:unit') do |t|
+  t.test_files = FileList['test/unit/**/test-*.rb']
+  # t.pattern = 'test/**/*test-*.rb' # instead of above
+  t.verbose = true
 end
 
 desc 'Test functional - the medium-sized tests'
-task :'test:functional' do |t|
-  Rake::TestTask.new(:'test:functional') do |t|
-    t.test_files = FileList['test/functional/**/test-*.rb']
-    t.verbose = true
-  end
+Rake::TestTask.new(:'test:functional') do |t|
+  t.test_files = FileList['test/functional/**/test-*.rb']
+  t.verbose = true
 end
 
 desc 'Test integration - end-to-end blackbox tests'
-task :'test:integration' do |t|
-  Rake::TestTask.new(:'test:integration') do |t|
-    t.test_files = FileList['test/integration/**/test-*.rb']
-    t.verbose = true
-  end
+Rake::TestTask.new(:'test:integration') do |t|
+  t.test_files = FileList['test/integration/**/test-*.rb']
+  t.verbose = true
 end
 
 desc 'Test everything - unit tests for now.'

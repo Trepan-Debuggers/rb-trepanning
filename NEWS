@@ -1,3 +1,12 @@
+Oct 8, 2010
+First release under the name trepanning
+
+* Add gdb-like "directory" command
+* Add "set max list" to set number of lines to list by default.
+* "break line" searches parent instruction sequences in the same file. This 
+  should allow more line numbers to be breakpointable.
+* Some small bug fixes
+  
 Sept 13, 2010
 
 First public (gemcutter) release.

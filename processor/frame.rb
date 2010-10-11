@@ -79,7 +79,7 @@ class Trepan
     end
 
     def frame_line
-      if @core.event == 'vm-insn' && @frame.iseq
+      if @event == 'vm-insn' && @frame.iseq
         pc_offset = @frame.pc_offset
         return 0 unless pc_offset
         @frame.iseq.offset2lines(pc_offset)[0]

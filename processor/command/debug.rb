@@ -29,7 +29,7 @@ Enter the debugger recursively on RUBY-CODE."
     stack_diff = RubyVM::ThreadFrame.current.stack_size - frame.stack_size 
 
     # Ignore tracing in support routines:
-    tf = @proc.core.dbgr.trace_filter 
+    tf = @proc.dbgr.trace_filter 
     [self.method(:run), @proc.method(:debug_eval),
      @proc.method(:debug_eval_with_exception),
      @proc.method(:get_binding_and_filename),

@@ -32,6 +32,7 @@ class Trepan
                                    # this is the temporary value for the
                                    # next stop while settings is the default
                                    # value to use.
+    attr_accessor :event           # Stop event. Same as @core.event
     attr_accessor :leave_cmd_loop  # Commands set this to signal to leave
                                    # the command loop (which often continues to 
                                    # run the debugged program). 
@@ -97,10 +98,15 @@ class Trepan
 
       # FIXME: Rework using a general "set substitute file" command and
       # a global default profile which gets read.
-      prelude_file = File.expand_path(File.join(File.dirname(__FILE__), 
-                                                %w(.. data prelude.rb)))
-      LineCache::cache(prelude_file)
-      LineCache::remap_file('<internal:prelude>', prelude_file)
+      file = File.expand_path(File.join(File.dirname(__FILE__), 
+                                        %w(.. data prelude.rb)))
+      LineCache::cache(file)
+      LineCache::remap_file('<internal:prelude>', file)
+      file = File.expand_path(File.join(File.dirname(__FILE__), 
+                                        %w(.. data custom_require.rb)))
+      LineCache::cache(file)
+      LineCache::remap_file('<internal:lib/rubygems/custom_require>', 
+                            file)
 
       # Start with empty thread and frame info.
       frame_teardown 
@@ -206,11 +212,12 @@ class Trepan
     def process_commands(frame)
 
       frame_setup(frame)
+      @event = @core.event
 
       @unconditional_prehooks.run
       if breakpoint?
         @last_pos = [@frame.source_container, frame_line,
-                     @stack_size, @current_thread, @core.event, 
+                     @stack_size, @current_thread, @event, 
                      @frame.pc_offset]
       else
         return if stepping_skip? || @stack_size <= @hide_level
@@ -220,7 +227,7 @@ class Trepan
 
       @leave_cmd_loop = false
       print_location unless @settings[:traceprint]
-      if 'trace-var' == @core.event 
+      if 'trace-var' == @event 
         msg "Note: we are stopped *after* the above location."
       end
 

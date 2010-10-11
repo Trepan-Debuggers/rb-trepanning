@@ -39,7 +39,7 @@ class BreakpointMgr
   def delete_by_brkpt(delete_bp)
     @list = @list.reject{|candidate| candidate == delete_bp}
     @set  = Set.new(@list.map{|bp| set_key(bp)})
-    delete_bp.unset unless @set.member?(set_key(delete_bp))
+    delete_bp.remove! unless @set.member?(set_key(delete_bp))
     return delete_bp
   end
 
@@ -101,7 +101,7 @@ class BreakpointMgr
   end
 
   def reset
-    @list.each{|bp| bp.unset}
+    @list.each{|bp| bp.remove!}
     @list = []
     @set  = Set.new
   end

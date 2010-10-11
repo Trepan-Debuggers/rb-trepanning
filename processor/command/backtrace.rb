@@ -64,7 +64,7 @@ Examples:
     # See also location.rb
     opts[:class] = @proc.core.hook_arg  if 
       'CFUNC' == @proc.frame.type && 
-      @proc.core.hook_arg && @proc.core.event != 'raise'
+      @proc.core.hook_arg && @proc.event != 'raise'
     print_stack_trace(@proc.top_frame, opts)
   end
 end

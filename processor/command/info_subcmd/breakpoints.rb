@@ -2,10 +2,10 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Trepan::Subcommand::InfoBreak < Trepan::Subcommand
+class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
   unless defined?(HELP)
     HELP         = <<EOH
-info break [num1 ...] [verbose]
+info breakpoints [num1 ...] [verbose]
 
 Show status of user-settable breakpoints. If no breakpoint numbers are
 given, the show all breakpoints. Otherwise only those breakpoints
@@ -22,7 +22,7 @@ EOH
 
     MIN_ABBREV   = 'br'.size 
     NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(info break)
+    PREFIX       = %w(info breakpoints)
     SHORT_HELP = "Status of user-settable breakpoints"
   end
 
@@ -91,7 +91,7 @@ EOH
       if args.size > 2
         opts = {
         :msg_on_error => 
-        "An 'info break'  argument must eval to a breakpoint between 1..#{@proc.brkpts.max}.",
+        "An '#{PREFIX.join(' ')}' argument must eval to a breakpoint between 1..#{@proc.brkpts.max}.",
         :min_value => 1,
         :max_value => @proc.brkpts.max
       }

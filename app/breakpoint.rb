@@ -116,7 +116,7 @@ module Trepanning
       @temp
     end
 
-    def unset
+    def remove!
       @iseq.brkpt_unset(@offset)
     end
 

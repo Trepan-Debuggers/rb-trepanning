@@ -52,7 +52,7 @@ while 'break' will have less overhead.
       # step 1 is core.level_count = 0 or "stop next event"
       level_count = count - 1  
     end
-    if 0 == level_count and %w(return c-return).member?(@proc.core.event)
+    if 0 == level_count and %w(return c-return).member?(@proc.event)
       errmsg "You are already at the requested return event."
     else
       @proc.finish(level_count, opts)

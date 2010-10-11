@@ -16,7 +16,7 @@ class Trepan::Subcommand::InfoFrame < Trepan::Subcommand
     msg("Line %s of %s at PC offset %d, type: %s" %
         [@proc.frame_line, frame.source_container[1], frame.pc_offset, 
          frame.type])
-    if @proc.core.event == 'return'
+    if @proc.event == 'return'
       msg("Return value class: #{@proc.frame.sp(1).class}")
     end
   end
