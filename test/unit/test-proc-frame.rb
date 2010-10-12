@@ -17,6 +17,7 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
     $msgs   = []
     @proc    = Trepan::CmdProcessor.new(Trepan::MockCore.new())
     @proc.frame_index = 0
+    @proc.frame_initialize
     class << @proc
       def errmsg(msg)
         $errors << msg
@@ -32,7 +33,6 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
   # See that we have can load up commands
   def test_basic
     @proc.frame_setup(RubyVM::ThreadFrame.current)
-    @proc.hidelevels = {}
 
     # Test absolute positioning. Should all be okay
     0.upto(@proc.top_frame.stack_size-1) do |i| 
@@ -52,7 +52,6 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
 
     setup
     @proc.top_frame  = @proc.frame = RubyVM::ThreadFrame.current
-    @proc.hidelevels = {}
     @proc.adjust_frame(0, true)
 
     @proc.top_frame.stack_size-1.times do 
