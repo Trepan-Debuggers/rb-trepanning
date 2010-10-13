@@ -6,8 +6,6 @@ class Trepan::Subcommand::ShowBasename < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
     HELP = "Show only file basename in showing file names"
     MIN_ABBREV = 'ba'.size
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %w(show basename)
   end
 
 end
@@ -15,7 +13,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')

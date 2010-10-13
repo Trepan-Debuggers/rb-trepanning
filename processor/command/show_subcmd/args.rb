@@ -6,8 +6,6 @@ class Trepan::Subcommand::ShowArgs < Trepan::Subcommand
   unless defined?(HELP)
     HELP = 'Show argument list to give program when it is restarted'
     MIN_ABBREV   = 'ar'.size
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(show args)
   end
 
   def run(args)

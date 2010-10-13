@@ -10,8 +10,7 @@ If aliases names are given, show their definition. If left blank, show
 all alias names"
 
     MIN_ABBREV = 'al'.size
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %w(show alias)
+    NAME   = File.basename(__FILE__, '.rb')
     SHORT_HELP = "Show defined aliases"
   end
 
@@ -45,6 +44,6 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
   puts 
-  subcommand.run(%w(show alias))
-  subcommand.run(%w(show alias u foo))
+  subcommand.run(%W(show #{name}))
+  subcommand.run(%w(show #{name} u foo))
 end

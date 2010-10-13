@@ -7,9 +7,9 @@ class Trepan::SubSubcommand::ShowTrace < Trepan::SubSubcommandMgr
 
   unless defined?(HELP)
     HELP = "Show event tracing printing"
-    MIN_ABBREV = 'tr'.size
     NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %w(show trace)
+    PREFIX     = %W(show #{NAME})
+    MIN_ABBREV = 'tr'.size
     SHORT_HELP = HELP
   end
 end

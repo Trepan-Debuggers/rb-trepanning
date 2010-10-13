@@ -7,7 +7,8 @@ class Trepan::SubSubcommand::ShowMax < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     HELP   = 'Show "maximum length" settings'
     NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %w(show max)
+    PREFIX = %W(show #{NAME})
+    MIN_ABBREV = NAME.size
   end
 
   def run(args)

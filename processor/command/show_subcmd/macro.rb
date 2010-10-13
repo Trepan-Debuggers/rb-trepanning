@@ -6,8 +6,6 @@ class Trepan::Subcommand::ShowMacro < Trepan::Subcommand
   unless defined?(HELP)
     HELP = "Show defined macros"
     MIN_ABBREV = 'ma'.size
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %w(show macro)
   end
 
   def run(args)
@@ -31,7 +29,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
@@ -40,6 +37,6 @@ if __FILE__ == $0
 
   name = File.basename(__FILE__, '.rb')
   subcommand.summary_help(name)
-  subcommand.run(%w(show macro))
-  subcommand.run(%w(show macro u foo))
+  subcommand.run(%W(show #{name}))
+  subcommand.run(%W(show #{name} u foo))
 end

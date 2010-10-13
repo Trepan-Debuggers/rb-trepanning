@@ -7,7 +7,6 @@ class Trepan::Subcommand::ShowEvents < Trepan::Subcommand
     HELP         = 'Show trace events we may stop on.'
     MIN_ABBREV   = 'ev'.size
     NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(show events)
   end
 
   # FIXME: this really should be a subcommand of "set trace"
@@ -26,7 +25,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('exit')

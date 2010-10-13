@@ -12,7 +12,7 @@ when the command processor was entered.  '
 
     MIN_ABBREV  = 'db'.size
     NAME        = File.basename(__FILE__, '.rb')
-    PREFIX      = %w(set debug dbgr)
+    PREFIX      = %W(set debug #{NAME})
     SHORT_HELP  = 'Set debugging debugger'
   end
 

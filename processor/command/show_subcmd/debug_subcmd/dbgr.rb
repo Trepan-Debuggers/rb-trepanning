@@ -6,7 +6,7 @@ class Trepan::SubSubcommand::ShowDebugDbgr < Trepan::ShowBoolSubSubcommand
   unless defined?(HELP)
     HELP        = "Show debugging the debugger"
     NAME        = File.basename(__FILE__, '.rb')
-    PREFIX      = %w(show debug dbgr)
+    PREFIX      = %W(show debug #{NAME})
   end
 
 end
