@@ -27,7 +27,6 @@ class Trepan
       # which append current settings to list output.
       MIN_ABBREV = 1
       NEED_STACK = false
-      NAME       = 'your_command_name'
     end
 
 

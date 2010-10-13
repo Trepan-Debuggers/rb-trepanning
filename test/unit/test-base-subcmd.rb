@@ -12,6 +12,7 @@ end
 $errors = []
 class TestBaseCommandHelp < Test::Unit::TestCase
 
+  Trepan::Subcommand.const_set(:NAME, 'bogus')
   def setup
     $errors   = []
     $msgs     = []
@@ -43,7 +44,7 @@ class TestBaseCommandHelp < Test::Unit::TestCase
       cmd_obj.subcmds.subcmds.each do |subcmd_name, subcmd_obj|
         %w(HELP NAME PREFIX).each do |attr|
           assert_equal(true, subcmd_obj.class.constants.member?(attr.to_sym),
-                       "Constant #{attr} should be defined in \"#{cmd_obj.name} #{subcmd_obj.name}\"")
+                       "Constant #{attr} should be defined in \"#{cmd_obj.name} #{subcmd_obj.class::NAME}\"")
         end
       end
         

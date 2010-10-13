@@ -7,7 +7,8 @@ class Trepan::SubSubcommand::ShowDebug < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     HELP   = 'Show internal debugger settings.'
     NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %w(show debug)
+    PREFIX = %W(show #{NAME})
+    MIN_ABBREV = 'de'.size
   end
 end
 

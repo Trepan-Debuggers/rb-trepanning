@@ -43,6 +43,7 @@ class Trepan::SubcommandMgr < Trepan::Command
     # Initialization
     cmd_names     = []
     subcmd_names  = []
+    cmd_basenames = []
     cmd_dir = File.dirname(__FILE__)
     subcmd_dir = File.join(cmd_dir, '..', name + '_subcmd')
     files = Dir.glob(File.join(subcmd_dir, '*.rb'))
@@ -52,15 +53,23 @@ class Trepan::SubcommandMgr < Trepan::Command
         subcmd_names << name.capitalize + basename.capitalize
       else
         cmd_names << name.capitalize + basename.capitalize
+        cmd_basenames << basename
       end
       require rb
     end if File.directory?(subcmd_dir)
 
     subcommands = {}
-    cmd_names.each do |name|
+    cmd_names.each_with_index do |name, i|
       next unless Trepan::Subcommand.constants.member?(name.to_sym)
-      subcmd_class = "Trepan::Subcommand::#{name}.new(self)"
-      cmd = self.instance_eval(subcmd_class)
+      subcmd_class = self.instance_eval("Trepan::Subcommand::#{name}")
+      unless subcmd_class.const_defined?(:NAME)
+        subcmd_class.const_set(:NAME, cmd_basenames[i])
+      end
+      unless subcmd_class.const_defined?(:PREFIX)
+        subcmd_class.const_set(:PREFIX, %W(#{parent.name} #{cmd_basenames[i]}))
+      end
+      subcmd_new_str = "Trepan::Subcommand::#{name}.new(self)"
+      cmd = self.instance_eval(subcmd_new_str)
       cmd_name = cmd.name
       @subcmds.add(cmd)
     end

@@ -7,7 +7,8 @@ class Trepan::SubSubcommand::ShowAuto < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     HELP   = 'Show settings which some sort of "automatic" default behavior'
     NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %w(show auto)
+    PREFIX = %W(show #{NAME})
+    MIN_ABBREV = 'au'.size
   end
 end
 
@@ -21,7 +22,5 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['show', name]
   show_cmd.instance_variable_set('@last_args', cmd_args)
-  # require_relative '../../../lib/trepanning'
-  # Trepan.debug(:set_restart => true)
   command.run(cmd_args)
 end
