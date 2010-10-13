@@ -11,8 +11,8 @@ class Trepan::Command::IRBCommand < Trepan::Command
 If -d is added you can get access to debugger frame the global variables
 $trepan_frame and $trepan_cmdproc. 
 
-irb is extended with methods 'cont', 'dbgr', 'n', and, 'q', 'step' which 
-run the corresponding debugger commands. 
+irb is extended with methods 'cont', 'ne', and, 'q', 'step' which 
+run the corresponding debugger commands 'continue', 'next', 'exit' and 'step'. 
 
 To issue a debugger command, inside irb nested inside a debugger use
 'dbgr'. For example:

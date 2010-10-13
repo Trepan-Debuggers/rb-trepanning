@@ -60,7 +60,7 @@ module IRB # :nodoc:
     # New irb Commands which are the slightly different from their
     # debugger counterpart
     [['cont',   :Continue],
-     ['n',      :Next],
+     ['ne',     :Next],
      ['q',      :Quit]].each do |command, sym|
       ExtendCommandBundle.def_extend_command command, sym
     end
