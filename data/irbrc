@@ -18,7 +18,7 @@ IRB.conf[:PROMPT][:SIMPLE] =
 #  dbgr info program    # wrong!
 # 
 puts "You are in a trepan session. You should have access to program scope."
-puts "'dbgr', 'step', 'n', 'q', 'cont' commands have been added."
+puts "'dbgr', 'step', 'ne', 'q', 'cont' commands have been added."
 
 if defined?($trepan) && $trepan
    puts 'You should have access to debugger state via global variable $trepan'
