@@ -13,7 +13,10 @@ Print the value of the EXPRESSION. Variables accessible are those of the
 environment of the selected stack frame, plus globals. 
 
 If the length output string large, the first part of the value is
-shown and ... indicates it has been truncated."
+shown and ... indicates it has been truncated.
+
+See 'set max string' to change the string truncation limit.
+"
 
     # ALIASES       = %w(p)
     CATEGORY      = 'data'
