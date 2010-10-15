@@ -2,11 +2,12 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 require_relative '../eval'
-class Trepan::Command::PrintCommand < Trepan::Command
+class Trepan::Command::PrCommand < Trepan::Command
 
   unless defined?(HELP)
+    NAME          = File.basename(__FILE__, '.rb')
     HELP = 
-      "print EXPRESSION
+      "#{NAME} EXPRESSION
 
 Print the value of the EXPRESSION. Variables accessible are those of the
 environment of the selected stack frame, plus globals. 
@@ -16,8 +17,7 @@ shown and ... indicates it has been truncated."
 
     # ALIASES       = %w(p)
     CATEGORY      = 'data'
-    NAME          = File.basename(__FILE__, '.rb')
-    SHORT_HELP    = 'Print expression'
+    SHORT_HELP    = 'print expression truncating long output'
   end
   
   def run(args)

@@ -124,9 +124,9 @@ class Trepan
 
       # If the last stop was a breakpoint, don't stop again if we are at
       # the same location with a line event.
-      skip_val |= (@last_pos[4] == 'brkpt' && 
-                   @event == 'line' &&
-                   @frame.pc_offset == @last_pos[5])
+      skip_val ||= (@last_pos[4] == 'brkpt' && 
+                    @event == 'line' &&
+                    @frame.pc_offset == @last_pos[5])
 
       if @settings[:'debugskip']
         puts "skip: #{skip_val.inspect}, last: #{@last_pos}, new: #{new_pos}" 

@@ -13,7 +13,7 @@ class TestRaise < Test::Unit::TestCase
             'step',
             'step',
             'raise',
-            'print "hi"',
+            'pr "hi"',
             ]
     d = strarray_setup(cmds)
     d.start
