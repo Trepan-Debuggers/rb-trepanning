@@ -10,15 +10,15 @@ class Trepan::Command::EnableCommand < Trepan::Command::DisableCommand
   # Silence already initialized constant .. warnings
   old_verbose = $VERBOSE  
   $VERBOSE    = nil
-  HELP = 
-      'enable [display] bpnumber [bpnumber ...]
+  NAME        = File.basename(__FILE__, '.rb')
+  HELP        = <<-HELP
+#{NAME} [display] bpnumber [bpnumber ...]
     
 Enables the breakpoints given as a space separated list of breakpoint
 numbers. See also "info break" to get a list.
-'
+  HELP
 
   ALIASES       = %w(en)
-  NAME          = File.basename(__FILE__, '.rb')
   SHORT_HELP    = 'Enable some breakpoints'
   $VERBOSE      = old_verbose 
 
@@ -31,13 +31,12 @@ end
         
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  cmd.run([name])
-  cmd.run([name, '1'])
-  cmdproc = dbgr.core.processor
+  dbgr, cmd = MockDebugger::setup
+  cmd.run([cmd.name])
+  cmd.run([cmd.name, '1'])
+  cmdproc = cmd.proc
   cmds = cmdproc.commands
   break_cmd = cmds['break']
   break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
-  cmd.run([name, '1'])
+  cmd.run([cmd.name, '1'])
 end

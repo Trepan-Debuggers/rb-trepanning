@@ -3,8 +3,9 @@ require_relative 'base/cmd'
 class Trepan::Command::HelpCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"help [command [subcommand]|expression]
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [command [subcommand]|expression]
 
 Without argument, print the list of available debugger commands.
 
@@ -21,8 +22,7 @@ subcommand. For example 'help info line' give help about the
 info line command.
 
 See also 'examine' and 'whatis'.
-"
-
+    HELP
 
     ALIASES       = %w(?)
     CATEGORIES    = {
@@ -35,7 +35,6 @@ See also 'examine' and 'whatis'.
     'stack'       => 'Examining the call stack'
     }
     CATEGORY      = 'support'
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'Print commands or give help for command(s)'
   end
@@ -124,23 +123,22 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
 
-  cmd.run %w(help help)
+  cmd.run %W(cmd.name help)
   puts '=' * 40
-  cmd.run %w(help *)
+  cmd.run %W(cmd.name *)
   puts '=' * 40
-  cmd.run %w(help fdafsasfda)
+  cmd.run %W(cmd.name fdafsasfda)
   puts '=' * 40
-  cmd.run %w(help)
+  cmd.run %W(cmd.name)
   puts '=' * 40
-  cmd.run %w(help support)
+  cmd.run %W(cmd.name support)
   puts '=' * 40
-  cmd.run %w(help support *)
+  cmd.run %W(cmd.name support *)
 
   puts '=' * 40
-  cmd.run %w(help s.*)
+  cmd.run %W(cmd.name s.*)
   puts '=' * 40
-  cmd.run %w(help s<>)
+  cmd.run %W(cmd.name s<>)
 end

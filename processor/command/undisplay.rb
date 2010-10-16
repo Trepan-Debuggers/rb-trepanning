@@ -6,6 +6,7 @@ require_relative 'base/cmd'
 class Trepan::Command::UndisplayCommand < Trepan::Command
     
   unless defined?(HELP)
+    NAME = File.basename(__FILE__, '.rb')
     HELP = <<EOH
 
 undisplay DISPLAY_NUMBER ...
@@ -18,7 +19,6 @@ EOH
 
     ALIASES       = %w(und)
     CATEGORY      = 'data'
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'Cancel some expressions to be displayed when program stops'
   end
@@ -48,8 +48,7 @@ if __FILE__ == $0
   # demo it.
   require 'thread_frame'
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
 
   def run_cmd(cmd, args)
     cmd.run(args)
@@ -58,6 +57,6 @@ if __FILE__ == $0
 
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
 
-  run_cmd(cmd, %w(undisplay z))
-  run_cmd(cmd, %w(undisplay 1 10))
+  run_cmd(cmd, %W(#{cmd.name} z))
+  run_cmd(cmd, %W(#{cmd.name} 1 10))
 end

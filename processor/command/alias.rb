@@ -4,17 +4,17 @@ require_relative 'base/cmd'
 class Trepan::Command::AliasCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"alias ALIAS COMMAND
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} ALIAS COMMAND
 
 Add an alias for a COMMAND
 
 See also 'unalias'.
-"
+    HELP
 
     CATEGORY      = 'support'
     MAX_ARGS      = 2  # Need at most this many
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = true
     SHORT_HELP    = 'Add an alias for a debugger command'
   end
@@ -46,10 +46,9 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  cmd.run %w(alias yy foo)
-  cmd.run %w(alias yy step)
-  cmd.run %w(alias)
-  cmd.run %w(alias yy next)
+  dbgr, cmd = MockDebugger::setup
+  cmd.run %W(cmd.name yy foo)
+  cmd.run %W(cmd.name yy step)
+  cmd.run %W(cmd.name)
+  cmd.run %W(cmd.name yy next)
 end
