@@ -54,7 +54,7 @@ Examples:
     opts[:count] = 
       if args.size > 1
         opts[:maxstack] = @proc.get_int(args[1], 
-                                       :cmdname   => 'where',
+                                       :cmdname   => self.name,
                                        :max_value => stack_size)
       else
         stack_size
