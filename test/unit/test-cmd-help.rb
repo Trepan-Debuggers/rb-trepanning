@@ -20,13 +20,12 @@ class TestCommandHelp < Test::Unit::TestCase
     shoulda = should_not_have ? ['no ', ''] : ['', 'no ']
     msgs = @cmdproc.instance_variable_get('@msgs')
     errmsgs = @cmdproc.instance_variable_get('@errmsgs')
-    assert_equal(should_not_have, msgs.empty?)
-# FIXME: reinstate
-#                 "Expecting %shelp for #{arg_str}.\n Got #{msgs}" %
-#                 shoulda[0])
+    assert_equal(should_not_have, msgs.empty?,
+                 "Expecting %shelp for %s.\n Got %s" %
+                 [shoulda[0], arg_str, msgs])
     assert_equal(!should_not_have, errmsgs.empty?,
-                 "Expecting %serror for #{arg_str}.\n Got #{errmsgs}" %
-                 shoulda[1])
+                 "Expecting %serror for %s.\n Got %s" %
+                 [shoulda[1], arg_str, msgs])
   end
   
   def test_help_command
