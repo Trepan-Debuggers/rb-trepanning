@@ -5,15 +5,16 @@ require_relative 'base/cmd'
 
 class Trepan::Command::DebugCommand < Trepan::Command
   unless defined?(HELP)
-    HELP =
-"debug RUBY-CODE
+    NAME          = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} RUBY-CODE
 
-Enter the debugger recursively on RUBY-CODE."
+Enter the debugger recursively on RUBY-CODE.
+    HELP
 
     CATEGORY      = 'data'
     MIN_ARGS      = 1
     MAX_ARG       = nil
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'recursive debugging of an expression'
 
@@ -76,10 +77,8 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  name = File.basename(__FILE__, '.rb')
+  dbgr, cmd = MockDebugger::setup
   cmd.proc.hidelevels[Thread.current] = 0
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
-  cmd.run([name, 'x = 1; y = 2'])
+  cmd.run([cmd.name, 'x = 1; y = 2'])
 end

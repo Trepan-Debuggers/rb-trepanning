@@ -5,8 +5,9 @@ require_relative 'base/cmd'
 class Trepan::Command::FinishCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"finish [levels]
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [levels]
 
 Continue execution until leaving the current function. 
 Sometimes this is called 'step out'.
@@ -21,14 +22,13 @@ guarentee the stack level is the same as or less than the current
 one. 
 
 See the break command if you want to stop at a particular point in a
-program. In general, 'finish', 'step' and 'next' may slow a program down
+program. In general, '#{NAME}', 'step' and 'next' may slow a program down
 while 'break' will have less overhead.
-"
+    HELP
     ALIASES      = %w(fin)
     CATEGORY     = 'running'
     # execution_set = ['Running']
     MAX_ARGS     = 1   # Need at most this many. 
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
     SHORT_HELP   = 'Step program without entering called functions'
   end
@@ -62,9 +62,8 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  [%w(finish 1), %w(fin 2-1), %w(n foo)].each do |c|
+  dbgr, cmd = MockDebugger::setup
+  [%W(#{cmd.name} 1), %w(fin 2-1), %w(n foo)].each do |c|
     cmd.proc.next_level = 0
     cmd.proc.leave_cmd_loop = false
     result = cmd.run(c)
@@ -72,7 +71,7 @@ if __FILE__ == $0
     puts 'level_count %d, leave_cmd_loop: %s' % [cmd.proc.next_level,
                                                 cmd.proc.leave_cmd_loop]
   end
-  [%w(fin), %w(finish)].each do |c|
+  [%w(fin), [cmd.name]].each do |c|
     cmd.proc.next_level = 0
     cmd.proc.leave_cmd_loop = false
     result = cmd.run(c)

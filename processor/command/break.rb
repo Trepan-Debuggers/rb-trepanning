@@ -5,22 +5,22 @@ require_relative '../../app/breakpoint'
 class Trepan::Command::BreakCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-'break [line number|offset]
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [line number|offset]
 
 With a line number argument, set a break there in the current
 instruction sequence.  With an offset (a number prefaced with an "O")
 set a breakpoint at that instruction offset.
 
 Examples:
-   break
-   break 10    # set breakpoint on line 10
-   break o20   # set breakpoint VM Instruction Sequence offset 20
-'
+   #{NAME}
+   #{NAME} 10    # set breakpoint on line 10
+   #{NAME} o20   # set breakpoint VM Instruction Sequence offset 20
+    HELP
 
     ALIASES      = %w(b)
     CATEGORY     = 'breakpoints'
-    NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = 'Set a breakpoint'
   end
 
@@ -69,17 +69,16 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  cmd.run([name])
-  cmd.run([name, __LINE__.to_s])
+  dbgr, cmd = MockDebugger::setup
+  cmd.run([cmd.name])
+  cmd.run([cmd.name, __LINE__.to_s])
   require 'thread_frame'
   tf = RubyVM::ThreadFrame.current
   pc_offset = tf.pc_offset
-  cmd.run([name, "O#{pc_offset}"])
+  cmd.run([cmd.name, "O#{pc_offset}"])
   def foo
     5 
   end
-  cmd.run([name, 'foo', (__LINE__-2).to_s])
-  cmd.run([name, 'foo'])
+  cmd.run([cmd.name, 'foo', (__LINE__-2).to_s])
+  cmd.run([cmd.name, 'foo'])
 end

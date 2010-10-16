@@ -77,6 +77,10 @@ class Trepan
       self.class.const_get(name)
     end
 
+    def name
+      self.class.const_get(:NAME)
+    end
+
     # The method that implements the debugger command.
     def run(*args)
       raise RuntimeError, 'You need to define this method elsewhere'

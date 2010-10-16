@@ -5,23 +5,24 @@ require_relative '../../app/irb'
 class Trepan::Command::IRBCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"          irb [-d]\tstarts an Interactive Ruby (IRB) session.
+    NAME         = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+          #{NAME} [-d]\tstarts an Interactive Ruby (IRB) session.
 
 If -d is added you can get access to debugger frame the global variables
 $trepan_frame and $trepan_cmdproc. 
 
-irb is extended with methods 'cont', 'ne', and, 'q', 'step' which 
+#{NAME} is extended with methods 'cont', 'ne', and, 'q', 'step' which 
 run the corresponding debugger commands 'continue', 'next', 'exit' and 'step'. 
 
-To issue a debugger command, inside irb nested inside a debugger use
+To issue a debugger command, inside #{NAME} nested inside a debugger use
 'dbgr'. For example:
 
-  dbgr %%w(info program)
+  dbgr %w(info program)
   dbgr('info', 'program') # Same as above
   dbgr 'info program'     # Single quoted string also works
 
-But arguments have to be quoted because irb will evaluate them:
+But arguments have to be quoted because #{NAME} will evaluate them:
 
   dbgr info program     # wrong!
   dbgr info, program    # wrong!
@@ -29,12 +30,11 @@ But arguments have to be quoted because irb will evaluate them:
 
 Here then is a loop to query VM stack values:
   (-1..1).each {|i| dbgr(\"info reg sp \#{i}\")}
-"
+     HELP
 
     CATEGORY     = 'support'
     MAX_ARGS     = 1  # Need at most this many
-    NAME         = File.basename(__FILE__, '.rb')
-    SHORT_HELP  = 'Run interactive Ruby session irb as a command subshell'
+    SHORT_HELP  = "Run #{NAME} as a command subshell"
   end
 
   # This method runs the command
@@ -99,8 +99,7 @@ end
 if __FILE__ == $0
   require 'thread_frame'
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   # Get an IRB session -- the hard way :-)
-  cmd.run([name]) if ARGV.size > 0
+  cmd.run([cmd.name]) if ARGV.size > 0
 end

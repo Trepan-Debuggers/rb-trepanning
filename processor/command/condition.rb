@@ -8,8 +8,9 @@ require_relative '../../app/condition'
 class Trepan::Command::ConditionCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-'condition BP_NUMBER CONDITION
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} BP_NUMBER CONDITION
 
 BP_NUMBER is a breakpoint number.  CONDITION is an expression which
 must evaluate to True before the breakpoint is honored.  If CONDITION
@@ -17,14 +18,13 @@ is absent, any existing condition is removed; i.e., the breakpoint is
 made unconditional.
 
 Examples:
-   condition 5 x > 10  # Breakpoint 5 now has condition x > 10
-   condition 5         # Remove above condition
-'
+   #{NAME} 5 x > 10  # Breakpoint 5 now has condition x > 10
+   #{NAME} 5         # Remove above condition
+    HELP
 
     ALIASES       = %w(cond)
     CATEGORY      = 'breakpoints'
     MIN_ARGS      = 1
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'Specify breakpoint number N to break only if COND is true'
   end
@@ -50,15 +50,14 @@ end
 if __FILE__ == $0
   require 'thread_frame'
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
   
-  cmd.run([name, '1'])
+  cmd.run([cmd.name, '1'])
   cmdproc = dbgr.core.processor
   cmds = cmdproc.commands
   break_cmd = cmds['break']
-  break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
-  cmd.run([name, '1', 'x' '>' '10'])
-  cmd.run([name, '1'])
+  break_cmd.run([break_cmd.name, cmdproc.frame.source_location[0].to_s])
+  cmd.run([cmd.name, '1', 'x' '>' '10'])
+  cmd.run([cmd.name, '1'])
 end
