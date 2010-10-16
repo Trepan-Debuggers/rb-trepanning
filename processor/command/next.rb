@@ -5,13 +5,14 @@ require_relative 'base/cmd'
 class Trepan::Command::NextCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"next[+|=|-|<|>|!|<>] [EVENT-NAME...] [count]
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME}[+|=|-|<|>|!|<>] [EVENT-NAME...] [count]
 
 Step one statement ignoring steps into function calls at this level.
 Sometimes this is called 'step over'.
 
-With an integer argument, perform 'next' that many times. However if
+With an integer argument, perform '#{NAME}' that many times. However if
 an exception occurs at this level, or we 'return' or 'yield' or the
 thread changes, we stop regardless of count.
 
@@ -24,23 +25,22 @@ If no suffix is given, the debugger setting 'different'
 determines this behavior.
 
 Examples: 
-  next        # next 1 event, *any* event 
-  next 1      # same as above
-  next+       # same but force stopping on a new line
-  next=       # same but force stopping on a new line a new frame added
-  next-       # same but force stopping on a new line a new frame added
-  next 5/5+0  # same as above
-  next line   # next using only line events
-  next call   # next using only call call events
-  next<>      # next using call return events at this level or below
-"
+  #{NAME}        # #{NAME} 1 event, *any* event 
+  #{NAME} 1      # same as above
+  #{NAME}+       # same but force stopping on a new line
+  #{NAME}=       # same but force stopping on a new line a new frame added
+  #{NAME}-       # same but force stopping on a new line a new frame added
+  #{NAME} 5/5+0  # same as above
+  #{NAME} line   # #{NAME} using only line events
+  #{NAME} call   # #{NAME} using only call call events
+  #{NAME}<>      # #{NAME} using call return events at this level or below
+    HELP
 
     ALIASES      = %w(n next+ next- next< next> next<> next! n> n< n! n+ n- 
                       n<> n=)
     CATEGORY     = 'running'
     # execution_set = ['Running']
     MAX_ARGS     = 1   # Need at most this many. FIXME: will be eventually 2
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_RUNNING = true
     SHORT_HELP   = 'Step program without entering called functions'
   end
@@ -70,8 +70,7 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   [%w(n 5), %w(next 1+2), %w(n foo)].each do |c|
     dbgr.core.step_count = 0
     cmd.proc.leave_cmd_loop = false

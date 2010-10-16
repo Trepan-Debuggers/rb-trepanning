@@ -5,8 +5,8 @@ require_relative '../eval'
 class Trepan::Command::PrCommand < Trepan::Command
 
   unless defined?(HELP)
-    NAME          = File.basename(__FILE__, '.rb')
-    HELP = 
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
       "#{NAME} EXPRESSION
 
 Print the value of the EXPRESSION. Variables accessible are those of the
@@ -16,7 +16,7 @@ If the length output string large, the first part of the value is
 shown and ... indicates it has been truncated.
 
 See 'set max string' to change the string truncation limit.
-"
+    HELP
 
     # ALIASES       = %w(p)
     CATEGORY      = 'data'
@@ -30,11 +30,10 @@ end
         
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   arg_str = '1 + 2'
   cmd.proc.instance_variable_set('@cmd_argstr', arg_str)
-  cmd.run([name, arg_str])
+  cmd.run([cmd.name, arg_str])
   cmdproc = dbgr.core.processor
   cmds = dbgr.core.processor.commands
 end

@@ -9,14 +9,14 @@ class Trepan::Command::DownCommand < Trepan::Command::UpCommand
   # Silence already initialized constant .. warnings
   old_verbose = $VERBOSE  
   $VERBOSE    = nil
-  HELP = 
-"d(own) [count]
+  HELP = <<-HELP
+#{NAME} [count]
 
 Move the current frame down in the stack trace (to a newer frame). 0
 is the most recent frame. If no count is given, move down 1.
 
 See also 'up' and 'frame'.
-"
+  HELP
 
   ALIASES       = %w(d)
   NAME          = File.basename(__FILE__, '.rb')
@@ -34,14 +34,13 @@ if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
 
   def sep ; puts '=' * 40 end
-  cmd.run [name]
+  cmd.run [cmd.name]
   %w(-1 0 1 -2).each do |count| 
-    puts "#{name} #{count}"
-    cmd.run([name, count])
+    puts "#{cmd.name} #{count}"
+    cmd.run([cmd.name, count])
     sep 
   end
   def foo(cmd, name)
@@ -52,5 +51,5 @@ if __FILE__ == $0
     puts "#{name} -1"
     cmd.run([name, '-1'])
   end
-  foo(cmd, name)
+  foo(cmd, cmd.name)
 end
