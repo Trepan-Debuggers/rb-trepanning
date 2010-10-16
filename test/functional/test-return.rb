@@ -18,7 +18,7 @@ class TestRaise < Test::Unit::TestCase
             'set return 10',
             'set events line',
             'step',
-            'print foo_retval',
+            'pr foo_retval',
             ]
     d = strarray_setup(cmds)
     d.start
@@ -65,7 +65,7 @@ class TestRaise < Test::Unit::TestCase
             'set return "abc"',
             'set events line',
             'step',
-            'print result',
+            'pr result',
             ]
     d = strarray_setup(cmds)
     d.start
