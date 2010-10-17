@@ -36,7 +36,7 @@ Examples:
   #{NAME}<>      # #{NAME} using call return events at this level or below
     HELP
 
-    ALIASES      = %w(n next+ next- next< next> next<> next! n> n< n! n+ n- 
+    ALIASES      = %W(n #{NAME}+ #{NAME}- #{NAME}< #{NAME}> #{NAME}<> #{NAME}! n> n< n! n+ n- 
                       n<> n=)
     CATEGORY     = 'running'
     # execution_set = ['Running']
@@ -55,7 +55,7 @@ Examples:
       count_str = args[1]
       opts = {
         :msg_on_error => 
-        "The 'next' command argument must eval to an integer. Got: %s" % 
+        "The '#{NAME}' command argument must eval to an integer. Got: %s" % 
         count_str,
         :min_value => 1
       }
@@ -71,7 +71,7 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  [%w(n 5), %w(next 1+2), %w(n foo)].each do |c|
+  [%w(n 5), %W(#{cmd.name} 1+2), %w(n foo)].each do |c|
     dbgr.core.step_count = 0
     cmd.proc.leave_cmd_loop = false
     result = cmd.run(c)
