@@ -7,7 +7,7 @@ class Trepan::SubSubcommand::SetDebugSkip < Trepan::SetBoolSubSubcommand
     HELP        = 'Set debugging of statement skip logic'
     MIN_ABBREV  = 'sk'.size
     NAME        = File.basename(__FILE__, '.rb')
-    PREFIX      = %w(set debug skip)
+    PREFIX      = %W(set debug #{NAME})
   end
 end
 
