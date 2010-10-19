@@ -31,7 +31,7 @@ Examples:
   end
 
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     if args.size == 1
       # Form is: "continue"
       @proc.continue

@@ -23,7 +23,7 @@ See also the commands "quit" and "kill".'
   # whether exit! or exit is used.
 
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     unconditional = 
       if args.size > 1 && args[1] == 'unconditionally'
         args.shift

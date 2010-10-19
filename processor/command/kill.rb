@@ -19,7 +19,7 @@ we are in interactive mode, we'll prompt to make sure."
   end
     
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     if args.size > 1
       sig = Integer(args[1]) rescue args[1]
       unless sig.is_a?(Integer) || Signal.list.member?(sig)

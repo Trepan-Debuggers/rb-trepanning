@@ -46,7 +46,7 @@ Examples:
   end
 
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     opts = @proc.parse_next_step_suffix(args[0])
     if args.size == 1
       # Form is: "next" which means "next 1"

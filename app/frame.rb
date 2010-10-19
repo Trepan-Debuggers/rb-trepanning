@@ -255,7 +255,7 @@ if __FILE__ == $0
     print_stack_trace(RubyVM::ThreadFrame::current)
   end
   x.call(1,2)
-  class C
+  class C # :nodoc
     def initialize(a)
       print_stack_trace(RubyVM::ThreadFrame::current)
     end

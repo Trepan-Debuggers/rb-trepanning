@@ -27,14 +27,16 @@ while 'break' will have less overhead.
     ALIASES      = %w(fin)
     CATEGORY     = 'running'
     # execution_set = ['Running']
-    MAX_ARGS     = 1   # Need at most this many. 
+
+    # Need at most this many. 
+    MAX_ARGS     = 1   
     NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
     SHORT_HELP   = 'Step program without entering called functions'
   end
 
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     opts = {}
     if args.size == 1
       # Form is: "finish" which means "finish 1"

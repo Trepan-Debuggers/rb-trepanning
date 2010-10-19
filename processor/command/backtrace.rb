@@ -33,7 +33,7 @@ Examples:
   include Trepan::Frame
 
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     unless @proc.frame
       errmsg 'No frame.'
       return false

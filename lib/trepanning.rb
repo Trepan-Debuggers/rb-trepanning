@@ -248,7 +248,7 @@ module Kernel
 end
 
 if __FILE__ == $0
-  def square(x) 
+  def square(x) # :nodoc
     x * x
   end
   puts 'block debugging...'

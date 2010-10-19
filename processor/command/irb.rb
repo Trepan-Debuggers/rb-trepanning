@@ -38,7 +38,7 @@ Here then is a loop to query VM stack values:
   end
 
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     add_debugging = 
       if args.size > 1
         '-d' == args[1]

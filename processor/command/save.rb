@@ -14,7 +14,7 @@ class Trepan::Command::SaveCommand < Trepan::Command
   end
     
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     save_filename = 
       if args.size > 1
         args[1]

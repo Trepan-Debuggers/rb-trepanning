@@ -15,7 +15,7 @@ Raise an exception in the debugged program."
   end
     
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     exception = 
       if args.size > 1
         except_str = args[1..-1].join(' ')

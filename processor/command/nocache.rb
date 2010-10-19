@@ -15,7 +15,7 @@ class Trepan::Command::NoCacheCommand < Trepan::Command
   end
 
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     if @proc.frame.iseq
       puts @proc.frame.iseq.disassemble
       count = @proc.frame.iseq.killcache

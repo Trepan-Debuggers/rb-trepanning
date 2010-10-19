@@ -17,7 +17,7 @@ class Trepan::Command::RestartCommand < Trepan::Command
   end
     
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
 
     dbgr = @proc.dbgr
     argv = dbgr.restart_argv

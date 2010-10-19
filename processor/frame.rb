@@ -6,31 +6,35 @@ class Trepan
   class CmdProcessor
 
     attr_reader   :current_thread
-    attr_accessor :frame           # ThreadFrame, current frame
-    attr_accessor :frame_index     # frame index in a "where" command
-    attr_accessor :hide_level      # 
-    attr_accessor :hidelevels      # Hash[thread_id] -> FixNum, the
-                                   # level of the last frame to
-                                   # show. If we called the debugger
-                                   # directly, then there is generally
-                                   # a portion of a backtrace we don't
-                                   # want to show. We don't need to
-                                   # store this for all threads, just
-                                   # those we want to hide frame on. A
-                                   # value of 1 means to hide just the
-                                   # oldest level. The default or
-                                   # showing all levels is 0.
-    attr_accessor :remap_container # Hash[container] -> file container
-                                   # Gives us a way to map non-file
-                                   # container objects to a file
-                                   # container for display.
+
+    # ThreadFrame, current frame
+    attr_accessor :frame
+
+    # frame index in a "where" command
+    attr_accessor :frame_index
+    attr_accessor :hide_level
+
+    # Hash[thread_id] -> FixNum, the level of the last frame to
+    # show. If we called the debugger directly, then there is
+    # generally a portion of a backtrace we don't want to show. We
+    # don't need to store this for all threads, just those we want to
+    # hide frame on. A value of 1 means to hide just the oldest
+    # level. The default or showing all levels is 0.
+    attr_accessor :hidelevels      
+
+    # Hash[container] -> file container Gives us a way to map non-file
+    # container objects to a file container for display.
     attr_accessor :remap_iseq      # Hash[iseq] -> file container
 
-    attr_accessor :top_frame       # top frame of current thread. Since
-                                   # right now the ThreadFrame method has "prev" 
-                                   # but no way to move in the other direction.
-                                   # So we store the top frame. 
-    attr_reader   :threads2frames  # Hash[thread_id] -> top_frame
+    attr_accessor :remap_container
+
+    # top frame of current thread. Since right now the ThreadFrame
+    # method has "prev" but no way to move in the other direction.  So
+    # we store the top frame.
+    attr_accessor :top_frame 
+
+    # Hash[thread_id] -> top_frame
+    attr_reader   :threads2frames
     
 
     def adjust_frame(frame_num, absolute_pos)

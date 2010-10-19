@@ -24,7 +24,7 @@ See also 'unalias'.
     if args.size == 1
       @proc.commands['show'].run(%w(show alias))
     elsif args.size == 2
-      @proc.commands['show'].run(%W(show alias #{args[1]}))
+      @proc.commands['show'].run(['show', 'alias', args[1]])
     else
       junk, al, command = args
       old_command = @proc.aliases[al]
