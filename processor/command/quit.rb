@@ -3,8 +3,11 @@ require_relative 'base/cmd'
 class Trepan::Command::QuitCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-      'quit[!] [unconditionally] [exit code] - gentle termination
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME}[!] [unconditionally] [exit code] 
+
+gentle termination
 
 The program being debugged is exited via exit() which runs the Kernel
 at_exit finalizers. If a return code is given, that is the return code
@@ -12,17 +15,17 @@ passed to exit() - presumably the return code that will be passed back
 to the OS. If no exit code is given, 0 is used.
 
 Examples: 
-  quit                 # quit prompting if we are interactive
-  quit conditionally   # quit without prompting
-  quit!                # same as above
-  quit 0               # same as "quit"
-  quit! 1              # unconditional quit setting exit code 1
+  #{NAME}                 # quit prompting if we are interactive
+  #{NAME} conditionally   # quit without prompting
+  #{NAME}!                # same as above
+  #{NAME} 0               # same as "quit"
+  #{NAME}! 1              # unconditional quit setting exit code 1
 
-See also the commands "exit" and "kill".'
+See also the commands "exit" and "kill".
+    HELP
 
-    ALIASES      = %w(quit! q q!)
+    ALIASES      = %W(#{NAME}! q q!)
     CATEGORY     = 'support'
-    NAME         = File.basename(__FILE__, '.rb')
     MAX_ARGS     = 2  # Need at most this many
     SHORT_HELP  = 'Quit program - gently'
   end
@@ -54,9 +57,8 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
+  dbgr, cmd = MockDebugger::setup
   name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  name = File.basename(__FILE__, '.rb')
-  fork { cmd.run([name]) }
-  cmd.run([name, '5'])
+  fork { cmd.run([cmd.name]) }
+  cmd.run([cmd.name, '5'])
 end

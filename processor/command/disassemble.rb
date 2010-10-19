@@ -9,8 +9,9 @@ class Trepan::Command::DisassembleCommand < Trepan::Command
     include Trepanning
 
   unless defined?(HELP)
-    HELP = 
-"disassemble [thing] [full]
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [thing] [full]
 
 With no argument, disassemble the current frame.  With a method,
 disassemble that method. '.' can be used to indicate the instruction
@@ -27,11 +28,10 @@ Examples:
   disas .       # Same as above
   disas . full  # At least the instruction sequence above but maybe more
   disas require_relative # disassemble method 'require_relative'
- "
+    HELP
 
     ALIASES       = %w(disas disassem) # Note we have disable
     CATEGORY      = 'data'
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = true
     SHORT_HELP    = 'Disassemble Ruby VM instructions'
   end
@@ -88,16 +88,15 @@ if __FILE__ == $0
   require 'thread_frame'
 
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   def small_fn(cmd, name)
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
     cmd.run [name]
   end
-  small_fn(cmd, name)
+  small_fn(cmd, cmd.name)
   p = Proc.new do 
     |x,y| x + y
   end
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
-  cmd.run([name, 'p'])
+  cmd.run([cmd.name, 'p'])
 end

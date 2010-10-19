@@ -5,14 +5,17 @@ require_relative '../../app/run'
 class Trepan::Command::RestartCommand < Trepan::Command
 
   unless defined?(HELP)
+    NAME         = File.basename(__FILE__, '.rb')
     ALIASES      = %w(R run)
-    HELP = 
-      'restart - Restart debugger and program via an exec
-    call. All state is lost, and new copy of the debugger is used.'
+    HELP = <<-HELP
+#{NAME} 
+
+Restart debugger and program via an exec call. All state is lost, and
+new copy of the debugger is used.
+    HELP
     
     CATEGORY     = 'running'
     MAX_ARGS     = 0  # Need at most this many
-    NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = '(Hard) restart of program via exec()'
   end
     
@@ -46,12 +49,10 @@ end
 
 if __FILE__ == $0
   exit if ARGV[0] == 'exit'
-
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   dbgr.restart_argv = []
-  cmd.run([name])
+  cmd.run([cmd.name])
   dbgr.restart_argv = [File.expand_path($0), 'exit']
-  cmd.run([name])
+  cmd.run([cmd.name])
 end

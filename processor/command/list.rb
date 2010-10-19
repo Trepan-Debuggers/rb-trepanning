@@ -5,16 +5,17 @@ require_relative 'base/cmd'
 
 class Trepan::Command::ListCommand < Trepan::Command
   unless defined?(HELP)
-    HELP = 
-"list[>] [MODULE] [FIRST [NUM]]
-list[>] LOCATION [NUM]
+    NAME          = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME}[>] [MODULE] [FIRST [NUM]]
+#{NAME}[>] LOCATION [NUM]
 
-List source code. 
+#{NAME} source code. 
 
 Without arguments, prints lines centered around the current
-line. If this is the first list command issued since the debugger
+line. If this is the first #{NAME} command issued since the debugger
 command loop was entered, then the current line is the current
-frame. If a subsequent list command was issued with no intervening
+frame. If a subsequent #{NAME} command was issued with no intervening
 frame changing, then that is start the line after we last one
 previously shown.
 
@@ -25,7 +26,7 @@ The number of line to show is controled by the debugger listsize
 setting. Use 'set listsize' or 'show listsize' to see or set the
 value.
 
-\"list -\" shows lines before a previous listing. 
+\"#{NAME} -\" shows lines before a previous listing. 
 
 A LOCATION is a either 
   - number, e.g. 5, 
@@ -47,22 +48,22 @@ just something that evaluates to a positive integer.
 
 Some examples:
 
-list 5            # List centered around line 5
-list 4+1          # Same as above.
-list 5>           # List starting at line 5
-list foo.rb:5     # List centered around line 5 of foo.rb
-list foo.rb 5     # Same as above.
-list foo.rb:5>    # List starting around line 5 of foo.rb
-list foo.rb  5 6  # list lines 5 and 6 of foo.rb
-list foo.rb  5 2  # Same as above, since 2 < 5.
-list foo.rb:5 2   # Same as above
-list FileUtils.cp # List lines around the FileUtils.cp function.
-list .            # List lines centered from where we currently are stopped
-list -            # List lines previous to those just shown
+#{NAME} 5            # List centered around line 5
+#{NAME} 4+1          # Same as above.
+#{NAME} 5>           # List starting at line 5
+#{NAME} foo.rb:5     # List centered around line 5 of foo.rb
+#{NAME} foo.rb 5     # Same as above.
+#{NAME} foo.rb:5>    # List starting around line 5 of foo.rb
+#{NAME} foo.rb  5 6  # list lines 5 and 6 of foo.rb
+#{NAME} foo.rb  5 2  # Same as above, since 2 < 5.
+#{NAME} foo.rb:5 2   # Same as above
+#{NAME} FileUtils.cp # List lines around the FileUtils.cp function.
+#{NAME} .            # List lines centered from where we currently are stopped
+#{NAME} -            # List lines previous to those just shown
 
-The output of the list command give a line number, and some status
+The output of the #{NAME} command give a line number, and some status
 information about the line and the text of the line. Here is some 
-hypothetical list output modeled roughly around line 251 of one
+hypothetical #{NAME} output modeled roughly around line 251 of one
 version of this code:
 
   251    	  cmd.proc.frame_setup(tf)
@@ -74,12 +75,12 @@ version of this code:
 Line 251 has nothing special about it. Line 252 is where we are
 currently stopped. On line 253 there is a breakpoint 1 which is
 enabled, while at line 255 there is an breakpoint 2 which is
-disabled."
+disabled.
+    HELP
 
-    ALIASES       = %w(l list> l>)
+    ALIASES       = %W(l #{NAME}> l>)
     CATEGORY      = 'files'
     MAX_ARGS      = 3
-    NAME          = File.basename(__FILE__, '.rb')
     SHORT_HELP    = 'List source code'
   end
 
@@ -256,8 +257,7 @@ if __FILE__ == $0
     require_relative '../location'
     require_relative '../mock'
     require_relative '../frame'
-    name = File.basename(__FILE__, '.rb')
-    dbgr, cmd = MockDebugger::setup(name)
+    dbgr, cmd = MockDebugger::setup
     cmd.proc.send('frame_initialize')
     LineCache::cache(__FILE__)
     cmd.run(['list'])
@@ -296,19 +296,19 @@ if __FILE__ == $0
     run_cmd(cmd, %w(list Columnize.columnize))
 
     # Use Class/method name. 15 isn't in the function - should this be okay?
-    run_cmd(cmd, %w(list Columnize.columnize 15))
+    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 15))
 
     # Start line and count, since 3 < 30
-    run_cmd(cmd, %w(list Columnize.columnize 30 3))
+    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 30 3))
 
     # Start line finish line 
-    run_cmd(cmd, %w(list Columnize.columnize 40 50))
+    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 40 50))
 
     # puts '--' * 10
-    # cmd.run(['list', os.path.abspath(__file__)+':3', '4'])
+    # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '4'])
     # puts '--' * 10
-    # cmd.run(['list', os.path.abspath(__file__)+':3', '12-10'])
-    # cmd.run(['list', 'os.path:5'])
+    # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '12-10'])
+    # cmd.run([cmd.name, 'os.path:5'])
 
     require 'thread_frame'
     tf = RubyVM::ThreadFrame.current
@@ -316,12 +316,12 @@ if __FILE__ == $0
     brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
     brkpt_cmd.run(['break'])
     line = __LINE__
-    run_cmd(cmd, ['list', __LINE__.to_s])
+    run_cmd(cmd, [cmd.name, __LINE__.to_s])
 
     disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
     disable_cmd.run(['disable', '1'])
 
-    run_cmd(cmd, ['list', line.to_s])
-    run_cmd(cmd, %w(list parse_list_cmd))
+    run_cmd(cmd, [cmd.name, line.to_s])
+    run_cmd(cmd, %W(#{cmd.name} run_cmd))
   end
 end

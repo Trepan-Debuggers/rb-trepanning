@@ -9,19 +9,19 @@ class Trepan::Command::UpCommand < Trepan::Command
   # Silence already initialized constant .. warnings
   old_verbose = $VERBOSE  
   $VERBOSE    = nil
-  HELP        = 
-"u(p) [count]
+  NAME        = File.basename(__FILE__, '.rb')
+  HELP        = <<-HELP
+#{NAME} [count]
 
 Move the current frame up in the stack trace (to an older frame). 0 is
 the most recent frame. If no count is given, move up 1.
 
 See also 'down' and 'frame'.
-"
+  HELP
 
   ALIASES       = %w(u)
   CATEGORY      = 'stack'
   MAX_ARGS      = 1  # Need at most this many
-  NAME          = File.basename(__FILE__, '.rb')
   NEED_STACK    = true
   SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
   $VERBOSE      = old_verbose 
@@ -67,14 +67,13 @@ if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
 
   def sep ; puts '=' * 40 end
-  cmd.run [name]
+  cmd.run [cmd.name]
   %w(-1 0 1 -2).each do |count| 
-    puts "#{name} #{count}"
-    cmd.run([name, count])
+    puts "#{cmd.name} #{count}"
+    cmd.run([cmd.name, count])
     sep 
   end
   def foo(cmd, name)
@@ -88,5 +87,5 @@ if __FILE__ == $0
       sep 
     end
   end
-  foo(cmd, name)
+  foo(cmd, cmd.name)
 end

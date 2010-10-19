@@ -3,19 +3,22 @@ require_relative 'base/cmd'
 class Trepan::Command::ExitCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-      'exit [exitcode] - hard exit of the debugged program.  
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [exitcode] 
+
+hard exit of the debugged program.  
 
 The program being debugged is exited via exit!() which does not run
 the Kernel at_exit finalizers. If a return code is given, that is the
 return code passed to exit() - presumably the return code that will be
 passed back to the OS. If no exit code is given, 0 is used.
 
-See also the commands "quit" and "kill".'
+See also the commands "quit" and "kill".
+    HELP
 
     CATEGORY     = 'support'
     MAX_ARGS     = 2  # Need at most this many
-    NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = 'Exit program via "exit!"'
   end
 
@@ -46,9 +49,7 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  name = File.basename(__FILE__, '.rb')
-  fork { cmd.run([name]) }
-  cmd.run([name, '10'])
+  dbgr, cmd = MockDebugger::setup
+  fork { cmd.run([cmd.name]) }
+  cmd.run([cmd.name, '10'])
 end

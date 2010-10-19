@@ -50,12 +50,11 @@ end
         
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   cmdproc = dbgr.core.processor
-  ['macro foo Proc.new{|x, y| x+y}',
-   'macro bad x+1',
-   'macro bad2 1+2'].each do |cmdline|
+  ["#{cmd.name} foo Proc.new{|x, y| x+y}",
+   "#{cmd.name} bad x+1",
+   "#{cmd.name} bad2 1+2"].each do |cmdline|
     args = cmdline.split
     cmd_argstr = cmdline[args[0].size..-1].lstrip
     cmdproc.instance_variable_set('@cmd_argstr', cmd_argstr)

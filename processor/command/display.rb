@@ -5,8 +5,9 @@ require_relative 'base/cmd'
 class Trepan::Command::DisplayCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = <<EOH
-display [format] EXP
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{name} [format] EXP
  
 Print value of expression EXP each time the program stops.  FMT may be
 used before EXP and may be one of 'c' for char, 'x' for hex, 'o' for
@@ -21,10 +22,9 @@ case or not.
 With no argument, evaluate and display all currently requested
 auto-display expressions.  Use "undisplay" to cancel display
 requests previously made.
-EOH
+    HELP
     
     CATEGORY      = 'data'
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'Display expressions when entering debugger'
   end
@@ -62,8 +62,7 @@ if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
 
   def run_cmd(cmd, args)
     cmd.run(args)
@@ -72,10 +71,10 @@ if __FILE__ == $0
 
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
 
-  run_cmd(cmd, [name])
-  run_cmd(cmd, [name, '/x', '10'])
-  run_cmd(cmd, [name, 'd'])
-  run_cmd(cmd, [name])
+  run_cmd(cmd, [cmd.name])
+  run_cmd(cmd, [cmd.name, '/x', '10'])
+  run_cmd(cmd, [cmd.name, 'd'])
+  run_cmd(cmd, [cmd.name])
   e = 5
-  run_cmd(cmd, [name, 'e'])
+  run_cmd(cmd, [cmd.name, 'e'])
 end

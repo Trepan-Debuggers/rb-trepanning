@@ -54,7 +54,7 @@ Examples:
     opts[:count] = 
       if args.size > 1
         opts[:maxstack] = @proc.get_int(args[1], 
-                                       :cmdname   => 'where',
+                                       :cmdname   => self.name,
                                        :max_value => stack_size)
       else
         stack_size
@@ -73,23 +73,22 @@ if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
 
   def run_cmd(cmd, args)
     cmd.run(args)
     puts '=' * 40
   end
 
-  run_cmd(cmd, [name])
+  run_cmd(cmd, [cmd.name])
 
-  %w(1 100).each {|count| run_cmd(cmd, [name, count])}
+  %w(1 100).each {|count| run_cmd(cmd, [cmd.name, count])}
   cmd.settings[:basename] = true
   def foo(cmd, name)
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
-    run_cmd(cmd, [name])
+    run_cmd(cmd, [cmd.name])
   end
-  foo(cmd, name)
+  foo(cmd, cmd.name)
   cmd.settings[:show_pc] = true
-  1.times {run_cmd(cmd, [name])}
+  1.times {run_cmd(cmd, [cmd.name])}
 end

@@ -37,7 +37,11 @@ module MockDebugger
   end
 
   # Common Mock debugger setup 
-  def setup(name, show_constants=true)
+  def setup(name=nil, show_constants=true)
+    unless name
+      tf = RubyVM::ThreadFrame.current.prev
+      name = File.basename(tf.source_container[1], '.rb')
+    end
     if ARGV.size > 0 && ARGV[0] == 'debug'
       require_relative '../lib/trepanning'
       dbgr = Trepan.new
@@ -71,11 +75,13 @@ module MockDebugger
   def show_special_class_constants(cmd)
     puts 'ALIASES: %s' % [cmd.class.const_get('ALIASES').inspect] if
       cmd.class.constants.member?(:ALIASES)
-    %w(CATEGORY HELP MIN_ARGS MAX_ARGS 
+    %w(CATEGORY MIN_ARGS MAX_ARGS 
        NAME NEED_STACK SHORT_HELP).each do |name|
       puts '%s: %s' % [name, cmd.class.const_get(name).inspect]
     end
-    puts '- - -'
+    puts '-' * 30
+    puts cmd.class.const_get('HELP')
+    puts '=' * 30
   end
   module_function :show_special_class_constants
 

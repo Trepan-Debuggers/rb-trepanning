@@ -4,12 +4,16 @@ require_relative 'base/cmd'
 class Trepan::Command::SaveCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"Save settings to a file"
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [filename]
+
+Save settings to file FILENAME. If FILENAME not given one will be made
+selected.
+    HELP
 
     CATEGORY     = 'running'
     MAX_ARGS     = 1  # Need at most this many
-    NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = 'Send debugger state to a file'
   end
     
@@ -51,10 +55,9 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   require 'tmpdir'
-  cmd.run([name, Dir.tmpdir])
-  cmd.run([name])
-  cmd.run([name, File.join(Dir.tmpdir, 'save_file.txt')])
+  cmd.run([cmd.name, Dir.tmpdir])
+  cmd.run([cmd.name])
+  cmd.run([cmd.name, File.join(Dir.tmpdir, 'save_file.txt')])
 end

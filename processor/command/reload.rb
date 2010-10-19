@@ -3,10 +3,10 @@
 require_relative 'base/submgr'
 
 class Trepan::Command::ReloadCommand < Trepan::SubcommandMgr
+  NAME          = File.basename(__FILE__, '.rb')
   ALIASES       = %w(rel)
   HELP = 'Reload information'
   CATEGORY      = 'data'
-  NAME          = File.basename(__FILE__, '.rb')
   NEED_STACK    = false
   SHORT_HELP    = 'Reload information'
   def initialize(proc)
@@ -17,12 +17,11 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
 
   # require 'trepanning'
   # Trepan.debug(:set_restart => true)
   xx = Trepan::Command::ReloadCommand.new(cmd)
-  cmd.run([name])
-  cmd.run([name, 'command'])
+  cmd.run([cmd.name])
+  cmd.run([cmd.name, 'command'])
 end

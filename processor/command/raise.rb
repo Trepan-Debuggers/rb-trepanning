@@ -3,14 +3,16 @@ require_relative 'base/cmd'
 class Trepan::Command::RaiseCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"raise EXCEPTION
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [exception-name]
 
-Raise an exception in the debugged program."
+Raise an EXCEPTION-NAME in the debugged program. If no exception name
+is given, raise RuntimeError.
+    HELP
 
     CATEGORY     = 'running'
     MAX_ARGS     = 1  # Need at most this many
-    NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = 'Raise an exception in the debugged program'
   end
     
@@ -39,9 +41,8 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  puts cmd.run([name, 'NotanException'])
-  puts cmd.run([name, '[5]'])
-  puts cmd.run([name, 'RuntimeError'])
+  dbgr, cmd = MockDebugger::setup
+  puts cmd.run([cmd.name, 'NotanException'])
+  puts cmd.run([cmd.name, '[5]'])
+  puts cmd.run([cmd.name, 'RuntimeError'])
 end

@@ -6,8 +6,11 @@ require_relative '../../app/breakpoint'
 class Trepan::Command::DeleteCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-      'delete [bpnumber [bpnumber...]]  - Delete some breakpoints.
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [bpnumber [bpnumber...]]  
+
+Delete some breakpoints.
 
 Arguments are breakpoint numbers with spaces in between.  To delete
 all breakpoints, give no argument.  those breakpoints.  Without
@@ -15,10 +18,9 @@ argument, clear all breaks (but first ask confirmation).
     
 See also the "clear" command which clears breakpoints by line/file
 number.
-'
+    HELP
 
     CATEGORY      = 'breakpoints'
-    NAME          = File.basename(__FILE__, '.rb')
     SHORT_HELP    = 'Delete some breakpoints'
   end
   
@@ -40,15 +42,14 @@ end
         
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  cmd.run([name])
-  cmd.run([name, '1'])
+  dbgr, cmd = MockDebugger::setup
+  cmd.run([cmd.name])
+  cmd.run([cmd.name, '1'])
   cmdproc = dbgr.core.processor
   cmds = dbgr.core.processor.commands
   break_cmd = cmds['break']
   break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
   # require_relative '../../lib/trepanning'
   # Trepan.debug(:set_restart => true)
-  cmd.run([name, '1'])
+  cmd.run([cmd.name, '1'])
 end

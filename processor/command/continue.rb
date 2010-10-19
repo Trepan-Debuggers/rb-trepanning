@@ -5,8 +5,9 @@ require_relative '../../app/breakpoint' # FIXME: possibly temporary
 class Trepan::Command::ContinueCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-'continue [offset|line number]
+    NAME         = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [offset|line number]
 
 Leave the debugger loop and continue execution. Subsequent entry to
 the debugger however may occur via breakpoints or explicit calls, or
@@ -17,15 +18,14 @@ before continuing. Offset are numbers preficed with an "O" otherwise
 the parameter is taken as a line number.
 
 Examples:
-   continue
-   continue 10    # continue to line 10
-   continue o20   # continue to VM Instruction Sequence offset 20
-'
+   #{NAME}
+   #{NAME} 10    # continue to line 10
+   #{NAME} o20   # continue to VM Instruction Sequence offset 20
+    HELP
 
     ALIASES      = %w(c)
     CATEGORY     = 'running'
     MAX_ARGS     = 1  # Need at most this many
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_RUNNING = true
     SHORT_HELP   = 'Continue execution of debugged program'
   end
@@ -55,7 +55,6 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  p cmd.run([name])
+  dbgr, cmd = MockDebugger::setup
+  p cmd.run([cmd.name])
 end

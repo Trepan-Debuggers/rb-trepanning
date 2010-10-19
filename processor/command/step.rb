@@ -5,13 +5,14 @@ require_relative '../../app/condition'
 class Trepan::Command::StepCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP =
-"step[+|=|-|<|>|!|<>] [into] [EVENT-NAME...] [count]
-step until EXPRESSION
-step thread
-step to METHOD-NAME
-step over 
-step out
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME}[+|=|-|<|>|!|<>] [into] [EVENT-NAME...] [count]
+#{NAME} until EXPRESSION
+#{NAME} thread
+#{NAME} to METHOD-NAME
+#{NAME} over 
+#{NAME} out
 
 Execute the current line, stopping at the next event.  Sometimes this
 is called 'step into'.
@@ -37,23 +38,23 @@ If no suffix is given, the debugger setting 'different' determines
 this behavior.
 
 Examples: 
-  step        # step 1 event, *any* event obeying 'set different' setting
-  step 1      # same as above
-  step+       # same but force stopping on a new line
-  step=       # same but force stopping on a new line a new frame added
-  step-       # same but force stopping on a new line a new frame added
-  step 5/5+0  # same as above
-  step line   # step only line events
-  step call   # step only call call events
-  step>       # step call and C-call events
-  step<       # step only return and C-return events
-  step call line   # Step line *and* call events
-  step<>      # same as step call c-call return c-return 
-  step until a > b
-  step over   # same as 'next'
-  step out    # same as 'finish'
-  step thread # step stopping only in the current thread. Is the same
-              # as step until Thread.current.object_id == #object_id
+  #{NAME}        # step 1 event, *any* event obeying 'set different' setting
+  #{NAME} 1      # same as above
+  #{NAME}+       # same but force stopping on a new line
+  #{NAME}=       # same but force stopping on a new line a new frame added
+  #{NAME}-       # same but force stopping on a new line a new frame added
+  #{NAME} 5/5+0  # same as above
+  #{NAME} line   # step only line events
+  #{NAME} call   # step only call call events
+  #{NAME}>       # step call and c-call events
+  #{NAME}<       # step only return and c-return events
+  #{NAME} call line   # step line *and* call events
+  #{NAME}<>      # same as step call c-call return c-return 
+  #{NAME} until a > b
+  #{NAME} over   # same as 'next'
+  #{NAME} out    # same as 'finish'
+  #{NAME} thread # step stopping only in the current thread. Is the same
+                 # as step until Thread.current.object_id == #object_id
 
 Related and similar is the 'next' (step over) and 'finish' (step out)
 commands.  All of these are slower than running to a breakpoint.
@@ -61,12 +62,11 @@ commands.  All of these are slower than running to a breakpoint.
 See also the commands:
 'skip', 'jump' (there's no 'hop' yet), 'continue', 'return' and
 'finish' for other ways to progress execution.
-"
+    HELP
 
     ALIASES      = %w(s step+ step- step< step> step<> step! s> s< s+ s- 
                       s<> s! s=)
     CATEGORY     = 'running'
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_RUNNING = true
     SHORT_HELP   = 'Step program (possibly entering called functions)'
 
@@ -133,7 +133,6 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  p cmd.run([name])
+  dbgr, cmd = MockDebugger::setup
+  p cmd.run([cmd.name])
 end

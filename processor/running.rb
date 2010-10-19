@@ -28,8 +28,8 @@ class Trepan
       @leave_cmd_loop  = true  # Break out of the processor command loop.
     end
 
-    # Does whatever needs to be done to set to "next" program
-    # execution.
+    # Does whatever setup needs to be done to set to ignore stepping
+    # to the finish of the current method.
     def finish(level_count=0, opts={})
       step(0, opts)
       @next_level        = @frame.stack_size - level_count
@@ -40,8 +40,12 @@ class Trepan
       @frame.trace_off   = true  # No more tracing in this frame
       @frame.return_stop = true  # don't need to 
     end
-    # Does whatever needs to be done to set to "next" program
-    # execution.
+
+    # Does whatever needs to be done to set to do "step over" or ignore
+    # stepping into methods called from this stack but step into any in 
+    # the same level. We do this by keeping track of the number of
+    # stack frames and the current thread. Elsewhere in "skipping_step?"
+    # we do the checking.
     def next(step_count=1, opts={})
       step(step_count, opts)
       @next_level      = @top_frame.stack_size
