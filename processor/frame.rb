@@ -10,7 +10,7 @@ class Trepan
     # ThreadFrame, current frame
     attr_accessor :frame
 
-    # frame index in a "where" command
+    # frame index in a "backtrace" command
     attr_accessor :frame_index
     attr_accessor :hide_level
 
@@ -22,11 +22,13 @@ class Trepan
     # level. The default or showing all levels is 0.
     attr_accessor :hidelevels      
 
-    # Hash[container] -> file container Gives us a way to map non-file
+    # Hash[container] -> file container. This gives us a way to map non-file
     # container objects to a file container for display.
-    attr_accessor :remap_iseq      # Hash[iseq] -> file container
-
     attr_accessor :remap_container
+
+    # Hash[iseq] -> file container. This gives as a way to map instruction
+    # sequences to a file container for display.
+    attr_accessor :remap_iseq      
 
     # top frame of current thread. Since right now the ThreadFrame
     # method has "prev" but no way to move in the other direction.  So
