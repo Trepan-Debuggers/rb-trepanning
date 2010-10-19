@@ -1,3 +1,148 @@
+2010-10-19  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+	Conflicts: 	processor/command/finish.rb
+
+2010-10-19  rocky <rockyb@rubyforge.org>
+
+	* .gitignore, app/frame.rb, lib/trepanning.rb,
+	processor/command/alias.rb, processor/command/backtrace.rb,
+	processor/command/break.rb, processor/command/continue.rb,
+	processor/command/directory.rb, processor/command/exit.rb,
+	processor/command/finish.rb, processor/command/help.rb,
+	processor/command/irb.rb, processor/command/kill.rb,
+	processor/command/next.rb, processor/command/nocache.rb,
+	processor/command/quit.rb, processor/command/raise.rb,
+	processor/command/restart.rb, processor/command/save.rb,
+	processor/frame.rb, processor/main.rb,
+	test/functional/test-fn_helper.rb: Add test of test-fn_helper.rb
+	Appease the RDoc God.
+
+2010-10-18  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/debug_subcmd/skip.rb,
+	processor/running.rb: Minor stuff
+
+2010-10-17  rocky <rockyb@rubyforge.org>
+
+	* processor/command/next.rb: Use of NAME rather than hardcoding
+	'next'.
+
+2010-10-16  rocky <rockyb@rubyforge.org>
+
+	* test/unit/test-cmd-help.rb: Reinstate expect message on assert
+
+2010-10-16  rocky <rockyb@rubyforge.org>
+
+	* processor/command/backtrace.rb, processor/mock.rb,
+	test/unit/test-cmd-help.rb: One more use of self.name
+
+2010-10-16  rocky <rockyb@rubyforge.org>
+
+	* processor/command/down.rb, processor/command/exit.rb,
+	processor/command/next.rb, processor/command/pr.rb,
+	processor/command/ps.rb, processor/command/raise.rb,
+	processor/command/reload.rb, processor/command/restart.rb,
+	processor/command/up.rb: Remove extraneous name setting and using
+	#{NAME} in help, part 2.
+
+2010-10-16  rocky <rockyb@rubyforge.org>
+
+	* processor/command/alias.rb, processor/command/delete.rb,
+	processor/command/disable.rb, processor/command/disassemble.rb,
+	processor/command/display.rb, processor/command/enable.rb,
+	processor/command/frame.rb, processor/command/help.rb,
+	processor/command/info.rb, processor/command/kill.rb,
+	processor/command/list.rb, processor/command/macro.rb,
+	processor/command/nocache.rb, processor/command/quit.rb,
+	processor/command/save.rb, processor/command/set.rb,
+	processor/command/show.rb, processor/command/step.rb,
+	processor/command/unalias.rb, processor/command/undisplay.rb: DRY
+	command demo code and use #{NAME} in help code. (Part 1 of 2)
+
+2010-10-16  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-10-16  rocky <rockyb@rubyforge.org>
+
+	* processor/command/backtrace.rb, processor/command/base/cmd.rb,
+	processor/command/break.rb, processor/command/condition.rb,
+	processor/command/continue.rb, processor/command/debug.rb,
+	processor/command/finish.rb, processor/command/irb.rb,
+	processor/command/source.rb: Add Trepan::Command#name and dry code
+	with it.
+
+2010-10-14  rocky <rockyb@rubyforge.org>
+
+	* processor/command/pr.rb: Add reference to "set max string" for
+	"pr" command.
+
+2010-10-14  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-10-14  rocky <rockyb@rubyforge.org>
+
+	* processor/command/pr.rb, processor/command/print.rb,
+	processor/running.rb, test/functional/test-raise.rb,
+	test/functional/test-return.rb, test/unit/test-proc-main.rb: 
+	debugger "print" (print truncating long output) renamed to "pr"
+	since p and print are both Ruby commands. running.rb: Typo |= -> ||=
+
+
+2010-10-13  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-10-13  rocky <rockyb@rubyforge.org>
+
+	* app/irb.rb, data/irbrc, processor/command/irb.rb: Keep in sync
+	with rbx-trepanning.
+
+2010-10-13  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/debug_subcmd/dbgr.rb,
+	processor/command/show_subcmd/debug_subcmd/dbgr.rb: A couple more
+	uses of NAME
+
+2010-10-13  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/subcmd.rb,
+	processor/command/base/submgr.rb,
+	processor/command/show_subcmd/alias.rb,
+	processor/command/show_subcmd/args.rb,
+	processor/command/show_subcmd/auto.rb,
+	processor/command/show_subcmd/basename.rb,
+	processor/command/show_subcmd/debug.rb,
+	processor/command/show_subcmd/different.rb,
+	processor/command/show_subcmd/events.rb,
+	processor/command/show_subcmd/macro.rb,
+	processor/command/show_subcmd/max.rb,
+	processor/command/show_subcmd/trace.rb,
+	test/unit/test-base-subcmd.rb: First attempt to compute NAME and
+	PREFIX on subcommands. Not entirely successful though.
+
+2010-10-12  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-10-12  rocky <rockyb@rubyforge.org>
+
+	* processor/frame.rb, test/unit/test-proc-frame.rb: A little cleaner
+	I think due to sync with rbx-trepanning.
+
+2010-10-11  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-10-10  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, ChangeLog, NEWS, Rakefile, lib/trepanning.rb: Rakefile:
+	remove weird self-modifying double loop lib/trepanning.rb: now in
+	0.0.5.git .gemspec: Add add for rbx-trepanning NEWS: forgot to
+	commit from before.
+
 2010-10-08  rocky <rockyb@rubyforge.org>
 
 	* README.textile: Update install link.
@@ -41,6 +186,10 @@
 	processor/command/set_subcmd/max_subcmd/.gitignore,
 	test/unit/test-app-brkptmgr.rb: Small things to sync up with
 	rbx-trepanning
+
+2010-10-05  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
 
 2010-10-05  rocky <rockyb@rubyforge.org>
 
@@ -107,7 +256,19 @@
 
 2010-09-28  rocky <rockyb@rubyforge.org>
 
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-09-28  rocky <rockyb@rubyforge.org>
+
 	* lib/trepanning.rb, processor/eval.rb: Add VERSION number
+
+2010-09-28  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-09-28  rocky <rockyb@rubyforge.org>
+
+	* processor/command/source.rb, processor/eval.rb: Small tweaks
 
 2010-09-27  rocky <rockyb@rubyforge.org>
 

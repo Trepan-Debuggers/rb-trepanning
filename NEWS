@@ -1,3 +1,8 @@
+* Add gdb directory command - this time for sure!
+* Debugger "print" comamnd rename to "pr" to avoid conflict with Ruby fns
+ "p" and "print" (when autoeval is in effect)
+* RDoc concessions in some comments
+
 Oct 8, 2010
 First release under the name trepanning
 
@@ -5,6 +10,7 @@ First release under the name trepanning
 * Add "set max list" to set number of lines to list by default.
 * "break line" searches parent instruction sequences in the same file. This 
   should allow more line numbers to be breakpointable.
+* remap file name in custom_requre.rb
 * Some small bug fixes
   
 Sept 13, 2010
