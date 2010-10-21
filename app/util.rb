@@ -1,18 +1,11 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+
 class Trepan
   module Util
 
-    def safe_repr(str, max, suffix='...')
+    def safe_repr(str, max, elipsis='... ')
       if str.is_a?(String) && str.size > max && !str.index("\n")
-        char = str[0..0]
-        opt_quote = 
-          if '"' == char || "'" == char
-            max -= 1
-            char
-          else
-            ''
-          end
-        "%s%s%s" % [ str[0...max], opt_quote, suffix ]
+        "%s%s%s" % [ str[0...max/2], elipsis,  str[str.size-max/2..str.size]]
       else
         str
       end
