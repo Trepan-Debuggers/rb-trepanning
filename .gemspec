@@ -22,7 +22,6 @@ FILES = FileList[
   'test/**/*.rb',
 ]                        
 
-
 Gem::Specification.new do |spec|
   spec.authors      = ['R. Bernstein']
   spec.date         = Time.now
