@@ -15,10 +15,14 @@ class Trepan
       :debugexcept   => true,      # Internal debugging of command exceptions
       :debugmacro    => false,     # debugging macros
       :debugskip     => false,     # Internal debugging of step/next skipping
-      :debugstack    => false,     # How hidden outer debugger stack frames
       :directory     =>            # last-resort path-search for files
                     '$cdir:$cwd',  # that are not fully qualified.
 
+      :hidestack     => nil,       # Fixnum. How many hidden outer
+                                   # debugger stack frames to hide?
+                                   # nil or -1 means compute value. 0
+                                   # means hide none. Less than 0 means show
+                                   # all stack entries.
       :maxlist       => 10,        # Number of source lines to list 
       :maxstack      => 10,        # backtrace limit
       :maxstring     => 150,       # Strings which are larger than this
