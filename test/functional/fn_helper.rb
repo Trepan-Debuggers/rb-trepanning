@@ -82,15 +82,25 @@ module FnTestHelper
       s =~ TREPAN_LOC ? s.gsub(/\(.+:\d+\)\n/, '').chomp : s.chomp
     end
 
+    # Canonicalize breakpoint messages. 
+    # For example: 
+    #   Set breakpoint 1: test/functional/test-tbreak.rb:10 (@0)
+    # becomes :
+    #   Set breakpoint 1: foo.rb:55 (@3)
+    a3 = a2.map do |s|
+      s.gsub(/^Breakpoint (\d+) set at line (\d+) in file .+,/, 
+             'Breakpoint \1 set at line 55 in file foo.rb,')
+    end
+
     # Remove VM offset locations. 
     # For example: 
     #	VM offset 2 of instruction sequence "block in compare_output".
     # becomes 
     #   VM offset 55 of instruction sequence "block in compare_output".
-    a3 = a2.map do |s|
+    a4 = a3.map do |s|
       s.gsub(/VM offset \d+/, 'VM offset 55')
     end
-    return a3
+    return a4
   end
 
 end

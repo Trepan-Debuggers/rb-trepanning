@@ -1,87 +1,49 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
-require_relative '../../app/breakpoint'
 
-class TestBreak < Test::Unit::TestCase
+class TestBreak2 < Test::Unit::TestCase
 
   include FnTestHelper
 
-  def setup
-    Trepanning::Breakpoint::reset
+  def test_line_only_break
+    # Check that we can set breakpoints in parent, sibling and children
+    # of sibling returns. We have one more 'continue' than we need
+    # just in case something goes wrong.
+    cmds_pat = ((['break %d'] * 3) + (%w(continue) * 4)).join("\n")
+    line = __LINE__
+    cmds = (cmds_pat % [line, line+11, line+14]).split(/\n/)
+    d = strarray_setup(cmds)
+    ##############################
+    def foo      # line +  4  
+      a = 5      # line +  5
+      b = 6      # line +  6
+    end          # line +  7
+    1.times do   # line +  8 
+      d.start    # line +  9
+      1.times do # line + 10
+        x = 11   # line + 11
+        foo      # line + 12
+      end        # line + 13
+      c = 14     # line + 14
+    end
+    ##############################
+    d.stop # ({:remove => true})
+    out = ["-- ",
+           "1.times do # line + 10",
+           "Breakpoint 1 set at line 55 in file foo.rb,
+\tVM offset 55 of instruction sequence \"test_line_only_break\".",
+           "Breakpoint 2 set at line 55 in file foo.rb,
+\tVM offset 55 of instruction sequence \"block (2 levels) in test_line_only_break\".",
+           "Breakpoint 3 set at line 55 in file foo.rb,
+\tVM offset 55 of instruction sequence \"block in test_line_only_break\".",
+           "xx ",
+           "x = 11   # line + 11",
+           "xx ",
+           "c = 14     # line + 14"]
+    compare_output(out, d, cmds)
   end
 
-  def test_break_same_level
-
-    # See that we can stop at a breakpoint
-    cmds = ['set basename on',
-            'break ' + (__LINE__ + 7).to_s, 
-            'continue']
-    d = strarray_setup(cmds)
-    d.start
-    ########### b1 ###############
-    x = 5
-    y = 6
-    z = 7
-    ##############################
-    d.stop
-    out = ['-- ',
-           'x = 5',
-           'basename is on.',
-           "Breakpoint 1 set at line 26 in file test-break.rb,\n" + 
-           "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
-           'xx ',
-           'z = 7']
-    compare_output(out, d, cmds)
-
-    # Try a disabling the breakpoint
-    cmds = ['set basename on',
-            'break ' + (__LINE__ + 8).to_s, 
-            'break ' + (__LINE__ + 8).to_s, 
-            'disable 1',
-            'continue']
-    d = strarray_setup(cmds)
-    d.start
-    ########### b2 ###############
-    x = 7
-    y = 8
-    z = 8+1
-    ##############################
-    d.stop
-    out = ['-- ',
-           'x = 7',
-           'basename is on.',
-           "Breakpoint 1 set at line 48 in file test-break.rb,\n" + 
-           "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
-           "Breakpoint 2 set at line 49 in file test-break.rb,\n" + 
-           "\tVM offset 55 of instruction sequence \"test_break_same_level\".",
-           "Breakpoint 1 disabled.",
-           'xx ',
-           'z = 8+1']
-    compare_output(out, d, cmds)
-
-    # Stepping after a breakpoint should not stay at same location.
-    cmds = ['set basename on',
-            'continue ' + (__LINE__ + 8).to_s, 
-            'continue']
-    dbg = strarray_setup(cmds)
-    dbg.start
-    ########### b3 ###############
-    a = 1
-    b = 2
-    c = 3
-    d = 4
-    e = 5
-    ##############################
-    dbg.stop
-    out = ['-- ',
-           'a = 1',
-           'basename is on.',
-           'xx ',
-           'd = 4' ]
-    compare_output(out, dbg, cmds)
-  end
-    
 end
+
 
