@@ -1,9 +1,6 @@
 #!/usr/bin/env rake
 # -*- Ruby -*-
 require 'rubygems'
-require 'rake/gempackagetask'
-require 'rake/rdoctask'
-require 'rake/testtask'
 
 ROOT_DIR = File.dirname(__FILE__)
 require File.join %W(#{ROOT_DIR} app options)
@@ -12,6 +9,7 @@ def gemspec
   @gemspec ||= eval(File.read('.gemspec'), binding, '.gemspec')
 end
 
+require 'rake/gempackagetask'
 desc "Build the gem"
 task :package=>:gem
 task :gem=>:gemspec do
@@ -29,6 +27,7 @@ task :install => :gem do
   end
 end
 
+require 'rake/testtask'
 desc "Test everything."
 Rake::TestTask.new(:test) do |t|
   t.libs << './lib'
@@ -142,6 +141,7 @@ task :gemspec do
 end
 
 # ---------  RDoc Documentation ------
+require 'rake/rdoctask'
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'

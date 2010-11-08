@@ -154,8 +154,7 @@ class Trepan
     # Parse a breakpoint position. Return
     # - the position - a Fixnum
     # - the instruction sequence to use
-    # - whether the postion is an offset or a line number
-    # - the condition (by default 'true') to use for this breakpoint
+    # - whether the position is an offset or a line number
     # - the condition (by default 'true') to use for this breakpoint
     def breakpoint_position(args)
       first = args.shift

@@ -1,7 +1,11 @@
+Oct 27, 2010 (0.0.6)
+
 * Add gdb directory command - this time for sure!
-* Debugger "print" comamnd rename to "pr" to avoid conflict with Ruby fns
+* Debugger "print" command rename to "pr" to avoid conflict with Ruby fns
  "p" and "print" (when autoeval is in effect)
 * RDoc concessions in some comments
+* "break" command looks up line in file better
+* Numerous bugfixes and code refactoring.
 
 Oct 8, 2010
 First release under the name trepanning

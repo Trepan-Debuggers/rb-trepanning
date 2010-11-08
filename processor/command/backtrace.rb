@@ -39,9 +39,10 @@ Examples:
       return false
     end
     hide_level  = 
-      if !settings[:debugstack] && @proc.hidelevels[Thread.current] 
+      if (!settings[:hidelevel] || settings[:hidelevel] < 0) && 
+          @proc.hidelevels[Thread.current] 
         @proc.hidelevels[Thread.current] 
-      else 0 
+      else settings[:hidelevel]
       end
     stack_size = @proc.top_frame.stack_size - hide_level
     opts = {
