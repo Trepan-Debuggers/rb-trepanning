@@ -30,26 +30,12 @@ if defined?($trepan_cmdproc) && $trepan_cmdproc
    puts 'You should have access to the command processor via global variable $trepan_cmdproc'
 end
 
-# Monkeypatch to save the current IRB statement to be run and make the instruction sequence
-# "filename" unique. Possibly not needed.
+# Monkeypatch to save the current IRB statement to be run.
 class IRB::Context
+  alias_method :_trepan_original_evaluate, :evaluate
   def evaluate(line, line_no)
     $trepan_irb_statements = line
-    @line_no = line_no
-    @eval_counter ||= 0
-    container = 
-      if irb_path =~ /\((.+)\)/
-        # Note we originally had a colon below. This causes IRB to think
-        # tracebacks are IRB bugs since the regexp matching it uses here
-        # is now messed up. (irb:5): in ... vs (irb): in ...
-        "(#{$1}[#{@eval_counter}])" 
-      else
-        irb_path
-      end
-    set_last_value(@workspace.evaluate(self, line, container, line_no))
-#    @workspace.evaluate("_ = IRB.conf[:MAIN_CONTEXT]._")
-#    @_ = @workspace.evaluate(line, irb_path, line_no)
-    @eval_counter += 1
+    _trepan_original_evaluate(line, line_no)
   end
 end
 
