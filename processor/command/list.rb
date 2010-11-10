@@ -5,7 +5,7 @@ require_relative 'base/cmd'
 
 class Trepan::Command::ListCommand < Trepan::Command
   unless defined?(HELP)
-    NAME          = File.basename(__FILE__, '.rb')
+    NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
 #{NAME}[>] [MODULE] [FIRST [NUM]]
 #{NAME}[>] LOCATION [NUM]
@@ -19,7 +19,7 @@ frame. If a subsequent #{NAME} command was issued with no intervening
 frame changing, then that is start the line after we last one
 previously shown.
 
-If the command has a '>' suffix, then lines centering is disabled and
+If the command has a '>' suffix, then line centering is disabled and
 listing begins at the specificed location.
 
 The number of line to show is controled by the debugger listsize
@@ -59,6 +59,8 @@ Some examples:
 #{NAME} foo.rb:5 2   # Same as above
 #{NAME} FileUtils.cp # List lines around the FileUtils.cp function.
 #{NAME} .            # List lines centered from where we currently are stopped
+#{NAME} . 3          # List 3 lines starting from where we currently are stopped
+                     # if . > 3. Otherwise we list from . to 3.
 #{NAME} -            # List lines previous to those just shown
 
 The output of the #{NAME} command give a line number, and some status
@@ -82,6 +84,12 @@ disabled.
     CATEGORY      = 'files'
     MAX_ARGS      = 3
     SHORT_HELP    = 'List source code'
+  end
+
+  # If last is less than first, assume last is a count rather than an
+  # end line number.
+  def adjust_last(first, last)
+    last < first ? first + last - 1 : last
   end
 
   # What a f*cking mess. Necessitated I suppose because we want to 
@@ -122,7 +130,20 @@ disabled.
         first = [1, @proc.line_no - 2*listsize - 1].max
       elsif args[0] == '.'
         return no_frame_msg unless @proc.line_no
-        first = [1, @proc.frame_line - center_correction].max
+        if args.size == 2
+          opts = {
+            :msg_on_error => 
+            "#{NAME} command last or count parameter expected, " +
+            'got: %s.' % args[2]
+          }
+          second = @proc.get_an_int(args[1], opts)
+          return nil, nil, nil unless second
+          first = @proc.frame_line 
+          last = adjust_last(first, second)
+        else
+          first = [1, @proc.frame_line - center_correction].max
+        end
+
       else
         modfunc, container, first = @proc.parse_position(args[0])
         if first == nil and modfunc == nil
@@ -135,29 +156,23 @@ disabled.
         elsif args.size == 2 or (args.size == 3 and modfunc)
           opts = {
             :msg_on_error => 
-            'Starting line expected, got %s.' % args[-1]
+            "#{NAME} command starting line expected, got %s." % args[-1]
           }
-          num = @proc.get_an_int(args[1], opts)
-
-          return nil, nil, nil unless num 
+          last = @proc.get_an_int(args[1], opts)
+          return nil, nil, nil unless last
           if modfunc
             if first
-              first = num
+              first = last
               if args.size == 3 and modfunc
-                opts[:msg_on_error] = ('last or count parameter expected, ' +
-                                       'got: %s.' % args[2])
+                opts[:msg_on_error] = 
+                  ("#{NAME} command last or count parameter expected, " +
+                   'got: %s.' % args[2])
                 last = @proc.get_an_int(args[2], opts)
+                return nil, nil, nil unless last
               end
-            else
-              last = num
             end
-          else
-            first = num - center_correction
           end
-          if last and last < first
-            # Assume last is a count rather than an end line number
-            last = first + last - 1
-          end
+          last = adjust_last(first, last)
         elsif not modfunc
           errmsg('At most 2 parameters allowed when no module' +
                   ' name is found/given. Saw: %d parameters' % args.size)
@@ -168,8 +183,8 @@ disabled.
           return nil, nil, nil
         end
       end
-    elsif !@proc.line_no and frame
-      first = [1, @proc.frame_line - center_correction].max
+    elsif !@proc.line_no and @proc.frame
+      first = [1, @proc.frame.line - center_correction].max
     else
       first = [1, @proc.line_no - center_correction].max 
     end

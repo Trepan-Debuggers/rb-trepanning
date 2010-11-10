@@ -18,7 +18,7 @@ reduce the number of stack frames. Also, if a thread is switched, we
 stop ignoring levels.
 
 'next>' is similar in that it stops at a return, but it doesn't
-guarentee the stack level is the same as or less than the current
+guarantee the stack level is the same as or less than the current
 one. 
 
 See the break command if you want to stop at a particular point in a
@@ -32,7 +32,7 @@ while 'break' will have less overhead.
     # Need at most this many. 
     MAX_ARGS     = 1   
     NEED_STACK   = true
-    SHORT_HELP   = 'Step program without entering called functions'
+    SHORT_HELP   = 'Step to end of current method (step out)'
   end
 
   # This method runs the command
@@ -45,7 +45,7 @@ while 'break' will have less overhead.
       count_str = args[1]
       opts = {
         :msg_on_error => 
-        "The 'next' command argument must eval to an integer. Got: %s" % 
+        "The '#{NAME}' command argument must eval to an integer. Got: %s" % 
         count_str,
         :min_value => 1
       }

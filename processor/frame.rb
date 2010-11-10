@@ -230,6 +230,7 @@ if __FILE__ == $0
   proc.adjust_frame(0, true)
   puts '*' * 10
   proc.top_frame.stack_size.times { proc.adjust_frame(1, false) }
+  puts '*' * 10
   proc.adjust_frame(proc.top_frame.stack_size-1, true)
   proc.top_frame.stack_size.times { proc.adjust_frame(-1, false) }
     
