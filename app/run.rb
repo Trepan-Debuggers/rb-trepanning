@@ -46,23 +46,6 @@ module Trepanning
     untrace_var(:$0, dollar_0_tracker)
   end
 
-  # Return an ARRAY which makes explicit what array is needed to pass
-  # to system() to reinvoke this debugger using the same Ruby
-  # interpreter.  Therefore, We want to the full path of both the Ruby
-  # interpreter and the debugger file ($0). We do this so as not to
-  # rely on an OS search lookup and/or the current working directory
-  # not getting changed from the initial invocation.
-  #
-  #    Hmmm, perhaps it is better to also save the initial working
-  #    directory? Yes, but on the other hand we can't assume that it 
-  #    still exists so we might still need to have the full paths.
-  # 
-  # It is the caller's responsibility to ensure that argv is the same
-  # as ARGV when the debugger was invokes.
-  def explicit_restart_argv(argv)
-    [ruby_path, File.expand_path($0)] + argv
-  end
-
   # Path name of Ruby interpreter we were invoked with.
   def ruby_path
     File.join(%w(bindir RUBY_INSTALL_NAME).map{|k| RbConfig::CONFIG[k]})
@@ -91,5 +74,4 @@ if __FILE__ == $0
   puts whence_file('irb')
   puts whence_file('probably-does-not-exist')
   puts ruby_path
-  p explicit_restart_argv(ARGV)
 end

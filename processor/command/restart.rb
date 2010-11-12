@@ -25,20 +25,19 @@ new copy of the debugger is used.
     dbgr = @proc.dbgr
     argv = dbgr.restart_argv
     if argv and argv.size > 0
-      unless File.executable?(argv[0])
-        msg(["File #{argv[0]} not executable.",
-             "Adding Ruby interpreter."])
-        argv.unshift Trepanning::ruby_path
-      end
+      # unless File.executable?(argv[0])
+      #   msg(["File #{argv[0]} not executable.",
+      #        "Adding Ruby interpreter."])
+      #   argv.unshift Trepanning::ruby_path
+      # end
       @proc.run_cmd(%w(show args))
       if not confirm('Restart (exec)?', false)
         msg "Restart not confirmed"
       else
         msg 'Restarting...'
         @proc.run_cmd(%w(save))
-        argv.unshift
         # FIXME: Run atexit finalize routines?
-        Dir.chdir(dbgr.initial_dir) if dbgr.initial_dir
+        Dir.chdir(RubyVM::OS_STARTUP_DIR)
         exec(*argv)
       end
     else
@@ -48,11 +47,11 @@ new copy of the debugger is used.
 end
 
 if __FILE__ == $0
-  exit if ARGV[0] == 'exit'
+  exit if ARGV[-1] == 'exit'
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   dbgr.restart_argv = []
   cmd.run([cmd.name])
-  dbgr.restart_argv = [File.expand_path($0), 'exit']
+  dbgr.restart_argv = RubyVM::OS_ARGV + ['exit']
   cmd.run([cmd.name])
 end

@@ -17,7 +17,7 @@ class Trepan
           if '$cwd' == dir
             Dir.pwd
           elsif '$cdir' == dir
-            @dbgr.initial_dir
+            RubyVM::OS_STARTUP_DIR
           else
             dir
           end

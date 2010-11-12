@@ -12,16 +12,17 @@ module Trepanning
     :cmdproc_opts    => {},    # Default Trepan::CmdProcessor settings
     :core_opts       => {},    # Default Trepan::Core settings
     :delete_restore  => true,  # Delete restore profile after reading? 
-    :initial_dir     => nil,   # Current directory run when "restart" is given
-    :nx              => false, # Don't run user startup file (e.g. .rbdbgrc)
-    :restart_argv    => [],    # Command run when "restart" is given
+    :initial_dir     => nil,   # If --cd option was given, we save it here.
+    :nx              => false, # Don't run user startup file (e.g. .trepanrc)
+    :restart_argv    => RubyVM::OS_ARGV,
+                               # Command run when "restart" is given.
     :restore_profile => nil    # Profile used to set/restore debugger state
   } unless defined?(DEFAULT_SETTINGS)
 
   # Default settings for Trepan run from the command line.
   DEFAULT_CMDLINE_SETTINGS = {
     :cmdfiles => [],  # Initialization command files to run
-    :nx       => false, # Don't run user startup file (e.g. .rbdbgrc)
+    :nx       => false, # Don't run user startup file (e.g. .trepanrc)
     :output   => nil,
   } unless defined?(DEFAULT_CMDLINE_SETTINGS)
 
