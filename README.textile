@@ -32,15 +32,9 @@ bc.  require 'trepan'
  Trepan.debug # Don't stop here...
  work # but stop here.
 
-or if you haven't mucked around with $0 and ARGV, you might try:
-
-bc.  Trepan.debug(:set_restart=>true)
-
-which informs the debugger on how to restart the program (via the restart command) using the values of ARGV and $0 at the time Trepan.debug was called.
-
 The above is really shorthand for something like:
 
-bc.  $trepan = Trepan.new(:set_restart=>true) 
+bc.  $trepan = Trepan.new
  $trepan.debugger
 
 The global variable $trepan set holds debugger settings, such as "autolist" or "autoeval" settings and breakpoint information.
