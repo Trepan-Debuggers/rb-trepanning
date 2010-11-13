@@ -60,15 +60,17 @@ class Trepan
     attr_reader   :output
     def initialize(out, opts={})
       @output = out
+      @eof    = false
       @flush_after_write = false
     end
 
     def close
       @output.close if @output
+      @eof = true
     end
 
     def eof? 
-      @input.eof?
+      @eof
     end
 
     def flush

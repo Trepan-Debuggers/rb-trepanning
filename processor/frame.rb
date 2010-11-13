@@ -45,7 +45,7 @@ class Trepan
         @frame = frame
         @frame_index = frame_num
         frame_eval_remap if 'EVAL' == @frame.type
-        print_location
+        print_location unless @settings[:traceprint]
         @line_no = frame_line() - 1
         @frame
       else

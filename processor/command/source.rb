@@ -10,7 +10,7 @@ class Trepan::Command::SourceCommand < Trepan::Command
   unless defined?(HELP)
     NAME         = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [-v][-Y|-N][-c] FILE
+#{NAME} [-v][-Y|-N][-c][q] FILE
 
 Read debugger commands from a file named FILE.  Optional -v switch
 (before the filename) causes each command in FILE to be echoed as it
@@ -33,6 +33,8 @@ unless option -c is given.
     verbose = false
     parms   = args[1..-1]
     opts    = {}
+    intf = @proc.dbgr.intf
+    output  = intf[-1].output
     parms.each do |arg|
       case arg
       when '-v'
@@ -43,6 +45,8 @@ unless option -c is given.
         opts[:confirm_val]    = false
       when '-c'
         opts[:abort_on_error] = false
+      when '-q'
+        output = Trepan::OutputNull.new(nil)
       end
     end
     
@@ -55,10 +59,7 @@ unless option -c is given.
     end
     
     # Push a new debugger interface.
-    intf = @proc.dbgr.intf
-    script_intf = Trepan::ScriptInterface.new(expanded_file,
-                                              intf[-1].output,
-                                              opts)
+    script_intf = Trepan::ScriptInterface.new(expanded_file, output, opts)
     intf << script_intf
     return false
   end

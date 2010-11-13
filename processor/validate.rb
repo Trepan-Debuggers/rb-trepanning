@@ -344,11 +344,15 @@ if __FILE__ == $0
   else    
     require 'thread_frame'
     require_relative '../app/mock'
+    require_relative './default'
+    require_relative 'frame'
     require_relative 'main' # Have to include before defining CmdProcessor!
                             # FIXME
 
     proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
-    proc.settings[:directory] = '$cwd'
+    proc.frame_initialize
+    proc.instance_variable_set('@settings', 
+                               Trepan::CmdProcessor::DEFAULT_SETTINGS)
     proc.frame_setup(RubyVM::ThreadFrame.current)
     onoff = %w(1 0 on off)
     onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }

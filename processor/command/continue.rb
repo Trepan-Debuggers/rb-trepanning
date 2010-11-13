@@ -14,7 +14,7 @@ the debugger however may occur via breakpoints or explicit calls, or
 exceptions.
 
 If a parameter is given, a temporary breakpoint is set at that position
-before continuing. Offset are numbers preficed with an "O" otherwise
+before continuing. Offset are numbers prefixed with an "O" otherwise
 the parameter is taken as a line number.
 
 Examples:
@@ -23,7 +23,7 @@ Examples:
    #{NAME} o20   # continue to VM Instruction Sequence offset 20
     HELP
 
-    ALIASES      = %w(c)
+    ALIASES      = %w(c cont)
     CATEGORY     = 'running'
     MAX_ARGS     = 1  # Need at most this many
     NEED_RUNNING = true

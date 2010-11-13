@@ -12,7 +12,7 @@ class Trepan
     end
 
     def resolve_file_with_dir(path_suffix)
-      settings[:directory].split(/:/).each do |dir|
+      @settings[:directory].split(/:/).each do |dir|
         dir = 
           if '$cwd' == dir
             Dir.pwd

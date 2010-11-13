@@ -18,7 +18,6 @@ if __FILE__ == $0
   set_cmd = cmds['set']
   command = Trepan::SubSubcommand::SetAuto.new(dbgr.core.processor, 
                                                set_cmd)
-  name = File.basename(__FILE__, '.rb')
   cmd_args = ['set', name]
   set_cmd.instance_variable_set('@last_args', cmd_args)
   # require_relative '../../../lib/trepanning'
