@@ -50,7 +50,7 @@ EOF
   spec.license      = 'MIT'
   spec.platform     = Gem::Platform::RUBY
   spec.require_path = 'lib'
-  spec.required_ruby_version = '= 1.9.2'
+  spec.required_ruby_version = '~> 1.9.2'
   spec.summary      = 'Modular Ruby 1.9.2 Debugger'
   spec.version      = Trepan::VERSION
 
