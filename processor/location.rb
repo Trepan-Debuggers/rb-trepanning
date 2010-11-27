@@ -48,7 +48,12 @@ class Trepan
     end
 
     def loc_and_text(loc, frame, line_no, source_container)
-      if source_container[0] != 'file'
+      ## FIXME: condition is too long.
+      if source_container[0] == 'string' && frame.iseq && frame.iseq.source
+        file = LineCache::map_iseq(frame.iseq)
+        text = LineCache::getline(frame.iseq, line_no)
+        loc += " remapped #{canonic_file(file)}:#{line_no}"
+      elsif source_container[0] != 'file'
         via = loc
         while source_container[0] != 'file' && frame.prev do
           frame            = frame.prev
@@ -111,10 +116,11 @@ class Trepan
 
     def source_location_info(source_container, line_no, frame)
       filename  = source_container[1]
+      ## FIXME: condition is too long.
       canonic_filename = 
-        if (0 == filename.index('(eval')) && frame.prev &&
-            (eval_str = Trepan::Frame.eval_string(frame.prev))
-          'eval ' + safe_repr(eval_str, 15)
+        if 'string' == source_container[0] && frame.iseq && frame.iseq.source
+          eval_str = frame.iseq.source
+          'eval "' + safe_repr(eval_str.gsub(/\n/,';'), 15) + '"'
         else
           canonic_file(filename)
         end
