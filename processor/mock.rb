@@ -72,6 +72,18 @@ module MockDebugger
   end
   module_function :setup
 
+  def sub_setup(sub_class, run=true)
+    sub_name = sub_class.const_get('PREFIX')
+    dbgr, cmd = setup(sub_name[0], false)
+    cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
+    sub_cmd = sub_class.new(cmd)
+    sub_cmd.summary_help(sub_cmd.name)
+    puts
+    sub_cmd.run([cmd.name]) if run
+    return sub_cmd
+  end
+  module_function :sub_setup
+
   def subsub_setup(sub_class, subsub_class, run=true)
     subsub_name = subsub_class.const_get('PREFIX')
     dbgr, cmd = setup(subsub_name[0], false)

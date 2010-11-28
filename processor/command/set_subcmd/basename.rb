@@ -15,25 +15,12 @@ end
 
 if __FILE__ == $0
   # Demo it.
+  $0 = __FILE__ + 'notagain' # So we don't run this agin
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Trepan::Subcommand::SetBasename.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
-
-  subcommand.run_show_bool
-  subcommand.summary_help(name)
-
-  # require 'trepanning'
-  # Trepan.debug
-  subcommand.run(['set', name])
-  subcommand.run(['set', name, 'off'])
-  subcommand.run(['set', name, 'on'])
-  subcommand.summary_help(name)
-  puts
-  puts '-' * 20
-  puts subcommand.save_command
-
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::SetBasename, false)
+  prefix = cmd.my_const('PREFIX')
+  cmd.run(prefix + ['off'])
+  cmd.run(prefix + ['ofn'])
+  cmd.run(prefix)
+  puts cmd.save_command
 end

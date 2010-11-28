@@ -215,7 +215,7 @@ class Trepan
   # Likewise for mydbg.debugger{ ... }
 
   def self.debug(opts={}, &block)
-    opts = {:hide_stack => true}.merge(opts)
+    opts = {:hide_stack => false}.merge(opts)
     unless defined?($trepanning) && $trepanning.is_a?(Trepan)
       $trepanning = Trepan.new(opts)
       $trepanning.trace_filter << self.method(:debug)

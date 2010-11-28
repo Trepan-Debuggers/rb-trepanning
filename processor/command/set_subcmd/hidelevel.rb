@@ -33,7 +33,7 @@ See also 'backtrace' and 'show hidelevel'.
     IN_LIST      = true
     MIN_ABBREV   = 'hide'.size
     NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(set hidelevel)
+    PREFIX       = %W(set #{NAME})
     SHORT_HELP   = "Set the number of bottom frames to hide."
   end
 
@@ -44,23 +44,18 @@ See also 'backtrace' and 'show hidelevel'.
       val = @proc.get_an_int(args[2])
       return unless val
     end
-    @proc.settings[:hidelevel] = val
+    @proc.hide_level = @proc.settings[:hidelevel] = val
+    @proc.run_command('show hidelevel')
   end
 
 end
 
 if __FILE__ == $0
   # Demo it.
+  $0 = __FILE__ + 'notagain' # So we don't run this agin
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Trepan::Subcommand::SetHidelevel.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
-
-  subcommand.run_show_bool
-  subcommand.summary_help(name)
-  puts
-  puts '-' * 20
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::SetHidelevel, false)
+  prefix = cmd.my_const('PREFIX')
+  cmd.run(prefix + %w(10))
+  cmd.run(prefix)
 end
