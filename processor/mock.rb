@@ -72,6 +72,17 @@ module MockDebugger
   end
   module_function :setup
 
+  def subsub_setup(sub_class, subsub_class, run=true)
+    subsub_name = subsub_class.const_get('PREFIX')
+    dbgr, cmd = setup(subsub_name[0], false)
+    cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
+    sub_cmd = sub_class.new(dbgr.core.processor, cmd)
+    subsub_cmd = subsub_class.new(cmd.proc, sub_cmd, subsub_name.join(''))
+    subsub_cmd.run([subsub_cmd.name]) if run
+    return subsub_cmd
+  end
+  module_function :subsub_setup
+
   def show_special_class_constants(cmd)
     puts 'ALIASES: %s' % [cmd.class.const_get('ALIASES').inspect] if
       cmd.class.constants.member?(:ALIASES)

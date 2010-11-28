@@ -51,22 +51,10 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative '/../../../mock'
-  require_relative '../../../subcmd'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, set_cmd = MockDebugger::setup('set')
-  testcmdMgr = Trepan::Subcmd.new(set_cmd)
-  cmd_name   = Trepan::SubSubcommand::SetSubstituteString::PREFIX.join('')
-  setx_cmd   = Trepan::SubSubcommand::SetSubstituteString.new(set_cmd.proc, 
-                                                              set_cmd,
-                                                              cmd_name)
-  # require_relative '../../../../lib/trepanning'
-  # dbgr = Trepan.new(:set_restart => true)
-  # dbgr.debugger
-  setx_cmd.run([])
-
-  # name = File.basename(__FILE__, '.rb')
-  # subcommand.summary_help(name)
+  require_relative '../../../mock'
+  require_relative '../substitute'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::SetSubstitute,
+                                   Trepan::SubSubcommand::SetSubstituteString,
+                                   false)
+  cmd.run([cmd.name, '/tmp/foo.rb', 'a=1;b=2'])
 end

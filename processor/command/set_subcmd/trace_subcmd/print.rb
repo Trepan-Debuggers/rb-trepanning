@@ -29,26 +29,10 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  require_relative '../../../subcmd'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, set_cmd = MockTrepan::setup('set')
-  trace_cmd     = Trepan::SubSubcommand::SetTrace.new(dbgr.core.processor, 
-                                                        set_cmd)
-
-  # FIXME: remove the 'join' below
-  cmd_name      = Trepan::SubSubcommand::SetTracePrint::PREFIX.join('')
-  subcmd        = Trepan::SubSubcommand::SetTracePrint.new(set_cmd.proc, 
-                                                           trace_cmd,
-                                                           cmd_name)
-  # require_relative '../../../../lib/trepanning'
-  # dbgr = Trepan.new(:set_restart => true)
-  # dbgr.debugger
-
-  subcmd.run([cmd_name])
-  %w(off on 1 0).each { |arg| subcmd.run([cmd_name, arg]) }
-  puts subcmd.save_command()
-
+  require_relative '../trace'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::SetTrace,
+                                   Trepan::SubSubcommand::SetTracePrint)
+  %w(off on 0 1).each { |arg| cmd.run([cmd.name, arg]) }
+  puts '-' * 10
 end
 

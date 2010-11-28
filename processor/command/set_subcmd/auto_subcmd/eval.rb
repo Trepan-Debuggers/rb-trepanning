@@ -36,7 +36,7 @@ problem. Another possibility is to go into a real Ruby shell via the
 "
     MIN_ABBREV = 'ev'.size
     NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %w(set auto eval)
+    PREFIX     = %W(set auto #{NAME})
     SHORT_HELP = "Set evaluation of unrecognized debugger commands"
   end
 
@@ -45,23 +45,10 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, set_cmd = MockTrepan::setup('set')
-  auto_cmd      = Trepan::SubSubcommand::SetAuto.new(dbgr.core.processor, 
-                                                     set_cmd)
-
-  # FIXME: remove the 'join' below
-  cmd_name      = Trepan::SubSubcommand::SetAutoEval::PREFIX.join('')
-  subcmd        = Trepan::SubSubcommand::SetAutoEval.new(set_cmd.proc, 
-                                                         auto_cmd,
-                                                         cmd_name)
-  # require_relative '../../../../lib/trepanning'
-  # Trepan.debug(:set_restart => true)
-
-  subcmd.run([cmd_name])
-  %w(off on 0 1).each { |arg| subcmd.run([cmd_name, arg]) }
+  require_relative '../auto'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::SetAuto,
+                                   Trepan::SubSubcommand::SetAutoEval)
+  %w(off on 0 1).each { |arg| cmd.run([cmd.name, arg]) }
   puts '-' * 10
-  puts subcmd.save_command.join("\n")
+  puts cmd.save_command.join("\n")
 end

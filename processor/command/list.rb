@@ -184,7 +184,7 @@ disabled.
         end
       end
     elsif !@proc.line_no and @proc.frame
-      first = [1, @proc.frame.line - center_correction].max
+      first = [1, @proc.frame_line - center_correction].max
     else
       first = [1, @proc.line_no - center_correction].max 
     end

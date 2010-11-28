@@ -20,19 +20,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-
-  # FIXME: DRY the below code
-  dbgr, show_cmd = MockDebugger::setup('show')
-  testcmdMgr     = Trepan::Subcmd.new(show_cmd)
-  auto_cmd       = Trepan::SubSubcommand::ShowAuto.new(dbgr.core.processor, 
-                                                       show_cmd)
-  # FIXME: remove the 'join' below
-  cmd_name       = Trepan::SubSubcommand::ShowAutoEval::PREFIX.join('')
-  autox_cmd      = Trepan::SubSubcommand::ShowAutoEval.new(show_cmd.proc, auto_cmd,
-                                                           cmd_name)
-  # require_relative '../../../../lib/trepanning'
-  # dbgr = Trepan.new(:set_restart => true)
-  # dbgr.debugger
-  autox_cmd.run([])
-
+  require_relative '../auto'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::ShowAuto,
+                                   Trepan::SubSubcommand::ShowAutoEval)
 end

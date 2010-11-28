@@ -16,19 +16,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  require_relative '../../../subcmd'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, show_cmd = MockDebugger::setup('show')
-  testcmdMgr     = Trepan::Subcmd.new(show_cmd)
-  auto_cmd       = Trepan::SubSubcommand::ShowAuto.new(dbgr.core.processor, 
-                                                       show_cmd)
-
-  cmd_name       = Trepan::SubSubcommand::ShowAutoIrb::PREFIX.join('')
-  autox_cmd      = Trepan::SubSubcommand::ShowAutoIrb.new(show_cmd.proc, auto_cmd,
-                                                          cmd_name)
-  autox_cmd.run([])
-  # name = File.basename(__FILE__, '.rb')
-  # autox_cmd.summary_help(name)
+  require_relative '../auto'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::ShowAuto,
+                                   Trepan::SubSubcommand::ShowAutoIrb)
 end

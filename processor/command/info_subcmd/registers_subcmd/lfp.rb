@@ -34,21 +34,9 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  require_relative '../../../subcmd'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, info_cmd = MockDebugger::setup('info')
-  testcmdMgr = Trepan::Subcmd.new(info_cmd)
-  cmd_name   = Trepan::SubSubcommand::InfoRegistersSp::PREFIX.join('')
-  infox_cmd  = Trepan::SubSubcommand::InfoRegistersSp.new(info_cmd.proc,
-                                                          info_cmd,
-                                                          cmd_name)
-  # require_relative '../../../../lib/trepanning'
-  # dbgr = Trepan.new(:set_restart => true)
-  # dbgr.debugger
-  infox_cmd.run([])
-
-  # name = File.basename(__FILE__, '.rb')
-  # subcommand.summary_help(name)
+  require_relative '../registers'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::InfoRegisters,
+                                   Trepan::SubSubcommand::InfoRegistersLfp,
+                                   false)
+  cmd.run([])
 end

@@ -43,6 +43,13 @@ require 'rbconfig'
 RUBY_PATH = File.join(RbConfig::CONFIG['bindir'],  
                       RbConfig::CONFIG['RUBY_INSTALL_NAME'])
 
+def run_standalone_ruby_files(list)
+  puts '*' * 40
+  list.each do |ruby_file|
+    system(RUBY_PATH, ruby_file)
+  end
+end
+
 def run_standalone_ruby_file(directory)
   puts ('*' * 10) + ' ' + directory + ' ' + ('*' * 10)
   Dir.chdir(directory) do
@@ -100,6 +107,12 @@ end
 desc "Run each command in standalone mode."
 task :'check:commands' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} processor command)))
+end
+
+desc "Run each of the sub-sub commands in standalone mode."
+task :'check:subsub:commands' do
+  subsub_files = FileList["#{ROOT_DIR}/processor/command/*_subcmd/*_subcmd/*.rb"]
+  run_standalone_ruby_files(subsub_files)
 end
 
 desc "Run each processor Ruby file in standalone mode."
