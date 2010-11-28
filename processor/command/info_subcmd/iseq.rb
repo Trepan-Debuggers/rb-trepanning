@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
+require 'pp'
 
 class Trepan::Subcommand::InfoIseq < Trepan::Subcommand
   unless defined?(HELP)
@@ -53,6 +54,14 @@ Examples:
         end
       else
         msg("Breakpoints have not been allocated.")
+      end
+      if iseq.compile_options
+        msg "\nCompile options:"
+        msg iseq.compile_options.pretty_inspect
+      end
+      if iseq.source
+        msg "Source string:"
+        msg @proc.safe_rep(iseq.source.inspect)
       end
     else
       mess = "Can't find instruction sequence"
