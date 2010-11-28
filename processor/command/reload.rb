@@ -20,7 +20,7 @@ if __FILE__ == $0
   dbgr, cmd = MockDebugger::setup
 
   # require 'trepanning'
-  # Trepan.debug(:set_restart => true)
+  # Trepan.debug
   xx = Trepan::Command::ReloadCommand.new(cmd)
   cmd.run([cmd.name])
   cmd.run([cmd.name, 'command'])

@@ -30,6 +30,6 @@ if __FILE__ == $0
   set_cmd.instance_variable_set('@last_args', cmd_args)
   command.run(cmd_args)
   require_relative '../../../lib/trepanning'
-  # Trepan.debug(:set_restart => true)
+  # Trepan.debug
   command.run(['set', name, 'string', 30])
 end

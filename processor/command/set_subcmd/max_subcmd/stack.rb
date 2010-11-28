@@ -24,37 +24,15 @@ class Trepan::Subcommand::SetMaxStack < Trepan::SubSubcommand
 end
 
 if __FILE__ == $0
+
   # Demo it.
   require_relative '../../../mock'
-  dbgr, set_cmd = MockDebugger::setup('set')
-  max_cmd       = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
-                                                    set_cmd)
-  # FIXME: remove the 'join' below
-  cmd_name      = Trepan::SubSubcommand::SetMaxStack::PREFIX.join('')
-  subcmd        = Trepan::SubSubcommand::SetMaxStack.new(set_cmd.proc, 
-                                                         max_cmd,
-                                                         cmd_name)
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, set_cmd = MockDebugger::setup('set')
-  max_cmd       = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
-                                                      set_cmd)
-  cmd_ary       = Trepan::SubSubcommand::SetMaxStack::PREFIX
-  cmd_name      = cmd_ary.join(' ')
-  subcmd        = Trepan::SubSubcommand::SetMaxStack.new(set_cmd.proc,
-                                                         max_cmd,
-                                                         cmd_name)
-
-  prefix_run = cmd_ary[1..-1]
-  subcmd.run(prefix_run)
-  subcmd.run(prefix_run + %w(0))
-  subcmd.run(prefix_run + %w(10))
-  name = File.basename(__FILE__, '.rb')
-  subcmd.summary_help(name)
-  puts
-  puts '-' * 20
-
-  require_relative '../../../../lib/trepanning'
-  puts subcmd.save_command
+  require_relative '../max'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::SetMax,
+                                   Trepan::SubSubcommand::SetMaxStack, false)
+  prefix_run = cmd.my_const('PREFIX')[1..-1]
+  cmd.run(prefix_run)
+  cmd.run(prefix_run + %w(0))
+  cmd.run(prefix_run + %w(10))
+  puts cmd.save_command
 end

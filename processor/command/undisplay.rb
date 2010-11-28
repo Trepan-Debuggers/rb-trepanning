@@ -8,7 +8,6 @@ class Trepan::Command::UndisplayCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<EOH
-
 undisplay DISPLAY_NUMBER ...
 Cancel some expressions to be displayed when program stops.
 Arguments are the code numbers of the expressions to stop displaying.

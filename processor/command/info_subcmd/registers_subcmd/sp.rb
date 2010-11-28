@@ -5,10 +5,10 @@ require_relative 'helper'
 
 class Trepan::Subcommand::InfoRegistersSp < Trepan::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show information about the VM stack pointer (SP).
-
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<EOH
 usage: 
-   info register sp [NUMBER NUMBER ...|size]
+   info register #{NAME} [NUMBER NUMBER ...|size]
 
 With no arguments, all SP values for the current frame of the debugged
 program are shown.  If a number is given, then the entry at that
@@ -21,12 +21,12 @@ a stack pointed to by SP. Just before the addition is perofrmed, sp(1)
 will have the value "a" contians and sp(2) will contain the value of
 "b"
 
-See also "info register LFP"'
+See also "info register LFP"
+EOH
 
     MIN_ABBREV   = 'sp'.size
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    PREFIX       = %w(info registers sp)
+    PREFIX       = %W(info registers #{NAME})
   end
 
   include Registers
@@ -52,10 +52,8 @@ if __FILE__ == $0
   cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::InfoRegisters,
                                    Trepan::SubSubcommand::InfoRegistersSp,
                                    false)
-  cmd.summary_help(cmd.name)
-  puts
   # require_relative '../../../../lib/trepanning'
-  # dbgr = Trepan.new(:set_restart => true)
+  # dbgr = Trepan.new
   # dbgr.debugger
   cmd.run([])
   puts

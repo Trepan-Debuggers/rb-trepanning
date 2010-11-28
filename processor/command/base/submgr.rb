@@ -180,7 +180,7 @@ if __FILE__ == $0
   puts cmd.help(%w(help set))
   puts '=' * 40
   # require_relative '../../../lib/trepanning)
-  # Trepan.debug(:set_restart => true)
+  # Trepan.debug
   puts cmd.help(%w(help set *))
   puts '=' * 40
   puts cmd.help(%w(help set d.*))

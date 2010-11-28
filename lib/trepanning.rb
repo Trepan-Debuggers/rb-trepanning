@@ -91,8 +91,6 @@ class Trepan
   # needs to be done first:
   #    require 'trepanning'
   #    mydbg = Trepan.new()
-  # or if you haven't mucked around with $0 and ARGV, you might try:
-  #    mydbg = Trepan.new(:set_restart=>true))
   # which will tell the debugger how to "restart" the program.
   #
   # If you want a synchronous stop in your program call to the
@@ -254,7 +252,7 @@ if __FILE__ == $0
   puts 'block debugging...'
   # It is imagined that there are all sorts of command-line options here.
   # (I have a good imagination.)
-  Trepan.debug(:set_restart=>true) {
+  Trepan.debug {
     a = 2
     b = square(a)
     p "square of #{a} is #{b}"

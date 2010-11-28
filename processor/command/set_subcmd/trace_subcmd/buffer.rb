@@ -45,7 +45,7 @@ if __FILE__ == $0
                                                             trace_cmd,
                                                             cmd_name)
   # require_relative '../../../../lib/trepanning'
-  # dbgr = Trepan.new(:set_restart => true)
+  # dbgr = Trepan.new
   # dbgr.debugger
 
   subcmd.run([cmd_name])

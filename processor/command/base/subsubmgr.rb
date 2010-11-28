@@ -177,6 +177,6 @@ if __FILE__ == $0
   puts '=' * 40
   # FIXME
   # require_relative '../../lib/trepanning'
-  # Trepan.debug(:set_restart => true)
+  # Trepan.debug
   # puts cmd.help(%w(help info registers p.*))
 end

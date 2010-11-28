@@ -60,7 +60,7 @@ if __FILE__ == $0
   subcommand.summary_help(name)
 
   # require 'trepanning'
-  # Trepan.debug(:set_restart => true)
+  # Trepan.debug
   subcommand.run(['set', name])
   subcommand.run(['set', name, 'off'])
   subcommand.run(['set', name, 'on'])

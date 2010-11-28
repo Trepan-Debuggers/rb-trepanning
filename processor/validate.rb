@@ -378,7 +378,7 @@ if __FILE__ == $0
     end
     puts '=' * 40
     # require_relative '../lib/trepanning'
-    # dbgr = Trepan.new(:set_restart => true)
+    # dbgr = Trepan.new
     # dbgr.debugger
 
     # FIXME:

@@ -78,7 +78,9 @@ module MockDebugger
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
     sub_cmd = sub_class.new(dbgr.core.processor, cmd)
     subsub_cmd = subsub_class.new(cmd.proc, sub_cmd, subsub_name.join(''))
-    subsub_cmd.run([subsub_cmd.name]) if run
+    subsub_cmd.summary_help(subsub_cmd.name)
+    puts
+    subsub_cmd.run([]) if run
     return subsub_cmd
   end
   module_function :subsub_setup

@@ -33,7 +33,7 @@ if __FILE__ == $0
   subcommand.run(subcommand.name)
   
   # require_relative '../../../../lib/trepanning'
-  # dbgr = Trepan.new(:set_restart => true)
+  # dbgr = Trepan.new
   # dbgr.debugger
   subcommand.summary_help(subcommand.name)
   puts
