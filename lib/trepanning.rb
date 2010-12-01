@@ -152,7 +152,7 @@ class Trepan
       Trace.event_masks[0] |= @core.step_events
 
       # Set to stop on the next event after this returns.
-      @core.step_count = 0
+      @core.step_count = opts[:step_count] || 0
     end
   end
 
@@ -235,13 +235,13 @@ end
 module Kernel
   # Same as Trepan.debug. 
   # FIXME figure out a way to remove duplication.
-  def trepan(opts={}, &block)
-    opts = {:hide_stack => true}.merge(opts)
+  def debugger(opts={}, &block)
+    opts = {:hide_stack => false}.merge(opts)
     unless defined?($trepanning) && $trepanning.is_a?(Trepan)
-      $trepanning = Trepan.new
-      $trepanning.trace_filter << self.method(:trepan)
+      $trepanning = Trepan.new(opts)
+      $trepanning.trace_filter << self.method(:debugger)
     end
-    $trepanning.debugger(opts, &block)
+    $trepanning.debugger(opts)
   end
 end
 
