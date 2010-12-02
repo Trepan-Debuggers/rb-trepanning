@@ -134,8 +134,7 @@ class Trepan
     th = Thread.current
     if block
       start
-      # I don't think yield or block.call is quite right.
-      ret = yield   # Not: block.call(self) ? 
+      ret = block.call
       stop
       return ret
     elsif opts[:immediate]
