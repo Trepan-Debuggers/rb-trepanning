@@ -50,11 +50,23 @@ local table (size: 6, argc: 1 [opts: 0, rest: -1, post: 0, block: -1] s1)
   def test_disassemble_split
     expect = {
       0=>
-      "0000 trace            8                                               (  26)",
+      '0000 trace            8                                               (  26)',
       2=>
-      "0002 trace            1                                               (  27)",
-      4=>"0004 putnil           "
+      '0002 trace            1                                               (  27)',
+      4=>'0004 putnil           '
     }
     assert_equal(expect, disassemble_split(@dis_string))
   end
+
+  # Test shortening lines via setting the maxwidth parameter
+  def test_shorten_dissassembly
+    ary = mark_disassembly(@dis_string, false, 2, [], 70)
+    assert_equal([
+'     0000 trace            8                                    (  26)',
+'     0002 trace            1                                    (  27)',
+'     0004 putnil           '],
+                 ary[3..-1])
+  end
+
+
 end

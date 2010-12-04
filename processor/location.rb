@@ -28,10 +28,11 @@ class Trepan
       nil
     end
 
-    # Get line +line_number+ from file named +filename+. Return "\n"
-    # there was a problem. Leading blanks are stripped off.
+    # Get line +line_number+ from file named +filename+. Return ''
+    # if there was a problem. Leading blanks are stripped off.
     def line_at(filename, line_number) # :nodoc:
       line = LineCache::getline(filename, line_number, @reload_on_change)
+
       unless line
         # Try using search directories (set with command "directory")
         if filename[0..0] != File::SEPARATOR
@@ -43,11 +44,11 @@ class Trepan
           end
         end
       end
-      return "\n" unless line
-      return line.lstrip.chomp
+      line ? line.lstrip.chomp : line
     end
 
     def loc_and_text(loc, frame, line_no, source_container)
+      found_line = true
       ## FIXME: condition is too long.
       if source_container[0] == 'string' && frame.iseq && frame.iseq.source
         file = LineCache::map_iseq(frame.iseq)
@@ -60,10 +61,11 @@ class Trepan
           source_container = frame_container(frame, false)
         end
         if source_container[0] == 'file'
-          line_no  = frame.source_location[0]
-          filename  = source_container[1]
-          loc      += " via #{canonic_file(filename)}:#{line_no}"
-          text      = line_at(filename, line_no)
+          line_no      = frame.source_location[0]
+          filename     = source_container[1]
+          loc         += " via #{canonic_file(filename)}:#{line_no}"
+          text         = line_at(filename, line_no)
+          found_line   = false
         end
       else
         container = source_container[1]
@@ -74,7 +76,7 @@ class Trepan
         
         text  = line_at(container, line_no)
       end
-      [loc, line_no, text]
+      [loc, line_no, text, found_line]
     end
 
     def print_location
@@ -99,8 +101,8 @@ class Trepan
       @line_no  = frame_line
 
       loc = source_location_info(source_container, @line_no, @frame)
-      loc, @line_no, text = loc_and_text(loc, @frame, @line_no, 
-                                         source_container)
+      loc, @line_no, text, found_line = 
+        loc_and_text(loc, @frame, @line_no, source_container)
       msg "#{ev} (#{loc})"
 
       if %w(return c-return).member?(@event)
@@ -111,6 +113,11 @@ class Trepan
       if text && !text.strip.empty?
         msg text
         @line_no -= 1
+      end
+      unless found_line
+        # Can't find source line, so give assembly as consolation.
+        # This great idea comes from the Rubinius reference debugger.
+        run_command('disassemble')
       end
     end
 

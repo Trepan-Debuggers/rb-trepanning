@@ -46,11 +46,11 @@ Examples:
       end
     stack_size = @proc.top_frame.stack_size - hide_level
     opts = {
-      :basename    => @proc.settings[:basename],
-      :current_pos => @proc.frame_index,
-      :maxstack    => @proc.settings[:maxstack],
-      :maxwidth    => @proc.settings[:maxwidth],
-      :show_pc     => @proc.settings[:show_pc]
+      :basename    => settings[:basename],
+      :current_pos => frame_index,
+      :maxstack    => settings[:maxstack],
+      :maxwidth    => settings[:maxwidth],
+      :show_pc     => settings[:show_pc]
     }
     opts[:count] = 
       if args.size > 1

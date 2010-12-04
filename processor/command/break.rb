@@ -7,16 +7,22 @@ class Trepan::Command::BreakCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [line number|offset]
+#{NAME} [LINE-NUMBER|OFFSET]
+#{NAME} METHOD 
 
-With a line number argument, set a break there in the current
-instruction sequence.  With an offset (a number prefaced with an "O")
-set a breakpoint at that instruction offset.
+Set a breakpoint. If a line number is given, a breakpoint is set in
+that line number of the current instruction sequence. If an offset is
+given, a number prefaced with an "O", set a breakpoint at that
+instruction offset.
+
+With method name, a breakpoint it set at the beginning of the method.
+current instruction sequence.  
 
 Examples:
    #{NAME}
    #{NAME} 10    # set breakpoint on line 10
    #{NAME} o20   # set breakpoint VM Instruction Sequence offset 20
+   #{NAME} FileUtils.cp # Set a breakpoint at the beginning of FileUtils.cp
     HELP
 
     ALIASES      = %w(b)
