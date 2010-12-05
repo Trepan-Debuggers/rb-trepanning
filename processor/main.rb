@@ -122,17 +122,6 @@ class Trepan
       # FIXME: run start file and start commands.
     end
 
-    def canonic_container(container)
-      [container[0], canonic_file(container[1])]
-    end
-
-    def canonic_file(filename)
-      # For now we want resolved filenames 
-      @settings[:basename] ? File.basename(filename) : 
-        # Cache this?
-        Pathname.new(filename).cleanpath.to_s
-    end
-
     def compute_prompt
       thread_str = 
         if 1 == Thread.list.size

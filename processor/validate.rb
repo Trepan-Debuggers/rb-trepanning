@@ -151,6 +151,24 @@ class Trepan
       nil
     end
 
+    def parse_num_or_offset(position_str)
+      opts = {
+        :msg_on_error => 
+        "argument '%s' does not seem to eval to a method or an integer." % 
+        position_str,
+        :min_value => 0 
+      }
+      use_offset = 
+        if position_str.size > 0 && position_str[0].downcase == 'o'
+          position_str[0] = ''
+          true
+        else
+          false
+        end
+      position = get_an_int(position_str, opts)
+      [position, use_offset]
+    end
+
     # Parse a breakpoint position. Return
     # - the position - a Fixnum
     # - the instruction sequence to use
@@ -167,11 +185,16 @@ class Trepan
               File.basename(container[1])
             iseq = @frame.iseq
           else
-            errmsg "Unable to find instruction sequence for position #{position} in #{container[1]}"
+            errmsg("Unable to find instruction sequence for" + 
+                   " position #{position} in #{container[1]}")
             return [nil, nil, nil, true]
           end
         end
-        use_offset = false 
+        if args.empty? || 'if' == args[0]
+          use_offset = false 
+        else
+          position, use_offset = parse_num_or_offset(args[0])
+        end
       else
         iseq = object_iseq(first)
         position_str = 
@@ -190,20 +213,7 @@ class Trepan
             iseq = @frame.iseq unless container
             first
           end
-        use_offset = 
-          if position_str.size > 0 && position_str[0].downcase == 'o'
-            position_str[0] = ''
-            true
-          else
-            false
-          end
-        opts = {
-          :msg_on_error => 
-          "argument '%s' does not seem to eval to a method or an integer." % 
-          position_str,
-          :min_value => 0
-        }
-        position  = get_an_int(position_str, opts)
+        position, use_offset = parse_num_or_offset(position_str)
       end
       condition = 'true'
       if args.size > 0 && 'if' == args[0] 
@@ -393,6 +403,8 @@ if __FILE__ == $0
     p proc.breakpoint_position(%w(1))
     p proc.breakpoint_position(%w(2 if a > b))
     p proc.get_int_list(%w(1+0 3-1 3))
+    require 'trepanning'
+    debugger
     p proc.get_int_list(%w(a 2 3))
   end
 end

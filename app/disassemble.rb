@@ -74,8 +74,7 @@ local table (size: 6, argc: 1 [opts: 0, rest: -1, post: 0, block: -1] s1)
   # FIXME:
   # require_relative '../lib/trepanning'
   # debugger
-  # There is a bug in: "breakpoint mark_disassembly" and 
-  # breakpoint mark_disassembly o10"
+  # There is a bug in: "breakpoint mark_disassembly" 
   str = mark_disassembly(dis_string, false, 2, [], 70).join("\n")
   puts str
   puts '=' * 40

@@ -8,7 +8,7 @@ class Trepan::Command::BreakCommand < Trepan::Command
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
 #{NAME} [LINE-NUMBER|OFFSET]
-#{NAME} METHOD 
+#{NAME} METHOD [LINE-NUMBER|OFFSET]
 
 Set a breakpoint. If a line number is given, a breakpoint is set in
 that line number of the current instruction sequence. If an offset is
@@ -16,13 +16,15 @@ given, a number prefaced with an "O", set a breakpoint at that
 instruction offset.
 
 With method name, a breakpoint it set at the beginning of the method.
-current instruction sequence.  
+current instruction sequence. Currently you can add a module name in
+front of the method name, like FileUtils.cp, but not a class name like
+Dir.pwd. 
 
 Examples:
    #{NAME}
    #{NAME} 10    # set breakpoint on line 10
    #{NAME} o20   # set breakpoint VM Instruction Sequence offset 20
-   #{NAME} FileUtils.cp # Set a breakpoint at the beginning of FileUtils.cp
+   #{NAME} Kernel.pp # Set a breakpoint at the beginning of Kernel.pp
     HELP
 
     ALIASES      = %w(b)

@@ -11,6 +11,17 @@ class Trepan
       @reload_on_change = nil
     end
 
+    def canonic_container(container)
+      [container[0], canonic_file(container[1])]
+    end
+
+    def canonic_file(filename)
+      # For now we want resolved filenames 
+      @settings[:basename] ? File.basename(filename) : 
+        # Cache this?
+        Pathname.new(filename).cleanpath.to_s
+    end
+
     def resolve_file_with_dir(path_suffix)
       @settings[:directory].split(/:/).each do |dir|
         dir = 

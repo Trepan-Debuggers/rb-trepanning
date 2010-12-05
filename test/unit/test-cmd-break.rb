@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'thread_frame'
+require 'fileutils' # To test FileUtils.cp
+
 require_relative 'cmd-helper'
 
 class TestCommandBreak < Test::Unit::TestCase
@@ -28,6 +30,7 @@ class TestCommandBreak < Test::Unit::TestCase
     pc_offset = tf.pc_offset
     [[@name],
      [@name, "O#{pc_offset}"],
+     #[@name, 'FileUtils.cp']
     ].each_with_index do |args, i|
       @my_cmd.run(args)
       assert_equal(true, @cmdproc.errmsgs.empty?, @cmdproc.errmsgs)
