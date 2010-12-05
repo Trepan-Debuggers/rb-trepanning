@@ -4,8 +4,10 @@ require_relative '../base/subcmd'
 
 class Trepan::Subcommand::ShowBasename < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
-    HELP = "Show only file basename in showing file names"
+    HELP       = "Show only file basename in showing file names"
     MIN_ABBREV = 'ba'.size
+    NAME       = File.basename(__FILE__, '.rb')
+    PREFIX     = %W(show #{NAME})
   end
 
 end
