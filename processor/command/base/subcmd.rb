@@ -60,6 +60,10 @@ class Trepan
       return(@proc.confirm(msg, default))
     end
 
+    def prefix
+      my_const('PREFIX')
+    end
+
     # Set a Boolean-valued debugger setting. 
     def run_set_bool(args, default=true)
       onoff_arg = args.size < 3 ? 'on' : args[2]

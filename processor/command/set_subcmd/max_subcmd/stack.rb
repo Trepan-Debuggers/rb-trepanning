@@ -24,13 +24,12 @@ class Trepan::Subcommand::SetMaxStack < Trepan::SubSubcommand
 end
 
 if __FILE__ == $0
-
   # Demo it.
   require_relative '../../../mock'
   require_relative '../max'
   cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::SetMax,
                                    Trepan::SubSubcommand::SetMaxStack, false)
-  prefix_run = cmd.my_const('PREFIX')[1..-1]
+  prefix_run = cmd.prefix[1..-1]
   cmd.run(prefix_run)
   cmd.run(prefix_run + %w(0))
   cmd.run(prefix_run + %w(10))

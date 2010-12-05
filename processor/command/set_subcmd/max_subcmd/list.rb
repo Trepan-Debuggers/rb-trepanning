@@ -31,7 +31,7 @@ if __FILE__ == $0
   require_relative '../max'
   cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::SetMax,
                                    Trepan::SubSubcommand::SetMaxList, false)
-  prefix_run = cmd.my_const('PREFIX')[1..-1]
+  prefix_run = cmd.prefix[1..-1]
   cmd.run(prefix_run)
   cmd.run(prefix_run + %w(0))
   cmd.run(prefix_run + %w(20))
