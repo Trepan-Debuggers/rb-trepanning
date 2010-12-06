@@ -32,7 +32,7 @@ module FnTestHelper
 
   unless defined?(TREPAN_PROMPT)
     TREPAN_PROMPT = /^\(trepan\): /
-    TREPAN_LOC    = /.. \(.+:\d+\)/
+    TREPAN_LOC    = /.. \(.+:\d+( @\d+)?\)/
   end
 
   # Return the caller's line number
@@ -79,7 +79,7 @@ module FnTestHelper
     # becomes:
     #   -- 
     a2 = a.map do |s|
-      s =~ TREPAN_LOC ? s.gsub(/\(.+:\d+\)\n/, '').chomp : s.chomp
+      s =~ TREPAN_LOC ? s.gsub(/\(.+:\d+( @\d+)?\)\n/, '').chomp : s.chomp
     end
 
     # Canonicalize breakpoint messages. 

@@ -114,7 +114,9 @@ class Trepan
       loc = source_location_info(source_container, @line_no, @frame)
       loc, @line_no, text, found_line = 
         loc_and_text(loc, @frame, @line_no, source_container)
-      msg "#{ev} (#{loc})"
+
+      ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
+      msg "#{ev} (#{loc}#{ip_str})"
 
       if %w(return c-return).member?(@event)
         retval = Trepan::Frame.value_returned(@frame, @event)
