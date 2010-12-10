@@ -36,7 +36,7 @@ See also rbx-trepanning for a version that works with Rubinius.
 EOF
   spec.add_dependency('rb-threadframe', '>= 0.34')
   spec.add_dependency('rb-trace', '>= 0.3')
-  spec.add_dependency('linecache-tf')
+  spec.add_dependency('linecache-tf', '>= 0.45')
   spec.add_dependency('columnize')
   spec.add_dependency('diff-lcs') # For testing only
   spec.author       = 'R. Bernstein'

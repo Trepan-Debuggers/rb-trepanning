@@ -1,3 +1,217 @@
+2010-12-10  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, lib/trepanning.rb: Giant Madagascar Day release
+
+2010-12-05  rocky <rockyb@rubyforge.org>
+
+	* processor/location.rb, test/functional/fn_helper.rb: Add IP in
+	source location line.
+
+2010-12-05  rocky <rockyb@rubyforge.org>
+
+	* processor/command/show_subcmd/basename.rb: Add missing contstants
+	and DRY standalong code.
+
+2010-12-05  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/subcmd.rb,
+	processor/command/set_subcmd/basename.rb,
+	processor/command/set_subcmd/hidelevel.rb,
+	processor/command/set_subcmd/max_subcmd/list.rb,
+	processor/command/set_subcmd/max_subcmd/stack.rb: DRY standalone
+	code a little more via subcmd#prefix.
+
+2010-12-04  rocky <rockyb@rubyforge.org>
+
+	* app/disassemble.rb, processor/command/break.rb,
+	processor/location.rb, processor/main.rb, processor/validate.rb,
+	test/unit/test-cmd-break.rb: Can handle: break METHOD NUM now.
+
+2010-12-04  rocky <rockyb@rubyforge.org>
+
+	* app/disassemble.rb, processor/command/backtrace.rb,
+	processor/command/break.rb, processor/command/disassemble.rb,
+	processor/location.rb, test/unit/test-app-disassemble.rb: If we
+	can't find source text, show disassembly output. Idea from rubinius.
+	Attempt to shorten disassembly output if larger than max width.
+
+2010-12-01  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb: block.call works if trace stops ignoring
+	blocks.
+
+2010-11-30  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb: Add Kernel.debugger to be compatible with
+	ruby-debug.
+
+2010-11-28  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/command/set_subcmd/basename.rb,
+	processor/command/set_subcmd/hidelevel.rb, processor/mock.rb: 
+	Hidelevel default was wrong. Changing settings changes frame adjust
+	values immediately. Start to DRY some stand-alone subcommands.
+
+2010-11-28  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/command/base/submgr.rb,
+	processor/command/base/subsubmgr.rb, processor/command/delete.rb,
+	processor/command/disable.rb,
+	processor/command/info_subcmd/registers_subcmd/pc.rb,
+	processor/command/info_subcmd/registers_subcmd/sp.rb,
+	processor/command/reload.rb, processor/command/set_subcmd/auto.rb,
+	processor/command/set_subcmd/basename.rb,
+	processor/command/set_subcmd/debug.rb,
+	processor/command/set_subcmd/max.rb,
+	processor/command/set_subcmd/max_subcmd/list.rb,
+	processor/command/set_subcmd/max_subcmd/stack.rb,
+	processor/command/set_subcmd/substitute.rb,
+	processor/command/set_subcmd/substitute_subcmd/eval.rb,
+	processor/command/set_subcmd/substitute_subcmd/path.rb,
+	processor/command/set_subcmd/timer.rb,
+	processor/command/set_subcmd/trace.rb,
+	processor/command/set_subcmd/trace_subcmd/buffer.rb,
+	processor/command/set_subcmd/trace_subcmd/var.rb,
+	processor/command/show_subcmd/hidelevel.rb,
+	processor/command/show_subcmd/max.rb,
+	processor/command/show_subcmd/trace_subcmd/buffer.rb,
+	processor/command/show_subcmd/trace_subcmd/print.rb,
+	processor/command/undisplay.rb, processor/mock.rb,
+	processor/validate.rb: DRY code more. Remove set_restart => true
+
+2010-11-28  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/iseq.rb: Show instruction sequence
+	options and source string.
+
+2010-11-28  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-11-28  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, processor/command/info_subcmd/registers_subcmd/dfp.rb,
+	processor/command/info_subcmd/registers_subcmd/lfp.rb,
+	processor/command/info_subcmd/registers_subcmd/sp.rb,
+	processor/command/list.rb,
+	processor/command/set_subcmd/auto_subcmd/eval.rb,
+	processor/command/set_subcmd/auto_subcmd/irb.rb,
+	processor/command/set_subcmd/auto_subcmd/list.rb,
+	processor/command/set_subcmd/debug_subcmd/dbgr.rb,
+	processor/command/set_subcmd/debug_subcmd/except.rb,
+	processor/command/set_subcmd/debug_subcmd/macro.rb,
+	processor/command/set_subcmd/debug_subcmd/skip.rb,
+	processor/command/set_subcmd/debug_subcmd/stack.rb,
+	processor/command/set_subcmd/substitute_subcmd/string.rb,
+	processor/command/set_subcmd/trace_subcmd/print.rb,
+	processor/command/show_subcmd/auto_subcmd/eval.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/auto_subcmd/list.rb,
+	processor/mock.rb: Start to DRY standalone-code.
+
+2010-11-26  rocky <rockyb@rubyforge.org>
+
+	* processor/frame.rb, processor/location.rb: Lean more on linecache
+	for eval string iseq remapping. Still more work is needed.
+
+2010-11-25  rvm <rocky@gnu.org>
+
+	* .gemspec, lib/trepanning.rb: version name .git -> .dev. Allow Ruby
+	version 1.9.2frame
+
+2010-11-13  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-11-13  rocky <rockyb@rubyforge.org>
+
+	* io/base_io.rb, io/null_output.rb, processor/command/continue.rb,
+	processor/command/set_subcmd/auto.rb, processor/command/source.rb,
+	processor/default.rb, processor/frame.rb, processor/location.rb,
+	processor/validate.rb: "source -q" silences all prompt and debugger
+	messages now. Fix bugs in output.eof auto.rb: remove
+	no-longer-needed assignment
+
+2010-11-12  rocky <rockyb@rubyforge.org>
+
+	* README.textile: Don't need set_restart any more.
+
+2010-11-12  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, app/default.rb, app/run.rb, bin/trepan,
+	processor/command/restart.rb,
+	processor/command/show_subcmd/args.rb, processor/location.rb,
+	test/unit/test-app-run.rb: Greatly simplify restart code and is more
+	reliable -- via new patch to 1.9.2. Thanks to Evan Phoenix for
+	suggesting and doing in Rubinius. .gemspec: need to make sure we
+	have a later Ruby 1.9.2 patch
+
+2010-11-09  rocky <rockyb@rubyforge.org>
+
+	* data/irbrc: Monkey patch irb more properly.
+
+2010-11-09  rocky <rockyb@rubyforge.org>
+
+	* processor/command/finish.rb, processor/command/list.rb,
+	processor/frame.rb: Fix "list . NUM". finish.rb: fix doc string
+
+2010-11-08  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-11-08  rocky <rockyb@rubyforge.org>
+
+	* test/functional/fn_helper.rb, test/functional/test-break.rb,
+	test/functional/test-condition.rb, test/functional/test-delete.rb: 
+	list.rb: handle "list . count" and "list start end". Sync with
+	rbx-trepanning.
+
+2010-11-04  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/command/backtrace.rb,
+	processor/command/set_subcmd/hidelevel.rb,
+	processor/command/show_subcmd/hidelevel.rb, processor/default.rb: 
+	Replace "set/show debugstack" with more general "set/show hidestack"
+
+
+2010-10-27  rocky <rockyb@rubyforge.org>
+
+	* NEWS, lib/trepanning.rb: Some small omissions.
+
+2010-10-27  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, lib/trepanning.rb: Dependency on threadframe should be
+	0.33 or greater.
+
+2010-10-27  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb: Update version number for release.
+
+2010-10-27  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, NEWS, Rakefile: Get ready for release.
+
+2010-10-21  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2010-10-20  rocky <rockyb@rubyforge.org>
+
+	* processor/validate.rb: Comment typo.
+
+2010-10-20  rocky <rockyb@rubyforge.org>
+
+	* app/util.rb, test/unit/test-app-util.rb: Elision of long strings
+	is now in middle of string rather than the end.
+
+2010-10-19  rocky <rockyb@rubyforge.org>
+
+	* processor/frame.rb: Some more RDoc appeasement.
+
+2010-10-19  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, NEWS, processor/command/finish.rb: What's up
+
 2010-10-19  rocky <rockyb@rubyforge.org>
 
 	Merge branch 'master' of github.com:rocky/rb-trepanning

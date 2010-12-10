@@ -47,7 +47,7 @@ Examples:
     stack_size = @proc.top_frame.stack_size - hide_level
     opts = {
       :basename    => settings[:basename],
-      :current_pos => frame_index,
+      :current_pos => @proc.frame_index,
       :maxstack    => settings[:maxstack],
       :maxwidth    => settings[:maxwidth],
       :show_pc     => settings[:show_pc]

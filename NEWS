@@ -1,3 +1,15 @@
+Dec 10, 2010 (0.0.8) Phel. Mad release
+* Show IP in source location
+* Can handle: break *method" *pos* now
+* Add Kernel#debugger to be compatible with ruby-debug
+* debugger { code here }  work better
+* source -q silences all prompt and debugger messages
+* Show instruction-sequence options on demand
+* Nuke debugger set_restart => true. We now have a more reliable way to 
+  do this. Rubinius showing the way here.
+* Improvements to the "list" command.
+* Get/show eval string using rb-threadframe patch 
+
 Oct 27, 2010 (0.0.6)
 
 * Add gdb directory command - this time for sure!
