@@ -34,8 +34,8 @@ This version works only with a patched version of Ruby 1.9.2 and rb-threadframe.
 
 See also rbx-trepanning for a version that works with Rubinius.
 EOF
-  spec.add_dependency('rb-threadframe', '~> 0.34')
-  spec.add_dependency('rb-trace', '>= 0.2')
+  spec.add_dependency('rb-threadframe', '>= 0.34')
+  spec.add_dependency('rb-trace', '>= 0.3')
   spec.add_dependency('linecache-tf')
   spec.add_dependency('columnize')
   spec.add_dependency('diff-lcs') # For testing only
@@ -45,7 +45,7 @@ EOF
   spec.executables = ['trepan']
   spec.files        = FILES.to_a  
   spec.has_rdoc     = true
-  spec.homepage     = 'http://wiki.github.com/rocky/rbdbgr'
+  spec.homepage     = 'http://wiki.github.com/rocky/rb-trepanning'
   spec.name         = 'trepanning'
   spec.license      = 'MIT'
   spec.platform     = Gem::Platform::RUBY
