@@ -43,7 +43,7 @@
 2010-11-30  rocky <rockyb@rubyforge.org>
 
 	* lib/trepanning.rb: Add Kernel.debugger to be compatible with
-	ruby-debug.
+o	ruby-debug.
 
 2010-11-28  rocky <rockyb@rubyforge.org>
 
