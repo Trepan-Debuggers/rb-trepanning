@@ -14,11 +14,12 @@ FILES = FileList[
   'Rakefile',
   'app/*',
   'bin/*',
-  'data/*',
   'interface/*',
   'io/*',
   'lib/*',
   'processor/**/*.rb',
+  'test/data/**/*.cmd',
+  'test/data/**/*.right',
   'test/**/*.rb',
 ]                        
 
