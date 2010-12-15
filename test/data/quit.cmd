@@ -2,4 +2,4 @@
 # This tests the quit.
 # ***************************************************
 # FIXME need to test --no-quit.
-quit
+quit!

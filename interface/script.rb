@@ -24,8 +24,8 @@ class Trepan::ScriptInterface < Trepan::Interface
     at_exit { finalize }
     @script_name     = script_name
     @input_lineno    = 0
-    @input           = Trepan::UserInput.open(script_name,
-                                                :line_edit => false)
+    @input           = opts[:input] || 
+      Trepan::UserInput.open(script_name, :line_edit => false)
     @buffer_output   = []
     unless opts[:verbose] or out
       out = Trepan::StringArrayOutput.open(@buffer_output)
