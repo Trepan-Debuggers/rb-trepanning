@@ -19,7 +19,7 @@ class Trepan::Command::NoCacheCommand < Trepan::Command
     if @proc.frame.iseq
       puts @proc.frame.iseq.disassemble
       count = @proc.frame.iseq.killcache
-      msg ("%d locations removed" % count)
+      msg "%d locations removed" % count
       # puts @proc.frame.iseq.disassemble
     end
   end

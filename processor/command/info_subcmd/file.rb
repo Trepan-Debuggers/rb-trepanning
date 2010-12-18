@@ -65,7 +65,7 @@ If no sub-options are given #{DEFAULT_FILE_ARGS.join(' ')} are assumed.
     elsif !(matches = find_scripts(filename)).empty?
       if (matches.size > 1)
         msg("Multiple files found:")
-        matches.each { |filename| msg("\t%s" % filename) }
+        matches.each { |match_file| msg "\t%s" % match_file }
         return
       else
         msg('File "%s" just now cached.' % filename)
