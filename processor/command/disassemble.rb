@@ -38,9 +38,9 @@ Examples:
 
   # FIXME: put in processor/data.rb? 
 
-  def marked_disassemble(iseq, include_children)
-    iseqs = include_children ? iseq.child_iseqs : [iseq]
-      iseqs.each do |iseq|
+  def marked_disassemble(iseq_param, include_children)
+    iseqs = include_children ? iseq_param.child_iseqs : [iseq_param]
+    iseqs.each do |iseq|
       ary = mark_disassembly(iseq.disasm_nochildren, 
                              @proc.frame.iseq.equal?(iseq),
                              @proc.frame.pc_offset,

@@ -37,7 +37,7 @@ Examples:
       unless sig.is_a?(Integer) || Signal.list.member?(sig.upcase)
         errmsg("Signal name '#{sig}' is not a signal I know about.\n")
         return false
-        end
+      end
 #       FIXME: reinstate
 #       if 'KILL' == sig || Signal['KILL'] == sig
 #           @proc.intf.finalize

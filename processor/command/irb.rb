@@ -93,7 +93,7 @@ Here then is a loop to query VM stack values:
     $trepan_in_irb = false
     # restore old trap if any
     trap('SIGINT', save_trap) if save_trap
-   end
+  end
 end
 
 if __FILE__ == $0

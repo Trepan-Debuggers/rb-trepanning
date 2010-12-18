@@ -28,7 +28,7 @@ class Trepan::SubcommandMgr < Trepan::Command
     @name    = obj_const(self, :NAME)
     @subcmds = Trepan::Subcmd.new(self)
     @proc    = proc
-    load_debugger_subcommands(@name, self)
+    load_debugger_subcommands(self)
   end
 
   # Create an instance of each of the debugger subcommands. Commands
@@ -38,7 +38,7 @@ class Trepan::SubcommandMgr < Trepan::Command
   # inside those files and for each class name, we will create an
   # instance of that class. The set of TrepanCommand class instances
   # form set of possible debugger commands.
-  def load_debugger_subcommands(name, parent)
+  def load_debugger_subcommands(parent)
 
     # Initialization
     cmd_names     = []

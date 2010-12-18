@@ -47,7 +47,7 @@ We have this here for completeness and just in case.
         @proc.get_frame(count, absolute)[0]
       else
         @proc.frame
-    end
+      end
     return unless frame
     if 'EVAL' != frame.type
       errmsg "Current frame has to be of type EVAL, not #{frame.type}"

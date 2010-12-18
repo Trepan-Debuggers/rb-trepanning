@@ -135,7 +135,7 @@ If no sub-options are given #{DEFAULT_FILE_ARGS.join(' ')} are assumed.
 end
 
 if __FILE__ == $0
-  if  not (ARGV.size == 1 && ARGV[0] == 'noload')
+  if !(ARGV.size == 1 && ARGV[0] == 'noload')
     ISEQS__        = {}
     SCRIPT_ISEQS__ = {}
     ARGV[0..-1]    = ['noload']
