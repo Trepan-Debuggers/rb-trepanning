@@ -1,5 +1,4 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-require_relative '../app/core'
 class Trepan
 
   class CmdProcessor
@@ -44,9 +43,9 @@ class Trepan
     end
 
     # Does whatever needs to be done to set a breakpoint
-    def breakpoint_line(line_number, iseq, temp=false)
+    def breakpoint_line(line_number, initial_iseq, temp=false)
       # FIXME: handle breakpoint conditions.
-      found_iseq = iseq.child_iseqs.detect do |iseq|
+      found_iseq = initial_iseq.child_iseqs.detect do |iseq|
         iseq.lineoffsets.keys.member?(line_number) 
       end
       unless found_iseq
