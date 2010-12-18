@@ -113,7 +113,7 @@ class Trepan
 
       # Run initialization routines for each of the "submodule"s.
       # load_cmds has to come first.
-      %w(load_cmds breakpoint display eventbuf frame running validate
+      %w(load_cmds breakpoint display eventbuf frame location running validate
          ).each do |submod|
         self.send("#{submod}_initialize")
       end
