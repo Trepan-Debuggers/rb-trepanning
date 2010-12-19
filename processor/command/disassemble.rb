@@ -10,7 +10,9 @@ class Trepan::Command::DisassembleCommand < Trepan::Command
 
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
-    HELP = <<-HELP
+    ALIASES       = %w(disas disassem) # Note we have disable
+    CATEGORY      = 'data'
+    HELP          = <<-HELP
 #{NAME} [thing] [full]
 
 With no argument, disassemble the current frame.  With a method,
@@ -23,15 +25,12 @@ instruction sequence might have. If 'full' is given, all instruction
 sequences are include.
 
 Examples:
-
-  disassemble 
-  disas .       # Same as above
-  disas . full  # At least the instruction sequence above but maybe more
-  disas require_relative # disassemble method 'require_relative'
+  #{NAME} 
+  #{NAME} .       # Same as above
+  #{NAME} . full  # At least the instruction sequence above but maybe more
+  #{NAME} require_relative # disassemble method 'require_relative'
     HELP
 
-    ALIASES       = %w(disas disassem) # Note we have disable
-    CATEGORY      = 'data'
     NEED_STACK    = true
     SHORT_HELP    = 'Disassemble Ruby VM instructions'
   end

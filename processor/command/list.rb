@@ -257,7 +257,7 @@ disabled.
         @proc.line_no = lineno
       end
     rescue => e
-      errmsg e if settings[:debugexcept]
+      errmsg e.to_s if settings[:debugexcept]
     end
   end
 end
@@ -275,8 +275,8 @@ if __FILE__ == $0
     dbgr, cmd = MockDebugger::setup
     cmd.proc.send('frame_initialize')
     LineCache::cache(__FILE__)
-    cmd.run(['list'])
-    cmd.run(['list', __FILE__ + ':10'])
+    cmd.run([cmd.name])
+    cmd.run([cmd.name, __FILE__ + ':10'])
 
     def run_cmd(cmd, args)
       seps = '--' * 10

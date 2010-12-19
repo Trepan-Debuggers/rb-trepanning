@@ -31,7 +31,7 @@ Examples:
   end
     
   # This method runs the command
-  def run(args)
+  def run(args) # :nodoc
     if args.size > 1
       sig = Integer(args[1]) rescue args[1]
       unless sig.is_a?(Integer) || Signal.list.member?(sig.upcase)

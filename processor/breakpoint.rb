@@ -13,8 +13,8 @@ class Trepan
                                    # If no breakpoint stop this is nil.
 
     def breakpoint_initialize
-      @brkpts          = BreakpointMgr.new
-      @brkpt           = nil
+      @brkpts = BreakpointMgr.new
+      @brkpt  = nil
     end
 
     def breakpoint?
