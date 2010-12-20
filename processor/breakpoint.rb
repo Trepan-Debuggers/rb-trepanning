@@ -49,7 +49,7 @@ class Trepan
         iseq.lineoffsets.keys.member?(line_number) 
       end
       unless found_iseq
-        found_iseq = iseq.parent
+        found_iseq = initial_iseq.parent
         while found_iseq do
           break if found_iseq.lineoffsets.keys.member?(line_number)
           found_iseq = found_iseq.parent
