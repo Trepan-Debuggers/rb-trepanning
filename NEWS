@@ -1,3 +1,6 @@
+Dec 25, 2010 (0.0.9)
+* Minor fixes. Remove some Ruby warnings
+
 Dec 10, 2010 (0.0.8) Phel. Mad release
 * Show IP in source location
 * Can handle: break *method" *pos* now
