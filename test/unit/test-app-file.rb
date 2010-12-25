@@ -26,6 +26,7 @@ class TestAppFile < Test::Unit::TestCase
 
   def test_find_iseqs
     iseqs = find_iseqs(ISEQS__, "tmpdir")
+    p ISEQS__.keys
     assert_equal(false, iseqs.empty?)
     iseqs = find_iseqs(ISEQS__, "tmpdir@#{__FILE__}")
     assert_equal(true, iseqs.empty?)
