@@ -257,7 +257,7 @@ class Trepan
           current_command = @macros[macro_cmd_name].call(*args[1..-1])
           msg current_command if settings[:debugmacro]
           if current_command.is_a?(Array) && 
-              current_command.any {|val| !val.is_a?(String)}
+              current_command.all? {|val| val.is_a?(String)}
             args = current_command
           elsif current_command.is_a?(String)
             args = current_command.split
