@@ -22,8 +22,8 @@ previously shown.
 If the command has a '>' suffix, then line centering is disabled and
 listing begins at the specificed location.
 
-The number of line to show is controled by the debugger listsize
-setting. Use 'set listsize' or 'show listsize' to see or set the
+The number of lines to show is controlled by the debugger "listsize"
+setting. Use 'set max list' or 'show max list' to see or set the
 value.
 
 \"#{NAME} -\" shows lines before a previous listing. 

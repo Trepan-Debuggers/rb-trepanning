@@ -12,7 +12,6 @@ end
 $errors = []
 class TestBaseCommandHelp < Test::Unit::TestCase
 
-  Trepan::Subcommand.const_set(:NAME, 'bogus')
   def setup
     $errors   = []
     $msgs     = []
