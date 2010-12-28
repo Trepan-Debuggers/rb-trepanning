@@ -1,13 +1,12 @@
 #!/usr/bin/env ruby
-require 'test/unit'
-require_relative '../../processor/mock'
+require_relative './mock-helper'
 require_relative '../../processor/command/quit'
 
 class TestCommandQuit < Test::Unit::TestCase
-
+  include MockUnitHelper
   def setup
-    @name      = File.basename(__FILE__, '.rb').split(/-/)[2]
-    @dbg, @cmd = MockDebugger::setup(@name, false)
+    @name = File.basename(__FILE__, '.rb').split(/-/)[2]
+    common_setup(@name)
   end
 
   def test_basic
@@ -21,6 +20,4 @@ class TestCommandQuit < Test::Unit::TestCase
     # should test 'confirm' gets run; and should test that
     # 'unconditional' is handled correctly.
   end
-  
-
 end

@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'test/unit'
 require_relative 'cmd-helper'
 require_relative '../../processor/command/step'
 
@@ -41,5 +40,4 @@ class TestCommandStep < Test::Unit::TestCase
     @my_cmd.run([@name, '1+foo'])
     assert_equal(false,  @cmdproc.leave_cmd_loop)
   end
-
 end

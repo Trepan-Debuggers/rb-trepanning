@@ -1,9 +1,5 @@
 #!/usr/bin/env ruby
-require 'test/unit'
-require 'thread_frame'
 require 'fileutils' # To test FileUtils.cp
-
-require_relative 'cmd-helper'
 
 class TestCommandBreak < Test::Unit::TestCase
 

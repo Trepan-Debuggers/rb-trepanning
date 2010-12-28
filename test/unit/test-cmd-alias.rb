@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'test/unit'
 require_relative 'cmd-helper'
 require_relative '../../processor/command/alias'
 require_relative '../../processor/command/unalias'

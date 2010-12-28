@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'test/unit'
 require_relative 'cmd-helper'
 require_relative '../../app/breakpoint'
 
@@ -35,7 +34,6 @@ class TestCommandEnableDisable < Test::Unit::TestCase
       reset_cmdproc_vars
     end
 
-    require 'thread_frame'
     tf = RubyVM::ThreadFrame.current
     @cmdproc.frame_setup(tf)
     pc_offset = tf.pc_offset

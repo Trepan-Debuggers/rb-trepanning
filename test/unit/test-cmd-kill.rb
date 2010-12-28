@@ -1,13 +1,12 @@
 #!/usr/bin/env ruby
-require 'test/unit'
-require_relative '../../processor/mock'
+require_relative './mock-helper'
 require_relative '../../processor/command/kill'
 
 class TestCommandKill < Test::Unit::TestCase
-
+  include MockUnitHelper
   def setup
-    @name      = File.basename(__FILE__, '.rb').split(/-/)[2]
-    @dbg, @cmd = MockDebugger::setup(@name, false)
+    @name = File.basename(__FILE__, '.rb').split(/-/)[2]
+    common_setup(@name)
     def @cmd.msg(message)
       @msgs << message
     end
