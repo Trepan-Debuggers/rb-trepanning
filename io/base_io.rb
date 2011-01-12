@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # classes to support communication to and from the debugger.  This
 # communcation might be to/from another process or another computer.
 # And reading may be from a debugger command script.
@@ -60,8 +60,8 @@ class Trepan
     attr_reader   :output
     def initialize(out, opts={})
       @output = out
-      @eof    = false
       @flush_after_write = false
+      @eof    = false
     end
 
     def close
@@ -86,9 +86,63 @@ class Trepan
     # used to write to a debugger that is connected to this
     # `str' written will have a newline added to it
     #
-    def writeline( msg)
+    def writeline(msg)
       @output.write("%s\n" % msg)
     end
   end
+
+  # This is an abstract class that specifies debugger input output when
+  # handled by the same channel, e.g. a socket or tty.
+  #
+  class InOutBase
+    
+    def initialize(inout, opts={})
+      @opts = DEFAULT_OPTS.merge(opts)
+      @inout = inout
+    end
+    
+    def close
+      @inout.close() if @inout
+    end
+    
+    def eof? 
+      begin
+        @input.eof?
+      rescue IOError
+        true
+      end
+    end
+
+    def flush
+      @inout.flush
+    end
+    
+    # Read a line of input. EOFError will be raised on EOF.  
+    # 
+    # Note that we don't support prompting first. Instead, arrange to
+    # call DebuggerOutput.write() first with the prompt. If `use_raw'
+    # is set raw_input() will be used in that is supported by the
+    # specific input input. If this option is left nil as is normally
+    # expected the value from the class initialization is used.
+    def readline(use_raw=nil)
+      @input.readline
+    end
+
+    # Use this to set where to write to. output can be a 
+    # file object or a string. This code raises IOError on error.
+    # 
+    # Use this to set where to write to. output can be a 
+    # file object or a string. This code raises IOError on error.
+    def write(*args)
+      @inout.write(*args)
+    end
+    
+    # used to write to a debugger that is connected to this
+    # server; `str' written will have a newline added to it
+    def writeline( msg)
+      @inout.write("%s\n" % msg)
+    end
+  end
+
 end
 
