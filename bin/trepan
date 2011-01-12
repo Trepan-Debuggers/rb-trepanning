@@ -3,6 +3,7 @@
 # Invoke debugger from the command line. 
 require_relative '../app/run'
 require_relative '../app/options'
+require_relative '../app/client'
 require_relative '../lib/trepanning'
 
 # FIXME: the figure out how to run via gem installation.
@@ -34,13 +35,15 @@ if File.basename(__FILE__) == File.basename($0)
     # FIXME: Should (some of) these be instance variables?
     Trepan::RUBY_PATH    = ruby_path
     Trepan::TREPAN_PATH  = trepan_path
-    Trepan::RBDBGR_FILE  = __FILE__
 
     if ARGV.empty?
       if options[:version] || options[:help]
         exit 100
+      elsif options[:client]
+        start_client(options)
+        exit
       else
-        STDERR.puts 'Sorry - for now you must specify a Ruby script to debug.'
+        STDERR.puts 'Sorry - for now you must specify a Ruby script to debug or use the --client option.'
         exit(1)
       end
     end
@@ -51,10 +54,12 @@ if File.basename(__FILE__) == File.basename($0)
     Trepan::PROG_SCRIPT = program_to_debug
 
     # Set global so others may use this debugger.
-    $trepan = Trepan.new(:cmdfiles    => options[:cmdfiles],
-                         :initial_dir => options[:chdir],
-                         :nx          => options[:nx]
-                         )
+    
+    opts = {}
+    %w(cmdfiles initial_dir host nx port server).each do |opt|
+      opts[opt.to_sym] = options[opt.to_sym]
+    end
+    $trepan = Trepan.new(opts)
     debug_program($trepan, Trepan::RUBY_PATH, 
                   File.expand_path(program_to_debug))
   end

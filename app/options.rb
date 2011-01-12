@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 #=== Summary
 # Parses command-line options. 
 #=== Options
@@ -29,8 +29,8 @@ require 'optparse'
 module Trepanning
   require_relative 'default'
 
-  Trepanning::VERSION = '0.0.4.git' unless defined?(Trepanning::VERSION)
-  Trepanning::PROGRAM = 'trepan' unless defined?(Rbdbgr::PROGRAM)
+  Trepanning::VERSION = '0.0.4.dev' unless defined?(Trepanning::VERSION)
+  Trepanning::PROGRAM = 'trepan' unless defined?(Trepanning::PROGRAM)
 
   def show_version
     "#{PROGRAM} version #{VERSION}"
@@ -54,12 +54,20 @@ module Trepanning
 #{show_version}
 Usage: #{PROGRAM} [options] <script.rb> -- <script.rb parameters>
 EOB
+      opts.on('--client',
+              "Connect to out-of-process program") do
+        if options[:server]
+          stderr.puts "--server option previously given. --client option ignored."
+        else
+          options[:client] = true
+        end
+      end
       opts.on('--command FILE', String, 
               "Execute debugger commnds from FILE") do |cmdfile| 
         if File.readable?(cmdfile)
           options[:cmdfiles] << cmdfile
         elsif File.exists?(cmdfile)
-            stderr.puts "Command file '#{cmdfile}' is not readable."
+            stderr.puts "Command file '#{cmdfile}' is not readable. Option ignored."
         else
           stderr.puts "Command file '#{cmdfile}' does not exist."
         end
@@ -82,11 +90,31 @@ EOB
           stderr.puts "\"#{dir}\" is not a directory. Option --cd ignored."
         end
       end
+      opts.on("--host NAME", String, 
+              "Host or IP used in TCP connections for --server or --client. " + 
+              "Default is #{DEFAULT_SETTINGS[:host].inspect}.") do 
+        |name_or_ip| 
+        options[:host] = name_or_ip
+      end
+      opts.on("--port NUMBER", Integer, 
+              "Port number used in TCP connections for --server or --client. " + 
+              "Default is #{DEFAULT_SETTINGS[:port]}.") do 
+        |num| 
+        options[:port] = num
+      end
       opts.on("--restore PROFILE", String, 
               "Restore debugger state using PROFILE") do |profile|
         if File.readable?(profile)
           options[:restore_profile] = profile
           stderr.puts "Debugger command file #{profile} is not readable. --restore option ignored."
+        end
+      end
+      opts.on('--server',
+              "Set up for out-of-process debugging") do
+        if options[:client]
+          stderr.puts "--client option previously given. --server option ignored."
+        else
+          options[:server] = true
         end
       end
       opts.on_tail("--help", "Show this message") do
@@ -103,20 +131,20 @@ EOB
 end
 
 if __FILE__ == $0
-  include Rbdbgr
+  include Trepanning
   opts = {}
   options ={}
   [%w(--help), %w(--version)].each do |o|
     options = copy_default_options
     opts    = setup_options(options)
     rest    = opts.parse o
-    puts options
+    p options
     puts '=' * 10
   end
   rest = opts.parse! ARGV
-  puts opts.to_s
+  puts opts
   puts '=' * 10
-  puts options
+  p options
   puts '=' * 10
-  puts Rbdbgr::DEFAULT_CMDLINE_SETTINGS
+  p Trepanning::DEFAULT_CMDLINE_SETTINGS
 end

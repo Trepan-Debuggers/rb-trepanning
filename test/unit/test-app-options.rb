@@ -57,4 +57,26 @@ class TestAppStringIO < Test::Unit::TestCase
     end
   end
 
+  def test_both_client_server_opts
+    # Try each of --client and --server options separately
+    %w(client server).each do |name|
+      setup
+      o    = ["--#{name}"]
+      rest = @opts.parse o
+      assert_equal('', @stdout.string)
+      assert_equal('', @stderr.string)
+      assert_equal(true, @options[name.to_sym])
+    end
+
+    # Try both --client and --server together. Should give a warning
+    setup
+    o    = %w(--client  --server)
+    rest = @opts.parse o
+    assert_not_equal('', @stderr.string)
+    assert_equal('', @stdout.string)
+    assert_equal(true, @options[:client])
+    assert_equal(false, @options[:server])
+    
+  end
+
 end

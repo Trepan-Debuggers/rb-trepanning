@@ -46,6 +46,7 @@ class Trepan
       @opts   = SERVER_SOCKET_OPTS.merge(opts)
       @host   = @opts[:host]
       @port   = @opts[:port]
+      # require 'trepanning'; debugger
       @server = TCPServer.new(@host, @port)
       # @server.setsockopt(Socket::SOL_SOCKET, Socket::SO_RCVTIMEO, 5)
       #                   # @opts[:timeout])

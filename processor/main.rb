@@ -167,13 +167,14 @@ class Trepan
 
     # Run one debugger command. True is returned if we want to quit.
     def process_command_and_quit?()
-      intf = @dbgr.intf
-      return true if intf[-1].input.eof? && intf.size == 1
-      while !intf[-1].input.eof? || intf.size > 1
+      intf_size = @dbgr.intf.size
+      intf  = @dbgr.intf[-1]
+      return true if intf.input_eof? && intf_size == 1
+      while intf_size > 1 || !intf.input_eof?
         begin
           @current_command = read_command().strip
           if @current_command.empty? 
-            if @last_command && intf[-1].interactive?
+            if @last_command && intf.interactive?
               @current_command = @last_command 
             else
               next
@@ -181,9 +182,11 @@ class Trepan
           end
           next if @current_command[0..0] == '#' # Skip comment lines
           break
-        rescue IOError, Errno::EPIPE
-          if @dbgr.intf.size > 1
+        rescue IOError, Errno::EPIPE => e
+          if intf_size > 1
             @dbgr.intf.pop 
+            intf_size = @dbgr.intf.size
+            intf = @dbgr.intf[-1]
             @last_command = nil
             print_location
           else

@@ -1,1 +1,4 @@
+-> (fname with blank.rb:1 @0)
+puts "Ha!"
+basename is off.
 Ha!

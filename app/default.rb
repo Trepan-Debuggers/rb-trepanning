@@ -14,16 +14,28 @@ module Trepanning
     :delete_restore  => true,  # Delete restore profile after reading? 
     :initial_dir     => nil,   # If --cd option was given, we save it here.
     :nx              => false, # Don't run user startup file (e.g. .trepanrc)
+
+    # Default values used only when 'server' or 'client'
+    # (out-of-process debugging)
+    :port            => 1027,
+    :host            => 'localhost', 
+
     :restart_argv    => RubyVM::OS_ARGV,
                                # Command run when "restart" is given.
-    :restore_profile => nil    # Profile used to set/restore debugger state
+    :restore_profile => nil,   # Profile used to set/restore debugger state
+    :server          => false, # Out-of-process debugging?
   } unless defined?(DEFAULT_SETTINGS)
 
   # Default settings for Trepan run from the command line.
   DEFAULT_CMDLINE_SETTINGS = {
     :cmdfiles => [],  # Initialization command files to run
+    :client   => false, # Attach to out-of-process program?
     :nx       => false, # Don't run user startup file (e.g. .trepanrc)
     :output   => nil,
+    :port     => 1027,
+    :host     => 'localhost', 
+    :server   => false, # Out-of-process debugging?
+    # Note that at most one of :server or :client can be true.
   } unless defined?(DEFAULT_CMDLINE_SETTINGS)
 
   DEFAULT_DEBUG_STR_SETTINGS = {

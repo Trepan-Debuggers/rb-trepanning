@@ -21,7 +21,6 @@ class Trepan
 
     def initialize(opts={})
       @opts      = CLIENT_SOCKET_OPTS.merge(opts)
-      @inout     = nil
       @addr      = nil
       @buf       = ''
       @line_edit = false # Our name for GNU readline capability

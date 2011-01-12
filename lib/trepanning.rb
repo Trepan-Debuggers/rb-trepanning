@@ -6,6 +6,8 @@ require_relative '../app/core'           # core event-handling mechanism
 require_relative '../app/default'        # default debugger settings
 require_relative '../interface/user'     # user interface (includes I/O)
 require_relative '../interface/script'   # --command interface (includes I/O)
+require_relative '../interface/client'   # client interface (remote debugging)
+require_relative '../interface/server'   # server interface (remote debugging)
 
 # SCRIPT_ISEQS__ is like SCRIPT_LINES__ in a patched Ruby 1.9. Setting
 # this variable to a hash causes instruction sequences to be added in
@@ -20,7 +22,7 @@ ISEQS__        = {} unless
   defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
 class Trepan
-  VERSION = '0.0.9'
+  VERSION = '0.1.0.dev'
 
   attr_accessor :core         # access to Trepan::Core instance
   attr_accessor :intf         # Array. The way the outside world
@@ -41,13 +43,27 @@ class Trepan
     th.exec_event_tracing  = true
 
     @settings = Trepanning::DEFAULT_SETTINGS.merge(settings)
-    @input  ||= @settings[:input]
-    @output ||= @settings[:output]
+    @input  = @settings[:input] || STDIN
+    @output = @settings[:output] || STDOUT
 
-    @intf     = [Trepan::UserInterface.new(@input, @output)]
-    @settings[:cmdfiles].each do |cmdfile|
-      add_command_file(cmdfile)
-    end if @settings.member?(:cmdfiles)
+    @intf = 
+      if @settings[:server]
+        opts = Trepan::ServerInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
+        opts[:port] = @settings[:port] if @settings[:port]
+        opts[:host] = @settings[:host] if @settings[:host]
+        puts("starting debugger in out-of-process mode port at " +
+             "#{opts[:host]}:#{opts[:port]}")
+        [Trepan::ServerInterface.new(nil, nil, opts)]
+      elsif @settings[:client]
+        opts = Trepan::ClientInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
+        opts[:port] = @settings[:port] if @settings[:port]
+        opts[:host] = @settings[:host] if @settings[:host]
+        [Trepan::ClientInterface.new(nil, nil, nil, nil, opts)]
+      else
+        [Trepan::UserInterface.new(@input, @output)]
+      end
+
+    process_cmdfile_setting(@settings)
     @core     = Core.new(self, @settings[:core_opts])
     if @settings[:initial_dir]
       Dir.chdir(@settings[:initial_dir])
@@ -55,25 +71,21 @@ class Trepan
       @settings[:initial_dir] = Dir.pwd
     end
     @initial_dir  = @settings[:initial_dir]
-    @restart_argv = 
-      if @settings[:set_restart]
-        [File.expand_path($0)] + ARGV
-      elsif @settings[:restart_argv]
-        @settings[:restart_argv]
-      else 
-        nil
+    @restart_argv = @settings[:restart_argv]
+
+    unless @settings[:client]
+      @trace_filter = Trace::Filter.new
+      %w(debugger start stop).each do |m| 
+        @trace_filter << self.method(m.to_sym)
       end
-    @trace_filter = Trace::Filter.new
-    %w(debugger start stop).each do |m| 
-      @trace_filter << self.method(m.to_sym)
+      %w(debugger event_processor trace_var_processor).each do 
+        |m| 
+        @trace_filter << @core.method(m)
+      end
+      @trace_filter << @trace_filter.method(:add_trace_func)
+      @trace_filter << @trace_filter.method(:remove_trace_func)
+      @trace_filter << Kernel.method(:add_trace_func)
     end
-    %w(debugger event_processor trace_var_processor).each do 
-      |m| 
-      @trace_filter << @core.method(m)
-    end
-    @trace_filter << @trace_filter.method(:add_trace_func)
-    @trace_filter << @trace_filter.method(:remove_trace_func)
-    @trace_filter << Kernel.method(:add_trace_func)
 
     # Run user debugger command startup files.
     add_startup_files unless @settings[:nx]
@@ -192,6 +204,18 @@ class Trepan
       add_command_file(full_initfile_path) if File.readable?(full_initfile_path)
       seen[full_initfile_path] = true
     end
+  end
+
+  def process_cmdfile_setting(settings)
+    settings[:cmdfiles].each do |item|
+      cmdfile, opts = 
+        if item.kind_of?(Array)
+          item
+        else
+          [item, {}]
+        end
+      add_command_file(cmdfile, opts)
+    end if settings.member?(:cmdfiles)
   end
 
   # As a simplification for creating a debugger object, and then
