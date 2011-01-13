@@ -35,6 +35,11 @@ class Trepan
       open(@opts) if @opts[:open]
     end
 
+    def connected?
+      :connected == @state
+    end
+    
+
     # Closes server connection.
     def close
       @state = :closing
@@ -58,7 +63,7 @@ class Trepan
     # have to buffer that for the next read.
     # EOFError will be raised on EOF.
     def read_msg
-      wait_for_connect unless @state == :connected
+      wait_for_connect unless connected?
       while !@buf || @buf.empty?
         @buf, info = @session.recvfrom(TCP_MAX_PACKET)
       end
@@ -75,7 +80,7 @@ class Trepan
     # writeline, no newline is added to the end to `str'. Also
     # msg doesn't have to be a string.
     def write(msg)
-      wait_for_connect() unless @state == :connected
+      wait_for_connect() unless connected?
       # FIXME: do we have to check the size of msg and split output? 
       @session.print(pack_msg(msg))
     end

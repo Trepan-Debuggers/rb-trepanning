@@ -45,7 +45,7 @@ class Trepan::ServerInterface < Trepan::Interface
   
   # Closes both input and output
   def close
-    if @inout
+    if @inout && @inout.connected?
       @inout.write(QUIT + 'bye')
       @inout.close 
     end
@@ -138,5 +138,5 @@ end
     
 # Demo
 if __FILE__ == $0
-  intf = Trepan::ServerInterface.new
+  intf = Trepan::ServerInterface.new(nil, nil, :open => false)
 end
