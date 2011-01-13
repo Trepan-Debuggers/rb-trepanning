@@ -33,8 +33,8 @@ class Trepan
 
     # Closes all input and/or output.
     def close
-      @input.close  unless @input.closed?
-      @output.close unless @output.closed?
+      @input.close  unless !@input || @input.closed?
+      @output.close unless !@output || @output.closed?
     end
 
     # Called when a dangerous action is about to be done to make sure

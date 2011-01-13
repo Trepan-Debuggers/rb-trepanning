@@ -17,7 +17,7 @@ module Trepanning
 
     # Default values used only when 'server' or 'client'
     # (out-of-process debugging)
-    :port            => 1027,
+    :port            => 1955,
     :host            => 'localhost', 
 
     :restart_argv    => RubyVM::OS_ARGV,
@@ -32,8 +32,8 @@ module Trepanning
     :client   => false, # Attach to out-of-process program?
     :nx       => false, # Don't run user startup file (e.g. .trepanrc)
     :output   => nil,
-    :port     => 1027,
-    :host     => 'localhost', 
+    :port     => DEFAULT_SETTINGS[:port],
+    :host     => DEFAULT_SETTINGS[:host], 
     :server   => false, # Out-of-process debugging?
     # Note that at most one of :server or :client can be true.
   } unless defined?(DEFAULT_CMDLINE_SETTINGS)

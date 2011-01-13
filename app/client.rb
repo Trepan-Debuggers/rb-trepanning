@@ -35,7 +35,12 @@ module Trepanning
       when PROMPT
         # require 'trepanning'
         # debugger
-        command = intf.read_command(line)
+        begin
+          command = intf.read_command(line)
+        rescue EOFError
+          puts "user-side EOF. Quitting..."
+          break
+        end
         begin 
           intf.write_remote(COMMAND, command)
         rescue Errno::EPIPE

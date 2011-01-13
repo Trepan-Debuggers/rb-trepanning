@@ -62,8 +62,8 @@ EOB
           options[:client] = true
         end
       end
-      opts.on('--command FILE', String, 
-              "Execute debugger commnds from FILE") do |cmdfile| 
+      opts.on('-c', '--command FILE', String, 
+              "Execute debugger commands from FILE") do |cmdfile| 
         if File.readable?(cmdfile)
           options[:cmdfiles] << cmdfile
         elsif File.exists?(cmdfile)
@@ -90,13 +90,13 @@ EOB
           stderr.puts "\"#{dir}\" is not a directory. Option --cd ignored."
         end
       end
-      opts.on("--host NAME", String, 
+      opts.on("-h", "--host NAME", String, 
               "Host or IP used in TCP connections for --server or --client. " + 
               "Default is #{DEFAULT_SETTINGS[:host].inspect}.") do 
         |name_or_ip| 
         options[:host] = name_or_ip
       end
-      opts.on("--port NUMBER", Integer, 
+      opts.on("-p", "--port NUMBER", Integer, 
               "Port number used in TCP connections for --server or --client. " + 
               "Default is #{DEFAULT_SETTINGS[:port]}.") do 
         |num| 
@@ -117,11 +117,11 @@ EOB
           options[:server] = true
         end
       end
-      opts.on_tail("--help", "Show this message") do
+      opts.on_tail("-?", "--help", "Show this message") do
         options[:help] = true
         stdout.puts opts
       end
-      opts.on_tail("--version", 
+      opts.on_tail("-v", "--version", 
                    "print the version") do
         options[:version] = true
         stdout.puts show_version
