@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+require 'optparse'
 
 # Our local modules
 require_relative 'base/cmd'
 require_relative '../../interface/script'
+require_relative '../../io/null_output'
 require_relative '../../app/default'
 
 class Trepan::Command::SourceCommand < Trepan::Command
   include Trepanning
   unless defined?(HELP)
-    NAME         = File.basename(__FILE__, '.rb')
+    NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
 #{NAME} [options] FILE
 
@@ -23,6 +25,9 @@ Read debugger commands from a file named FILE.  Optional -v switch
 causes each command in FILE to be echoed as it is executed.  Option -Y
 sets the default value in any confirmation command to be 'yes' and -N
 sets the default value to 'no'.
+
+Option -q will turn off any debugger output that normally occurs in the
+running of the program.
 
 Note that the command startup file #{Trepanning::CMD_INITFILE_BASE} is read automatically
 via a #{NAME} command the debugger is started.
