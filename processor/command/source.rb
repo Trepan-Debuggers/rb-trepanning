@@ -55,7 +55,7 @@ unless option -c is given.
       opts.on("-c", "--[no-]continue", 
               "Continue in the face of errors") do
         |v| 
-        options[:abort_on_error] = v
+        options[:abort_on_error] = !v
       end
       opts.on("-v", 
               "--[no-]verbose", "echo each command as it is executed") do
