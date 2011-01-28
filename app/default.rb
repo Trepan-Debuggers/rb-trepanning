@@ -1,8 +1,6 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # A place for the default settings
-# This could be put elsewhere but it is expected that this will grow
-# get quite large.
-module Trepanning
+class Trepan
 
   # I am not sure if we need to sets of hashes, but we'll start out
   # that way.
@@ -61,7 +59,7 @@ end
 if __FILE__ == $0
   # Show it:
   require 'pp'
-  PP.pp(Trepanning::DEFAULT_SETTINGS)
+  PP.pp(Trepan::DEFAULT_SETTINGS)
   puts '=' * 30
-  PP.pp(Trepanning::DEFAULT_CMDLINE_SETTINGS)
+  PP.pp(Trepan::DEFAULT_CMDLINE_SETTINGS)
 end

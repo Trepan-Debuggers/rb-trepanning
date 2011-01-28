@@ -7,15 +7,14 @@ require_relative '../../app/options'
 # To have something to work with.
 load 'tmpdir.rb'
 
-class TestAppStringIO < Test::Unit::TestCase
-  include Trepanning
+class TestAppOptions < Test::Unit::TestCase
 
   def setup
-    @options = DEFAULT_CMDLINE_SETTINGS.clone
+    @options = Trepan::DEFAULT_CMDLINE_SETTINGS.clone
     @stderr  = StringIO.new
     @stdout  = StringIO.new
-    @options = copy_default_options
-    @opts = setup_options(@options, @stdout, @stderr)
+    @options = Trepan::copy_default_options
+    @opts    = Trepan::setup_options(@options, @stdout, @stderr)
   end
 
   def test_cd

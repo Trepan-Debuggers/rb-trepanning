@@ -1,8 +1,10 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Mock setup for commands.
 require_relative 'main'
+
 require_relative '../app/core'
 require_relative '../app/default'
+require_relative '../app/frame'
 require_relative '../interface/user'  # user interface (includes I/O)
 
 SCRIPT_ISEQS__ = {} unless 
@@ -14,6 +16,7 @@ module MockDebugger
   class MockDebugger
     attr_accessor :trace_filter # Procs/Methods we ignore.
 
+    attr_accessor :frame        # Actually a "Rubinius::Location object
     attr_accessor :core         # access to Debugger::Core instance
     attr_accessor :intf         # The way the outside world interfaces with us.
     attr_reader   :initial_dir  # String. Current directory when program
@@ -21,10 +24,16 @@ module MockDebugger
     attr_accessor :restart_argv # How to restart us, empty or nil. 
                                 # Note restart[0] is typically $0.
     attr_reader   :settings     # Hash[:symbol] of things you can configure
+    attr_accessor :processor
+
+    # FIXME: move more stuff of here and into Trepan::CmdProcessor
+    # These below should go into Trepan::CmdProcessor.
+    attr_reader :cmd_argstr, :cmd_name, :vm_locations, :current_frame, 
+                :debugee_thread
 
     def initialize(settings={})
       @before_cmdloop_hooks = []
-      @settings             = Trepanning::DEFAULT_SETTINGS.merge(settings)
+      @settings             = Trepan::DEFAULT_SETTINGS.merge(settings)
       @intf                 = [Trepan::UserInterface.new]
       @core                 = Trepan::Core.new(self)
       @trace_filter         = []
@@ -34,6 +43,9 @@ module MockDebugger
 
     end
 
+    def frame(num)
+      @frames[num] ||= Trepan::Frame.new(self, num, @vm_locations[num])
+    end
   end
 
   # Common Mock debugger setup 

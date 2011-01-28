@@ -16,8 +16,8 @@ class Trepan
     DEFAULT_INIT_OPTS = {:open => true}
     
     SERVER_SOCKET_OPTS = {
-      :host    => Trepanning::DEFAULT_SETTINGS[:host],
-      :port    => Trepanning::DEFAULT_SETTINGS[:port], # A non-privileged port
+      :host    => Trepan::DEFAULT_SETTINGS[:host],
+      :port    => Trepan::DEFAULT_SETTINGS[:port], # A non-privileged port
       :timeout => 5,     # FIXME: not used
       :reuse   => true,  # FIXME: not used. Allow port to be resued on close?
                          # Python has: 'posix' == os.name 
@@ -51,7 +51,6 @@ class Trepan
       @opts   = SERVER_SOCKET_OPTS.merge(opts)
       @host   = @opts[:host]
       @port   = @opts[:port]
-      # require 'trepanning'; debugger
       @server = TCPServer.new(@host, @port)
       # @server.setsockopt(Socket::SOL_SOCKET, Socket::SO_RCVTIMEO, 5)
       #                   # @opts[:timeout])

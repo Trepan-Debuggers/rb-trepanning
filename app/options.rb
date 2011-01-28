@@ -26,17 +26,17 @@
 #      Show invocation help and exit.
 
 require 'optparse'
-module Trepanning
+class Trepan
   require_relative 'default'
 
-  Trepanning::VERSION = '0.0.4.dev' unless defined?(Trepanning::VERSION)
-  Trepanning::PROGRAM = 'trepan' unless defined?(Trepanning::PROGRAM)
+  Trepan::VERSION = '0.1.0.dev'
+  Trepan::PROGRAM = 'trepan'
 
-  def show_version
-    "#{PROGRAM} version #{VERSION}"
+  def self.show_version
+    "#{PROGRAM}, version #{VERSION}"
   end
 
-  def copy_default_options
+  def self.copy_default_options
     options = {}
     DEFAULT_CMDLINE_SETTINGS.each do |key, value|
       begin 
@@ -48,7 +48,7 @@ module Trepanning
     options
   end
 
-  def setup_options(options, stdout=$stdout, stderr=$stderr)
+  def self.setup_options(options, stdout=$stdout, stderr=$stderr)
     OptionParser.new do |opts|
       opts.banner = <<EOB
 #{show_version}
@@ -117,6 +117,10 @@ EOB
           options[:server] = true
         end
       end
+      opts.on('--[no-]terminal',
+              "Set output for terminal highlighting") do |v|
+        options[:terminal] = ((v) ? :term : nil)
+      end
       opts.on_tail("-?", "--help", "Show this message") do
         options[:help] = true
         stdout.puts opts
@@ -131,12 +135,11 @@ EOB
 end
 
 if __FILE__ == $0
-  include Trepanning
   opts = {}
   options ={}
   [%w(--help), %w(--version)].each do |o|
-    options = copy_default_options
-    opts    = setup_options(options)
+    options = Trepan::copy_default_options
+    opts    = Trepan::setup_options(options)
     rest    = opts.parse o
     p options
     puts '=' * 10
@@ -146,5 +149,5 @@ if __FILE__ == $0
   puts '=' * 10
   p options
   puts '=' * 10
-  p Trepanning::DEFAULT_CMDLINE_SETTINGS
+  p Trepan::DEFAULT_CMDLINE_SETTINGS
 end

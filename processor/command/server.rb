@@ -5,13 +5,12 @@ require_relative 'base/cmd'
 require_relative '../../app/default'
 require_relative '../../interface/server'   # server interface (remote debugging)
 class Trepan::Command::ServerCommand < Trepan::Command
-  include Trepanning
 
   unless defined?(HELP)
     CATEGORY     = 'support'
     DEFAULT_OPTIONS = {
-      :host => DEFAULT_SETTINGS[:host],
-      :port => DEFAULT_SETTINGS[:port]
+      :host => Trepan::DEFAULT_SETTINGS[:host],
+      :port => Trepan::DEFAULT_SETTINGS[:port]
     }
     MAX_ARGS     = 4  # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
@@ -21,8 +20,8 @@ class Trepan::Command::ServerCommand < Trepan::Command
 Put session into server mode which allows an out-of-process or remote
 connection to the debugged program. --port and --host can be supplied
 to specify the port number to use and the host name for TCP
-connections. If neither is given, the default host (#{DEFAULT_SETTINGS[:host]}) 
-and the default port (#{DEFAULT_SETTINGS[:port]}) are used.
+connections. If neither is given, the default host (#{Trepan::DEFAULT_SETTINGS[:host]}) 
+and the default port (#{Trepan::DEFAULT_SETTINGS[:port]}) are used.
 
 Examples:
    #{NAME} # Accept remote connections using defaults

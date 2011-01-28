@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Invoke debugger from the command line. 
 require_relative '../app/run'
 require_relative '../app/options'
@@ -21,8 +21,8 @@ if File.basename(__FILE__) == File.basename($0)
     # options = DEFAULT_CMDLINE_SETTINGS.merge({}) seems to change up
     # DEFAULT_CMDLINE_SETTINGS when options[:key] is changed. The
     # below is the simplest thing I can come up with so far.
-    options = copy_default_options
-    opts    = setup_options(options)
+    options = Trepan.copy_default_options
+    opts    = Trepan.setup_options(options)
     Trepan::ARGV = ARGV.clone
     rest = opts.parse! ARGV
 

@@ -33,10 +33,11 @@ class Trepan
                                    # debug nesting and 
       :save_cmdfile  => nil,       # If set, debugger command file to be
                                    # used on restart
+      :terminal      => false,     # Use terminal highlight? 
       :timer         => false,     # show elapsed time between events
       :traceprint    => false,     # event tracing printing
       :tracebuffer   => false,     # save events to a trace buffer.
-      :user_cmd_dir  => File.join(Trepanning::HOME_DIR, 'trepan', 'command'),
+      :user_cmd_dir  => File.join(Trepan::HOME_DIR, 'tepanx', 'command'),
                                    # User command directory
     } 
   end
