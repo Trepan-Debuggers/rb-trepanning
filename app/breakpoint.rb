@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'thread_frame'
 
 # Breakpoint objects
-module Trepanning
+class Trepan
   class Breakpoint
     attr_accessor :condition # If non-nil, this is a String to be eval'd
                              # which must be true to enter the debugger
@@ -131,11 +131,11 @@ end
 if __FILE__ == $0
   tf = RubyVM::ThreadFrame.current
   iseq = tf.iseq
-  b1 = Trepanning::Breakpoint.new(iseq, 0)
+  b1 = Trepan::Breakpoint.new(iseq, 0)
   p b1
   p b1.source_location
   p b1.source_container
-  b2 = Trepanning::Breakpoint.new(iseq, 0, :temp => true)
+  b2 = Trepan::Breakpoint.new(iseq, 0, :temp => true)
   p b2
   puts "b2 id: #{b2.id}"
   puts "b2 hits: #{b2.hits}"
@@ -147,11 +147,11 @@ if __FILE__ == $0
     puts "TypeError (expected): #{e}"
   end
   begin
-    b3 = Trepanning::Breakpoint.new(5, iseq.iseq_size)
+    b3 = Trepan::Breakpoint.new(5, iseq.iseq_size)
   rescue TypeError => e
     puts "TypeError (expected): #{e}"
   end
-  puts Trepanning::Breakpoint.class_variable_get('@@next_id')
-  Trepanning::Breakpoint.reset
-  puts Trepanning::Breakpoint.class_variable_get('@@next_id')
+  puts Trepan::Breakpoint.class_variable_get('@@next_id')
+  Trepan::Breakpoint.reset
+  puts Trepan::Breakpoint.class_variable_get('@@next_id')
 end

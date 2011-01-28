@@ -7,7 +7,7 @@ require 'thread_frame'
 class TestLibAppBrkptMgr < Test::Unit::TestCase
 
   def setup
-    @brkpts = BreakpointMgr.new
+    @brkpts = Trepan::BreakpointMgr.new
   end
 
   def test_basic
@@ -24,7 +24,7 @@ class TestLibAppBrkptMgr < Test::Unit::TestCase
     assert_equal(0, @brkpts.size)
 
     # Try adding via << rather than .add
-    b2 = @brkpts << Trepanning::Breakpoint.new(iseq, offsets[1], :temp => true)
+    b2 = @brkpts << Trepan::Breakpoint.new(iseq, offsets[1], :temp => true)
 
     assert_equal(nil, @brkpts.find(iseq, offset, tf.binding))
     @brkpts.reset

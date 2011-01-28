@@ -1,111 +1,112 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'set'
 require_relative 'breakpoint'
-class BreakpointMgr
+class Trepan
+  class BreakpointMgr
 
-  attr_reader :list
-  attr_reader :set
+    attr_reader :list
+    attr_reader :set
 
-  def initialize
-    @list = []
-    @next_id = 1
-    @set = Set.new
-  end
-
-  def <<(brkpt)
-    @list << brkpt
-    @set.add(set_key(brkpt))
-  end
-
-  def [](index)
-    raise TypeError, 
-    "index #{index} should be a Fixnum, is #{index.class}" unless
-      index.is_a?(Fixnum)
-    @list.detect {|bp| bp.id == index }
-  end
-
-  alias detect []
-
-  def delete(index)
-    bp = detect(index)
-    if bp
-      delete_by_brkpt(bp)
-      return bp
-    else
-      return nil
+    def initialize
+      @list = []
+      @next_id = 1
+      @set = Set.new
     end
-  end
 
-  def delete_by_brkpt(delete_bp)
-    @list = @list.reject{|candidate| candidate == delete_bp}
-    @set  = Set.new(@list.map{|bp| set_key(bp)})
-    delete_bp.remove! unless @set.member?(set_key(delete_bp))
-    return delete_bp
-  end
+    def <<(brkpt)
+      @list << brkpt
+      @set.add(set_key(brkpt))
+    end
 
-  def add(*args)
-    if args[2] 
-      unless args[2].member?(:id)
-        args[2][:id] = @next_id
+    def [](index)
+      raise TypeError, 
+      "index #{index} should be a Fixnum, is #{index.class}" unless
+        index.is_a?(Fixnum)
+      @list.detect {|bp| bp.id == index }
+    end
+
+    alias detect []
+
+    def delete(index)
+      bp = detect(index)
+      if bp
+        delete_by_brkpt(bp)
+        return bp
+      else
+        return nil
+      end
+    end
+
+    def delete_by_brkpt(delete_bp)
+      @list = @list.reject{|candidate| candidate == delete_bp}
+      @set  = Set.new(@list.map{|bp| set_key(bp)})
+      delete_bp.remove! unless @set.member?(set_key(delete_bp))
+      return delete_bp
+    end
+
+    def add(*args)
+      if args[2] 
+        unless args[2].member?(:id)
+          args[2][:id] = @next_id
+          @next_id += 1
+        end
+      else
+        args[2] = {:id => @next_id}
         @next_id += 1
       end
-    else
-      args[2] = {:id => @next_id}
-      @next_id += 1
+
+      brkpt = Trepan::Breakpoint.new(*args)
+      @list << brkpt
+      @set.add(set_key(brkpt))
+      return brkpt
     end
 
-    brkpt = Trepanning::Breakpoint.new(*args)
-    @list << brkpt
-    @set.add(set_key(brkpt))
-    return brkpt
-  end
+    def empty?
+      @list.empty?
+    end
 
-  def empty?
-    @list.empty?
-  end
+    def line_breaks(container)
+      result = {}
+      @list.each do |bp|
+        if bp.source_container == container
+          bp.source_location.each do |line|
+            result[line] = bp 
+          end
+        end
+      end
+      result
+    end
 
-  def line_breaks(container)
-    result = {}
-    @list.each do |bp|
-      if bp.source_container == container
-        bp.source_location.each do |line|
-          result[line] = bp 
+    def find(iseq, offset, bind)
+      @list.detect do |bp| 
+        if bp.enabled? && bp.iseq.equal?(iseq) && bp.offset == offset
+          begin
+            return bp if bp.condition?(bind)
+          rescue
+          end 
         end
       end
     end
-    result
-  end
 
-  def find(iseq, offset, bind)
-    @list.detect do |bp| 
-      if bp.enabled? && bp.iseq.equal?(iseq) && bp.offset == offset
-        begin
-          return bp if bp.condition?(bind)
-        rescue
-        end 
-      end
+    def max
+      @list.map{|bp| bp.id}.max
+    end
+
+    # Key used in @set to list unique instruction-sequence offsets.
+    def set_key(bp)
+      [bp.iseq, bp.offset]
+    end
+
+    def size
+      @list.size
+    end
+
+    def reset
+      @list.each{|bp| bp.remove!}
+      @list = []
+      @set  = Set.new
     end
   end
-
-  def max
-    @list.map{|bp| bp.id}.max
-  end
-
-  # Key used in @set to list unique instruction-sequence offsets.
-  def set_key(bp)
-    [bp.iseq, bp.offset]
-  end
-
-  def size
-    @list.size
-  end
-
-  def reset
-    @list.each{|bp| bp.remove!}
-    @list = []
-    @set  = Set.new
-  end
-
 end
 if __FILE__ == $0
   def bp_status(brkpts, i)
@@ -118,12 +119,12 @@ if __FILE__ == $0
 
   frame = RubyVM::ThreadFrame.current 
   iseq = frame.iseq
-  brkpts = BreakpointMgr.new
+  brkpts = Trepan::BreakpointMgr.new
   brkpts.add(iseq, 0)
   p brkpts[2]
   bp_status(brkpts, 1)
   offset = frame.pc_offset
-  b2 = Trepanning::Breakpoint.new(iseq, offset)
+  b2 = Trepan::Breakpoint.new(iseq, offset)
   brkpts << b2
   p brkpts.find(b2.iseq, b2.offset, nil)
   p brkpts[2]
@@ -136,10 +137,10 @@ if __FILE__ == $0
   # Two of the same breakpoints but delete 1 and see that the
   # other still stays
   offset = frame.pc_offset
-  b2 = Trepanning::Breakpoint.new(iseq, offset)
+  b2 = Trepan::Breakpoint.new(iseq, offset)
   brkpts << b2
   bp_status(brkpts, 4)
-  b3 = Trepanning::Breakpoint.new(iseq, offset)
+  b3 = Trepan::Breakpoint.new(iseq, offset)
   brkpts << b3
   bp_status(brkpts, 5)
   brkpts.delete_by_brkpt(b2)

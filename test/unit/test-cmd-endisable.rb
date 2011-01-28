@@ -6,7 +6,7 @@ class TestCommandEnableDisable < Test::Unit::TestCase
 
   include UnitHelper
   def setup
-    Trepanning::Breakpoint::reset
+    Trepan::Breakpoint::reset
     common_setup
     @break_cmd   = @cmds['break']
     @disable_cmd = @cmds['disable']
