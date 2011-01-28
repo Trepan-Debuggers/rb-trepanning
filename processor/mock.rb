@@ -67,17 +67,20 @@ module MockDebugger
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
     show_special_class_constants(cmd) if show_constants
 
+    def cmd.confirm(prompt, default)
+      true
+    end
+    def cmd.errmsg(message)
+      puts "Error: #{message}"
+    end
     def cmd.msg(message)
       puts message
     end
     def cmd.msg_nocr(message)
       print message
     end
-    def cmd.errmsg(message)
-      puts "Error: #{message}"
-    end
-    def cmd.confirm(prompt, default)
-      true
+    def cmd.section(message, opts={})
+      puts "Section: #{message}"
     end
 
     return dbgr, cmd

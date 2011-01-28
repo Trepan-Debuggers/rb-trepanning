@@ -79,10 +79,10 @@ class TestCmdProcessor < Test::Unit::TestCase
       assert_equal(expect_errmsgs, $errs, 
                    "Mismatched error messages from #{caller[0]}")
     end
-    def @cmdproc.msg(mess)
+    def @cmdproc.msg(mess, opts={})
       $msgs << "#{mess}"
     end
-    def @cmdproc.errmsg(mess)
+    def @cmdproc.errmsg(mess, opts={})
       $errs << "#{mess}"
     end
     run_and_check('!s=1', ['D=> 1'], [], "! evaluation")

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Base class of all commands. Code common to all commands is here.
 # Note: don't end classname with Command (capital C) since main
 # will think this a command name like QuitCommand 
@@ -46,21 +46,21 @@ class Trepan
       @proc.confirm(message, default)
     end
 
-    def errmsg(message)
-      @proc.errmsg(message)
+    def errmsg(message, opts={})
+      @proc.errmsg(message, opts)
     end
 
     def obj_const(obj, name)
       obj.class.const_get(name) 
     end
 
-    def msg(message)
-      @proc.msg(message)
+    def msg(message, opts={})
+      @proc.msg(message, opts)
     end
 
     # Convenience short-hand for @dbgr.intf[-1].msg_nocr
     def msg_nocr(msg)
-      @proc.msg_nocr(msg)
+      @proc.msg_nocr(msg, opts={})
     end
 
     def my_const(name)
@@ -84,6 +84,10 @@ class Trepan
     # The method that implements the debugger command.
     def run(*args)
       raise RuntimeError, 'You need to define this method elsewhere'
+    end
+
+    def section(message, opts={})
+      @proc.section(message, opts)
     end
 
     def settings

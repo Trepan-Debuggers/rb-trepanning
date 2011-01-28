@@ -15,17 +15,20 @@ module UnitHelper
     @cmdproc  = @core.processor = Trepan::CmdProcessor.new(@core)
     @cmds     = @cmdproc.commands
 
-    def @cmdproc.msg(message)
+    def @cmdproc.msg(message, opts={})
       @msgs << message
     end
-    def @cmdproc.errmsg(message)
+    def @cmdproc.msgs
+      @msgs
+    end
+    def @cmdproc.errmsg(message, opts={})
       @errmsgs << message
     end
     def @cmdproc.errmsgs
       @errmsgs
     end
-    def @cmdproc.msgs
-      @msgs
+    def @cmdproc.section(message, opts={})
+      @msgs << message
     end
     reset_cmdproc_vars
   end

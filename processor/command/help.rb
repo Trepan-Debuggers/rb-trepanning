@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 class Trepan::Command::HelpCommand < Trepan::Command
 
@@ -41,13 +41,14 @@ See also 'examine' and 'whatis'.
 
   # List the command categories and a short description of each.
   def list_categories
-    msg("Classes of commands:")
+    section 'Classes of commands:'
     CATEGORIES.keys.sort.each do |cat|
       msg("%-13s -- %s" % [cat, CATEGORIES[cat]])
     end
     final_msg = '
 Type "help" followed by a class name for a list of commands in that class.
 Type "help *" for the list of all commands.
+Type "help all" for the list of all commands.
 Type "help REGEXP" for the list of commands matching /^#{REGEXP}/
 Type "help CLASS *" for the list of all commands in class CLASS.
 Type "help" followed by command name for full documentation.
@@ -56,12 +57,16 @@ Type "help" followed by command name for full documentation.
   end
 
   # This method runs the command
-  def run(args)
+  def run(args) # :nodoc
     if args.size > 1
       cmd_name = args[1]
       if cmd_name == '*'
-        msg("All command names:")
+        section 'All command names:'
         msg columnize_commands(@proc.commands.keys.sort)
+      elsif cmd_name =~ /^all$/i
+        CATEGORIES.sort.each do |category|
+          show_category(category[0], [])
+        end
       elsif CATEGORIES.member?(cmd_name)
         show_category(args[1], args[2..-1])
       elsif @proc.commands.member?(cmd_name) or @proc.aliases.member?(cmd_name)
@@ -87,7 +92,7 @@ Type "help" followed by command name for full documentation.
         if matches.empty?
           errmsg("No commands found matching /^#{cmd_name}/. Try \"help\".")
         else
-          msg("Command names matching /^#{cmd_name}/:")
+          section "Command names matching /^#{cmd_name}/:"
           msg columnize_commands(matches.sort)
         end
       end
@@ -101,18 +106,18 @@ Type "help" followed by command name for full documentation.
   def show_category(category, args)
       
     if args.size == 1 && args[0] == '*'
-      msg("Commands in class %s:" % category)
+      section "Commands in class %s:" % category
       
       cmds = @proc.commands.keys.select do |cmd_name|
         category == @proc.commands[cmd_name].category
       end.sort
-
       width = settings[:maxwidth]
       return columnize_commands(cmds)
     end
         
-    msg("%s." % CATEGORIES[category])
-    msg("List of commands:\n")
+    msg('')
+    section "Command class: %s" % category
+    msg('')
     @proc.commands.keys.sort.each do |name|
       next if category != @proc.commands[name].category
       msg("%-13s -- %s" % [name, @proc.commands[name].short_help])
@@ -125,20 +130,20 @@ if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
 
-  cmd.run %W(cmd.name help)
+  cmd.run %W(#{cmd.name} help)
   puts '=' * 40
-  cmd.run %W(cmd.name *)
+  cmd.run %W(#{cmd.name} *)
   puts '=' * 40
-  cmd.run %W(cmd.name fdafsasfda)
+  cmd.run %W(#{cmd.name} fdafsasfda)
   puts '=' * 40
-  cmd.run %W(cmd.name)
+  cmd.run [cmd.name]
   puts '=' * 40
-  cmd.run %W(cmd.name support)
+  cmd.run %W(#{cmd.name} support)
   puts '=' * 40
-  cmd.run %W(cmd.name support *)
+  cmd.run %W(#{cmd.name} support *)
 
   puts '=' * 40
-  cmd.run %W(cmd.name s.*)
+  cmd.run %W(#{cmd.name} s.*)
   puts '=' * 40
-  cmd.run %W(cmd.name s<>)
+  cmd.run %W(#{cmd.name} s<>)
 end

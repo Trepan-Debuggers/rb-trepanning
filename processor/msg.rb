@@ -1,18 +1,20 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # I/O related command processor methods
 require_relative '../app/util'
 class Trepan
   class CmdProcessor
-    def errmsg(message)
+    def errmsg(message, opts={})
       @dbgr.intf[-1].errmsg(safe_rep(message))
     end
 
-    def msg(message)
-      @dbgr.intf[-1].msg(safe_rep(message))
+    def msg(message, opts={})
+      message = safe_rep(message) unless opts[:unlimited]
+      @dbgr.intf[-1].msg(message)
     end
 
-    def msg_nocr(message)
-      @dbgr.intf[-1].msg_nocr(safe_rep(message))
+    def msg_nocr(message, opts={})
+      message = safe_rep(message) unless opts[:unlimited]
+      @dbgr.intf[-1].msg_nocr(message)
     end
 
     def read_command()
@@ -20,7 +22,16 @@ class Trepan
     end
 
     def safe_rep(str)
-      Trepan::Util::safe_repr(str, @settings[:maxstring])
+      Util::safe_repr(str, @settings[:maxstring])
+    end
+
+    def section(message, opts={})
+      message = safe_rep(message) unless opts[:unlimited]
+      if @settings[:terminal] && defined?(Term::ANSIColor)
+        message = 
+          Term::ANSIColor.bold + message + Term::ANSIColor.reset 
+      end
+      @dbgr.intf[-1].msg(message)
     end
   end
 end
