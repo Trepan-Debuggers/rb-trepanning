@@ -63,7 +63,13 @@ class Trepan
       end
 
     process_cmdfile_setting(@settings)
-    @core     = Core.new(self, @settings[:core_opts])
+
+    # FIXME: The below option settings is a big crock.
+    @settings[:core_opts][:cmdproc_opts] ||= {}
+    @settings[:core_opts][:cmdproc_opts][:terminal] ||= settings[:terminal]
+
+    @core = Core.new(self, @settings[:core_opts])
+    
     if @settings[:initial_dir]
       Dir.chdir(@settings[:initial_dir])
     else

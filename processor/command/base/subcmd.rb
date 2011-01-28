@@ -193,6 +193,18 @@ class Trepan
 
 end
 
+module Trepanning
+  module Subcommand
+    module_function
+    def set_name_prefix(__file__, klass)
+      dirname    = File.basename(File.dirname(File.expand_path(__file__)))
+      name = File.basename(__file__, '.rb')
+      klass.const_set('NAME', name)
+      klass.const_set('PREFIX', %W(#{dirname[0...-'_subcmd'.size]} #{name}))
+    end
+  end
+end
+
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'

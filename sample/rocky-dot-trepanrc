@@ -1,0 +1,14 @@
+# Rocky's trepanx profile for Rubinius.
+
+# Place where I have Rubinius source (in rvm)
+dir /home/rocky-rvm/.rvm/src/rbx-head/
+
+set autoeval on   # Is default, but just in case
+# set terminal on   # turn on syntax highlight by default
+
+# My customization to the default syntax coloring
+load "#{ENV['HOME']}/.trepanx-colors.rb"
+
+# let me know that this ran...
+puts "Rocky's .trepanxrc loaded"
+

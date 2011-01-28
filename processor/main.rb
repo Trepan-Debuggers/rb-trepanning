@@ -93,7 +93,7 @@ class Trepan
       start_cmds       = settings.delete(:start_cmds)
       start_file       = settings.delete(:start_file)
 
-      @settings        = settings.merge(DEFAULT_SETTINGS)
+      @settings        = DEFAULT_SETTINGS.merge(settings)
       @different_pos   = @settings[:different]
 
       # FIXME: Rework using a general "set substitute file" command and

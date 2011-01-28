@@ -234,13 +234,17 @@ disabled.
     end
 
     begin
+      opts = {
+        :reload_on_change => @proc.reload_on_change,
+        :output => settings[:terminal]
+      }
       first.upto(last).each do |lineno|
-        line = LineCache::getline(container[1], lineno,
-                                  @proc.reload_on_change).chomp
+        line = LineCache::getline(container[1], lineno, opts)
         unless line
           msg('[EOF]')
           break
         end
+        line.chomp!
         s = '%3d' % lineno
         s = s + ' ' if s.size < 4 
         s += if breaklist.member?(lineno)
