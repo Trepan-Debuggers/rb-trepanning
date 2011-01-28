@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'linecache'
 require_relative 'msg'
 require_relative '../app/frame'
@@ -42,15 +42,18 @@ class Trepan
     # Get line +line_number+ from file named +filename+. Return ''
     # if there was a problem. Leading blanks are stripped off.
     def line_at(filename, line_number) # :nodoc:
-      line = LineCache::getline(filename, line_number, @reload_on_change)
+      opts = {
+        :reload_on_change => @reload_on_change,
+        :output => @settings[:terminal]
+      }
+      line = LineCache::getline(filename, line_number, opts)
 
       unless line
         # Try using search directories (set with command "directory")
         if filename[0..0] != File::SEPARATOR
           try_filename = resolve_file_with_dir(filename) 
           if try_filename && 
-              line = LineCache::getline(try_filename, line_number, 
-                                        @reload_on_change)
+              line = LineCache::getline(try_filename, line_number, opts)
             LineCache::remap_file(filename, try_filename)
           end
         end
@@ -61,7 +64,7 @@ class Trepan
     def loc_and_text(loc, frame, line_no, source_container)
       found_line = true
       ## FIXME: condition is too long.
-      if source_container[0] == 'string' && frame.iseq && frame.iseq.source
+      if source_container[0] == 'string' && frame.iseq && frame.iseq.eval_source
         file = LineCache::map_iseq(frame.iseq)
         text = LineCache::getline(frame.iseq, line_no)
         loc += " remapped #{canonic_file(file)}:#{line_no}"
@@ -138,8 +141,9 @@ class Trepan
       filename  = source_container[1]
       ## FIXME: condition is too long.
       canonic_filename = 
-        if 'string' == source_container[0] && frame.iseq && frame.iseq.source
-          eval_str = frame.iseq.source
+        if 'string' == source_container[0] && frame.iseq && 
+            frame.iseq.eval_source
+          eval_str = frame.iseq.eval_source
           'eval "' + safe_repr(eval_str.gsub(/\n/,';'), 15) + '"'
         else
           canonic_file(filename)
