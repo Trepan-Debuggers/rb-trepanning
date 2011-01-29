@@ -257,7 +257,7 @@ disabled.
              end
         s += (frame && lineno == @proc.frame_line &&
               container == frame.source_container) ? '->' : a_pad
-        msg(s + "\t" + line)
+        msg(s + "\t" + line, {:unlimited => true})
         @proc.line_no = lineno
       end
     rescue => e
