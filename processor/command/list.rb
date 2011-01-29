@@ -236,7 +236,7 @@ disabled.
     begin
       opts = {
         :reload_on_change => @proc.reload_on_change,
-        :output => settings[:terminal]
+        :output => settings[:highlight]
       }
       first.upto(last).each do |lineno|
         line = LineCache::getline(container[1], lineno, opts)

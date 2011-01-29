@@ -1,8 +1,7 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # The main "driver" class for a command processor. Other parts of the 
 # command class and debugger command objects are pulled in from here.
 
-require 'linecache'
 require 'set'
 require 'pathname'  # For cleanpath
 
@@ -22,6 +21,7 @@ class Trepan
                                    # This is current_command with the command
                                    # name removed from the beginning.
     attr_reader   :cmd_name        # command name before alias or macro resolution
+    attr_reader   :cmd_queue       # queue of commands to run
     attr_reader   :core            # Trepan core object
     attr_reader   :current_command # Current command getting run, a String.
     attr_reader   :dbgr            # Trepan instance (via
@@ -59,6 +59,7 @@ class Trepan
       # Event icons used in printing locations.
       EVENT2ICON = {
         'brkpt'          => 'xx',
+        'tbrkpt'         => 'x1',
         'c-call'         => 'C>',
         'c-return'       => '<C',
         'call'           => '->',
@@ -81,6 +82,7 @@ class Trepan
     end
 
     def initialize(core, settings={})
+      @cmd_queue       = []
       @core            = core
       @debug_nest      = 1
       @dbgr            = core.dbgr
@@ -172,7 +174,12 @@ class Trepan
       return true if intf.input_eof? && intf_size == 1
       while intf_size > 1 || !intf.input_eof?
         begin
-          @current_command = read_command().strip
+          @current_command = 
+            if @cmd_queue.empty?
+              read_command.strip
+            else
+              @cmd_queue.shift
+            end
           if @current_command.empty? 
             if @last_command && intf.interactive?
               @current_command = @last_command 
@@ -184,13 +191,13 @@ class Trepan
           break
         rescue IOError, Errno::EPIPE => e
           if intf_size > 1
-            @dbgr.intf.pop 
+            @dbgr.intf.pop
             intf_size = @dbgr.intf.size
             intf = @dbgr.intf[-1]
             @last_command = nil
             print_location
           else
-            msg "EOF - Leaving"
+            msg "That's all folks..."
             ## FIXME: think of something better.
             quit('quit!')
             return true
@@ -233,7 +240,7 @@ class Trepan
           @dbgr.stop
           raise
         rescue Exception => exc
-          msg("Internal debugger error: #{exc.inspect}")
+          errmsg("Internal debugger error: #{exc.inspect}")
           exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end
       end
@@ -251,8 +258,13 @@ class Trepan
         end
 
       unless eval_command
-        # Expand macros. FIXME: put in a procedure
+        commands = current_command.split(';;')
+        if commands.size > 1
+          current_command = commands.shift
+          @cmd_queue.unshift *commands
+        end
         args = current_command.split
+        # Expand macros. FIXME: put in a procedure
         while true do
           macro_cmd_name = args[0]
           return false if args.size == 0
@@ -260,7 +272,7 @@ class Trepan
           current_command = @macros[macro_cmd_name].call(*args[1..-1])
           msg current_command if settings[:debugmacro]
           if current_command.is_a?(Array) && 
-              current_command.all? {|val| val.is_a?(String)}
+              current_command.any {|val| !val.is_a?(String)}
             args = current_command
           elsif current_command.is_a?(String)
             args = current_command.split

@@ -23,6 +23,7 @@ class Trepan
                                    # nil or -1 means compute value. 0
                                    # means hide none. Less than 0 means show
                                    # all stack entries.
+      :hightlight    => false,     # Use terminal highlight? 
       :maxlist       => 10,        # Number of source lines to list 
       :maxstack      => 10,        # backtrace limit
       :maxstring     => 150,       # Strings which are larger than this
@@ -33,7 +34,6 @@ class Trepan
                                    # debug nesting and 
       :save_cmdfile  => nil,       # If set, debugger command file to be
                                    # used on restart
-      :terminal      => false,     # Use terminal highlight? 
       :timer         => false,     # show elapsed time between events
       :traceprint    => false,     # event tracing printing
       :tracebuffer   => false,     # save events to a trace buffer.

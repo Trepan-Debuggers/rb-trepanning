@@ -47,6 +47,7 @@ See also 'examine' and 'whatis'.
     end
     final_msg = '
 Type "help" followed by a class name for a list of commands in that class.
+Type "help syntax" for information on debugger command syntax.
 Type "help *" for the list of all commands.
 Type "help all" for the list of all commands.
 Type "help REGEXP" for the list of commands matching /^#{REGEXP}/
@@ -63,6 +64,8 @@ Type "help" followed by command name for full documentation.
       if cmd_name == '*'
         section 'All command names:'
         msg columnize_commands(@proc.commands.keys.sort)
+      elsif cmd_name =~ /^syntax$/i
+        show_command_syntax
       elsif cmd_name =~ /^all$/i
         CATEGORIES.sort.each do |category|
           show_category(category[0], [])
@@ -99,7 +102,6 @@ Type "help" followed by command name for full documentation.
     else
       list_categories
     end
-    return false  # Don't break out of cmd loop
   end
 
   # Show short help for all commands in `category'.
@@ -123,6 +125,52 @@ Type "help" followed by command name for full documentation.
       msg("%-13s -- %s" % [name, @proc.commands[name].short_help])
     end
   end
+
+  def show_command_syntax
+    section "Debugger command syntax"
+    msg <<-EOS
+Command command syntax is very simple-minded. 
+
+If a line starts with #, the command is ignored. 
+If a line starts with !, the line is eval'd. 
+
+If the command you want eval'd uses the Ruby ! initally, add that
+after the first !.
+
+Commands are split at whereever ;; appears. This process disregards
+any quotes or other symbols that have meaning in Ruby. The strings
+after the leading command string are put back on a command queue. 
+
+Within a single command, tokens are then white-space split. Again,
+this process disregards quotes or symbols that have meaning in Ruby.
+
+The first token is then looked up in the debugger command table and
+then the debugger alias table. If a match is found the command name
+and arguments are dispatched to the command object that process the
+command.
+
+If the command is not found and "auto eval" is set on, then the
+command is eval'd in the context that the program is currently stopped
+at. If "auto eval" is not set on, then we display an error message
+that the entered string is "undefined".
+
+If you want irb-like command-processing, it's possible to go into an
+irb shell with the "irb" command. It is also possible to arrange going
+into an irb shell every time you enter the debugger.
+
+Examples:
+
+# This line does nothing. It is a comment
+s    # by default, this is an alias for the "step" command
+!s   # shows the value of variable step. 
+!!s  # Evaluates !s (or "not s"). The first ! is indicates evaluate.
+info program;; list # Runs two commands "info program" and "list"
+pr  "hi ;;-)"  # Syntax error since ;; splits the line and " is not closed.
+!puts "hi ;;-)" # One way to do the above.
+
+See also "alias", "irb", "set auto eval", and "set auto irb".
+    EOS
+  end
 end
 
 if __FILE__ == $0
@@ -141,7 +189,6 @@ if __FILE__ == $0
   cmd.run %W(#{cmd.name} support)
   puts '=' * 40
   cmd.run %W(#{cmd.name} support *)
-
   puts '=' * 40
   cmd.run %W(#{cmd.name} s.*)
   puts '=' * 40

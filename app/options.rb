@@ -117,9 +117,9 @@ EOB
           options[:server] = true
         end
       end
-      opts.on('--[no-]terminal',
+      opts.on('--[no-]highlight',
               "Set output for terminal highlighting") do |v|
-        options[:terminal] = ((v) ? :term : nil)
+        options[:highlight] = ((v) ? :term : nil)
       end
       opts.on_tail("-?", "--help", "Show this message") do
         options[:help] = true

@@ -44,7 +44,7 @@ class Trepan
     def line_at(filename, line_number) # :nodoc:
       opts = {
         :reload_on_change => @reload_on_change,
-        :output => @settings[:terminal]
+        :output => @settings[:highlight]
       }
       line = LineCache::getline(filename, line_number, opts)
 

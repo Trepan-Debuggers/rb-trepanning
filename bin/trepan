@@ -56,7 +56,7 @@ if File.basename(__FILE__) == File.basename($0)
     # Set global so others may use this debugger.
     
     opts = {}
-    %w(cmdfiles initial_dir host nx port server terminal).each do |opt|
+    %w(cmdfiles initial_dir host nx port server highlight).each do |opt|
       opts[opt.to_sym] = options[opt.to_sym]
     end
 
