@@ -59,9 +59,9 @@ Examples:
         msg "\nCompile options:"
         msg iseq.compile_options.pretty_inspect
       end
-      if iseq.source
+      if iseq.eval_source
         msg "Source string:"
-        msg @proc.safe_rep(iseq.source.inspect)
+        msg @proc.safe_rep(iseq.eval_source.inspect)
       end
     else
       mess = "Can't find instruction sequence"
