@@ -7,7 +7,7 @@ class Trepan
       message = safe_rep(message) unless opts[:unlimited]
       if @settings[:highlight] && defined?(Term::ANSIColor)
         message = 
-          Term::ANSIColor.underline + message + Term::ANSIColor.reset 
+          Term::ANSIColor.italic + message + Term::ANSIColor.reset 
       end
       @dbgr.intf[-1].errmsg(safe_rep(message))
     end

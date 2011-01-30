@@ -26,7 +26,7 @@ all alias names"
     elsif @proc.aliases.empty?
       msg "No aliases defined."
     else
-      msg "List of aliases names currently defined:"
+      section "List of aliases names currently defined:"
       msg columnize_commands(@proc.aliases.keys.sort)
     end
   end

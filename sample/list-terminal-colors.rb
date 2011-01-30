@@ -133,3 +133,7 @@ require 'term/ansicolor'
 ).each do |name|
      puts "\e[#{TOKEN_COLORS[name.to_sym]}m#{name} - #{TOKEN_COLORS[name.to_sym].inspect}\e[0m"
 end
+%w(bold italic underline).each do |name|
+     attrib=Term::ANSIColor.send(name)
+     puts "#{attrib}#{name} - #{attrib.inspect}\e[0m"
+end
