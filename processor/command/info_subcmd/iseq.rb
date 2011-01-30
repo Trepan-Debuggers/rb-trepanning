@@ -5,6 +5,7 @@ require 'pp'
 
 class Trepan::Subcommand::InfoIseq < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 
 'info iseq [METHOD|.]
 
@@ -16,9 +17,7 @@ Examples:
   info iseq require_relative
 '
     MIN_ABBREV   = 'is'.size
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    PREFIX       = %w(info iseq)
     SHORT_HELP   = 'Information about an instruction sequence'
   end
 

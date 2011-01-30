@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<EOH
 info breakpoints [num1 ...] [verbose]
 
@@ -21,8 +22,6 @@ The "Where" column indicates where the breakpoint is located.
 EOH
 
     MIN_ABBREV   = 'br'.size 
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(info breakpoints)
     SHORT_HELP = "Status of user-settable breakpoints"
   end
 

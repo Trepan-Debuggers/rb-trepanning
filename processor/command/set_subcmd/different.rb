@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetDifferent < Trepan::SetBoolSubcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = "
 set different [on|off|nostack]
 
@@ -32,8 +33,6 @@ override this setting."
 
     IN_LIST      = true
     MIN_ABBREV   = 'dif'.size
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(set different)
     SHORT_HELP   = "Set to make sure 'next/step' move to a new position."
   end
 

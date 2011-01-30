@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::InfoFrame < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 'Show all information about the selected frame'
     MIN_ABBREV   = 'fr'.size # Note we have "info file"
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    PREFIX       = %w(info frame)
   end
 
   def run(args)

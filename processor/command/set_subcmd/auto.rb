@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
 
 class Trepan::SubSubcommand::SetAuto < Trepan::SubSubcommandMgr
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP   = 'Set controls for things with some sort of "automatic" default behavior'
-    NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %w(set auto)
   end
 end
 

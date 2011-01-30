@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Trepan::CmdProcess that loads up debugger commands from builtin and
 # user directories.
 # Sets @commands, @aliases, @macros
@@ -29,28 +29,48 @@ class Trepan
     # 'command' directory. Then a new instance of each class of the 
     # form Trepan::xxCommand is added to @commands and that array
     # is returned.
-
-    def load_debugger_commands(cmd_dir)
-      Dir.glob(File.join(cmd_dir, '*.rb')).each do |rb| 
-        require rb
-      end if File.directory?(cmd_dir)
-      # Instantiate each Command class found by the above require(s).
-      ### p Trepan::Command.constants ## REMOVE ME
-      Trepan::Command.constants.grep(/.Command$/).each do |command|
-        # Note: there is probably a non-eval way to instantiate the
-        # command, but I don't know it. And eval works.
-        new_cmd = "Trepan::Command::#{command}.new(self)"
-        cmd = self.instance_eval(new_cmd)
-
-        # Add to list of commands and aliases.
-        cc = cmd.class
-        cmd_name = cc.const_get(:NAME)
-        if cc.constants.member?(:ALIASES)
-          aliases= cc.const_get(:ALIASES)  
-          aliases.each {|a| @aliases[a] = cmd_name}
+    def load_debugger_commands(file_or_dir)
+      if File.directory?(file_or_dir)
+        Dir.glob(File.join(file_or_dir, '*.rb')).each do |rb| 
+          # We use require so that multiple calls have no effect.
+          require rb
         end
-        @commands[cmd_name] = cmd
+      elsif File.readable?(file_or_dir)
+        # We use load in case we are reloading. 
+        # 'require' would not be effective here
+        load file_or_dir
+      else
+        return false
       end
+      Trepan::Command.constants.grep(/.Command$/).each do |command|
+        setup_command(command)
+      end
+      return true
+    end
+
+    def load_debugger_command(command_file)
+      return unless File.readable?(command_file)
+      load command_file
+      Trepan::Command.constants.grep(/.Command$/).each do |command|
+        setup_command(command)
+      end
+    end
+
+    # Instantiate a Trepan::Command and extract info: the NAME, ALIASES
+    # and store the command in @commands.
+    def setup_command(command)
+      # Note: there is probably a non-eval way to instantiate the
+      # command, but I don't know it. And eval works.
+      klass = self.instance_eval("Trepan::Command::#{command}")
+      cmd = klass.send(:new, self)
+      
+      # Add to list of commands and aliases.
+      cmd_name = klass.const_get(:NAME)
+      if klass.constants.member?(:ALIASES)
+        aliases= klass.const_get(:ALIASES)  
+        aliases.each {|a| @aliases[a] = cmd_name}
+      end
+      @commands[cmd_name] = cmd
     end
 
     # Looks up cmd_array[0] in @commands and runs that. We do lots of 

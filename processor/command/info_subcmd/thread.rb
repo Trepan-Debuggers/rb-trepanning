@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 require_relative '../../../app/thread'
 require_relative '../../../app/frame'
 
 class Trepan::Subcommand::InfoThread < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 
 'info thread [THREAD-ARG1 THREAD-ARG2.. ]
 
@@ -26,9 +27,7 @@ Examples:
    info thread 92562770    # ifnormation for thread with object id 92562770
 '
     MIN_ABBREV   = 'thr'.size 
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    PREFIX       = %w(info thread)
     SHORT_HELP   = 'Show frame(s) for threads'
   end
 

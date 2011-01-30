@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
 
 class Trepan::SubSubcommand::InfoRegisters < Trepan::SubSubcommandMgr
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 
 'List of contents for the registers of the current stack frame.
 If a register name given, only only that register is show.
@@ -19,9 +20,7 @@ Examples:
 '
 
     MIN_ABBREV   = 'reg'.size  # Note we have "info return"
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    PREFIX       = %w(info registers)
   end
 
   def run(args)

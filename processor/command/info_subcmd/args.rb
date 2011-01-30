@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 require_relative '../../../app/frame'
 
 class Trepan::Subcommand::InfoArgs < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 'Show argument variables of the current stack frame'
     MIN_ABBREV   = 'ar'.size 
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    PREFIX       = %w(info args)
   end
 
   include Trepan::Frame

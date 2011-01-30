@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 require_relative '../../../app/frame'
 
 class Trepan::Subcommand::SetReturn < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 'Set the value that will be returned in the current method'
     IN_LIST      = true
     MIN_ABBREV   = 'ret'.size
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(set return)
   end
 
   include Trepan::Frame

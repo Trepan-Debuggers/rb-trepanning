@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'trace'
 require 'columnize'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetEvents < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = "set events {event-name[,] ...}
 
 Set trace events that the debugger will stop on
@@ -21,8 +22,6 @@ Examples:
    set ev call, c_call, return, c_return, c_return, insn
 "
     MIN_ABBREV   = 'ev'.size
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(set events)
     SHORT_HELP   = 'Set trace events we may stop on.'
   end
 

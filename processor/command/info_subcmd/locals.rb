@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'columnize'
 require_relative '../base/subcmd'
 require_relative '../../../app/frame'
 
 class Trepan::Subcommand::InfoLocals < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 'Show local variables of the current stack frame'
     MAX_ARGS     = 1
     MIN_ABBREV   = 'lo'.size 
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    PREFIX       = %w(info locals)
   end
 
   include Trepan::Frame

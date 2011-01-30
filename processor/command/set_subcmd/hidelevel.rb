@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetHidelevel < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = "
 set hidelevel [NUM]
 
@@ -32,8 +33,6 @@ See also 'backtrace' and 'show hidelevel'.
 
     IN_LIST      = true
     MIN_ABBREV   = 'hide'.size
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %W(set #{NAME})
     SHORT_HELP   = "Set the number of bottom frames to hide."
   end
 

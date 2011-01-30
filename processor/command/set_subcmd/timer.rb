@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subsubcmd'
 
 class Trepan::Subcommand::SetTimer < Trepan::SetBoolSubcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = "set timer [on|off|0|1]
 
 Tracks and shows elapsed time between debugger events.
@@ -26,8 +27,6 @@ See also: 'set events', 'set trace buffer', 'step', and 'break'.
 "
 
     MIN_ABBREV = 'ti'.size
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %w(set timer)
     SHORT_HELP = "Set to show elapsed time between debugger events"
   end
 

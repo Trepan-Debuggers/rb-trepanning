@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
 
 class Trepan::SubSubcommand::SetTrace < Trepan::SubSubcommandMgr 
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = "Set tracing of various sorts.
 
 The types of tracing include global variables, events from the trace
@@ -15,8 +16,6 @@ See 'help set trace *' or a list of subcommands or 'help set trace
 
     IN_LIST    = true
     MIN_ABBREV = 'tr'.size
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %w(set trace)
     SHORT_HELP = 'Set tracing of various sorts.'
   end
 

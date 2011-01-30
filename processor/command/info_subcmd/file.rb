@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'linecache'
 require_relative '../base/subcmd'
 require_relative '../../../app/file'
 
 class Trepan::Subcommand::InfoFile < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     DEFAULT_FILE_ARGS = %w(size sha1)
 
     HELP =
@@ -28,9 +29,7 @@ all    -- All of the above information.
 If no sub-options are given #{DEFAULT_FILE_ARGS.join(' ')} are assumed.
 "
     MIN_ABBREV   = 'fi'.size  # Note we have "info frame"
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = false
-    PREFIX       = %w(info file)
   end
 
   include Trepanning
