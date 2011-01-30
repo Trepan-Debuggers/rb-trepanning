@@ -16,18 +16,19 @@ require 'rubygems'
 require 'coderay'
 require 'coderay/encoders/term'
 TERM_TOKEN_COLORS = {
-  :comment => ';36',    # italic yellow brownish
+  :comment => '3;36',        # italic yellow brownish
+  :constant => '1;34',       # bold blue
   :global_variable => '36',  # yellow brownish 
-  :integer => '34',
-  :label => '4',       # black underline
+  :integer => '34',          # blue
+  :label => '4',             # black underline
   :regexp => {
-    :content => '33',  # light turquoise (from red)
+    :content => '33',        # light turquoise (from red)
     :delimiter => '1;29',
     :modifier => '35',
     :function => '1;29'
   },
-  :reserved => '1;32',  # green (from red)
-  :symbol   => '35',    # purple
+  :reserved => '1;32',       # bold green (from red)
+  :symbol   => '35',         # purple
 }
 module CodeRay::Encoders
   class Term < Encoder
