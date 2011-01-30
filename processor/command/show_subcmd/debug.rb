@@ -5,9 +5,8 @@ require_relative '../base/subsubmgr'
 
 class Trepan::SubSubcommand::ShowDebug < Trepan::SubSubcommandMgr
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP   = 'Show internal debugger settings.'
-    NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %W(show #{NAME})
     MIN_ABBREV = 'de'.size
   end
 end

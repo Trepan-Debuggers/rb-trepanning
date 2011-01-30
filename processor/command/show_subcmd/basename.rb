@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::ShowBasename < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP       = "Show only file basename in showing file names"
     MIN_ABBREV = 'ba'.size
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %W(show #{NAME})
   end
 
 end

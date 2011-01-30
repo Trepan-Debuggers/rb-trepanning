@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subsubcmd'
 
 class Trepan::Subcommand::ShowHidelevel < Trepan::ShowIntSubcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = 'Show the number of stack levels to hide'
     MIN_ABBREV   = 'hide'.size
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(show hidelevel)
   end
   def run(args)
     if @proc.settings[:hidelevel]

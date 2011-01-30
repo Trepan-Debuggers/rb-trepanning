@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
 
 class Trepan::SubSubcommand::ShowTrace < Trepan::SubSubcommandMgr 
 
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = "Show event tracing printing"
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %W(show #{NAME})
     MIN_ABBREV = 'tr'.size
     SHORT_HELP = HELP
   end

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::ShowEvents < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 'Show trace events we may stop on.'
     MIN_ABBREV   = 'ev'.size
-    NAME         = File.basename(__FILE__, '.rb')
   end
 
   # FIXME: this really should be a subcommand of "set trace"
