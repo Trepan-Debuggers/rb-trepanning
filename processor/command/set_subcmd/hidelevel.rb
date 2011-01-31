@@ -6,7 +6,7 @@ class Trepan::Subcommand::SetHidelevel < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = "
-set hidelevel [NUM]
+#{PREFIX.join(' ')} [NUM]
 
 Hide this many stack frames from the bottom (or least-recent) frame.
 
@@ -22,11 +22,11 @@ would be otherwise be, empty then we show all entries, or take NUM to
 be 0.
 
 Examples:
-   set hidelevel     # Use the default value and hide 'uninteresting' ones
-   set hidelevel 0   # Show all stack entries, even from loading the program
+   #{PREFIX.join(' ')}     # Use the default value and hide 'uninteresting' ones
+   #{PREFIX.join(' ')} 0   # Show all stack entries, even from loading the program
                      # or initial stack entries the debugger created to 
                      # debug the program.
-   set hidelevel 1   # Hide only the bottom-most or least-recent stack frame.
+   #{PREFIX.join(' ')} 1   # Hide only the bottom-most or least-recent stack frame.
 
 See also 'backtrace' and 'show hidelevel'. 
 ."

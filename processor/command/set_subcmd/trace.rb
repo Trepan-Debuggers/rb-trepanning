@@ -11,7 +11,7 @@ class Trepan::SubSubcommand::SetTrace < Trepan::SubSubcommandMgr
 The types of tracing include global variables, events from the trace
 buffer, or printing those events.
 
-See 'help set trace *' or a list of subcommands or 'help set trace
+See 'help #{PREFIX.join(' ')} *' for a list of subcommands or 'help set trace
 <name>' for help on a particular trace subcommand."
 
     IN_LIST    = true
