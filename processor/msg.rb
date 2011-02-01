@@ -9,7 +9,7 @@ class Trepan
         message = 
           Term::ANSIColor.italic + message + Term::ANSIColor.reset 
       end
-      @dbgr.intf[-1].errmsg(safe_rep(message))
+      @dbgr.intf[-1].errmsg(message)
     end
 
     def msg(message, opts={})
