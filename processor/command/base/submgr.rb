@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'cmd'
 require_relative '../../subcmd'
 require_relative '../../help'
@@ -17,7 +17,7 @@ class Trepan::SubcommandMgr < Trepan::Command
     NEED_STACK    = false
   end
 
-  attr_accessor :subcmds   # Array of instaniated Trepan::Subcommand objects
+  attr_accessor :subcmds   # Array of instantiated Trepan::Subcommand objects
   attr_reader   :name      # Name of command
   attr_reader   :last_args # Last arguments seen
 
@@ -75,13 +75,12 @@ class Trepan::SubcommandMgr < Trepan::Command
     end
     subcmd_names.each do |name|
       next unless Trepan::SubSubcommand.constants.member?(name.to_sym)
-      subcmd_class = "Trepan::SubSubcommand::#{name}.new(self, parent)"
+      subcmd_class = Trepan::SubSubcommand.const_get(name)
       begin
-        cmd = self.instance_eval(subcmd_class)
+        cmd = subcmd_class.send(:new, self, parent)
       rescue
         puts "Subcmd #{name} is bad"
       end
-      cmd_name = cmd.name
       @subcmds.add(cmd)
     end
   end
@@ -151,7 +150,14 @@ class Trepan::SubcommandMgr < Trepan::Command
     end
   end
 
-  def run(args)
+  # Return an Array of subcommands that can start with +arg+. If none
+  # found we just return +arg+.
+  def complete(arg)
+    ret = @subcmds.subcmds.keys.select { |cmd| cmd.to_s.start_with?(arg) }
+    ret.empty? ? arg : ret.sort
+  end
+
+  def run(args) # nodoc
     @last_args = args
     if args.size < 2 || args.size == 2 && args[-1] == '*'
       summary_list(obj_const(self, :NAME), @subcmds)
@@ -173,15 +179,8 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  dbgr = MockDebugger::MockDebugger.new
-  cmds = dbgr.core.processor.commands
-  cmd  = cmds['set']
-  Trepan::SubcommandMgr.new(dbgr.core.processor)
-  puts cmd.help(%w(help set))
-  puts '=' * 40
-  # require_relative '../../../lib/trepanning)
-  # Trepan.debug
-  puts cmd.help(%w(help set *))
-  puts '=' * 40
-  puts cmd.help(%w(help set d.*))
+  dbgr, cmd = MockDebugger::setup('show')
+  p cmd.complete('d')
+  p cmd.subcmds.lookup('ar').prefix
+  p cmd.subcmds.lookup('a')
 end

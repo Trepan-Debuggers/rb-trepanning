@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Trepan::CmdProcess that loads up debugger commands from builtin and
 # user directories.
@@ -95,6 +96,40 @@ class Trepan
         @commands[cmd_name].run(cmd_array)
       end
     end
+    
+    def complete(arg)
+      if arg.kind_of?(String)
+        args = arg.split
+      elsif arg.kind_of?(Array)
+        args = arg
+      else
+        return arg
+      end
+      return arg if args.empty?
+      if args.size == 1
+        cmd_matches = @commands.keys.select do |cmd|
+          cmd.start_with?(args[0])
+        end
+        alias_matches = @aliases.keys.select do |cmd|
+          cmd.start_with?(args[0]) && !cmd_matches.member?(@aliases[cmd])
+        end
+        (cmd_matches + alias_matches).sort
+      else 
+        first_ary = complete(args[0])
+        return arg unless 1 == first_ary.size 
+        first_arg = first_ary[0]
+        cmd = @commands[first_arg]
+        if cmd.respond_to?(:complete)
+          second_ary = cmd.complete(args[1])
+          return second_ary.map do |second_arg|
+            # FIXME: break out args[2..-1] if that exists to 
+            # handle more complex completions including subsubcmds.
+            "#{first_arg} #{second_arg.to_s + args[2..-1].join(' ')}"
+          end
+        end
+        return "#{first_arg} #{args[1..-1].join(' ')}"
+      end
+    end
   end
 end
 if __FILE__ == $0
@@ -119,4 +154,6 @@ if __FILE__ == $0
   cmdproc.run_cmd('foo')  # Invalid - not an Array
   cmdproc.run_cmd([])     # Invalid - empty Array
   cmdproc.run_cmd(['list', 5])  # Invalid - nonstring arg
+  p cmdproc.complete("d")
+  p cmdproc.complete("sho d")
 end
