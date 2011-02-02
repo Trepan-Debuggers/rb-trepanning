@@ -1,3 +1,240 @@
+2011-02-01  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, NEWS: One more small NEWS update
+
+2011-02-01  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb: Get ready for release
+
+2011-02-01  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, NEWS, app/disassemble.rb, app/yarv.rb,
+	processor/command/disassemble.rb: Feb 1, 2011 (0.1.0) * Add Remote debugging interface. Add options --server --port * Add Syntax highlighting on Ruby and YARV listings and locations * Section highlighting on some commands * Use ;; to allow multiple debugger commands. Document debugger
+	command syntax * include data files for debugging custom-require * Numerous bug fixes and code cleanups
+
+2011-02-01  rocky <rockyb@rubyforge.org>
+
+	* processor/msg.rb: Sync with rbx-trepanning.
+
+2011-01-30  rocky <rockyb@rubyforge.org>
+
+	* .gemspec: Install data files.
+
+2011-01-30  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/hidelevel.rb,
+	processor/command/set_subcmd/trace.rb: Minor cleanup.
+
+2011-01-30  rocky <rockyb@rubyforge.org>
+
+	* processor/main.rb: Wrong method in macro handling. Need more
+	though.
+
+2011-01-30  rocky <rockyb@rubyforge.org>
+
+	* processor/command/list.rb, sample/rocky-trepan-colors.rb: Color
+	tweaks
+
+2011-01-30  rocky <rockyb@rubyforge.org>
+
+	* processor/command/show_subcmd/alias.rb, processor/msg.rb,
+	sample/list-terminal-colors.rb, sample/rocky-trepan-colors.rb: Try
+	italic error messages. Update comments for terminal colors.
+	alias.rb: use sectioning for title.
+
+2011-01-30  rocky <rockyb@rubyforge.org>
+
+	* processor/command/show_subcmd/alias.rb,
+	processor/command/show_subcmd/args.rb,
+	processor/command/show_subcmd/auto.rb,
+	processor/command/show_subcmd/basename.rb,
+	processor/command/show_subcmd/debug.rb,
+	processor/command/show_subcmd/different.rb,
+	processor/command/show_subcmd/events.rb,
+	processor/command/show_subcmd/hidelevel.rb,
+	processor/command/show_subcmd/macro.rb,
+	processor/command/show_subcmd/max.rb,
+	processor/command/show_subcmd/trace.rb: DRY code for show_subcmd:
+	Remove explicit NAME and PREFIX setting.
+
+2011-01-30  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, processor/command/info_subcmd/args.rb,
+	processor/command/info_subcmd/breakpoints.rb,
+	processor/command/info_subcmd/file.rb,
+	processor/command/info_subcmd/frame.rb,
+	processor/command/info_subcmd/iseq.rb,
+	processor/command/info_subcmd/locals.rb,
+	processor/command/info_subcmd/program.rb,
+	processor/command/info_subcmd/registers.rb,
+	processor/command/info_subcmd/return.rb,
+	processor/command/info_subcmd/thread.rb,
+	processor/command/reload.rb,
+	processor/command/reload_subcmd/command.rb,
+	processor/command/set_subcmd/auto.rb,
+	processor/command/set_subcmd/basename.rb,
+	processor/command/set_subcmd/debug.rb,
+	processor/command/set_subcmd/different.rb,
+	processor/command/set_subcmd/events.rb,
+	processor/command/set_subcmd/hidelevel.rb,
+	processor/command/set_subcmd/max.rb,
+	processor/command/set_subcmd/return.rb,
+	processor/command/set_subcmd/sp.rb,
+	processor/command/set_subcmd/substitute.rb,
+	processor/command/set_subcmd/timer.rb,
+	processor/command/set_subcmd/trace.rb, processor/load_cmds.rb: 
+	reload.rb: allow loading of a new debugger command files
+	load_cmds.rb: allow loading files as well as directories. Use send
+	over eval since it is better in reporting errors.  *_subcmd/*.rb:
+	DRY code for setting NAME and PREFIX
+
+2011-01-29  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/iseq.rb, processor/command/list.rb: 
+	Don't limit list output strings.
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/iseq.rb: iseq.source ->
+	iseq.eval_source
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb, bin/trepan, lib/trepanning.rb,
+	processor/command/help.rb, processor/command/list.rb,
+	processor/command/set_subcmd/highlight.rb,
+	processor/command/set_subcmd/terminal.rb,
+	processor/command/show_subcmd/highlight.rb,
+	processor/command/show_subcmd/terminal.rb, processor/default.rb,
+	processor/location.rb, processor/main.rb, processor/msg.rb,
+	sample/rocky-dot-trepanrc: set/show terminal -> set/show highlight
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	* .gemspec: Update other min versions for rb-threadframe and
+	rb-trace.
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	* .gemspec: it's ~> not =~.
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	* bin/trepan, lib/trepanning.rb, processor/command/base/subcmd.rb,
+	processor/command/list.rb,
+	processor/command/set_subcmd/terminal.rb,
+	processor/command/show_subcmd/terminal.rb, processor/default.rb,
+	processor/main.rb, sample/.gitignore,
+	sample/list-terminal-colors.rb, sample/rocky-dot-trepanrc,
+	sample/rocky-trepan-colors.rb: Syntax highlighting. Finally.
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/cmd.rb, processor/command/base/subcmd.rb,
+	processor/command/disassemble.rb, processor/command/help.rb,
+	processor/mock.rb, processor/msg.rb, test/unit/cmd-helper.rb,
+	test/unit/test-proc-main.rb: Add 'help all' and add sectioning-type
+	message.
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, app/brkptmgr.rb, test/unit/test-app-brkpt.rb,
+	test/unit/test-app-brkptmgr.rb, test/unit/test-cmd-endisable.rb: 
+	Trepanning::Breakpoint -> Trepan::Breakpoint
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, Rakefile, app/default.rb, app/options.rb, bin/trepan,
+	io/tcpserver.rb, lib/trepanning.rb, processor/command/server.rb,
+	processor/command/source.rb, processor/default.rb,
+	processor/mock.rb, test/unit/test-app-options.rb,
+	test/unit/test-cmd-break.rb: Remove module Trepanning. Trepanning ->
+	Trepan.
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, processor/location.rb: Rework for syntax-enabled
+	linecache. tf.source -> tf.eval_source
+
+2011-01-16  rocky <rockyb@rubyforge.org>
+
+	* processor/command/source.rb, test/unit/test-cmd-source.rb: Add
+	unit test source options. Fix bug in source option processing.
+
+2011-01-13  rocky <rockyb@rubyforge.org>
+
+	* processor/command/server.rb, processor/command/source.rb: Sync
+	with rbx-trepanning
+
+2011-01-13  rocky <rockyb@rubyforge.org>
+
+	* app/client.rb, app/default.rb, app/options.rb,
+	interface/base_intf.rb, processor/command/server.rb,
+	processor/command/source.rb: server.rb: Add command to go server
+	mode. source.rb: use optparse to parse options. client.rb: handle
+	user EOF. default.rb: DRY host/port options. base_intf.rb: close()
+	guards against uninitialized I/O.
+
+2011-01-12  rocky <rockyb@rubyforge.org>
+
+	* interface/server.rb, io/tcpserver.rb: Out-of-process debugging
+	works now.
+
+2011-01-11  rocky <rockyb@rubyforge.org>
+
+	* app/client.rb, app/default.rb, app/options.rb, bin/trepan,
+	interface/base_intf.rb, interface/client.rb, interface/comcodes.rb,
+	interface/server.rb, io/tcpclient.rb, io/tcpserver.rb,
+	lib/trepanning.rb, processor/main.rb,
+	test/data/fname-with-blank.right, test/data/quit.right,
+	test/integration/helper.rb,
+	test/integration/test-fname-with-blank.rb,
+	test/integration/test-quit.rb, test/unit/test-app-options.rb,
+	test/unit/test-io-tcp.rb, test/unit/test-io-tcpclient.rb,
+	test/unit/test-io-tcpserver.rb: Add out-of-process code from
+	rbx-trepanning. Not working yet though. Sync with rbx-trepanning:
+	some I/O initialization fixed.
+
+2011-01-11  rocky <rockyb@rubyforge.org>
+
+	* : commit ca6a6ce7ba4599c5edecda1b70cac3656cf50b54 Author: rocky
+	<rockyb@rubyforge.org> Date:   Tue Jan 11 19:28:29 2011 -0500
+
+2011-01-11  rocky <rockyb@rubyforge.org>
+
+	* processor/command/directory.rb: revise help and glob expand
+	directory. More in (sync with suitable adjustments) to
+	rbx-trepanning
+
+2010-12-28  rocky <rockyb@rubyforge.org>
+
+	* : commit 6585edc946e7c7bc3b8cd20b86860435569d7dd9 Author: rocky
+	<rockyb@rubyforge.org> Date:   Tue Dec 28 14:04:16 2010 -0500
+
+2010-12-27  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, processor/main.rb, test/unit/test-app-file.rb: .gemspec:
+	need 1.9.2frame main.rb: wrong fn any -> all? But will rewrite more
+	completely later.  test-app-file.rb: remove debug statement.
+
+2010-12-27  rocky <rockyb@rubyforge.org>
+
+	* : commit 5fa8ccdc95a478e19f2a1f4874c8d24663aff36d Author: rocky
+	<rockyb@rubyforge.org> Date:   Mon Dec 27 10:48:14 2010 -0500
+
+2010-12-25  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, test/unit/test-app-file.rb: Get ready for 0.0.9
+	release
+
+2010-12-24  rocky <rockyb@rubyforge.org>
+
+	* NEWS: Update NEWS
+
+2010-12-24  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog: What's up (ChangeLog).
+
 2010-12-20  rocky <rockyb@rubyforge.org>
 
 	* processor/breakpoint.rb: Fix bug introduced in recent

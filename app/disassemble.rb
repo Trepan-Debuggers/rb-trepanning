@@ -6,8 +6,15 @@
 
 class Trepan
   module Disassemble
+    # FIXME: turn final optional params into a hash.
     def mark_disassembly(disassembly_str, iseq_equal, pc_offset,
-                         brkpt_offsets=[], max_width=80)
+                         brkpt_offsets=[], max_width=80, highlight=nil)
+
+      if highlight
+        require_relative '../app/yarv'
+        @highlighter ||= CodeRay::Duo[:yarv, :term]
+      end
+
       dis_array = disassembly_str.split(/\n/)
       dis_array.map do |line|
         if line =~ /^(.*?)(\s+)(\(\s+\d+\))?$/
@@ -37,7 +44,11 @@ class Trepan
         if (shrink_amount > 0) && line_padding.size > shrink_amount
           line_padding = ' ' * (line_padding.size - shrink_amount)
         end
-        prefix + line_begin + line_padding + line_end
+        if highlight && prefix != ''
+          prefix + @highlighter.encode(line_begin + line_padding + line_end)
+        else
+          prefix + line_begin + line_padding + line_end
+        end
       end
     end
     module_function :mark_disassembly
