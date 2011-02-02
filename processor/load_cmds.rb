@@ -95,6 +95,26 @@ class Trepan
         @commands[cmd_name].run(cmd_array)
       end
     end
+    def complete(arg)
+      if arg.kind_of?(String)
+        args = arg.split
+      elsif arg.kind_of?(Array)
+        args = arg
+      else
+        return arg
+      end
+      if args.size == 1
+        cmd_matches = @commands.keys.select do |cmd|
+          cmd.start_with?(args[0])
+        end
+        alias_matches = @aliases.keys.select do |cmd|
+          cmd.start_with?(args[0]) && !cmd_matches.member?(@aliases[cmd])
+        end
+        (cmd_matches + alias_matches).sort
+      else # FIXME: handle more complex completions
+        return arg
+      end
+    end
   end
 end
 if __FILE__ == $0
