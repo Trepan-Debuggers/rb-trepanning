@@ -1,5 +1,9 @@
 2011-02-01  rocky <rockyb@rubyforge.org>
 
+	* ChangeLog, NEWS: One more small NEWS update
+
+2011-02-01  rocky <rockyb@rubyforge.org>
+
 	* app/options.rb: Get ready for release
 
 2011-02-01  rocky <rockyb@rubyforge.org>
