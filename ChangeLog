@@ -1,5 +1,15 @@
 2011-02-01  rocky <rockyb@rubyforge.org>
 
+	* app/options.rb: Get ready for release
+
+2011-02-01  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, NEWS, app/disassemble.rb, app/yarv.rb,
+	processor/command/disassemble.rb: Feb 1, 2011 (0.1.0) * Add Remote debugging interface. Add options --server --port * Add Syntax highlighting on Ruby and YARV listings and locations * Section highlighting on some commands * Use ;; to allow multiple debugger commands. Document debugger
+	command syntax * include data files for debugging custom-require * Numerous bug fixes and code cleanups
+
+2011-02-01  rocky <rockyb@rubyforge.org>
+
 	* processor/msg.rb: Sync with rbx-trepanning.
 
 2011-01-30  rocky <rockyb@rubyforge.org>
