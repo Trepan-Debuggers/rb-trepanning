@@ -116,6 +116,12 @@ module CodeRay
               tokens << [match, :global_variable]
             elsif match = scan(/nil|true|false/)
               tokens << [match, :pre_constant]
+            elsif match = scan(/nil|true|false/)
+              tokens << [match, :pre_constant]
+            elsif match = scan(/[A-Za-z_][_A-Za-z0-9?!]*/)
+              tokens << [match, :variable]
+            elsif match = scan(/^#[^, \n]*/)
+              tokens << [match, :content]
             elsif match = scan(/^<.+>/)
               tokens << [match, :content]
             elsif string_parse(tokens)
