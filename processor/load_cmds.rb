@@ -96,7 +96,6 @@ class Trepan
         @commands[cmd_name].run(cmd_array)
       end
     end
-    
     def complete(arg)
       if arg.kind_of?(String)
         args = arg.split

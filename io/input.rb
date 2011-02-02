@@ -52,7 +52,7 @@ class Trepan
       def open(inp=nil, opts={})
         inp ||= STDIN
         inp = File.new(inp, 'r') if inp.is_a?(String)
-        opts[:line_edit] = false unless
+        opts[:line_edit] = 
           inp.respond_to?(:isatty) && inp.isatty && Trepan::GNU_readline?
         self.new(inp, opts)
       end

@@ -52,13 +52,16 @@ class Trepan
         opts[:host] = @settings[:host] if @settings[:host]
         puts("starting debugger in out-of-process mode port at " +
              "#{opts[:host]}:#{opts[:port]}")
+        complete = nil
         [Trepan::ServerInterface.new(nil, nil, opts)]
       elsif @settings[:client]
         opts = Trepan::ClientInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
         opts[:port] = @settings[:port] if @settings[:port]
         opts[:host] = @settings[:host] if @settings[:host]
+        complete = true
         [Trepan::ClientInterface.new(nil, nil, nil, nil, opts)]
       else
+        complete = true
         [Trepan::UserInterface.new(@input, @output)]
       end
 
@@ -69,6 +72,9 @@ class Trepan
     @settings[:core_opts][:cmdproc_opts][:highlight] ||= settings[:highlight]
 
     @core = Core.new(self, @settings[:core_opts])
+    if Trepan::GNU_readline? && complete
+      Readline.completion_proc = @core.processor.method(:complete)
+    end
     
     if @settings[:initial_dir]
       Dir.chdir(@settings[:initial_dir])
