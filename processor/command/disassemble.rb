@@ -43,7 +43,8 @@ Examples:
       ary = mark_disassembly(iseq.disasm_nochildren, 
                              @proc.frame.iseq.equal?(iseq),
                              @proc.frame.pc_offset,
-                             iseq.brkpts, settings[:maxwidth])
+                             iseq.brkpts, settings[:maxwidth], 
+                             settings[:highlight])
       msg ary
     end
   end

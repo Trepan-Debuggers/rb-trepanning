@@ -1,3 +1,11 @@
+Feb 1, 2011 (0.1.0)
+* Add Remote debugging interface. Add options --server --port
+* Add Syntax highlighting on Ruby and YARV listings and locations
+* Section highlighting on some commands
+* Use ;; to allow multiple debugger commands. Document debugger command syntax
+* include data files for debugging custom-require 
+* Numerous bug fixes and code cleanups
+
 Dec 25, 2010 (0.0.9)
 * Minor fixes. Remove some Ruby warnings
 
