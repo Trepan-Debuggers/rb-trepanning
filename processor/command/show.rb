@@ -18,6 +18,17 @@ Type "help #{NAME} *" for just a list of "#{NAME}" subcommands.
     NEED_STACK    = false
     SHORT_HELP    = 'Show parts of the debugger environment'
   end
+
+  def run(args)
+    if args.size > 1 
+      first = args[1].downcase
+      alen = 'auto'.size
+      args[1..1] = ['auto', first[alen..-1]] if
+        first.start_with?('auto') && first.size > alen
+    end
+    super
+  end
+
 end
 
 if __FILE__ == $0

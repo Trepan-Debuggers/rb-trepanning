@@ -4,6 +4,7 @@
 # Note: don't end classname with Command (capital C) since main
 # will think this a command name like QuitCommand 
 require 'columnize'
+require_relative '../../../app/util'
 
 class Trepan
   class Command
@@ -105,9 +106,7 @@ class Trepan
     def self.completion(ary) 
       self.send(:define_method, 
                 :complete, 
-                Proc.new {|str| 
-                  ary.select { |cmd| cmd.start_with?(str) }.sort})
+                Proc.new {|prefix| Trepan::Util.complete_token(ary, prefix) })
     end
-
   end
 end

@@ -3,6 +3,7 @@
 class Trepan
   module Util
 
+    module_function 
     def safe_repr(str, max, elipsis='... ')
       if str.is_a?(String) && str.size > max && !str.index("\n")
         "%s%s%s" % [ str[0...max/2], elipsis,  str[str.size-max/2..str.size]]
@@ -10,7 +11,10 @@ class Trepan
         str
       end
     end
-    module_function :safe_repr
+
+    def complete_token(complete_ary, prefix)
+      complete_ary.select { |cmd| cmd.to_s.start_with?(prefix) }.sort
+    end
     
   end
 end

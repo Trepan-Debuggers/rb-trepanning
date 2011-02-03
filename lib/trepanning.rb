@@ -210,7 +210,7 @@ class Trepan
         return
       end
     end
-    @intf << Trepan::ScriptInterface.new(cmdfile, @output)
+    @intf << Trepan::ScriptInterface.new(cmdfile)
   end
 
   def add_startup_files()

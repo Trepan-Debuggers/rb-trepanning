@@ -1,5 +1,6 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
+require_relative '../../app/util'
 class Trepan::Command::HelpCommand < Trepan::Command
 
   unless defined?(HELP)
@@ -39,10 +40,10 @@ See also 'examine' and 'whatis'.
     SHORT_HELP    = 'Print commands or give help for command(s)'
   end
 
-  def complete(arg)
-    complete_ary = CATEGORIES.keys + %w(* syntax all) + 
-      @proc.commands.keys + @proc.aliases.keys
-    complete_ary.select { |cmd| cmd.to_s.start_with?(arg) }.sort
+  def complete(prefix)
+    Trepan::Util.complete_token(CATEGORIES.keys + %w(* syntax all) + 
+                                @proc.commands.keys + @proc.aliases.keys,
+                                prefix)
   end    
 
   # List the command categories and a short description of each.
@@ -199,4 +200,6 @@ if __FILE__ == $0
   cmd.run %W(#{cmd.name} s.*)
   puts '=' * 40
   cmd.run %W(#{cmd.name} s<>)
+  puts '=' * 40
+  p cmd.complete('br')
 end

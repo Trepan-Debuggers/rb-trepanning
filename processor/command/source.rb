@@ -9,7 +9,6 @@ require_relative '../../io/null_output'
 require_relative '../../app/default'
 
 class Trepan::Command::SourceCommand < Trepan::Command
-  include Trepanning
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP

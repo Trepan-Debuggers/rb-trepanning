@@ -3,6 +3,7 @@
 # Trepan::CmdProcess that loads up debugger commands from builtin and
 # user directories.
 # Sets @commands, @aliases, @macros
+require_relative '../app/util'
 class Trepan
   class CmdProcessor
 
@@ -103,17 +104,14 @@ class Trepan
       elsif arg.kind_of?(Array)
         args = arg
       else
-        return arg
+        return []
       end
-      return [arg] if args.empty?
+      return args if args.empty?
       if args.size == 1
-        cmd_matches = @commands.keys.select do |cmd|
-          cmd.start_with?(args[0])
-        end
-        alias_matches = @aliases.keys.select do |cmd|
+        cmd_matches = Trepan::Util.complete_token(@commands.keys, args[0])
+        (@aliases.keys.select do |cmd|
           cmd.start_with?(args[0]) && !cmd_matches.member?(@aliases[cmd])
-        end
-        (cmd_matches + alias_matches).sort
+         end) + cmd_matches.sort
       else 
         first_ary = complete(args[0])
         return first_ary unless 1 == first_ary.size 
