@@ -77,7 +77,8 @@ class Trepan
         size = Readline.line_buffer.size
         completed_ary = @core.processor.complete(Readline.line_buffer, true)
         completed_ary.map do |complete|
-          str + complete[size..-1]
+          suffix = complete[size..-1] 
+          suffix ? str + suffix : str
         end
       end
     end

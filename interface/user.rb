@@ -63,6 +63,20 @@ class Trepan::UserInterface < Trepan::Interface
     # FIXME: Do something with history?
     return line
   end
+
+  def readline(prompt='')
+    @output.flush
+    line = 
+      if @input.line_edit
+        @input.readline(prompt)
+        # FIXME: Do something with history?
+      else
+        @output.write(prompt) if prompt and prompt.size > 0
+        @input.readline
+      end
+    return line
+  end
+
 end
 
 # Demo

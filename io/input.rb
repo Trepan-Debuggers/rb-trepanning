@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Debugger user/command-oriented input possibly attached to IO-style
 # input or GNU Readline.
@@ -17,6 +17,7 @@ class Trepan
       @opts      = DEFAULT_OPTS.merge(opts)
       @input     = inp || STDIN
       @eof       = false
+      @line_edit = @opts[:line_edit]
     end
 
     def closed?; @input.closed? end
@@ -27,18 +28,22 @@ class Trepan
     end
 
     # Read a line of input. EOFError will be raised on EOF.  
-    # 
-    # Note that we don't support prompting first. Instead, arrange
-    # to call Trepan::Output.write() first with the prompt. 
-    def readline
-      # FIXME we don't do command completion.
+    def readline(prompt='')
       raise EOFError if eof?
       begin 
-        line = @opts[:line_edit] ? Readline.readline : @input.gets
-        @eof = !line
+        if @line_edit 
+          puts 'calling readline'
+          line = Readline.readline(prompt)
+        else
+          line = @input.gets
+          end
+      rescue EOFError
       rescue
+        puts $!.backtrace
+        puts "Exception caught #{e.inspect}"
         @eof = true
       end
+      @eof = !line
       raise EOFError if eof?
       return line
     end
