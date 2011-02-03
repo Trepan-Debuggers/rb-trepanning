@@ -32,13 +32,12 @@ class Trepan
       raise EOFError if eof?
       begin 
         if @line_edit 
-          puts 'calling readline'
           line = Readline.readline(prompt)
         else
           line = @input.gets
           end
       rescue EOFError
-      rescue
+      rescue => e
         puts $!.backtrace
         puts "Exception caught #{e.inspect}"
         @eof = true
@@ -57,7 +56,7 @@ class Trepan
       def open(inp=nil, opts={})
         inp ||= STDIN
         inp = File.new(inp, 'r') if inp.is_a?(String)
-        opts[:line_edit] = 
+        opts[:line_edit] = @line_edit = 
           inp.respond_to?(:isatty) && inp.isatty && Trepan::GNU_readline?
         self.new(inp, opts)
       end

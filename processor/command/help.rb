@@ -39,6 +39,12 @@ See also 'examine' and 'whatis'.
     SHORT_HELP    = 'Print commands or give help for command(s)'
   end
 
+  def complete(arg)
+    complete_ary = CATEGORIES.keys + %w(* syntax all) + 
+      @proc.commands.keys + @proc.aliases.keys
+    complete_ary.select { |cmd| cmd.to_s.start_with?(arg) }.sort
+  end    
+
   # List the command categories and a short description of each.
   def list_categories
     section 'Classes of commands:'

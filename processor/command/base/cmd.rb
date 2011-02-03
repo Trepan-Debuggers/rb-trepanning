@@ -101,5 +101,13 @@ class Trepan
                           end
       my_const(help_constant_sym)
     end
+
+    def self.completion(ary) 
+      self.send(:define_method, 
+                :complete, 
+                Proc.new {|str| 
+                  ary.select { |cmd| cmd.start_with?(str) }.sort})
+    end
+
   end
 end

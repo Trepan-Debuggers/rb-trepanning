@@ -35,6 +35,8 @@ Examples:
     SHORT_HELP    = 'Disassemble Ruby VM instructions'
   end
 
+  completion %w(. full)
+
   # FIXME: put in processor/data.rb? 
 
   def marked_disassemble(iseq_param, include_children)
@@ -99,4 +101,5 @@ if __FILE__ == $0
   end
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
   cmd.run([cmd.name, 'p'])
+  puts cmd.complete('f')
 end
