@@ -96,7 +96,8 @@ class Trepan
         @commands[cmd_name].run(cmd_array)
       end
     end
-    def complete(arg)
+
+    def complete(arg, replace_leading=true)
       if arg.kind_of?(String)
         args = arg.split
       elsif arg.kind_of?(Array)
@@ -104,7 +105,7 @@ class Trepan
       else
         return arg
       end
-      return arg if args.empty?
+      return [arg] if args.empty?
       if args.size == 1
         cmd_matches = @commands.keys.select do |cmd|
           cmd.start_with?(args[0])
@@ -115,18 +116,25 @@ class Trepan
         (cmd_matches + alias_matches).sort
       else 
         first_ary = complete(args[0])
-        return arg unless 1 == first_ary.size 
+        return first_ary unless 1 == first_ary.size 
         first_arg = first_ary[0]
         cmd = @commands[first_arg]
         if cmd.respond_to?(:complete)
           second_ary = cmd.complete(args[1])
+          if second_ary.empty?
+            return [args.join(' ')] 
+          end
           return second_ary.map do |second_arg|
             # FIXME: break out args[2..-1] if that exists to 
             # handle more complex completions including subsubcmds.
-            "#{first_arg} #{second_arg.to_s + args[2..-1].join(' ')}"
+            if replace_leading
+              "#{first_arg} #{second_arg.to_s + args[2..-1].join(' ')}"
+            else
+              "#{args[0]} #{second_arg.to_s + args[2..-1].join(' ')}"
+            end
           end
         end
-        return "#{first_arg} #{args[1..-1].join(' ')}"
+        return ["#{first_arg} #{args[1..-1].join(' ')}"]
       end
     end
   end

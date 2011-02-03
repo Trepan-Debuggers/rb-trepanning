@@ -73,7 +73,13 @@ class Trepan
 
     @core = Core.new(self, @settings[:core_opts])
     if Trepan::GNU_readline? && complete
-      Readline.completion_proc = @core.processor.method(:complete)
+      Readline.completion_proc = Proc.new do |str; size|
+        size = Readline.line_buffer.size
+        completed_ary = @core.processor.complete(Readline.line_buffer, true)
+        completed_ary.map do |complete|
+          str + complete[size..-1]
+        end
+      end
     end
     
     if @settings[:initial_dir]

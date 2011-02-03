@@ -153,8 +153,7 @@ class Trepan::SubcommandMgr < Trepan::Command
   # Return an Array of subcommands that can start with +arg+. If none
   # found we just return +arg+.
   def complete(arg)
-    ret = @subcmds.subcmds.keys.select { |cmd| cmd.to_s.start_with?(arg) }
-    ret.empty? ? arg : ret.sort
+    @subcmds.subcmds.keys.select { |cmd| cmd.to_s.start_with?(arg) }.sort
   end
 
   def run(args) # nodoc
