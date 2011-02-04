@@ -41,9 +41,11 @@ See also 'examine' and 'whatis'.
   end
 
   def complete(prefix)
-    Trepan::Util.complete_token(CATEGORIES.keys + %w(* syntax all) + 
-                                @proc.commands.keys + @proc.aliases.keys,
-                                prefix)
+    matches = Trepan::Util.complete_token(CATEGORIES.keys + %w(* syntax all) + 
+                                          @proc.commands.keys, prefix)
+    aliases = Trepan::Util.complete_token_filtered(@proc.aliases, prefix, 
+                                                   matches)
+    (matches + aliases).sort
   end    
 
   # List the command categories and a short description of each.
@@ -202,4 +204,5 @@ if __FILE__ == $0
   cmd.run %W(#{cmd.name} s<>)
   puts '=' * 40
   p cmd.complete('br')
+  p cmd.complete('un')
 end

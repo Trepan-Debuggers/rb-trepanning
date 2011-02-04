@@ -108,10 +108,10 @@ class Trepan
       end
       return args if args.empty?
       if args.size == 1
-        cmd_matches = Trepan::Util.complete_token(@commands.keys, args[0])
-        (@aliases.keys.select do |cmd|
-          cmd.start_with?(args[0]) && !cmd_matches.member?(@aliases[cmd])
-         end) + cmd_matches.sort
+        matches = Trepan::Util.complete_token(@commands.keys, args[0])
+        aliases = Trepan::Util.complete_token_filtered(@aliases, args[0], 
+                                                       matches)
+        (matches + aliases).sort
       else 
         first_ary = complete(args[0])
         return first_ary unless 1 == first_ary.size 
