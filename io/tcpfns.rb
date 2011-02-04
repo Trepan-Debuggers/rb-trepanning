@@ -5,9 +5,11 @@
 module Trepanning
   module TCPPacking
 
-    TCP_MAX_PACKET = 8192 # Largest size for a recv
-    LOG_MAX_MSG    = Math.log10(TCP_MAX_PACKET).ceil
-
+    unless defined?(TCP_MAX_PAXKET)
+      TCP_MAX_PACKET = 8192 # Largest size for a recv
+      LOG_MAX_MSG    = Math.log10(TCP_MAX_PACKET).ceil
+    end
+      
     def pack_msg(msg)
       fmt = '%%%dd' % LOG_MAX_MSG # A funny way of writing: '%4d'
       (fmt % msg.size) + msg

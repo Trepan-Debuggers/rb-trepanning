@@ -1,6 +1,6 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
-require_relative '../../app/util'
+require_relative '../../app/complete'
 class Trepan::Command::HelpCommand < Trepan::Command
 
   unless defined?(HELP)
@@ -41,10 +41,11 @@ See also 'examine' and 'whatis'.
   end
 
   def complete(prefix)
-    matches = Trepan::Util.complete_token(CATEGORIES.keys + %w(* syntax all) + 
+    matches = Trepan::Complete.complete_token(CATEGORIES.keys + 
+                                              %w(* syntax all) + 
                                           @proc.commands.keys, prefix)
-    aliases = Trepan::Util.complete_token_filtered(@proc.aliases, prefix, 
-                                                   matches)
+    aliases = Trepan::Complete.complete_token_filtered(@proc.aliases, prefix, 
+                                                       matches)
     (matches + aliases).sort
   end    
 

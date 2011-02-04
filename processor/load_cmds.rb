@@ -3,7 +3,7 @@
 # Trepan::CmdProcess that loads up debugger commands from builtin and
 # user directories.
 # Sets @commands, @aliases, @macros
-require_relative '../app/util'
+require_relative '../app/complete'
 class Trepan
   class CmdProcessor
 
@@ -98,6 +98,9 @@ class Trepan
       end
     end
 
+    def complete_token_with_next(arg, replace_leading=true)
+    end
+
     def complete(arg, replace_leading=true)
       if arg.kind_of?(String)
         args = arg.split
@@ -107,32 +110,52 @@ class Trepan
         return []
       end
       return args if args.empty?
+      match_pairs = Trepan::Complete.complete_token_with_next(@commands,
+                                                               args[0])
+      match_hash = {}
+      match_pairs.each do |pair|
+        match_hash[pair[0]] = pair[1]
+      end
+      alias_pairs = Trepan::Complete.
+        complete_token_filtered_with_next(@aliases, args[0], match_hash,
+                                          @commands)
+      match_pairs += alias_pairs
       if args.size == 1
-        matches = Trepan::Util.complete_token(@commands.keys, args[0])
-        aliases = Trepan::Util.complete_token_filtered(@aliases, args[0], 
-                                                       matches)
-        (matches + aliases).sort
+        return match_pairs.map{|pair| pair[0]}.sort
       else 
-        first_ary = complete(args[0])
-        return first_ary unless 1 == first_ary.size 
-        first_arg = first_ary[0]
-        cmd = @commands[first_arg]
-        if cmd.respond_to?(:complete)
-          second_ary = cmd.complete(args[1])
-          if second_ary.empty?
+        alias_pairs.each do |pair|
+          match_hash[pair[0]] = pair[1]
+        end
+        unless 1 == match_pairs.size 
+          # FIXME: figure out what to do here.
+          return [args.join(' ')]
+        end
+        # FIXME generalize more and turn into a routine.
+        first_arg, cmd = match_pairs[0]
+        if cmd.respond_to?(:complete_token_with_next)
+          match_pairs = cmd.complete_token_with_next(args[1])
+          if match_pairs.empty?
             return [args.join(' ')] 
-          end
-          return second_ary.map do |second_arg|
-            # FIXME: break out args[2..-1] if that exists to 
-            # handle more complex completions including subsubcmds.
-            if replace_leading
-              "#{first_arg} #{second_arg.to_s + args[2..-1].join(' ')}"
-            else
-              "#{args[0]} #{second_arg.to_s + args[2..-1].join(' ')}"
+          elsif args.size > 2 && match_pairs.size == 1
+            second_arg, cmd = match_pairs[0]
+            if cmd.respond_to?(:complete)
+              matches = cmd.complete(args[2])
+              return matches.map do |third_arg|
+                # FIXME: break out args[3..-1] if that exists to 
+                # handle more complex completions including subsubcmds.
+                "#{first_arg} #{second_arg.to_s} #{third_arg}" + 
+                  ((args.size > 3) ? "#{args[3..-1].join(' ')}" : '')
+              end
             end
           end
+          return match_pairs.map do |second_arg, junk|
+            # FIXME: break out args[2..-1] if that exists to 
+            # handle more complex completions including subsubcmds.
+            "#{first_arg} #{second_arg.to_s}" + 
+              ((args.size > 2) ? " #{args[2..-1].join(' ')}" : '')
+          end
         end
-        return ["#{first_arg} #{args[1..-1].join(' ')}"]
+        return ["#{next_arg} #{args[1..-1].join(' ')}"]
       end
     end
   end

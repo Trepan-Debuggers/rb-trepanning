@@ -106,7 +106,8 @@ class Trepan
     def self.completion(ary) 
       self.send(:define_method, 
                 :complete, 
-                Proc.new {|prefix| Trepan::Util.complete_token(ary, prefix) })
+                Proc.new {|prefix| 
+                  Trepan::Complete.complete_token(ary, prefix) })
     end
   end
 end

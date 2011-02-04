@@ -12,13 +12,4 @@ class TestAppUtil < Test::Unit::TestCase
     string = "'The time has come to talk of many things.'"
     assert_equal("'The tim... things.'", safe_repr(string, 17))
   end
-
-  def test_complete_token
-    ary = %w(a aa ab aac).sort
-    [[[], 'b'], [ary, 'a'], [%w(aa aac), 'aa'], 
-     [ary, ''], [['ab'], 'ab'], [[], 'abc']].each do |result, prefix|
-      assert_equal(result, complete_token(ary, prefix),
-                   "Trouble matching #{ary}.inspect on #{prefix.inspect}")
-    end
-  end
 end

@@ -6,13 +6,15 @@ module Trepanning
   # Most of these go from debugged process to front-end
   # client interface. COMMAND goes the other way.
   module RemoteCommunication
-    PRINT         = '.'
-    COMMAND       = 'C'
-    CONFIRM_TRUE  = 'Y'
-    CONFIRM_FALSE = 'N'
-    CONFIRM_REPLY = '?'
-    QUIT          = 'q'
-    PROMPT        = 'p'
-    RESTART       = 'r'
+    unless defined?(PRINT)
+      PRINT         = '.'
+      COMMAND       = 'C'
+      CONFIRM_TRUE  = 'Y'
+      CONFIRM_FALSE = 'N'
+      CONFIRM_REPLY = '?'
+      QUIT          = 'q'
+      PROMPT        = 'p'
+      RESTART       = 'r'
+    end
   end
 end

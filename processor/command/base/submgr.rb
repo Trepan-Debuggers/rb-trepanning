@@ -3,6 +3,7 @@
 require_relative 'cmd'
 require_relative '../../subcmd'
 require_relative '../../help'
+require_relative '../../../app/complete'
 
 class Trepan::SubcommandMgr < Trepan::Command
 
@@ -17,7 +18,7 @@ class Trepan::SubcommandMgr < Trepan::Command
     NEED_STACK    = false
   end
 
-  attr_accessor :subcmds   # Array of instantiated Trepan::Subcommand objects
+  attr_accessor :subcmds   # Trepan::Subcmd
   attr_reader   :name      # Name of command
   attr_reader   :last_args # Last arguments seen
 
@@ -152,8 +153,13 @@ class Trepan::SubcommandMgr < Trepan::Command
 
   # Return an Array of subcommands that can start with +arg+. If none
   # found we just return +arg+.
+  # FIXME: Not used any more? 
   def complete(prefix)
-    Trepan::Util.complete_token(@subcmds.subcmds.keys, prefix)
+    Trepan::Complete.complete_token(@subcmds.subcmds.keys, prefix)
+  end
+
+  def complete_token_with_next(prefix)
+    Trepan::Complete.complete_token_with_next(@subcmds.subcmds, prefix)
   end
 
   def run(args) # nodoc

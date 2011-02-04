@@ -149,7 +149,11 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
   def complete(prefix)
     prior = self.prefix.join('').size
     last_args = @subcmds.list.map{|str| str[prior..-1]}
-    Trepan::Util.complete_token(last_args, prefix)
+    Trepan::Complete.complete_token(last_args, prefix)
+  end
+
+  def complete_token_with_next(prefix)
+    Trepan::Complete.complete_token_with_next(@subcmds.subcmds, prefix)
   end
 
   def run(args)

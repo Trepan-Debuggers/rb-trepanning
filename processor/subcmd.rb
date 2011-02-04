@@ -1,10 +1,11 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # gdb-like subcommand processing.
 
 class Trepan
   class Subcmd
 
-    attr_reader :subcmds
+    attr_reader :subcmds  # Hash of subcommands. Key is the subcommand name.
+                          # the value is the subcommand object to run.
     def initialize(cmd)
       @cmd     = cmd
       @subcmds = {}

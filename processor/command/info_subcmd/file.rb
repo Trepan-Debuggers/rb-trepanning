@@ -32,6 +32,8 @@ If no sub-options are given #{DEFAULT_FILE_ARGS.join(' ')} are assumed.
     NEED_STACK   = false
   end
 
+  completion %w(all brkpts iseq sha1 size stat)
+
   include Trepanning
   
   # Get file information
