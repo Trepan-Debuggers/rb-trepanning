@@ -25,6 +25,8 @@ Examples:
     SHORT_HELP   = 'Set trace events we may stop on.'
   end
 
+  completion Trace.const_get("EVENTS").map{|event| event.to_s}
+
   def save_command
     step_events_list = @proc.core.step_events_list
     step_events_list = 'brkpt' unless step_events_list
