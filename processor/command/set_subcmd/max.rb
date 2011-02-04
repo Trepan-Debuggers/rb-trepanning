@@ -18,17 +18,14 @@ class Trepan::SubSubcommand::SetMax < Trepan::SubSubcommandMgr
 end
 
 if __FILE__ == $0
+  # Demo it.
   require_relative '../../mock'
-  dbgr, cmd = MockDebugger::setup('set')
-  cmds = dbgr.core.processor.commands
-  set_cmd = cmds['set']
-  command = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
-                                              set_cmd)
-  name = File.basename(__FILE__, '.rb')
-  cmd_args = ['set', name]
-  set_cmd.instance_variable_set('@last_args', cmd_args)
-  command.run(cmd_args)
-  require_relative '../../../lib/trepanning'
-  # Trepan.debug
-  command.run(['set', name, 'string', 30])
+  dbgr, parent_cmd = MockDebugger::setup('set', false)
+  cmd              = Trepan::SubSubcommand::SetMax.new(dbgr.processor, 
+                                                       parent_cmd)
+  cmd.run(cmd.prefix + ['string', '30'])
+
+  %w(s lis foo).each do |prefix|
+    p [prefix, cmd.complete(prefix)]
+  end
 end
