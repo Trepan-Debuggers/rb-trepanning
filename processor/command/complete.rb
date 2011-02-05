@@ -4,15 +4,13 @@ require_relative '../load_cmds'
 class Trepan::Command::CompleteCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"complete COMMAND-PREFIX
+    NAME          = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} COMMAND-PREFIX
 
 List the completions for the rest of the line as a command.
-
-NOTE: For now we just handle completion of the first token.
-"
+    HELP
     CATEGORY      = 'support'
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'List the completions for the rest of the line as a command'
   end

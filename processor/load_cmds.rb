@@ -109,9 +109,10 @@ class Trepan
       else
         return []
       end
-      return args if args.empty?
+      return [] if args.empty?
       match_pairs = Trepan::Complete.complete_token_with_next(@commands,
                                                                args[0])
+      return [] if match_pairs.empty?
       match_hash = {}
       match_pairs.each do |pair|
         match_hash[pair[0]] = pair[1]
@@ -126,10 +127,13 @@ class Trepan
         alias_pairs.each do |pair|
           match_hash[pair[0]] = pair[1]
         end
-        unless 1 == match_pairs.size 
+        if match_pairs.size > 1
           # FIXME: figure out what to do here.
-          return [args.join(' ')]
+          return match_pairs.map do |name, cmd|
+            ["#{name} #{args[1..-1].join(' ')}"]
+          end
         end
+        # match_pairs.size == 1
         # FIXME generalize more and turn into a routine.
         first_arg, cmd = match_pairs[0]
         if cmd.respond_to?(:complete_token_with_next)
