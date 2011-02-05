@@ -49,6 +49,21 @@ See also 'examine' and 'whatis'.
     (matches + aliases).sort
   end    
 
+  def complete(prefix)
+    matches = Trepan::Complete.complete_token(CATEGORIES.keys + 
+                                              %w(* syntax all) + 
+                                          @proc.commands.keys, prefix)
+    aliases = Trepan::Complete.complete_token_filtered(@proc.aliases, prefix, 
+                                                       matches)
+    (matches + aliases).sort
+  end    
+
+  def complete_token_with_next(prefix)
+    complete(prefix).map do |cmd| 
+      [cmd, @proc.commands.member?(cmd) ? @proc.commands[cmd] : nil]
+    end
+  end
+
   # List the command categories and a short description of each.
   def list_categories
     section 'Classes of commands:'

@@ -18,6 +18,7 @@ class Trepan
       @input     = inp || STDIN
       @eof       = false
       @line_edit = @opts[:line_edit]
+      @have_readline = nil
     end
 
     def closed?; @input.closed? end
@@ -36,6 +37,8 @@ class Trepan
         else
           line = @input.gets
           end
+      rescue Interrupt
+        return ''
       rescue EOFError
       rescue => e
         puts $!.backtrace
@@ -60,13 +63,22 @@ class Trepan
           inp.respond_to?(:isatty) && inp.isatty && Trepan::GNU_readline?
         self.new(inp, opts)
       end
+
+      def finalize
+        if defined?(RbReadline)
+          RbReadline.rl_cleanup_after_signal()
+          RbReadline.rl_deprep_terminal()
+        end
+      end
     end
   end
 end
 
 def Trepan::GNU_readline?
   begin
-    require 'readline'
+    return @have_readline unless @have_readline.nil?
+    @have_readline = require 'readline'
+    at_exit { Trepan::UserInput::finalize }
     return true
   rescue LoadError
     return false

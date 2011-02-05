@@ -159,10 +159,11 @@ class Trepan
     def summary_help(subcmd_name)
       msg_nocr("%-12s: %s" % [subcmd_name, my_const(:SHORT_HELP)])
     end
-    
   end
 
   class SetBoolSubcommand < Subcommand
+    completion %w(on off)
+
     def run(args)
       run_set_bool(args)
     end

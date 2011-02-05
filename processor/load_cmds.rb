@@ -155,7 +155,7 @@ class Trepan
               ((args.size > 2) ? " #{args[2..-1].join(' ')}" : '')
           end
         end
-        return ["#{next_arg} #{args[1..-1].join(' ')}"]
+        return ["#{first_arg} #{args[1..-1].join(' ')}"]
       end
     end
   end

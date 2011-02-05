@@ -21,7 +21,7 @@ if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
   dbgr, parent_cmd = MockDebugger::setup('set', false)
-  cmd              = Trepan::SubSubcommand::SetMax.new(dbgr.processor, 
+  cmd              = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
                                                        parent_cmd)
   cmd.run(cmd.prefix + ['string', '30'])
 
