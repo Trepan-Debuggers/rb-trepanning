@@ -12,16 +12,18 @@ class Trepan
   class TCPDbgServer < Trepan::InOutBase
 
     include Trepanning::TCPPacking
-    
-    DEFAULT_INIT_OPTS = {:open => true}
-    
-    SERVER_SOCKET_OPTS = {
-      :host    => Trepan::DEFAULT_SETTINGS[:host],
-      :port    => Trepan::DEFAULT_SETTINGS[:port], # A non-privileged port
-      :timeout => 5,     # FIXME: not used
-      :reuse   => true,  # FIXME: not used. Allow port to be resued on close?
-                         # Python has: 'posix' == os.name 
-    }
+
+    unless defined?(SERVER_SOCKET_OPTS)
+      DEFAULT_INIT_OPTS = {:open => true}
+      
+      SERVER_SOCKET_OPTS = {
+        :host    => Trepan::DEFAULT_SETTINGS[:host],
+        :port    => Trepan::DEFAULT_SETTINGS[:port], # A non-privileged port
+        :timeout => 5,     # FIXME: not used
+        :reuse   => true,  # FIXME: not used. Allow port to be resued on close?
+        # Python has: 'posix' == os.name 
+      }
+    end
 
     attr_reader :state
 

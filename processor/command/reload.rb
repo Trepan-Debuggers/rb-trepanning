@@ -3,12 +3,16 @@
 require_relative 'base/submgr'
 
 class Trepan::Command::ReloadCommand < Trepan::SubcommandMgr
+  # Silence already initialized constant .. warnings
+  old_verbose = $VERBOSE  
+  $VERBOSE    = nil
   NAME          = File.basename(__FILE__, '.rb')
   ALIASES       = %w(rel)
   HELP = 'Reload information'
   CATEGORY      = 'data'
   NEED_STACK    = false
   SHORT_HELP    = 'Reload information'
+  $VERBOSE      = old_verbose 
   def initialize(proc)
     super
   end

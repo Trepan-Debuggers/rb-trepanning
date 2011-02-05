@@ -39,7 +39,7 @@ class Trepan
       :tracebuffer   => false,     # save events to a trace buffer.
       :user_cmd_dir  => File.join(Trepan::HOME_DIR, 'tepanx', 'command'),
                                    # User command directory
-    } 
+    }
   end
 end
 

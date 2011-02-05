@@ -7,12 +7,17 @@ class TestLibTrepanning < Test::Unit::TestCase
 
   def test_completion
     dbgr = Trepan.new
-    [['sh', 'sh', ['show']],
-     ['se', 'se', ['server', 'set']],
-     ['show', 'show', ['show ']],
-     ['set au', 'au', ['auto']],
-     ['set auto', 'auto', ['auto ']],
+    [
+     ['sh', 'sh', ['show']],  # Simple single completion
+     ['se', 'se', ['server', 'set']],  # Simple multiple completion
+     ['show', 'show', ['show ']], # Add a space because there is more
+     ['irb ', 'irb ', []],        # Don't add anything - no more
+     # ['irb ', 'irb', []],         # Don't add anything - no more
+     ['set au', 'au', ['auto']],  # Single completion when there are two words
+     ['set auto', 'auto', ['auto ']], # Add a space because there is more
+     ['set auto ', '', ['eval', 'irb', 'list']], # Many two-word completions
      ['set auto e', 'e', ['eval']],
+     ['disas', 'disas ', ['disassemble']], # Another single completion
      ['help syn', 'syn', ['syntax']],
      ['help br', 'br', ['break', 'breakpoints']],
      ['set basename o', 'o', ['off', 'on']],

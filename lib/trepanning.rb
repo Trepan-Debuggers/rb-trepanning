@@ -124,10 +124,21 @@ class Trepan
         leading.split(' ').compact
       end
     completion = @core.processor.complete(args)
-    if 1 == completion.size && completion[0].split[-1] == str
-      # If we were at the end of a complete token add a space so that
-      # the next time, we'll complete any context after that.
-      [str + ' ']
+    if 1 == completion.size 
+      last_token = completion[0].split[-1]
+      if  last_token == str
+        # If we were at the end of a complete token add a space so that
+        # the next time, we'll complete any context after that.
+        [str + ' ']
+      elsif str.end_with?(' ') && str.strip == last_token 
+        # There is nothing more to complete
+        []
+      elsif str.empty? && completion[0] == leading
+        # There is also nothing more to complete
+        []
+      else
+        [last_token]
+      end
     else
       # We have multiple completions. Get the last token so that will
       # be presented as a list of completions.
