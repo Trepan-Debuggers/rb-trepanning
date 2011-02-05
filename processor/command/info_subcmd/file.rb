@@ -9,8 +9,8 @@ class Trepan::Subcommand::InfoFile < Trepan::Subcommand
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     DEFAULT_FILE_ARGS = %w(size sha1)
 
-    HELP =
-"info file [{FILENAME|.} [all | brkpts | iseq | sha1 | size | stat]]
+    HELP = <<-EOH
+#{PREFIX.join(' ')} [{FILENAME|.} [all | brkpts | sha1 | size | stat]]
 
 Show information about the current file. If no filename is given and
 the program is running then the current file associated with the
@@ -27,7 +27,7 @@ stat   -- File.stat information
 all    -- All of the above information.
 
 If no sub-options are given #{DEFAULT_FILE_ARGS.join(' ')} are assumed.
-"
+EOH
     MIN_ABBREV   = 'fi'.size  # Note we have "info frame"
     NEED_STACK   = false
   end
@@ -155,7 +155,7 @@ if __FILE__ == $0
      %w(info file),
      %w(info file file.rb),
      %w(info file . all),
-     %w(info file . lines size sha1 sha1)].each do |args|
+     %w(info file . brkpts bad size sha1 sha1)].each do |args|
       subcommand.run(args)
       puts '-' * 40
     end

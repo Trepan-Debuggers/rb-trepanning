@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'trace'                          # Trace filtering
 require 'thread_frame'
 require_relative '../app/core'           # core event-handling mechanism
@@ -72,16 +72,8 @@ class Trepan
     @settings[:core_opts][:cmdproc_opts][:highlight] ||= settings[:highlight]
 
     @core = Core.new(self, @settings[:core_opts])
-    if Trepan::GNU_readline? && complete
-      Readline.completion_proc = Proc.new do |str; size|
-        size = Readline.line_buffer.size
-        completed_ary = @core.processor.complete(Readline.line_buffer, true)
-        completed_ary.map do |complete|
-          suffix = complete[size..-1] 
-          suffix ? str + suffix : str
-        end
-      end
-    end
+    Readline.completion_proc = method(:completion_method) if 
+      Trepan::GNU_readline? && complete
     
     if @settings[:initial_dir]
       Dir.chdir(@settings[:initial_dir])
@@ -115,6 +107,34 @@ class Trepan
       @intf[-1].close 
     end
     th.exec_event_tracing  = false
+  end
+
+  # The method is called when we want to do debugger command completion
+  # such as called from GNU Readline with <TAB>.
+  def completion_method(str, leading=Readline.buffer)
+    args =
+      if str.empty? && leading.end_with?(' ')
+        # A line ending with a blank means we want to get all completions
+        # of the *next* token, not the current token.
+        leading.split(' ').compact + ['']
+      else
+        # We split on a single blank rather than sequences of spaces
+        # because we need to keep the line exactly as it is except for the
+        # last token
+        leading.split(' ').compact
+      end
+    completion = @core.processor.complete(args)
+    if 1 == completion.size && completion[0].split[-1] == str
+      # If we were at the end of a complete token add a space so that
+      # the next time, we'll complete any context after that.
+      [str + ' ']
+    else
+      # We have multiple completions. Get the last token so that will
+      # be presented as a list of completions.
+      completion.map do |cmd|
+        cmd.split[-1]
+      end
+    end
   end
 
   # To call from inside a Ruby program, there is one-time setup that 

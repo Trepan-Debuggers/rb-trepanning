@@ -98,10 +98,10 @@ class Trepan
       end
     end
 
-    def complete_token_with_next(arg, replace_leading=true)
+    def complete_token_with_next(arg)
     end
 
-    def complete(arg, replace_leading=true)
+    def complete(arg)
       if arg.kind_of?(String)
         args = arg.split
       elsif arg.kind_of?(Array)
@@ -109,7 +109,6 @@ class Trepan
       else
         return []
       end
-      return [] if args.empty?
       match_pairs = Trepan::Complete.complete_token_with_next(@commands,
                                                                args[0])
       return [] if match_pairs.empty?
