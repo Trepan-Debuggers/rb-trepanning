@@ -111,7 +111,7 @@ class Trepan
 
   # The method is called when we want to do debugger command completion
   # such as called from GNU Readline with <TAB>.
-  def completion_method(str, leading=Readline.buffer)
+  def completion_method(str, leading=Readline.line_buffer)
     args =
       if str.empty? && leading.end_with?(' ')
         # A line ending with a blank means we want to get all completions
