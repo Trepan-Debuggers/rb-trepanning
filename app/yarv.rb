@@ -107,6 +107,10 @@ module CodeRay
             state = :expect_another_operand
             if match = scan(/^(\d+)/)
               tokens << [match, :integer]
+              if match = scan(/^[.]{2}\d+/)
+                tokens << ['..', :operator]
+                tokens << [match[2..-1], :integer]
+              end
             elsif match = scan(/\/.*\//)
               # Really a regular expression
               tokens << [match, :entity]
@@ -118,6 +122,9 @@ module CodeRay
               tokens << [match, :pre_constant]
             elsif match = scan(/nil|true|false/)
               tokens << [match, :pre_constant]
+            elsif match = scan(/block in <.+>/)
+              tokens << ["block in ", :variable]
+              tokens << [match['block in '.size..-1], :content]
             elsif match = scan(/[A-Za-z_][_A-Za-z0-9?!]*/)
               tokens << [match, :variable]
             elsif match = scan(/^#[^, \n]*/)
@@ -157,7 +164,6 @@ if __FILE__ == $0
   require 'term/ansicolor'
   ruby_scanner = CodeRay.scanner :yarv
 string='
-     0045 opt_regexpmatch1 /^-e$/
      0000 trace            1                                              (   9)
      0002 putnil           
      0003 putstring        "irb"
@@ -174,6 +180,9 @@ string='
      0029 setinlinecache   <ic:2>
      0031 putstring        "/usr/local/bin/irb"
      0033 send             :start, 1, nil, 0, <ic:3>
+     0026 putobject        0..1
+     0030 send             :map, 0, block in <top gcd.rb>, 0, <ic:3>
+     0045 opt_regexpmatch1 /^-e$/
 '  
   yarv_scanner = CodeRay.scanner :yarv
   tokens = yarv_scanner.tokenize(string)
