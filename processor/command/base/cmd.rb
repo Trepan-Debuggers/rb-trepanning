@@ -4,7 +4,7 @@
 # Note: don't end classname with Command (capital C) since main
 # will think this a command name like QuitCommand 
 require 'columnize'
-require_relative '../../../app/util'
+require_relative '../../../app/complete'
 
 class Trepan
   class Command
@@ -60,8 +60,8 @@ class Trepan
     end
 
     # Convenience short-hand for @dbgr.intf[-1].msg_nocr
-    def msg_nocr(msg)
-      @proc.msg_nocr(msg, opts={})
+    def msg_nocr(msg, opts={})
+      @proc.msg_nocr(msg, opts)
     end
 
     def my_const(name)
@@ -103,11 +103,55 @@ class Trepan
       my_const(help_constant_sym)
     end
 
-    def self.completion(ary) 
+    # Define a method called 'complete' on this class and set the 
+    # default completions to 'base_completions' which is set in the 
+    # singleton class. The instance can override this default value
+    # by setting instance variable @completions
+    def self.completion(base_completions, klass=nil) 
+      @base_completions = base_completions
       self.send(:define_method, 
                 :complete, 
                 Proc.new {|prefix| 
-                  Trepan::Complete.complete_token(ary, prefix) })
+                  completions = @completions ||
+                  self.class.instance_variable_get('@base_completions')
+                  if completions.nil? 
+                    require 'trepanning'; debugger
+                  end
+                  Trepan::Complete.complete_token(completions, prefix) })
     end
   end
+end
+if __FILE__ == $0
+  class Trepan
+    class CmdProcessor
+      def confirm(message, default)
+        p ['confirm: ', message, default]
+      end
+      def errmsg(message, opts)
+        p ['err:', message, opts]
+      end
+      def msg(message, opts)
+        p [message, opts]
+      end
+      def msg_nocr(message, opts)
+        p ['nocr: ', message, opts]
+      end
+      def section(message, opts)
+        p ['section: ', message, opts]
+      end
+    end
+    class Command::Test < Trepan::Command
+      NAME = 'test'
+      CATEGORY = 'testcategory'
+      completion %w(a aa ab ba aac)
+    end
+  end
+  proc = Trepan::CmdProcessor.new(nil)
+  cmd = Trepan::Command::Test.new(proc)
+  %w(confirm errmsg msg msg_nocr section).each do |meth|
+    cmd.send(meth, 'test', nil)
+  end
+  p cmd.complete('aa')
+  cmd.instance_variable_set('@completions', %w(aardvark apple))
+  p cmd.complete('aa')
 end

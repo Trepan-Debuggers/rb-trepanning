@@ -5,12 +5,12 @@ require_relative '../../processor/main'
 require_relative '../../processor/command/exit'
 require_relative '../../processor/command/base/subcmd'
 
-# Mock debugger stub. FIXME: put in comment helper routine.
+# Mock debugger stub. FIXME: put in common helper routine.
 class Trepan
 end
 
 $errors = []
-class TestBaseCommandHelp < Test::Unit::TestCase
+class TestBaseSubCommand < Test::Unit::TestCase
 
   def setup
     $errors   = []
