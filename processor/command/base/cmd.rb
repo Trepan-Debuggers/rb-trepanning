@@ -124,6 +124,8 @@ end
 if __FILE__ == $0
   class Trepan
     class CmdProcessor
+      def initialize(dbgr)
+      end
       def confirm(message, default)
         p ['confirm: ', message, default]
       end

@@ -16,6 +16,8 @@ class TestBaseCommand < Test::Unit::TestCase
     # The below functions aren't tested/called, but they are the
     # methods required by a command and are placeholders for when we
     # do start testing.
+    def initialize(dbgr)
+    end
     def confirm(message, default)
       p ['confirm: ', message, default]
     end
