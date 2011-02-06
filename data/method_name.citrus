@@ -1,0 +1,90 @@
+# -*- Ruby -*-
+grammar MethodName
+  rule upcase_letter
+    [A-Z]
+  end 
+  rule downcase_letter
+    [a-z]
+  end
+  rule suffix_letter
+    [=!?]
+  end    
+  rule letter
+    upcase_letter | downcase_letter
+  end
+  rule id_symbol
+    letter | '_' | [0-9]
+  end
+  rule variable_identifier
+    ((downcase_letter | '_') id_symbol* suffix_letter?)
+    { 
+      SymbolEntry = Struct.new(:type, :name, :chain)
+      def value
+         SymbolEntry.new(:variable, self.to_s)
+      end   
+    }
+  end 
+  rule constant_identifier
+    (upcase_letter id_symbol* suffix_letter?)
+    { 
+      def value
+         SymbolEntry.new(:constant, self.to_s)
+      end   
+    }
+  end 
+  # We won't try for funny global names like $$, $? $:, $', etc
+  rule global_identifier
+    ('$' (constant_identifier | variable_identifier))
+    {
+      def value
+         SymbolEntry.new(:global, self.to_s)
+      end   
+    }     
+  end 
+  rule local_identifier
+    (constant_identifier | variable_identifier)
+    {
+      def value
+         SymbolEntry.new(:instance, self.to_s)
+      end   
+    }     
+  end 
+  rule instance_identifier
+    ('@' local_identifier )
+    {
+      def value
+         SymbolEntry.new(:instance, self.to_s)
+      end   
+    }     
+  end 
+  rule classvar_identifier
+    ('@@' local_identifier )
+    {
+      def value
+         SymbolEntry.new(:classvar, self.to_s)
+      end   
+    }     
+  end 
+  rule identifier
+    global_identifier | instance_identifier | classvar_identifier |
+    local_identifier 
+  end 
+
+  # I think strict Ruby rules are that once one goes from :: to .
+  # There is no going back. That is, A.B::C is invalid. So would
+  # 
+  # Also I think method names can't be constants. But such 
+  # subtleties we'll handle in semantic analysis.
+  rule class_module_chain
+    ( ( parent:(local_identifier) symbol:('::'|'.')
+        child:(class_module_chain) )
+     | (parent:(local_identifier) ) )
+    {
+      def value
+        let = self.to_s[0..0]
+        type = (let.capitalize == let) ? :constant : :variable
+        SymbolEntry.new(type, self.to_s, [parent, child, symbol.to_s])
+      end   
+    }
+  end
+end
