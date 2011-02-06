@@ -1,33 +1,49 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
-require_relative '../base/subcmd'
+require 'columnize'
 require 'pp'
+require_relative '../base/subcmd'
+require_relative '../../../app/file'
 
 class Trepan::Subcommand::InfoIseq < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = 
-'info iseq [METHOD|.]
+    HELP = <<-EOH
+#{CMD=PREFIX.join(' ')} iseq [METHOD|.]
 
 Show information about an instruction sequence.
 
 Examples:
-  info iseq
-  info iseq .
-  info iseq require_relative
-'
+  #{CMD}
+  #{CMD} .
+  #{CMD} *
+  #{CMD} require_relative
+  EOH
     MIN_ABBREV   = 'is'.size
     NEED_STACK   = true
     SHORT_HELP   = 'Information about an instruction sequence'
   end
 
+  def iseq_list
+    ISEQS__.keys
+  end
+  def complete(prefix)
+    completions = ['.'] + iseq_list
+    Trepan::Complete.complete_token(completions, prefix)
+  end
+
+  include Trepanning
+
   def run(args)
-    if 2 == args.size
-      iseq_name = '.'
-    else
-      iseq_name = args[2]
-    end
-    if '.' == iseq_name
+    args << '.' if 2 == args.size 
+    iseq_name = args[2]
+    if '*' == iseq_name
+      section 'Instruction Sequences:'
+      iseq_list.sort.each do |iseq|
+        msg "\t #{iseq}"
+      end
+      return
+    elsif '.' == iseq_name
       iseq = frame = @proc.frame.iseq
     elsif !(matches = find_iseqs(ISEQS__, iseq_name)).empty?
       # FIXME: do something if there is more than one
@@ -78,14 +94,20 @@ if __FILE__ == $0
 
   require_relative '../../mock'
   require_relative '../../subcmd'
-  name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('info')
   subcommand = Trepan::Subcommand::InfoIseq.new(cmd)
   testcmdMgr = Trepan::Subcmd.new(subcommand)
 
-  subcommand.run_show_bool
-  name = File.basename(__FILE__, '.rb')
-  subcommand.summary_help(name)
+  def five; 5; end
+
+  [%w(info iseq nothere),
+   %w(info file .),
+   %w(info file *),
+  ].each do |args|
+    subcommand.run(args)
+    puts '-' * 40
+  end
+  p subcommand.complete('')
 end
