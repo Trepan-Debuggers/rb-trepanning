@@ -42,7 +42,5 @@ class TestBaseCommand < Test::Unit::TestCase
 
   def test_base_completion
     assert_equal(%w(aa aac), @cmd.complete('aa'))
-    @cmd.instance_variable_set('@completions', %w(aardvark apple))
-    assert_equal(%w(aardvark), @cmd.complete('aa'))
   end
 end

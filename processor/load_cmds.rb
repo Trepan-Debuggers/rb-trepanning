@@ -23,8 +23,8 @@ class Trepan
       cmd_dirs = [ File.join(File.dirname(__FILE__), 'command') ]
       cmd_dirs <<  @settings[:user_cmd_dir] if @settings[:user_cmd_dir]
       cmd_dirs.each do |cmd_dir| 
-          load_debugger_commands(cmd_dir) if File.directory?(cmd_dir)
-        end
+        load_debugger_commands(cmd_dir) if File.directory?(cmd_dir)
+      end
     end
 
     # Loads in debugger commands by require'ing each ruby file in the
@@ -33,7 +33,8 @@ class Trepan
     # is returned.
     def load_debugger_commands(file_or_dir)
       if File.directory?(file_or_dir)
-        Dir.glob(File.join(file_or_dir, '*.rb')).each do |rb| 
+        dir = File.expand_path(file_or_dir)
+        Dir.glob(File.join(dir, '*.rb')).each do |rb| 
           # We use require so that multiple calls have no effect.
           require rb
         end
@@ -109,6 +110,7 @@ class Trepan
       else
         return []
       end
+      args = [''] if args.empty?
       match_pairs = Trepan::Complete.complete_token_with_next(@commands,
                                                                args[0])
       return [] if match_pairs.empty?
@@ -164,7 +166,12 @@ class Trepan
   end
 end
 if __FILE__ == $0
-  cmdproc = Trepan::CmdProcessor.new
+  class Trepan::CmdProcessor
+    def initialize(core, settings={})
+    end
+  end
+
+  cmdproc = Trepan::CmdProcessor.new(nil)
   cmddir = File.join(File.dirname(__FILE__), 'command')
   cmdproc.instance_variable_set('@settings', {})
   cmdproc.load_cmds_initialize
@@ -187,4 +194,5 @@ if __FILE__ == $0
   cmdproc.run_cmd(['list', 5])  # Invalid - nonstring arg
   p cmdproc.complete("d")
   p cmdproc.complete("sho d")
+  p cmdproc.complete('')
 end
