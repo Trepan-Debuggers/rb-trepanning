@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
-# Trepan::CmdProcess that loads up debugger commands from builtin and
-# user directories.
+
+# Part of Trepan::CmdProcess that loads up debugger commands from
+# builtin and user directories.  
 # Sets @commands, @aliases, @macros
 require_relative '../app/complete'
 class Trepan
