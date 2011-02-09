@@ -205,6 +205,9 @@ class Trepan
         end
       end
       run_command(@current_command)
+
+      # Save it to the history.
+      intf.history_io.puts @last_command if @last_command && intf.history_io
     end
 
     # This is the main entry point.

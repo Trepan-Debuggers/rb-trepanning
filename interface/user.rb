@@ -9,8 +9,6 @@
 require_relative 'base_intf'
 require_relative '../io/input'
 
-# Moutput    = import_relative('dbg_output', '..io', 'pydbgr')
-
 # Interface when communicating with the user in the same
 # process as the debugged program.
 class Trepan::UserInterface < Trepan::Interface
@@ -24,6 +22,25 @@ class Trepan::UserInterface < Trepan::Interface
              else
                Trepan::UserInput.open(inp)
              end
+     if Trepan::GNU_readline? && opts[:complete]
+      Readline.completion_proc = opts[:complete]
+      # Use gdb's default setting
+      @opts[:history_length] ||= 
+        ENV['HISTSIZE'] ? ENV['HISTSIZE'].to_i : 256  
+      Readline.completion_proc = @opts[:complete]
+      @history_path = File.expand_path("~/.trepanx")
+
+      if File.exists?(@history_path)
+        File.readlines(@history_path).each do |line|
+          Readline::HISTORY << line.strip
+        end
+        @history_io = File.new(@history_path, "a")
+      else
+        @history_io = File.new(@history_path, "w")
+      end
+      @history_io.sync = true
+      @history_save = true
+     end
   end
 
   # Closes both input and output
@@ -50,9 +67,21 @@ class Trepan::UserInterface < Trepan::Interface
     return YES.member?(response)
   end
 
+  def save_history 
+    iface.histfile ||= File.join(ENV['HOME']||ENV['HOMEPATH']||'.', 
+                                 FILE_HISTORY)
+    open(iface.histfile, 'w') do |file|
+      Readline::HISTORY.to_a.last(iface.history_length).each do |line|
+        file.puts line unless line.strip.empty?
+      end if defined?(iface.history_save) and iface.history_save
+    end rescue nil
+  end
+
   def finalize(last_wishes=nil)
     # print exit annotation
-    # save history
+    if Trepan::GNU_readline? && @history_save
+      save_history 
+    end
     super
   end
 

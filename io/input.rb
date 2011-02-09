@@ -33,7 +33,7 @@ class Trepan
       raise EOFError if eof?
       begin 
         if @line_edit 
-          line = Readline.readline(prompt)
+          line = Readline.readline(prompt, true)
         else
           line = @input.gets
           end

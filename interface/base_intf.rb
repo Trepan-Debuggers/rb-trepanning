@@ -16,7 +16,7 @@ class Trepan
   #  - another interface in another process or computer
   class Interface
 
-    attr_accessor :interactive, :input, :output
+    attr_accessor :history_io, :interactive, :input, :output
 
     unless defined?(YES)
       YES = %w(y yes oui si yep ja)
@@ -25,10 +25,13 @@ class Trepan
     end
 
     def initialize(inp=nil, out=nil, opts={})
-      @input       = inp || STDIN
-      @interactive = false 
-      @opts        = opts
-      @output      = out || STDOUT
+      @history_io   = nil
+      @history_save = false
+      @history_path = nil
+      @input        = inp || STDIN
+      @interactive  = false 
+      @opts         = opts
+      @output       = out || STDOUT
     end
 
     # Closes all input and/or output.

@@ -24,6 +24,7 @@ class Trepan
                                    # means hide none. Less than 0 means show
                                    # all stack entries.
       :hightlight    => false,     # Use terminal highlight? 
+      
       :maxlist       => 10,        # Number of source lines to list 
       :maxstack      => 10,        # backtrace limit
       :maxstring     => 150,       # Strings which are larger than this

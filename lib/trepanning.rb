@@ -45,6 +45,8 @@ class Trepan
     @input  = @settings[:input] || STDIN
     @output = @settings[:output] || STDOUT
 
+    completion_proc = method(:completion_method)
+
     @intf = 
       if @settings[:server]
         opts = Trepan::ServerInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
@@ -52,17 +54,16 @@ class Trepan
         opts[:host] = @settings[:host] if @settings[:host]
         puts("starting debugger in out-of-process mode port at " +
              "#{opts[:host]}:#{opts[:port]}")
-        complete = nil
         [Trepan::ServerInterface.new(nil, nil, opts)]
       elsif @settings[:client]
         opts = Trepan::ClientInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
         opts[:port] = @settings[:port] if @settings[:port]
         opts[:host] = @settings[:host] if @settings[:host]
-        complete = true
+        opts[:complete] = completion_proc
         [Trepan::ClientInterface.new(nil, nil, nil, nil, opts)]
       else
-        complete = true
-        [Trepan::UserInterface.new(@input, @output)]
+        opts = {:complete => completion_proc}
+        [Trepan::UserInterface.new(@input, @output, opts)]
       end
 
     process_cmdfile_setting(@settings)
@@ -72,8 +73,6 @@ class Trepan
     @settings[:core_opts][:cmdproc_opts][:highlight] ||= settings[:highlight]
 
     @core = Core.new(self, @settings[:core_opts])
-    Readline.completion_proc = method(:completion_method) if 
-      Trepan::GNU_readline? && complete
     
     if @settings[:initial_dir]
       Dir.chdir(@settings[:initial_dir])
