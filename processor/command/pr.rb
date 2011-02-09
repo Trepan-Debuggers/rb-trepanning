@@ -24,7 +24,7 @@ See 'set max string' to change the string truncation limit.
   end
   
   def run(args)
-    msg @proc.debug_eval(@proc.cmd_argstr, @proc.settings[:maxstring])
+    @proc.eval_code(@proc.cmd_argstr, @proc.settings[:maxstring])
   end
 end
         

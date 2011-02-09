@@ -41,11 +41,11 @@ class Trepan
 
     # Get line +line_number+ from file named +filename+. Return ''
     # if there was a problem. Leading blanks are stripped off.
-    def line_at(filename, line_number) # :nodoc:
-      opts = {
-        :reload_on_change => @reload_on_change,
-        :output => @settings[:highlight]
-      }
+    def line_at(filename, line_number,
+                opts = {
+                  :reload_on_change => @reload_on_change,
+                  :output => @settings[:highlight]
+                })
       line = LineCache::getline(filename, line_number, opts)
 
       unless line
@@ -61,12 +61,16 @@ class Trepan
       line ? line.lstrip.chomp : line
     end
 
-    def loc_and_text(loc, frame, line_no, source_container)
+    def loc_and_text(loc, frame, line_no, source_container,
+                     opts = {
+                       :reload_on_change => @reload_on_change,
+                       :output => @settings[:highlight]
+                     })
       found_line = true
       ## FIXME: condition is too long.
       if source_container[0] == 'string' && frame.iseq && frame.iseq.eval_source
         file = LineCache::map_iseq(frame.iseq)
-        text = LineCache::getline(frame.iseq, line_no)
+        text = LineCache::getline(frame.iseq, line_no, opts)
         loc += " remapped #{canonic_file(file)}:#{line_no}"
       elsif source_container[0] != 'file'
         via = loc
@@ -78,7 +82,7 @@ class Trepan
           line_no      = frame.source_location[0]
           filename     = source_container[1]
           loc         += " via #{canonic_file(filename)}:#{line_no}"
-          text         = line_at(filename, line_no)
+          text         = line_at(filename, line_no, opts)
           found_line   = false
         end
       else
@@ -88,7 +92,7 @@ class Trepan
           loc += " remapped #{canonic_file(map_file)}:#{map_line}"
         end
         
-        text  = line_at(container, line_no)
+        text  = line_at(container, line_no, opts)
       end
       [loc, line_no, text, found_line]
     end
