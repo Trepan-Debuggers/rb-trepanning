@@ -26,5 +26,7 @@ class TestLibTrepanning < Test::Unit::TestCase
                    dbgr.completion_method(token, line),
                    "Bad completion of #{token.inspect} with #{line.inspect}")
     end
+    assert(dbgr.completion_method('', '').size > 30, 
+           'Initial completion should return more than 30 commands')
   end
 end

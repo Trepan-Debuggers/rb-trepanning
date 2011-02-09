@@ -103,21 +103,12 @@ class Trepan
       my_const(help_constant_sym)
     end
 
-    # Define a method called 'complete' on this class and set the 
-    # default completions to 'base_completions' which is set in the 
-    # singleton class. The instance can override this default value
-    # by setting instance variable @completions
-    def self.completion(base_completions, klass=nil) 
-      @base_completions = base_completions
+    # Define a method called 'complete' on the singleton class.
+    def self.completion(ary) 
       self.send(:define_method, 
                 :complete, 
                 Proc.new {|prefix| 
-                  completions = @completions ||
-                  self.class.instance_variable_get('@base_completions')
-                  if completions.nil? 
-                    require 'trepanning'; debugger
-                  end
-                  Trepan::Complete.complete_token(completions, prefix) })
+                  Trepan::Complete.complete_token(ary, prefix) })
     end
   end
 end
@@ -153,7 +144,5 @@ if __FILE__ == $0
   %w(confirm errmsg msg msg_nocr section).each do |meth|
     cmd.send(meth, 'test', nil)
   end
-  p cmd.complete('aa')
-  cmd.instance_variable_set('@completions', %w(aardvark apple))
   p cmd.complete('aa')
 end
