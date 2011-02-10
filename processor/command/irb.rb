@@ -7,7 +7,7 @@ class Trepan::Command::IRBCommand < Trepan::Command
   unless defined?(HELP)
     NAME         = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-          #{NAME} [-d]\tstarts an Interactive Ruby (IRB) session.
+#{NAME} [-d]\tstarts an Interactive Ruby (IRB) session.
 
 If -d is added you can get access to debugger frame the global variables
 $trepan_frame and $trepan_cmdproc. 
