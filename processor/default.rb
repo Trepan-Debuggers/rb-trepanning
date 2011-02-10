@@ -9,6 +9,7 @@ class Trepan
       :autolist      => false,     # Run 'list' 
 
       :basename      => false,     # Show basename of filenames only
+      :confirm       => true,      # Confirm potentially dangerous operations?
       :different     => 'nostack', # stop *only* when  different position? 
 
       :debugdbgr     => false,     # Debugging the debugger
