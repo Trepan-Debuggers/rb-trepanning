@@ -25,7 +25,7 @@ def run_debugger(testname, ruby_file, opts={})
   rightfile  = File.join(datadir, short_right)
 
   short_cmd   = "#{opts[:short_cmd] || testname}.cmd"
-  cmdfile     = File.join(datadir, short_cmd)
+  cmdfile     = opts[:cmdfile] || File.join(datadir, short_cmd)
   outfile     = opts[:outfile] ||
     File.join(srcdir,  "#{testname}.out")
   programfile = ruby_file ? File.join(progdir, ruby_file) : ''
