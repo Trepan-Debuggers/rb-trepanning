@@ -33,6 +33,8 @@ class Trepan
                                    # next stop while settings is the default
                                    # value to use.
     attr_accessor :event           # Stop event. Same as @core.event
+    attr_reader   :intf            # Current interface
+                                   # Trepan::Core instance)
     attr_accessor :leave_cmd_loop  # Commands set this to signal to leave
                                    # the command loop (which often continues to 
                                    # run the debugged program). 
@@ -170,9 +172,9 @@ class Trepan
     # Run one debugger command. True is returned if we want to quit.
     def process_command_and_quit?()
       intf_size = @dbgr.intf.size
-      intf  = @dbgr.intf[-1]
-      return true if intf.input_eof? && intf_size == 1
-      while intf_size > 1 || !intf.input_eof?
+      @intf  = @dbgr.intf[-1]
+      return true if @intf.input_eof? && intf_size == 1
+      while intf_size > 1 || !@intf.input_eof?
         begin
           @current_command = 
             if @cmd_queue.empty?
@@ -193,7 +195,7 @@ class Trepan
           if intf_size > 1
             @dbgr.intf.pop
             intf_size = @dbgr.intf.size
-            intf = @dbgr.intf[-1]
+            @intf = @dbgr.intf[-1]
             @last_command = nil
             print_location
           else
@@ -207,7 +209,7 @@ class Trepan
       run_command(@current_command)
 
       # Save it to the history.
-      intf.history_io.puts @last_command if @last_command && intf.history_io
+      @intf.history_io.puts @last_command if @last_command && @intf.history_io
     end
 
     # This is the main entry point.

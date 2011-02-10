@@ -27,7 +27,8 @@ class Trepan
     def initialize(inp=nil, out=nil, opts={})
       @history_io   = nil
       @history_save = false
-      @history_path = nil
+      @histfile     = nil
+      @histsize     = nil
       @input        = inp || STDIN
       @interactive  = false 
       @opts         = opts

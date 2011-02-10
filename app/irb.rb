@@ -69,7 +69,7 @@ module IRB # :nodoc:
   def self.start_session(binding, dbg_cmdproc, conf={})
     unless @__initialized
 
-      # Set to run the standard rbdbgr IRB profile
+      # Set to run the standard trepan IRB profile
       irbrc = File.expand_path(File.join(File.dirname(__FILE__), 
                                          %w(.. data irbrc)))
       ENV['IRBRC'] = irbrc
@@ -80,8 +80,8 @@ module IRB # :nodoc:
       ARGV.replace(args)
       
       # If the user has a IRB profile, run that now.
-      if ENV['RBDBGR_IRB']
-        ENV['IRBRC'] = ENV['RBDBGR_IRB']
+      if ENV['TREPAN_IRB']
+        ENV['IRBRC'] = ENV['TREPAN_IRB']
         @CONF[:RC_NAME_GENERATOR]=nil
         IRB.run_config
       end
@@ -90,7 +90,7 @@ module IRB # :nodoc:
     end
     
     workspace = WorkSpace.new(binding)
-    workspace.instance_variable_set('@dbg_cmdproc', dbg_cmdproc)
+    # workspace.instance_variable_set('@dbg_cmdproc', dbg_cmdproc)
 
     irb = Irb.new(workspace)
 
