@@ -65,9 +65,23 @@ Here then is a loop to query VM stack values:
     $trepan_command = nil
 
     conf = {:BACK_TRACE_LIMIT => settings[:maxstack]}
+
+    # ?? Should we set GNU readline to what we have,
+    # or let IRB make its own determination? 
+  
+    if Trepan::GNU_readline? 
+      require 'irb/completion'
+      Readline.completion_proc = IRB::InputCompletor::CompletionProc
+      # ?? Do something with the history?
+    end
     cont = IRB.start_session(@proc.frame.binding, @proc, conf)
     trap('SIGINT', save_trap) # Restore old trap
+    if Trepan::GNU_readline? && @proc.dbgr.competion_proc
+      Readline.completion_proc = @proc.dbgr.completion_proc 
+      # ?? Do something with the history?
+    end
 
+    # Respect any backtrace limit set in irb.
     back_trace_limit = IRB.CurrentContext.back_trace_limit
     if settings[:maxstack] !=  back_trace_limit
       msg("\nSetting debugger's BACK_TRACE_LIMIT (%d) to match irb's last setting (%d)" % 
