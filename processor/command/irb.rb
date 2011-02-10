@@ -76,7 +76,7 @@ Here then is a loop to query VM stack values:
     end
     cont = IRB.start_session(@proc.frame.binding, @proc, conf)
     trap('SIGINT', save_trap) # Restore old trap
-    if Trepan::GNU_readline? && @proc.dbgr.competion_proc
+    if Trepan::GNU_readline? && @proc.dbgr.completion_proc
       Readline.completion_proc = @proc.dbgr.completion_proc 
       # ?? Do something with the history?
     end
