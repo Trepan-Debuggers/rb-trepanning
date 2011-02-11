@@ -7,7 +7,7 @@ class Trepan::Command::IRBCommand < Trepan::Command
   unless defined?(HELP)
     NAME         = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-          #{NAME} [-d]\tstarts an Interactive Ruby (IRB) session.
+#{NAME} [-d]\tstarts an Interactive Ruby (IRB) session.
 
 If -d is added you can get access to debugger frame the global variables
 $trepan_frame and $trepan_cmdproc. 
@@ -64,21 +64,30 @@ Here then is a loop to query VM stack values:
     $trepan_irb_statements = nil
     $trepan_command = nil
 
-    conf = {:BACK_TRACE_LIMIT => settings[:maxstack]}
+    conf = {:BACK_TRACE_LIMIT => settings[:maxstack],
+            :RC => true}
 
     # ?? Should we set GNU readline to what we have,
     # or let IRB make its own determination? 
-  
+
+    # Save the Readline history and set the Readline completion function 
+    # to be IRB's function 
     if Trepan::GNU_readline? 
+      @proc.intf.save_history if @proc.intf.respond_to?(:save_history)
       require 'irb/completion'
       Readline.completion_proc = IRB::InputCompletor::CompletionProc
-      # ?? Do something with the history?
     end
+
+    # And just when you thought, we'd never get around to 
+    # actually running irb...
     cont = IRB.start_session(@proc.frame.binding, @proc, conf)
-    trap('SIGINT', save_trap) # Restore old trap
+    trap('SIGINT', save_trap) # Restore our old interrupt function.
+
+    # Restore the debuggers' Readline history and the Readline completion 
+    # function
     if Trepan::GNU_readline? && @proc.dbgr.completion_proc
+      @proc.intf.read_history if @proc.intf.respond_to?(:read_history)
       Readline.completion_proc = @proc.dbgr.completion_proc 
-      # ?? Do something with the history?
     end
 
     # Respect any backtrace limit set in irb.
