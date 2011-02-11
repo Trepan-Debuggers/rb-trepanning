@@ -70,19 +70,19 @@ desc 'Test units - the smaller tests'
 Rake::TestTask.new(:'test:unit') do |t|
   t.test_files = FileList['test/unit/**/test-*.rb']
   # t.pattern = 'test/**/*test-*.rb' # instead of above
-  t.verbose = true
+  t.options = '--verbose' if $VERBOSE
 end
 
 desc 'Test functional - the medium-sized tests'
 Rake::TestTask.new(:'test:functional') do |t|
   t.test_files = FileList['test/functional/**/test-*.rb']
-  t.verbose = true
+  t.options = '--verbose' if $VERBOSE
 end
 
 desc 'Test integration - end-to-end blackbox tests'
 Rake::TestTask.new(:'test:integration') do |t|
   t.test_files = FileList['test/integration/**/test-*.rb']
-  t.verbose = true
+  t.options = '--verbose' if $VERBOSE
 end
 
 desc 'Test everything - unit tests for now.'

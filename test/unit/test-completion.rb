@@ -9,8 +9,7 @@ def Trepan::GNU_readline?
 end
 
 # Test commands completion
-class TestLibTrepanning < Test::Unit::TestCase
-
+class TestCompletion < Test::Unit::TestCase
   def test_completion
     dbgr = Trepan.new
     [
