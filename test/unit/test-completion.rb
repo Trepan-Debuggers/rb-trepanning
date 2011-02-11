@@ -2,6 +2,12 @@
 require 'test/unit'
 require_relative '../../lib/trepanning'
 
+# We don't want to do completion or save history.
+# This is one hacky way to make sure this doesn't happen
+def Trepan::GNU_readline?
+  false
+end
+
 # Test commands completion
 class TestLibTrepanning < Test::Unit::TestCase
 
