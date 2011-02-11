@@ -91,6 +91,7 @@ module MockDebugger
     sub_name = sub_class.const_get('PREFIX')
     dbgr, cmd = setup(sub_name[0], false)
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
+    cmd.proc.event = 'debugger-call'
     sub_cmd = sub_class.new(cmd)
     sub_cmd.summary_help(sub_cmd.name)
     puts
@@ -103,6 +104,7 @@ module MockDebugger
     subsub_name = subsub_class.const_get('PREFIX')
     dbgr, cmd = setup(subsub_name[0], false)
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
+    cmd.proc.event = 'debugger-call'
     sub_cmd = sub_class.new(dbgr.core.processor, cmd)
     subsub_cmd = subsub_class.new(cmd.proc, sub_cmd, subsub_name.join(''))
     subsub_cmd.summary_help(subsub_cmd.name)

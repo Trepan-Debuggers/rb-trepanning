@@ -42,12 +42,6 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Trepan::Subcommand::InfoProgram.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
-
-  name = File.basename(__FILE__, '.rb')
-  subcommand.run([name])
-  subcommand.summary_help(name)
-  puts
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoProgram, false)
+  cmd.run(cmd.prefix)
 end

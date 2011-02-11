@@ -171,12 +171,7 @@ if __FILE__ == $0
     load(__FILE__)
   else    
     require_relative '../../mock'
-    require_relative '../../subcmd'
-    # FIXME: DRY the below code
-    dbgr, cmd = MockDebugger::setup('info')
-    subcommand = Trepan::Subcommand::InfoFiles.new(cmd)
-    testcmdMgr = Trepan::Subcmd.new(subcommand)
-    
+    cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoFiles, false)
     [%w(info file nothere),
      %w(info file .),
      %w(info file *),
@@ -184,9 +179,9 @@ if __FILE__ == $0
      %w(info file file.rb),
      %w(info file . all),
      %w(info file . brkpts bad size sha1 sha1)].each do |args|
-      subcommand.run(args)
+      cmd.run(args)
       puts '-' * 40
     end
-    p subcommand.complete('')
+    p cmd.complete('')
   end
 end
