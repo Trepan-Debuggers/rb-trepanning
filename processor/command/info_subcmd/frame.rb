@@ -12,11 +12,14 @@ class Trepan::Subcommand::InfoFrame < Trepan::Subcommand
 
   def run(args)
     frame = @proc.frame
-    msg("Line %s of %s at PC offset %d, type: %s" %
-        [@proc.frame_line, frame.source_container[1], frame.pc_offset, 
-         frame.type])
+    section "Frame #{frame.method}"
+    msg "  Line: %s" % @proc.frame_line
+    msg "  %s: %s" % frame.source_container
+    msg "  PC offset: %d" % frame.pc_offset
+    msg "  argc: %d arity: %d" % [frame.argc, frame.arity]
+    msg "  Type: %s" % frame.type
     if @proc.event == 'return'
-      msg("Return value class: #{@proc.frame.sp(1).class}")
+      msg("  Return value class: #{@proc.frame.sp(1).class}")
     end
   end
 
@@ -25,14 +28,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  require_relative '../../subcmd'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Trepan::Subcommand::InfoFrame.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
-
-  name = File.basename(__FILE__, '.rb')
-  subcommand.summary_help(name)
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoFrame, false)
+  cmd.run(cmd.prefix)
 end
