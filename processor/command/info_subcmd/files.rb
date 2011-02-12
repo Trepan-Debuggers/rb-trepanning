@@ -9,10 +9,10 @@ require_relative '../../../app/complete'
 class Trepan::Subcommand::InfoFiles < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    DEFAULT_FILE_ARGS = %w(size sha1)
+    DEFAULT_FILE_ARGS = %w(size mtime sha1)
 
     HELP = <<-EOH
-#{CMD=PREFIX.join(' ')} [{FILENAME|.|*} [all | brkpts | sha1 | size | stat]]
+#{CMD=PREFIX.join(' ')} [{FILENAME|.|*} [all | brkpts | mtime | sha1 | size | stat]]
 
 Show information about the current file. If no filename is given and
 the program is running, then the current file associated with the
@@ -25,6 +25,7 @@ Sub options which can be shown about a file are:
 brkpts -- Line numbers where there are statement boundaries. 
           These lines can be used in breakpoint commands.
 iseq   -- Instruction sequences from this file.
+mtime  -- File modification time
 sha1   -- A SHA1 hash of the source text. This may be useful in comparing
           source code.
 size   -- The number of lines in the file.
@@ -83,7 +84,7 @@ EOH
     args += DEFAULT_FILE_ARGS if args.size == 3
 
     m = filename + ' is'
-    canonic_name = LineCache::map_file(filename)
+    canonic_name = LineCache::map_file(filename) || filename
     if LineCache::cached?(canonic_name)
       m += " cached in debugger"
       if canonic_name != filename
@@ -94,17 +95,26 @@ EOH
     elsif !(matches = find_scripts(filename)).empty?
       if (matches.size > 1)
         msg("Multiple files found:")
-        matches.each { |match_file| msg "\t%s" % match_file }
+        matches.sort.each { |match_file| msg "\t%s" % match_file }
         return
       else
         msg('File "%s" just now cached.' % filename)
         LineCache::cache(matches[0])
-        LineCache::remap_file(matches[0], filename)
+        LineCache::remap_file(filename, matches[0])
         canonic_name = matches[0]
       end
     else
-      msg(m + ' not cached in debugger.')
-      return
+      matches = file_list.select{|try| try.end_with?(filename)}
+      if (matches.size > 1)
+        msg("Multiple files found ending filename string:")
+        matches.sort.each { |match_file| msg "\t%s" % match_file }
+        return
+      elsif 1 == matches.size
+        canonic_name = LineCache::map_file(matches[1])
+      else
+        msg(m + ' not cached in debugger.')
+        return
+      end
     end
     seen = {}
     args[3..-1].each do |arg|
@@ -149,6 +159,13 @@ EOH
         processed_arg = seen[:iseq] = true
       end
 
+      if %w(all mtime).member?(arg)
+        unless seen[:stat]
+          msg("mtime:\t%s." % LineCache::stat(canonic_name).mtime.to_s)
+        end
+        processed_arg = seen[:stat] = true
+      end
+      
       if %w(all stat).member?(arg)
         unless seen[:stat]
           msg("Stat info:\n\t%s." % LineCache::stat(canonic_name).inspect)
@@ -177,6 +194,7 @@ if __FILE__ == $0
      %w(info file *),
      %w(info file),
      %w(info file file.rb),
+    %w(info file citrus/file.rb),
      %w(info file . all),
      %w(info file . brkpts bad size sha1 sha1)].each do |args|
       cmd.run(args)
