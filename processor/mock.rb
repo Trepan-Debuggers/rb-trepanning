@@ -70,13 +70,13 @@ module MockDebugger
     def cmd.confirm(prompt, default)
       true
     end
-    def cmd.errmsg(message)
+    def cmd.errmsg(message, opts={})
       puts "Error: #{message}"
     end
-    def cmd.msg(message)
+    def cmd.msg(message, opts={})
       puts message
     end
-    def cmd.msg_nocr(message)
+    def cmd.msg_nocr(message, opts={})
       print message
     end
     def cmd.section(message, opts={})
