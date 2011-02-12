@@ -146,7 +146,7 @@ disabled.
 
       else
         modfunc, container, first = @proc.parse_position(args[0])
-        if first == nil and modfunc == nil
+        if first == nil and container == nil
           # error should have been shown previously
           return nil, nil, nil
         end

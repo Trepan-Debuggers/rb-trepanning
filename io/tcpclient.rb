@@ -35,11 +35,11 @@ class Trepan
     def close
       @state = :closing
       @inout.close if @inout
-      @state = :disconnnected
+      @state = :disconnected
     end
 
     def disconnected?
-      :disconnnected == @state
+      :disconnected == @state
     end
 
     def open(opts={})

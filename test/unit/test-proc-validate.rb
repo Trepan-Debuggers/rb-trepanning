@@ -4,6 +4,7 @@ require_relative '../../processor/main' # Have to include before validate!
                                         # FIXME
 require_relative '../../processor/validate'
 require_relative '../../app/mock'
+require 'thread_frame'
 
 $errors = []
 $msgs   = []
@@ -42,7 +43,6 @@ class TestValidate < Test::Unit::TestCase
   end
 
   def test_breakpoint_position
-    require 'thread_frame'
     tf = RubyVM::ThreadFrame.current
     @proc.frame_setup(tf)
 
@@ -64,6 +64,13 @@ class TestValidate < Test::Unit::TestCase
     assert_equal(0, $errors.size)
     assert_equal([2,3], @proc.get_int_list(%w(a 2 3)))
     assert_equal(1, $errors.size)
+  end
+
+  def test_parse_position
+    tf = RubyVM::ThreadFrame.current
+    @proc.frame_setup(tf)
+    assert_equal(8, @proc.parse_position('8')[-1])
+    assert_equal(0, $errors.size)
   end
 
   def test_method?

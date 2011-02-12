@@ -43,7 +43,6 @@ class TestTCPDbgClient < Test::Unit::TestCase
           puts "Client got EOF"
           break
         rescue Exception => e
-          p client
           puts "Client got #{e}"
           break
         end

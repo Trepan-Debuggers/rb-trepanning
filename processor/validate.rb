@@ -136,7 +136,7 @@ class Trepan
       # FIXME: do something if there is more than one.
       if iseqs.size == 1
          iseqs[-1]
-      elsif meth = method?(object_string)w
+      elsif meth = method?(object_string)
         meth.iseq
       else
         nil
@@ -146,19 +146,21 @@ class Trepan
     end
 
     def parse_num_or_offset(position_str)
-      opts = {
-        :msg_on_error => 
-        "argument '%s' does not seem to eval to a method or an integer." % 
-        position_str,
-        :min_value => 0 
-      }
+      err_str = "argument '%s' does not seem to be an integer" % 
+        position_str.dup
       use_offset = 
         if position_str.size > 0 && position_str[0].downcase == 'o'
+          err_str << 'or an offset.'
           position_str[0] = ''
           true
         else
+          err_str << '.'
           false
         end
+      opts = {
+        :msg_on_error => err_str,
+        :min_value => 0 
+      }
       position = get_an_int(position_str, opts)
       [position, use_offset]
     end
@@ -268,8 +270,7 @@ class Trepan
     # Make sure it works for C:\foo\bar.py:12
     def parse_position(arg, old_mod=nil, allow_offset = false)
       if meth = method?(arg)
-        iseq = meth.iseq
-        if iseq 
+        if meth.kind_of?(Method) && iseq = meth.iseq
           line_no = iseq.offsetlines.values.flatten.min
           if iseq.source_container[0] == 'file'
             filename = iseq.source_container[1]
@@ -340,14 +341,16 @@ class Trepan
       end
 
       # How about something with an instruction sequence?
-      # FIXME: to be completed after we get method.type...
-      # meth = method?(arg)
-      # if meth
-      #   iseq = meth.iseq
-      #   unless iseq
-          
-      #   end
-      # end
+      meth = method?(arg)
+      if meth
+        if 'instruction sequence' == meth.type
+          iseq = meth.iseq
+        else
+          errmsg("#{meth.class} #{arg} is of type #{meth.type}; " +
+                 "it doesn't have an instruction sequence.")
+          return meth, nil, nil
+        end
+      end
 
       iseq = object_iseq(arg)
       if iseq 
@@ -410,6 +413,8 @@ if __FILE__ == $0
     puts proc.object_iseq('proc.object_iseq').inspect
     
     puts proc.parse_position_one_arg('tmpdir.rb').inspect
+    puts proc.parse_position_one_arg('O8').inspect
+    puts proc.parse_position_one_arg('8').inspect
 
     puts '=' * 40
     ['Array.map', 'Trepan::CmdProcessor.new',
