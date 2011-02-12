@@ -36,13 +36,15 @@ class TestTCPDbgClient < Test::Unit::TestCase
       msgs = %w(four five six)
       msgs.each do |mess|
         begin
+          break if client.disconnected?
           client.writeline(mess)
           assert_equal mess, client.read_msg.chomp
         rescue EOFError
-          puts "Got EOF"
+          puts "Client got EOF"
           break
         rescue Exception => e
-          puts "Got #{e}"
+          p client
+          puts "Client got #{e}"
           break
         end
       end

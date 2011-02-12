@@ -122,7 +122,7 @@ module CodeRay
               tokens << [match, :pre_constant]
             elsif match = scan(/nil|true|false/)
               tokens << [match, :pre_constant]
-            elsif match = scan(/block in <.+>/)
+            elsif match = scan(/block in (?:<.+>|[^,]+)/)
               tokens << ["block in ", :variable]
               tokens << [match['block in '.size..-1], :content]
             elsif match = scan(/[A-Za-z_][_A-Za-z0-9?!]*/)
@@ -182,6 +182,7 @@ string='
      0033 send             :start, 1, nil, 0, <ic:3>
      0026 putobject        0..1
      0030 send             :map, 0, block in <top gcd.rb>, 0, <ic:3>
+     0177 send             :catch, 1, block in start, 8, <ic:23>
      0045 opt_regexpmatch1 /^-e$/
 '  
   yarv_scanner = CodeRay.scanner :yarv

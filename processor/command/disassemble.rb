@@ -102,4 +102,6 @@ if __FILE__ == $0
   cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
   cmd.run([cmd.name, 'p'])
   puts cmd.complete('f')
+  require 'irb'
+  cmd.run([cmd.name, 'IRB.start'])
 end

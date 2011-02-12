@@ -69,20 +69,18 @@ class TestValidate < Test::Unit::TestCase
   def test_method?
     def foo; 5 end
     
-    # require_relative '../../lib/trepan'
-    # dbgr = Trepan.new(:set_restart => true)
-    # FIXME: 'foo', 'errmsg'
-    ['Array#map', 'Trepan::CmdProcessor.new'
-    ].each do |str|
-      # dbgr.debugger if 'foo' == str
-      assert_equal(true, @proc.method?(str),
-                   "#{str} should be known as a method")
+    # require_relative '../../lib/trepanning'
+    # debugger
+    # FIXME: 'foo', 'setup'
+    require 'irb'
+    %w(Array.map errmsg Trepan::CmdProcessor.new IRB.start).each do |str|
+      assert @proc.method?(str), "#{str} should be known as a method"
     end
     ['food', '.errmsg'
     ].each do |str|
       # dbgr.debugger if 'foo' == str
-      assert_equal(false, @proc.method?(str),
-                   "#{str} should be known as a method")
+      assert_equal(false, !!@proc.method?(str),
+                   "#{str} should not be known as a method")
     end
 
   end

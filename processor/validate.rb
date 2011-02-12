@@ -1,10 +1,11 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Trepan command input validation routines.  A String type is
 # usually passed in as the argument to validation routines.
 
 require_relative '../app/condition'
 require_relative '../app/file'
+require_relative '../app/method_name'
 require_relative '../app/thread'
 
 require_relative 'location' # for resolve_file_with_dir
@@ -135,17 +136,10 @@ class Trepan
       # FIXME: do something if there is more than one.
       if iseqs.size == 1
          iseqs[-1]
-      elsif debug_eval_no_errmsg("#{object_string}.respond_to?('iseq')")
-        debug_eval_no_errmsg("#{object_string}.iseq")
+      elsif meth = method?(object_string)w
+        meth.iseq
       else
-        parts = object_string.split(/[.]/)
-        string = 
-          if parts.size < 2 
-            "method(\"#{object_string}\").iseq"
-          else
-            parts[0..-2].join('.')+".method(\"#{parts[-1]}\").iseq"
-          end
-        debug_eval_no_errmsg(string)
+        nil
       end
     rescue
       nil
@@ -244,17 +238,28 @@ class Trepan
       raise TypeError
     end
 
-    def method?(method_string)
-      obj, type, meth = 
-        if method_string =~ /(.+)(#|::|\.)(.+)/
-          [$1, $2, $3]
-        else
-          ['self', '.', method_string]
+    include CmdParser
+
+    def get_method(method_string)
+      start_binding = 
+        begin
+          @frame.binding
+        rescue
+          binding
         end
-      ret = debug_eval_no_errmsg("#{obj}.method(#{meth.inspect})")
-      return true if ret 
-      return debug_eval_no_errmsg("#{obj}.is_a?(Class)") &&
-        debug_eval_no_errmsg("#{obj}.method_defined?(#{meth.inspect})")
+      meth_for_string(method_string, start_binding)
+    end
+
+    # FIXME: this is a ? method but we return 
+    # the method value. 
+    def method?(method_string)
+      begin
+        get_method(method_string)
+      rescue Citrus::ParseError
+        return false
+      rescue NameError
+        return false
+      end
     end
 
     # parse_position(self, arg)->(fn, container, lineno)
@@ -262,6 +267,18 @@ class Trepan
     # Parse arg as [filename:]lineno | function | module
     # Make sure it works for C:\foo\bar.py:12
     def parse_position(arg, old_mod=nil, allow_offset = false)
+      if meth = method?(arg)
+        iseq = meth.iseq
+        if iseq 
+          line_no = iseq.offsetlines.values.flatten.min
+          if iseq.source_container[0] == 'file'
+            filename = iseq.source_container[1]
+            return arg, ['file', canonic_file(filename)], line_no
+          else
+            return arg, iseq.container, line_no
+          end
+        end
+      end
       colon = arg.rindex(':') 
       if colon
         # First handle part before the colon
@@ -322,12 +339,25 @@ class Trepan
         end
       end
 
-      # How about a method name with an instruction sequence?
+      # How about something with an instruction sequence?
+      # FIXME: to be completed after we get method.type...
+      # meth = method?(arg)
+      # if meth
+      #   iseq = meth.iseq
+      #   unless iseq
+          
+      #   end
+      # end
+
       iseq = object_iseq(arg)
-      if iseq && iseq.source_container[0] == 'file'
-        filename = iseq.source_container[1]
+      if iseq 
         line_no = iseq.offsetlines.values.flatten.min
-        return arg, ['file', canonic_file(filename)], line_no
+        if iseq.source_container[0] == 'file'
+          filename = iseq.source_container[1]
+          return arg, ['file', canonic_file(filename)], line_no
+        else
+          return arg, iseq.source_container, line_no
+        end
       end
 
       if show_errmsg
@@ -382,18 +412,14 @@ if __FILE__ == $0
     puts proc.parse_position_one_arg('tmpdir.rb').inspect
 
     puts '=' * 40
-    ['Array#map', 'Trepan::CmdProcessor.new',
+    ['Array.map', 'Trepan::CmdProcessor.new',
      'foo', 'proc.errmsg'].each do |str|
-      puts "#{str} should be true: #{proc.method?(str).inspect}"
+      puts "#{str} should be method: #{proc.method?(str).inspect}"
     end
     puts '=' * 40
-    # require_relative '../lib/trepanning'
-    # dbgr = Trepan.new
-    # dbgr.debugger
 
     # FIXME:
-    # Array#foo should be false: true
-    # Trepan::CmdProcessor.allocate should be false: true
+    puts "Trepan::CmdProcessor.allocate is: #{proc.get_method('Trepan::CmdProcessor.allocate')}"
 
     ['food', '.errmsg'].each do |str|
       puts "#{str} should be false: #{proc.method?(str).inspect}"
@@ -403,8 +429,6 @@ if __FILE__ == $0
     p proc.breakpoint_position(%w(1))
     p proc.breakpoint_position(%w(2 if a > b))
     p proc.get_int_list(%w(1+0 3-1 3))
-    require 'trepanning'
-    debugger
     p proc.get_int_list(%w(a 2 3))
   end
 end

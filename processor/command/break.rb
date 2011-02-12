@@ -89,4 +89,7 @@ if __FILE__ == $0
   end
   cmd.run([cmd.name, 'foo', (__LINE__-2).to_s])
   cmd.run([cmd.name, 'foo'])
+  cmd.run([cmd.name, "MockDebugger::setup"])
+  require 'irb'
+  cmd.run([cmd.name, "IRB.start"])
 end
