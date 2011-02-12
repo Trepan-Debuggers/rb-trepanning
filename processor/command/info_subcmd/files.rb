@@ -12,7 +12,7 @@ class Trepan::Subcommand::InfoFiles < Trepan::Subcommand
     DEFAULT_FILE_ARGS = %w(size mtime sha1)
 
     HELP = <<-EOH
-#{CMD=PREFIX.join(' ')} [{FILENAME|.|*} [all | brkpts | mtime | sha1 | size | stat]]
+#{CMD=PREFIX.join(' ')} [{FILENAME|.|*} [all|ctime|brkpts|mtime|sha1|size|stat]]
 
 Show information about the current file. If no filename is given and
 the program is running, then the current file associated with the
@@ -24,6 +24,7 @@ Sub options which can be shown about a file are:
 
 brkpts -- Line numbers where there are statement boundaries. 
           These lines can be used in breakpoint commands.
+ctime  -- File creation time
 iseq   -- Instruction sequences from this file.
 mtime  -- File modification time
 sha1   -- A SHA1 hash of the source text. This may be useful in comparing
@@ -145,6 +146,14 @@ EOH
         processed_arg = seen[:brkpts] = true
       end
 
+      if %w(all ctime).member?(arg)
+        unless seen[:ctime]
+          msg("create time:\t%s." % 
+              LineCache::stat(canonic_name).ctime.to_s)
+        end
+        processed_arg = seen[:ctime] = true
+      end
+      
       if %w(all iseq).member?(arg) 
         unless seen[:iseq]
           if SCRIPT_ISEQS__.member?(canonic_name)
@@ -160,10 +169,11 @@ EOH
       end
 
       if %w(all mtime).member?(arg)
-        unless seen[:stat]
-          msg("mtime:\t%s." % LineCache::stat(canonic_name).mtime.to_s)
+        unless seen[:mtime]
+          msg("modify time:\t%s." % 
+              LineCache::stat(canonic_name).mtime.to_s)
         end
-        processed_arg = seen[:stat] = true
+        processed_arg = seen[:mtime] = true
       end
       
       if %w(all stat).member?(arg)
