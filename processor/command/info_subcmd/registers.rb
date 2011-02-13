@@ -6,21 +6,23 @@ require_relative '../base/subsubmgr'
 class Trepan::SubSubcommand::InfoRegisters < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = 
-'List of contents for the registers of the current stack frame.
+    HELP = <<-EOH
+#{CMD=PREFIX.join(' ')} [lfp|pc|sp]
+
+List of contents for the registers of the current stack frame.
 If a register name given, only only that register is show.
 
 Examples:
-  info registers     # show all registers
-  info register pc   # show only the pc register
-  info reg sp        # show all stack pointer registers
-  info reg sp 1 3    # show sp(1) and sp(3)
-  info reg sp size   # show sp size
-  info reg lfp       # show lfp(0)
-'
-
+#{CMD}     # show all registers
+#{CMD} pc   # show only the pc register
+info reg sp        # show all stack pointer registers
+info reg sp 1 3    # show sp(1) and sp(3)
+info reg sp size   # show sp size
+info reg lfp       # show lfp(0)
+    EOH
     MIN_ABBREV   = 'reg'.size  # Note we have "info return"
     NEED_STACK   = true
+    SHORT_HELP   = 'List of register values of the current stack frame'
   end
 
   def run(args)
