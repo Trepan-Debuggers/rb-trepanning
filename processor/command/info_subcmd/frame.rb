@@ -13,11 +13,12 @@ class Trepan::Subcommand::InfoFrame < Trepan::Subcommand
   def run(args)
     frame = @proc.frame
     section "Frame #{frame.method}"
-    msg "  Line: %s" % @proc.frame_line
-    msg "  %s: %s" % frame.source_container
-    msg "  PC offset: %d" % frame.pc_offset
-    msg "  argc: %d arity: %d" % [frame.argc, frame.arity]
-    msg "  Type: %s" % frame.type
+    msg "  %-6s: %s" % frame.source_container
+    msg "  line  : %s" % @proc.frame_line
+    msg "  argc  : %d" % frame.argc
+    msg "  arity : %d" % frame.arity
+    msg "  type  : %s" % frame.type
+    msg "  offset: %d" % frame.pc_offset
     if @proc.event == 'return'
       msg("  Return value class: #{@proc.frame.sp(1).class}")
     end
