@@ -14,10 +14,22 @@ Show information about the selected frame. The fields we list are:
 * The actual number of arguments passed in
 * The 'arity' or permissible number of arguments passed it. -1 indicates
   variable number
-* The frame "type", e.g. TOP, METHOD, BLOCK, EVAL, etc.
-* The PC offfset we are currently at.
+* The frame "type", e.g. TOP, METHOD, BLOCK, EVAL, CFUNC etc.
+* The return value if the frame is at a return point
+* The PC offset we are currently at; May be omitted of no instruction 
+  sequence
 
 A backtrace shows roughly the same information in a more compact form.
+
+Example form inside File.basename('foo')
+
+Frame basename
+  file  : /tmp/c-func.rb # actually location of caller
+  line  : 2  # inherited from caller
+  argc  : 1  # One out argument supplied: 'foo'
+  arity : -1 # Variable number of args, can have up to 2 arguments.
+  type  : CFUNC  (A C function)
+
 
 See also: backtrace
     EOH
@@ -34,9 +46,10 @@ See also: backtrace
     msg "  argc  : %d" % frame.argc
     msg "  arity : %d" % frame.arity
     msg "  type  : %s" % frame.type
-    msg "  offset: %d" % frame.pc_offset
-    if @proc.event == 'return'
-      msg("  Return value class: #{@proc.frame.sp(1).class}")
+    msg "  offset: %d" % frame.pc_offset if frame.iseq
+    if %w(return c-return).member?(@proc.event)
+      ret_val = Trepan::Frame.value_returned(@proc.frame, @proc.event)
+      msg "  Return: %s" % ret_val
     end
   end
 
