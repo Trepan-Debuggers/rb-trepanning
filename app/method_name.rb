@@ -89,11 +89,7 @@ class Trepan
     # and NameError is returned if we can't find a method
     # but we can parse the string.
     def meth_for_string(str, start_binding)
-      begin 
-        match = MethodName.parse(str, :root => :class_module_chain)
-      rescue Citrus::ParseError
-        return nil
-      end
+      match = MethodName.parse(str, :root => :class_module_chain)
       resolve_method(match, start_binding)
     end
   end
