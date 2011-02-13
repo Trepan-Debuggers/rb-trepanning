@@ -5,9 +5,25 @@ require_relative '../base/subcmd'
 class Trepan::Subcommand::InfoFrame < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = 'Show all information about the selected frame'
+    HELP = <<-EOH
+#{CMD=PREFIX.join(' ')} 
+
+Show information about the selected frame. The fields we list are:
+
+* A source container and name (e.g. "file" or "string" and the value)
+* The actual number of arguments passed in
+* The 'arity' or permissible number of arguments passed it. -1 indicates
+  variable number
+* The frame "type", e.g. TOP, METHOD, BLOCK, EVAL, etc.
+* The PC offfset we are currently at.
+
+A backtrace shows roughly the same information in a more compact form.
+
+See also: backtrace
+    EOH
     MIN_ABBREV   = 'fr'.size # Note we have "info file"
     NEED_STACK   = true
+    SHORT_HELP   = 'Show information about the selected frame'
   end
 
   def run(args)
