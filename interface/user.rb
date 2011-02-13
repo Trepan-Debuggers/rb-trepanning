@@ -82,7 +82,6 @@ class Trepan::UserInterface < Trepan::Interface
     if @histfile
       lines = Readline::HISTORY.to_a
       lines = lines[-@histsize, @histsize] if lines.size > @histsize
-      lines = lines.select
       begin
         open(@histfile, 'w') do |file|
           Readline::HISTORY.to_a.last(@histsize).each do |line|
