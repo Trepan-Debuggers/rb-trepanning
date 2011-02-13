@@ -11,7 +11,7 @@ class Trepan
     # Name error if we can't find a method. parent_class is the parent class of
     # the object we've found so far and "binding" is used if we need
     # to use eval to find the method.
-    def resolve_method(match_data, binding, parent_class = nil)
+    def resolve_method(match_data, bind, parent_class = nil)
       m = match_data
       name = m.value.name
       errmsg = nil
@@ -22,16 +22,16 @@ class Trepan
           else
             errmsg = "Constant #{m} is not a class or module"
             raise NameError, errmsg unless m.value.chain[0]
-            klass = eval(m.value.chain[0], binding)
+            klass = eval(m.value.chain[0], bind)
           end
           errmsg = "Constant #{klass} is not a class or module" unless
           raise NameError, errmsg unless
             klass.kind_of?(Class) or klass.kind_of?(Module)
           m = m.value.chain[1]
-          if klass.instance_methods.member?(:binding)
-            bind = klass.binding
-          elsif klass.private_instance_methods.member?(:binding)
-            bind = klass.send(:binding)
+          if klass.instance_methods.member?(:bind)
+            bind = klass.bind
+          elsif klass.private_instance_methods.member?(:bind)
+            bind = klass.send(:bind)
           else
             bind = nil
           end
@@ -54,7 +54,28 @@ class Trepan
                 parent_class.method(name)
               end
             else
-              eval("self.method(#{name.inspect})", binding)
+              if child = m.value.chain[1] 
+                parent = m.value.chain[0]
+                parent_class=eval("#{parent}.class", bind)
+                raise NameError, "No method eval of #{parent} in allowed" if
+                  parent_class.kind_of?(Method)
+                is_method = 
+                  eval("#{parent}.methods.member?(#{child.to_sym.inspect})", 
+                       bind)
+                if is_method 
+                  if child.value.chain[1]
+                    raise NameError, "No method eval past method #{child}"
+                  else
+                    eval("#{parent}.method(#{child.inspect})", bind)
+                  end
+                elsif parent_class.kind_of?(Constant)
+                  resolve_method(parent, bind, parent_class)
+                else 
+                  raise NameError, "field #{child} of #{parent} is neither a method or a Constant"
+                end
+              else
+                eval("self.method(#{name.inspect})", bind)
+              end
             end
           return meth
         rescue
@@ -106,8 +127,8 @@ if __FILE__ == $0
 
   def five; 5 end
   include Trepan::CmdParser
-  p meth_for_string('Array.map', binding)
   %w(five
+     Array.map
      RubyVM::InstructionSequence.new
      Kernel.eval
      Kernel::eval).each do |str|
@@ -120,5 +141,10 @@ if __FILE__ == $0
   end
   p meth_for_string('Testing.testing', binding)  
   p meth_for_string('File.basename', binding)  
+  x = File
+  p meth_for_string('x.basename', binding)  
+  def x.five; 5; end
+  p  meth_for_string('x.five', binding)  
+  p x.five
 end
 

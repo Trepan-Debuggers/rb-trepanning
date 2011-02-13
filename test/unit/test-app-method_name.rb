@@ -63,6 +63,12 @@ class TestAppMethodName < Test::Unit::TestCase
       meth = meth_for_string(str, binding)
       assert meth.kind_of?(Method), "#{str} method's class should be Method, not #{meth.class}"
     end
+    x = File
+    def x.five; 5; end
+    %w(x.basename x.five).each do |str|
+      meth = meth_for_string(str, binding)
+      assert meth.kind_of?(Method), "#{str} method's class should be Method, not #{meth.class}"
+    end
     %w(Array.map).each do |str|
       meth = meth_for_string(str, binding)
       assert meth.kind_of?(UnboundMethod), "#{meth.class}"
