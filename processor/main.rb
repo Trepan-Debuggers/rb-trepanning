@@ -278,11 +278,12 @@ class Trepan
           return false if args.size == 0
           break unless @macros.member?(macro_cmd_name)
           current_command = @macros[macro_cmd_name].call(*args[1..-1])
-          msg current_command if settings[:debugmacro]
-          # FIXME: should handle nested Array as a new command.
+          msg current_command.inspect if settings[:debugmacro]
           if current_command.is_a?(Array) && 
               current_command.all? {|val| val.is_a?(String)}
-            args = current_command
+            args = (first=current_command.shift).split
+            @cmd_queue += current_command
+            current_command = first
           elsif current_command.is_a?(String)
             args = current_command.split
           else

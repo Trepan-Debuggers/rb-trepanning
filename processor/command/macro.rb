@@ -1,35 +1,48 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 require_relative '../eval'
 class Trepan::Command::MacroCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-      "macro NAME PROC-OBJECT
+    NAME          = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} MACRO-NAME PROC-OBJECT
 
-Define NAME as a debugger macro. Debugger macros get a list of arguments
-and should return a command string to use in its place.
+Define MACRO-NAME as a debugger macro. Debugger macros get a list of
+arguments and should return either a String or an Array of Strings to
+use in its place.  If the return is a String, that gets tokenized by a
+simple String#split .  Note that macro processing is done right after
+splitting on ;; so if the macro returns a string containing ;; those
 
-Here is a contrived example that shows how to issue 'finish' if we are in 
-method 'gcd' and 'step' otherwise:
+won't be handled on the first string returned.
 
-  macro step_unless_gcd Proc.new{|*args| \"$trepan_frame.method == 'gcd' ? 'finish' : 'step'\"}
+If instead, Array of Strings is returned, then the first string is
+unshifted from the array and executed. The remaning strings are pushed
+onto the command queue. In contrast to the first string, subsequent
+strings which contain other macros or ;; splitting will be acted upon.
 
-Here is another real example. I use the following to debug a
-debugger command, assuming 'set debug dbgr' is set:
+Here is an example. The below creates a macro called finish+ which
+issues two commands 'finish' followed by 'step':
 
-  macro dbgcmd Proc.new{|*args| \"debug $trepan_cmdproc.commands['\#{args[0]}'].run(\#{args.inspect})\"}
+  macro finish+ Proc.new{|*args| ['finish', 'step']}
 
-With the above, 'dbgcmd list 5' will debug the debugger 'list' command 
-on the command 'list 5'.
+Here is another example using arguments. I use the following to debug
+a debugger command:
+
+  macro dbgcmd Proc.new{|*args| ["set debug dbgr", "debug $trepan_cmdproc.commands['\#{args[0]}'].run(\#{args.inspect})"]}
+
+With the above, 'dbgcmd list 5' will ultimately expand to: 
+  set debug dbgr
+  debug $trepan_cmdproc.commands['list'].run(['5'])
+
+and will debug the debugger's 'list' command on the command 'list 5'.
 
 See also 'show macro'.
-"
+    HELP
 
     CATEGORY      = 'support'
     MIN_ARGS      = 2  # Need at least this many
-    NAME          = File.basename(__FILE__, '.rb')
     SHORT_HELP    = 'Define a macro'
   end
   
@@ -52,8 +65,7 @@ if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   cmdproc = dbgr.core.processor
-  ["#{cmd.name} foo Proc.new{|x, y| x+y}",
-   "#{cmd.name} bad x+1",
+  ["#{cmd.name} foo Proc.new{|x, y| 'x+y'}",
    "#{cmd.name} bad2 1+2"].each do |cmdline|
     args = cmdline.split
     cmd_argstr = cmdline[args[0].size..-1].lstrip

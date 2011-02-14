@@ -73,7 +73,9 @@ See also 'examine' and 'whatis'.
     final_msg = '
 Type "help" followed by a class name for a list of commands in that class.
 Type "help syntax" for information on debugger command syntax.
-Type "help *" for the list of all commands.
+Type "help aliases" for a list of current aliases
+Type "help macros" for a list of current macros
+Type "help *" for the list of all commands, macros and aliases.
 Type "help all" for the list of all commands.
 Type "help REGEXP" for the list of commands matching /^#{REGEXP}/
 Type "help CLASS *" for the list of all commands in class CLASS.
@@ -89,6 +91,12 @@ Type "help" followed by command name for full documentation.
       if cmd_name == '*'
         section 'All command names:'
         msg columnize_commands(@proc.commands.keys.sort)
+        show_aliases  unless @proc.aliases.empty?
+        show_macros unless @proc.macros.empty?
+      elsif cmd_name =~ /^aliases$/i
+        show_aliases
+      elsif cmd_name =~ /^macros$/i
+        show_macros
       elsif cmd_name =~ /^syntax$/i
         show_command_syntax
       elsif cmd_name =~ /^all$/i
@@ -115,6 +123,9 @@ Type "help" followed by command name for full documentation.
             msg "Aliases: #{cmd_obj.class.const_get(:ALIASES).join(', ')}"
           end
         end
+      elsif @proc.macros.member?(cmd_name)
+        msg "#{cmd_name} is a macro which expands to:"
+        msg "  #{@proc.macros[cmd_name]}", {:unlimited => true}
       else 
         matches = @proc.commands.keys.grep(/^#{cmd_name}/).sort rescue []
         if matches.empty?
@@ -127,6 +138,11 @@ Type "help" followed by command name for full documentation.
     else
       list_categories
     end
+  end
+
+  def show_aliases
+    section 'All alias names:'
+    msg columnize_commands(@proc.aliases.keys.sort)
   end
 
   # Show short help for all commands in `category'.
@@ -154,7 +170,7 @@ Type "help" followed by command name for full documentation.
   def show_command_syntax
     section "Debugger command syntax"
     msg <<-EOS
-Command command syntax is very simple-minded. 
+Command tokenization syntax is very simple-minded. 
 
 If a line starts with #, the command is ignored. 
 If a line starts with !, the line is eval'd. 
@@ -168,11 +184,16 @@ after the leading command string are put back on a command queue.
 
 Within a single command, tokens are then white-space split. Again,
 this process disregards quotes or symbols that have meaning in Ruby.
+Some commands like 'eval' and 'macro' have access to the untokenized
+string entered and make use of that rather than the tokenized list.
 
-The first token is then looked up in the debugger command table and
-then the debugger alias table. If a match is found the command name
-and arguments are dispatched to the command object that process the
-command.
+The leading token is first looked up in the macro table. If it
+found there, the expansion is replaces the current command and possibly
+other commands pushed onto a command queue.  Next the leading token is
+looked up in the debugger alias table and the name may be substituted
+there. Finally, the leading token is looked up in the debugger alias
+table. If a match is found, the command name and arguments are
+dispatched to the command object that process the command.
 
 If the command is not found and "auto eval" is set on, then the
 command is eval'd in the context that the program is currently stopped
@@ -196,6 +217,12 @@ pr  "hi ;;-)"  # Syntax error since ;; splits the line and " is not closed.
 See also "alias", "irb", "set auto eval", and "set auto irb".
     EOS
   end
+
+  def show_macros
+    section 'All macro names:'
+    msg columnize_commands(@proc.macros.keys.sort)
+  end
+
 end
 
 if __FILE__ == $0
