@@ -33,7 +33,7 @@ class Trepan
       step(0, opts)
       @next_level        = @frame.stack_size - level_count
       @next_thread       = Thread.current
-      @stop_events       = Set.new(%w(return))
+      @stop_events       = Set.new(%w(return send leave yield))
 
       # Try high-speed (run-time-assisted) method
       @frame.trace_off   = true  # No more tracing in this frame

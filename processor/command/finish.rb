@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 
 class Trepan::Command::FinishCommand < Trepan::Command
@@ -9,8 +9,9 @@ class Trepan::Command::FinishCommand < Trepan::Command
     HELP = <<-HELP
 #{NAME} [levels]
 
-Continue execution until leaving the current function. 
-Sometimes this is called 'step out'.
+Continue execution until the program is about to leaving the current
+function or switch context via yielding or ending a block which was
+yield to. Sometimes this is called 'step out'.
 
 When `levels' is specified, that many frame levels need to be
 popped. The default is 1.  Note that 'yield' and exceptions raised my
@@ -24,6 +25,7 @@ one.
 See the break command if you want to stop at a particular point in a
 program. In general, '#{NAME}', 'step' and 'next' may slow a program down
 while 'break' will have less overhead.
+
     HELP
     ALIASES      = %w(fin)
     CATEGORY     = 'running'
@@ -54,7 +56,7 @@ while 'break' will have less overhead.
       # step 1 is core.level_count = 0 or "stop next event"
       level_count = count - 1  
     end
-    if 0 == level_count and %w(return c-return).member?(@proc.event)
+    if 0 == level_count and %w(return c-return yield leave).member?(@proc.event)
       errmsg "You are already at the requested return event."
     else
       @proc.finish(level_count, opts)

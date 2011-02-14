@@ -71,7 +71,7 @@ grammar MethodName
   end 
 
   # I think strict Ruby rules are that once one goes from :: to .
-  # There is no going back. That is, A.B::C is invalid. So would
+  # There is no going back. That is, A.B::C is invalid. 
   # 
   # Also I think method names can't be constants. But such 
   # subtleties we'll handle in semantic analysis.

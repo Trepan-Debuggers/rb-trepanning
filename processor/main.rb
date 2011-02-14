@@ -65,6 +65,8 @@ class Trepan
         'c-call'         => 'C>',
         'c-return'       => '<C',
         'call'           => '->',
+        'send'           => '=>',
+        'leave'          => '<=',
         'class'          => '::',
         'coverage'       => '[]',
         'debugger-call'  => ':o',
@@ -77,6 +79,7 @@ class Trepan
         'unknown'        => '?!',
         'vm'             => 'VM',
         'vm-insn'        => '..',
+        'yield'          => '<>',
       } 
       # These events are important enough event that we always want to
       # stop on them.
