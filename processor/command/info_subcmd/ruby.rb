@@ -11,7 +11,7 @@ class Trepan::Subcommand::InfoRuby < Trepan::Subcommand
 Show Ruby version information such as you'd get from "ruby -v", which
 is really just the value of RUBY_RELEASE_DATE.
 
-See also constants: RUBY_DESCRIPITON, RUBY_VERSION, and RUBY_RELEASE_DATE."
+See also constants: RUBY_DESCRIPTION, RUBY_VERSION, and RUBY_RELEASE_DATE."
     EOH
     MIN_ABBREV   = 'ru'.size
     NEED_STACK   = false
