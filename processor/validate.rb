@@ -75,10 +75,10 @@ class Trepan
       end
       
       if val < opts[:min_value]
-        if cmdname
+        if opts[:cmdname]
           errmsg(("Command '%s' expects an integer at least" +
                   ' %d; got: %d.') %
-                 [cmdname, opts[:min_value], opts[:default]])
+                 [opts[:cmdname], opts[:min_value], opts[:default]])
         else
           errmsg(("Expecting a positive integer at least" +
                   ' %d; got: %d') %

@@ -121,6 +121,10 @@ EOB
               "Set output for terminal highlighting") do |v|
         options[:highlight] = ((v) ? :term : nil)
       end
+      opts.on('--[no-]readline',
+              "Try to use GNU Readline") do |v|
+        options[:readline] = v
+      end
       opts.on_tail("-?", "--help", "Show this message") do
         options[:help] = true
         stdout.puts opts

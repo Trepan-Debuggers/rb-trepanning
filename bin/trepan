@@ -53,13 +53,13 @@ if File.basename(__FILE__) == File.basename($0)
       File.exist?(program_to_debug)
     Trepan::PROG_SCRIPT = program_to_debug
 
-    # Set global so others may use this debugger.
-    
     opts = {}
-    %w(cmdfiles initial_dir host nx port server highlight).each do |opt|
+    %w(cmdfiles highlight initial_dir host nx port readline server 
+      ).each do |opt|
       opts[opt.to_sym] = options[opt.to_sym]
     end
 
+    # Set global so others may use this debugger.
     $trepan = Trepan.new(opts)
     debug_program($trepan, Trepan::RUBY_PATH, 
                   File.expand_path(program_to_debug))

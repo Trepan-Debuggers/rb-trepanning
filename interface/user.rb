@@ -11,6 +11,10 @@ require_relative '../io/input'
 class Trepan::UserInterface < Trepan::Interface
 
   DEFAULT_USER_OPTS = {
+    :readline   => true,                # Try to use GNU Readline?
+    
+    # The below are only used if we want and have readline support.
+    # See method Trepan::GNU_readline? below.
     :histsize => 256,                   # Use gdb's default setting
     :file_history   => '.trepan_hist',  # where history file lives
                                         # Note a directory will 
@@ -24,7 +28,7 @@ class Trepan::UserInterface < Trepan::Interface
     @input = if inp.class.ancestors.member?(Trepan::InputBase)
                inp
              else
-               Trepan::UserInput.open(inp)
+               Trepan::UserInput.open(inp, {:readline => opts[:readline]})
              end
     if Trepan::GNU_readline?
       Readline.completion_proc = opts[:complete] if opts[:complete]
@@ -107,7 +111,7 @@ class Trepan::UserInterface < Trepan::Interface
 
   def readline(prompt='')
     @output.flush
-    if @input.line_edit
+    if @input.line_edit && @opts[:use_readline]
       @input.readline(prompt)
     else
       @output.write(prompt) if prompt and prompt.size > 0

@@ -54,6 +54,7 @@ class Trepan
         opts = Trepan::ServerInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
         opts[:port] = @settings[:port] if @settings[:port]
         opts[:host] = @settings[:host] if @settings[:host]
+        opts[:readline] = false
         puts("starting debugger in out-of-process mode port at " +
              "#{opts[:host]}:#{opts[:port]}")
         [Trepan::ServerInterface.new(nil, nil, opts)]
@@ -62,9 +63,11 @@ class Trepan
         opts[:port] = @settings[:port] if @settings[:port]
         opts[:host] = @settings[:host] if @settings[:host]
         opts[:complete] = @completion_proc
+        opts[:readline] ||= @settings[:readline]
         [Trepan::ClientInterface.new(nil, nil, nil, nil, opts)]
       else
-        opts = {:complete => @completion_proc}
+        opts = {:complete => @completion_proc,
+                :readline => @settings[:readline]}
         [Trepan::UserInterface.new(@input, @output, opts)]
       end
 

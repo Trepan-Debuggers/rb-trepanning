@@ -1,3 +1,18 @@
+Feb 15, 2011  (0.0.5)
+- "disassemble" command: allow disassembly of specified line numbers
+- GNU Readline: 
+  * Start GNU readline tab (command) completion. 
+  * Save and restore command history
+  * add --readline and --no-readline options to trepanx
+- Macros can return more than one command now
+- help 
+  * "help macros" shows all macro names
+  * "help aliases" shows all alias names
+  * "help *" lists macros and aliases now
+- start "info line"
+- "info file" has/shows File::stat()'s mtime and ctime 
+- be able to pass --verbose to ruby to rake
+
 Feb 1, 2011 (0.1.0)
 * Add Remote debugging interface. Add options --server --port
 * Add Syntax highlighting on Ruby and YARV listings and locations
