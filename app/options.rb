@@ -3,27 +3,6 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 #=== Summary
 # Parses command-line options. 
-#=== Options
-#
-#<tt>--cd=DIR</tt>
-#      Change current directory to DIR.
-#
-#<tt>--command</tt> <i>file</i>::
-#      Run debugger command file <i>file</i>
-#
-#<tt>--nx</tt>::
-#      Don’t execute commands  found in any initialization
-#      files, e.g. <tt>.rdebugrc</tt>.
-#
-#<tt>--restore=PROFILE</tt>::
-#      Debugger command file which restores debugger settings,
-#      resumably saved before a 'restart' debugger command.
-#
-#<tt>--version</tt>::
-#      Show the version number.
-#
-#<tt>--help</tt>::
-#      Show invocation help and exit.
 
 require 'optparse'
 class Trepan
@@ -118,11 +97,11 @@ EOB
         end
       end
       opts.on('--[no-]highlight',
-              "Set output for terminal highlighting") do |v|
+              "Use [no] syntax highligh output") do |v|
         options[:highlight] = ((v) ? :term : nil)
       end
       opts.on('--[no-]readline',
-              "Try to use GNU Readline") do |v|
+              "Try [not] GNU Readline") do |v|
         options[:readline] = v
       end
       opts.on_tail("-?", "--help", "Show this message") do
