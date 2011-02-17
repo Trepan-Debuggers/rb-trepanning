@@ -20,7 +20,7 @@ class Trepan
       @input        = inp || STDIN
       @eof          = false
       @line_edit    = @opts[:line_edit]
-      @use_readline = opts[:readline]
+      @use_readline = @opts[:readline]
     end
 
     def closed?; @input.closed? end
@@ -29,7 +29,6 @@ class Trepan
     def interactive? 
       @input.respond_to?(:isatty) && @input.isatty
     end
-
     # Read a line of input. EOFError will be raised on EOF.  
     def readline(prompt='')
       raise EOFError if eof?
@@ -67,9 +66,15 @@ class Trepan
       end
 
       def finalize
-        if defined?(RbReadline) && !@@readline_finalized
-          RbReadline.rl_cleanup_after_signal()
-          RbReadline.rl_deprep_terminal()
+       if defined?(RbReadline) && !@@readline_finalized
+          begin 
+            RbReadline.rl_cleanup_after_signal()
+          rescue
+          end
+          begin 
+            RbReadline.rl_deprep_terminal()
+          rescue
+          end
           @@readline_finalized = true
         end
       end

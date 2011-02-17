@@ -34,12 +34,19 @@ class TestAppOptions < Test::Unit::TestCase
   end
 
   def test_binary_opts
-    %w(nx).each do |name|
+    %w(nx readline).each do |name|
       setup
       o    = ["--#{name}"]
       rest = @opts.parse o
       assert_equal('', @stderr.string)
       assert_equal(true, @options[name.to_sym])
+    end
+    # --no- options
+    %w(readline).each do |name|
+      o    = ["--no-#{name}"]
+      rest = @opts.parse o
+      assert_equal('', @stderr.string)
+      assert_equal(false, @options[name.to_sym])
     end
   end
 

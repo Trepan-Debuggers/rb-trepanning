@@ -9,7 +9,7 @@ module Trepanning
   # The caller must ensure that ARGV is set up to remove any debugger
   # arguments or things that the debugged program isn't supposed to
   # see.  FIXME: Should we make ARGV an explicit parameter?
-  def debug_program(dbgr, ruby_path, program_to_debug)
+  def debug_program(dbgr, ruby_path, program_to_debug, start_opts={})
 
     # Make sure Ruby script syntax checks okay.
     # Otherwise we get a load message that looks like trepanning has 
@@ -37,7 +37,10 @@ module Trepanning
     dbgr.debugger(:hide_stack=>true) do
       dbgr.core.processor.hidelevels[Thread.current] = 
         RubyVM::ThreadFrame.current.stack_size + 1
-      Kernel::load program_to_debug
+      begin
+        Kernel::load program_to_debug
+      rescue Interrupt
+      end
     end
 
     # The dance we have to undo to restore $0 and undo the mess created

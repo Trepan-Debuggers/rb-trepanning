@@ -33,6 +33,7 @@ class Trepan
     :port     => DEFAULT_SETTINGS[:port],
     :host     => DEFAULT_SETTINGS[:host], 
     :server   => false, # Out-of-process debugging?
+    :readline => true,  # Try to use GNU Readline?
     # Note that at most one of :server or :client can be true.
   } unless defined?(DEFAULT_CMDLINE_SETTINGS)
 

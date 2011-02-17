@@ -30,8 +30,8 @@ class Trepan::UserInterface < Trepan::Interface
              else
                Trepan::UserInput.open(inp, {:readline => opts[:readline]})
              end
-    if Trepan::GNU_readline?
-      Readline.completion_proc = opts[:complete] if opts[:complete]
+    if Trepan::GNU_readline? && @opts[:complete]
+      Readline.completion_proc = @opts[:complete]
       read_history
     end
     at_exit { finalize }
@@ -41,6 +41,7 @@ class Trepan::UserInterface < Trepan::Interface
   # sure it's okay. Expect a yes/no answer to `prompt' which is printed,
   # suffixed with a question mark and the default value.  The user
   # response converted to a boolean is returned.
+  # FIXME: make common routine for this and server.rb
   def confirm(prompt, default)
     default_str = default ? 'Y/n' : 'N/y'
     while true do
@@ -107,11 +108,13 @@ class Trepan::UserInterface < Trepan::Interface
 
   def interactive? ; @input.interactive? end
 
-  def read_command(prompt=''); readline(prompt) end
+  def read_command(prompt='')
+    readline(prompt) 
+  end
 
   def readline(prompt='')
     @output.flush
-    if @input.line_edit && @opts[:use_readline]
+    if @input.line_edit && @opts[:readline]
       @input.readline(prompt)
     else
       @output.write(prompt) if prompt and prompt.size > 0

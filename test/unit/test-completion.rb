@@ -25,6 +25,7 @@ class TestCompletion < Test::Unit::TestCase
      ['disas', 'disas ', ['disassemble']], # Another single completion
      ['help syn', 'syn', ['syntax']],
      ['help br', 'br', ['break', 'breakpoints']],
+     ['where', 'where', ['where ']],  # Single alias completion
      ['set basename o', 'o', ['off', 'on']],
     ].each do |line, token, expect_completion|
       assert_equal(expect_completion, 
