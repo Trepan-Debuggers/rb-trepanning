@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'trace'                          # Trace filtering
-require 'thread_frame'
+require 'thread_frame'                   # Stack frame introspection and more.
+require_relative '../app/complete'       # command completion
 require_relative '../app/core'           # core event-handling mechanism
 require_relative '../app/default'        # default debugger settings
 require_relative '../interface/user'     # user interface (includes I/O)
@@ -115,40 +116,24 @@ class Trepan
 
   # The method is called when we want to do debugger command completion
   # such as called from GNU Readline with <TAB>.
-  def completion_method(str, leading=Readline.line_buffer)
-    args =
-      if str.empty? && leading.end_with?(' ')
-        # A line ending with a blank means we want to get all completions
-        # of the *next* token, not the current token.
-        leading.split(' ').compact + ['']
-      else
-        # We split on a single blank rather than sequences of spaces
-        # because we need to keep the line exactly as it is except for the
-        # last token
-        leading.split(' ').compact
-      end
-    completion = @core.processor.complete(args)
+  def completion_method(last_token, leading=Readline.line_buffer)
+    completion = @core.processor.complete(leading, last_token)
     if 1 == completion.size 
-      last_token = completion[0].split[-1]
-      if  last_token == str
-        # If we were at the end of a complete token add a space so that
-        # the next time, we'll complete any context after that.
-        [str + ' ']
-      elsif str.end_with?(' ') && str.strip == last_token 
-        # There is nothing more to complete
-        []
-      elsif str.empty? && completion[0] == leading
-        # There is also nothing more to complete
-        []
+      completion_token = completion[0]
+      if last_token.end_with?(' ')
+        if last_token.rstrip == completion_token 
+          # There is nothing more to complete
+          []
+        else
+          []
+        end
       else
-        [last_token]
+        [completion_token]
       end
     else
       # We have multiple completions. Get the last token so that will
       # be presented as a list of completions.
-      completion.map do |cmd|
-        cmd.split[-1]
-      end
+      completion
     end
   end
 

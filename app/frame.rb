@@ -1,8 +1,9 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'util'
 
 class Trepan
-
+  
+  # Call-Stack frame methods
   module Frame
 
     DEFAULT_STACK_TRACE_SETTINGS = {

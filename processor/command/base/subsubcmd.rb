@@ -62,6 +62,7 @@ class Trepan
   end
 
   class SetBoolSubSubcommand < SubSubcommand
+    completion %w(on off)
     def run(args)
       run_set_bool(args)
     end

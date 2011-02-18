@@ -153,7 +153,8 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
   end
 
   def complete_token_with_next(prefix)
-    Trepan::Complete.complete_token_with_next(@subcmds.subcmds, prefix)
+    Trepan::Complete.complete_token_with_next(@subcmds.subcmds, prefix,
+                                              self.prefix.join(''))
   end
 
   def run(args)

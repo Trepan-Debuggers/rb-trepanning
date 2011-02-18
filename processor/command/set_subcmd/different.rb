@@ -36,6 +36,8 @@ override this setting."
     SHORT_HELP   = "Set to make sure 'next/step' move to a new position."
   end
 
+  completion %w(on off nostack)
+
   def run(args)
     if args.size == 3 && 'nostack' == args[2]
       @proc.settings[:different] = 'nostack'

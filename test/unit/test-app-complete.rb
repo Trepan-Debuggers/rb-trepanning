@@ -20,4 +20,19 @@ class TestAppUtil < Test::Unit::TestCase
     end
     
   end
+
+  def test_next_token
+    x = '  now is  the  time'
+    [[0, [ 5, 'now']], 
+     [2, [ 5, 'now']],
+     [5, [ 8, 'is']], 
+     [8, [13, 'the']],
+     [9, [13, 'the']],
+     [13, [19, 'time']],
+     [19, [19, '']],
+    ].each do |pos, expect|
+      assert_equal expect, next_token(x, pos)
+    end
+  end
+
 end
