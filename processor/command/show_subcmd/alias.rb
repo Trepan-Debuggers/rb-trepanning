@@ -14,6 +14,10 @@ all alias names"
     SHORT_HELP = "Show defined aliases"
   end
 
+  def complete(prefix)
+    Trepan::Complete.complete_token(@proc.aliases.keys, prefix)
+  end
+
   def run(args)
     if args.size > 2
       args[2..-1].each do |alias_name|
