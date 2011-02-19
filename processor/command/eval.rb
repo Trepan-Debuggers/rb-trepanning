@@ -38,7 +38,6 @@ See also 'set autoeval'
 
   def run(args)
     if args.size == 1
-      # FIXME: DRY this code with code in print_location
       text  = @proc.current_source_text
       text.gsub!(/^\s*(?:if|elsif|until|while)\s*/,'') if 
         '?' == args[0][-1..-1] 

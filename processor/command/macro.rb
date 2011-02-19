@@ -27,7 +27,7 @@ split into separate commands.
 Here is an example. The below creates a macro called finish+ which
 issues two commands 'finish' followed by 'step':
 
-  macro finish+ Proc.new{|*args| ['finish', 'step']}
+  macro fin+ Proc.new{|*args| %w(finish step)}
 
 Here is another example using arguments. I use the following to debug
 a debugger command:
@@ -49,15 +49,15 @@ See also 'show macro'.
   end
   
   def run(args)
-    macro_name = args[1]
-    proc_argstr = @proc.cmd_argstr[macro_name.size..-1].lstrip
-    proc_obj = @proc.debug_eval(proc_argstr, @proc.settings[:maxstring])
+    cmd_name = args[1]
+    cmd_argstr = @proc.cmd_argstr[cmd_name.size..-1].lstrip
+    proc_obj = @proc.debug_eval(cmd_argstr, @proc.settings[:maxstring])
     if proc_obj
       if proc_obj.is_a?(Proc)
-        @proc.macros[macro_name] = proc_obj
-        msg "Macro \"#{macro_name}\" defined."
+        @proc.macros[cmd_name] = [proc_obj, cmd_argstr]
+        msg "Macro \"#{cmd_name}\" defined."
       else
-        errmsg "Expecting a Proc object; got: #{proc_argstr}"
+        errmsg "Expecting a Proc object; got: #{cmd_argstr}"
       end
     end
   end

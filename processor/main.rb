@@ -278,7 +278,7 @@ class Trepan
           macro_cmd_name = args[0]
           return false if args.size == 0
           break unless @macros.member?(macro_cmd_name)
-          current_command = @macros[macro_cmd_name].call(*args[1..-1])
+          current_command = @macros[macro_cmd_name][0].call(*args[1..-1])
           msg current_command.inspect if settings[:debugmacro]
           if current_command.is_a?(Array) && 
               current_command.all? {|val| val.is_a?(String)}

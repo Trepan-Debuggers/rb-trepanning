@@ -3,6 +3,8 @@
 require_relative '../app/util'
 class Trepan
   class CmdProcessor
+    attr_accessor :ruby_highlighter
+
     def errmsg(message, opts={})
       message = safe_rep(message) unless opts[:unlimited]
       if @settings[:highlight] && defined?(Term::ANSIColor)
@@ -26,6 +28,20 @@ class Trepan
       @dbgr.intf[-1].read_command(@prompt)
     end
 
+    def ruby_format(text)
+      return text unless settings[:highlight]
+      unless @ruby_highlighter
+        begin
+          require 'coderay'
+          require 'term/ansicolor'
+          @ruby_highlighter = CodeRay::Duo[:ruby, :term]
+        rescue LoadError
+          return text
+        end
+      end
+      return @ruby_highlighter.encode(text)
+    end
+
     def safe_rep(str)
       Util::safe_repr(str, @settings[:maxstring])
     end
@@ -38,5 +54,6 @@ class Trepan
       end
       @dbgr.intf[-1].msg(message)
     end
+
   end
 end
