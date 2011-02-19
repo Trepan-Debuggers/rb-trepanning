@@ -1,5 +1,6 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'linecache'
+require_relative '../app/complete'
 require_relative '../app/frame'
 class Trepan
   class CmdProcessor
@@ -49,6 +50,12 @@ class Trepan
       else
         nil
       end
+    end
+
+    def frame_complete(prefix)
+      stack_size = @top_frame.stack_size - @hide_level
+      ary = (-stack_size..stack_size-1).map{|i| i.to_s}
+      Trepan::Complete.complete_token(ary, prefix)
     end
 
     def frame_container(frame, canonicalize=true)

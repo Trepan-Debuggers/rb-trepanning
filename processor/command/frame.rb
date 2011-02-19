@@ -46,6 +46,10 @@ See also 'up', 'down' 'where' and 'info thread'.
     SHORT_HELP    = 'Select and print a stack frame'
   end
   
+  def complete(prefix)
+    @proc.frame_complete(prefix)
+  end
+  
   # The simple case: thread frame switching has been done or is
   # not needed and we have an explicit position number as a string
   def one_arg_run(position_str)

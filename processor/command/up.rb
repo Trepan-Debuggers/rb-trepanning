@@ -29,6 +29,10 @@ See also 'down' and 'frame'.
   require_relative '../../app/frame'
   include Trepan::Frame
 
+  def complete(prefix)
+    @proc.frame_complete(prefix)
+  end
+  
   def initialize(proc)
     super
     @direction = +1 # -1 for down.

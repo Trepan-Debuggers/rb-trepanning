@@ -32,6 +32,10 @@ Examples:
   require_relative '../../app/frame'
   include Trepan::Frame
 
+  def complete(prefix)
+    @proc.frame_complete(prefix)
+  end
+  
   # This method runs the command
   def run(args)
     unless @proc.frame
