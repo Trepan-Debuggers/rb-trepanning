@@ -94,7 +94,8 @@ class Trepan
         mess += "\n\tVM offset #{item.pc_offset}"
       end
       unless same_loc
-        text = LineCache::getline(container, location, @reload_on_change)
+        text = LineCache::getline(container, location, 
+                                  :reload_on_change => @reload_on_change)
         mess += ":\n  #{text.chomp}" if text
       end
       return container, location, mess
