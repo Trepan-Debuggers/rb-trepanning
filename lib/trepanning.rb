@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'trace'                          # Trace filtering
 require 'thread_frame'                   # Stack frame introspection and more.
@@ -29,10 +30,10 @@ class Trepan
   attr_accessor :intf         # Array. The way the outside world
                               # interfaces with us.  An array, so that
                               # interfaces can be stacked.
-  attr_reader   :initial_dir  # String. Current directory when program
-                              # started. Used in restart program.
-  attr_accessor :restart_argv # How to restart us, empty or nil. 
-                              # Note restart[0] is typically $0.
+  attr_accessor :restart_argv # How to restart us, empty or nil.
+                              # Note: restart_argv is typically C's
+                              # **argv, not Ruby's ARGV. So
+                              # restart_argv[0] is $0.
   attr_reader   :settings     # Hash[:symbol] of things you can configure
   attr_accessor :trace_filter # Procs/Methods we ignore.
 
@@ -226,7 +227,6 @@ class Trepan
         return
       else
         stderr.puts "Command file '#{cmdfile}' does not exist."
-        stderr.puts caller
         return
       end
     end

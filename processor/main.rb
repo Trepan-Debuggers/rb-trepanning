@@ -181,7 +181,8 @@ class Trepan
         begin
           @current_command = 
             if @cmd_queue.empty?
-              read_command.strip
+              # Leave trailing blanks on for the "complete" command
+              read_command.chomp 
             else
               @cmd_queue.shift
             end
@@ -346,6 +347,7 @@ if __FILE__ == $0
   cmdproc.errmsg('Whoa!')
   cmds = cmdproc.commands
   p cmdproc.aliases
+  p cmdproc.commands.keys.sort
   cmd_name, cmd_obj = cmds.first
   puts cmd_obj.class.const_get(:HELP)
   puts cmd_obj.class.const_get(:SHORT_HELP)

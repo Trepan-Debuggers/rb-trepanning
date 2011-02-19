@@ -17,7 +17,8 @@ List the completions for the rest of the line as a command.
 
   # This method runs the command
   def run(args) # :nodoc
-    @proc.complete(args[1..-1]).each do |match|
+    last_arg = @proc.cmd_argstr.end_with?(' ') ? '' : args[-1]
+    @proc.complete(@proc.cmd_argstr, last_arg).each do |match|
       msg match
     end
   end
