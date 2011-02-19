@@ -22,6 +22,17 @@ class Trepan
         Pathname.new(filename).cleanpath.to_s
     end
 
+    # Return the text to the current source line.
+    # FIXME: loc_and_text should call this rather than the other
+    # way around.
+    def current_source_text
+      opts = {:reload_on_change => @reload_on_change}
+      junk1, junk2, text, found_line = 
+        loc_and_text(nil, frame, frame.source_location[0], 
+                     frame.source_container, opts)
+      text
+    end
+
     def resolve_file_with_dir(path_suffix)
       @settings[:directory].split(/:/).each do |dir|
         dir = 

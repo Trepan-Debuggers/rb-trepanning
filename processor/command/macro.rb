@@ -10,17 +10,19 @@ class Trepan::Command::MacroCommand < Trepan::Command
 #{NAME} MACRO-NAME PROC-OBJECT
 
 Define MACRO-NAME as a debugger macro. Debugger macros get a list of
-arguments and should return either a String or an Array of Strings to
-use in its place.  If the return is a String, that gets tokenized by a
-simple String#split .  Note that macro processing is done right after
-splitting on ;; so if the macro returns a string containing ;; those
+arguments. 
 
-won't be handled on the first string returned.
+The macro should return either a String or an Array of Strings which
+is substituted for the command.  If the return is a String, that gets
+tokenized by a simple String#split .  Note that macro processing is
+done right after splitting on ;; so if the macro returns a string
+containing ;; this will not be handled on the string returned.
 
 If instead, Array of Strings is returned, then the first string is
 unshifted from the array and executed. The remaning strings are pushed
 onto the command queue. In contrast to the first string, subsequent
-strings which contain other macros or ;; splitting will be acted upon.
+strings can contain other macros, and ;; in those strings will be
+split into separate commands.
 
 Here is an example. The below creates a macro called finish+ which
 issues two commands 'finish' followed by 'step':
