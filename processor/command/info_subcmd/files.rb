@@ -12,7 +12,7 @@ class Trepan::Subcommand::InfoFiles < Trepan::Subcommand
     DEFAULT_FILE_ARGS = %w(size mtime sha1)
 
     HELP = <<-EOH
-#{CMD=PREFIX.join(' ')} [{FILENAME|.|*} [all|ctime|brkpts|mtime|sha1|size|stat]]
+#{CMD} [{FILENAME|.|*} [all|ctime|brkpts|mtime|sha1|size|stat]]
 
 Show information about the current file. If no filename is given and
 the program is running, then the current file associated with the

@@ -6,7 +6,7 @@ class Trepan::Subcommand::InfoRuby < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
-#{CMD=PREFIX.join(' ')}
+#{CMD}
 
 Show Ruby version information such as you'd get from "ruby -v", which
 is really just the value of RUBY_RELEASE_DATE.

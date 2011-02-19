@@ -6,7 +6,7 @@ class Trepan::Subcommand::InfoFrame < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = <<-EOH
-#{CMD=PREFIX.join(' ')} 
+#{CMD} 
 
 Show information about the selected frame. The fields we list are:
 

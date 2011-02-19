@@ -7,7 +7,7 @@ class Trepan::Subcommand::ShowMacro < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = <<-HELP
-#{CMD=PREFIX.join(' ')} 
+#{CMD} 
 #{CMD} *
 #{CMD} MACRO1 [MACRO2 ..]
 

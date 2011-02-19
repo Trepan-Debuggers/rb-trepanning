@@ -7,7 +7,7 @@ class Trepan::SubSubcommand::InfoRegisters < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = <<-EOH
-#{CMD=PREFIX.join(' ')} [lfp|pc|sp]
+#{CMD} [lfp|pc|sp]
 
 List of contents for the registers of the current stack frame.
 If a register name given, only only that register is show.

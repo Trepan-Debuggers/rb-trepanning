@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 require_relative '../trace'
 class Trepan::SubSubcommand::SetTracePrint < Trepan::SetBoolSubSubcommand
+  Trepanning::Subcommand.set_name_prefix(__FILE__, self)
   unless defined?(HELP)
-    HELP         = 
-"set trace print [on|off|1|0]
+    HELP         = <<-EOH
+"#{CMD} [on|off|1|0]
 
-Set printing trace events."
+Set printing trace events.
+    EOH
 
     MIN_ABBREV   = 'p'.size  
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(set trace print)
     SHORT_HELP   = 'Set print trace events'
   end
 
@@ -32,7 +32,9 @@ if __FILE__ == $0
   require_relative '../trace'
   cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::SetTrace,
                                    Trepan::SubSubcommand::SetTracePrint)
-  %w(off on 0 1).each { |arg| cmd.run([cmd.name, arg]) }
-  puts '-' * 10
+  %w(off on 1 0).each do |arg|
+      cmd.run([cmd.name, arg])
+  end
+  puts cmd.save_command()
 end
 

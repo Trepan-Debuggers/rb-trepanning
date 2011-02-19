@@ -3,13 +3,14 @@
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::ShowAlias < Trepan::Subcommand
+  Trepanning::Subcommand.set_name_prefix(__FILE__, self)
   unless defined?(HELP)
-    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP = "show alias [NAME1 NAME2 ...] 
+    HELP         = <<-EOH
+#{CMD} [NAME1 NAME2 ...] 
 
 If aliases names are given, show their definition. If left blank, show
-all alias names"
-
+all alias names
+    EOH
     MIN_ABBREV = 'al'.size
     SHORT_HELP = "Show defined aliases"
   end
@@ -39,15 +40,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('show')
-  subcommand = Trepan::Subcommand::ShowAlias.new(cmd)
-
-  name = File.basename(__FILE__, '.rb')
-  subcommand.summary_help(name)
-  puts 
-  subcommand.run(%W(show #{name}))
-  subcommand.run(%w(show #{name} u foo))
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::ShowAlias)
+  cmd.run(cmd.prefix + %w(u foo))
 end
