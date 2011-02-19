@@ -1,5 +1,6 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
+require_relative '../../app/complete'
 class Trepan::Command::KillCommand < Trepan::Command
 
   unless defined?(HELP)
@@ -29,6 +30,13 @@ Examples:
     MAX_ARGS     = 1  # Need at most this many
     SHORT_HELP  = 'Send this process a POSIX signal (default "9" is "kill -9")'
   end
+  
+  def complete(prefix)
+    completions = Signal.list.keys + 
+      Signal.list.values.map{|i| i.to_s} + 
+      Signal.list.values.map{|i| (-i).to_s} 
+    Trepan::Complete.complete_token(completions, prefix)
+  end
     
   # This method runs the command
   def run(args) # :nodoc
@@ -38,10 +46,10 @@ Examples:
         errmsg("Signal name '#{sig}' is not a signal I know about.\n")
         return false
       end
-#       FIXME: reinstate
-#       if 'KILL' == sig || Signal['KILL'] == sig
-#           @proc.intf.finalize
-#       end
+      # FIXME: reinstate
+      if 'KILL' == sig || Signal['KILL'] == sig
+        @proc.intf.finalize
+      end
     else
       if not confirm('Really kill?', false)
         msg('Kill not confirmed.')
