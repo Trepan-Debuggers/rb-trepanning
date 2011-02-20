@@ -33,7 +33,7 @@ Examples:
   include Trepan::Frame
 
   def complete(prefix)
-    @proc.frame_complete(prefix)
+    @proc.frame_complete(prefix, nil)
   end
   
   # This method runs the command

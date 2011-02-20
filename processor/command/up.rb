@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 
 # up command. Like 'down' butthe direction (set by DIRECTION) is different.
@@ -30,7 +30,7 @@ See also 'down' and 'frame'.
   include Trepan::Frame
 
   def complete(prefix)
-    @proc.frame_complete(prefix)
+    @proc.frame_complete(prefix, @direction)
   end
   
   def initialize(proc)
@@ -51,14 +51,13 @@ See also 'down' and 'frame'.
       # Form is: "down" which means "down 1"
       count = 1
     else
-      stack_size = @proc.top_frame.stack_size - @proc.hide_level
+      low, high = @proc.frame_low_high(@direction)
       count_str = args[1]
       name_or_id = args[1]
       opts = {
         :msg_on_error => 
         "The '#{NAME}' command argument requires a frame number. Got: %s" % count_str,
-        :min_value => -stack_size,
-        :max_value => stack_size-1
+        :min_value => low, :max_value => high
       }
       count = @proc.get_an_int(count_str, opts)
       return false unless count

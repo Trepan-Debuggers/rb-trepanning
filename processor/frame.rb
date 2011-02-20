@@ -52,9 +52,21 @@ class Trepan
       end
     end
 
-    def frame_complete(prefix)
+    def frame_low_high(direction)
       stack_size = @top_frame.stack_size - @hide_level
-      ary = (-stack_size..stack_size-1).map{|i| i.to_s}
+      if direction
+        low, high = [ @frame_index * -direction, 
+                      (stack_size - 1 - @frame_index) * direction ]
+        low, high = [high, low] if direction < 0
+        [low, high]
+      else
+        [-stack_size, stack_size-1]
+      end
+    end
+    
+    def frame_complete(prefix, direction)
+      low, high = frame_low_high(direction)
+      ary = (low..high).map{|i| i.to_s}
       Trepan::Complete.complete_token(ary, prefix)
     end
 

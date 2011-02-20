@@ -47,18 +47,17 @@ See also 'up', 'down' 'where' and 'info thread'.
   end
   
   def complete(prefix)
-    @proc.frame_complete(prefix)
+    @proc.frame_complete(prefix, nil)
   end
   
   # The simple case: thread frame switching has been done or is
   # not needed and we have an explicit position number as a string
   def one_arg_run(position_str)
-    stack_size = @proc.top_frame.stack_size - @proc.hide_level
+    low, high = @proc.frame_low_high(nil)
     opts={
       :msg_on_error => 
       "The '#{NAME}' command requires a frame number. Got: #{position_str}",
-      :min_value => -stack_size,
-      :max_value => stack_size-1
+      :min_value => low, :max_value => high
     }
     frame_num = @proc.get_an_int(position_str, opts)
     return false unless frame_num
