@@ -3,10 +3,11 @@
 require 'rubygems'
 
 ROOT_DIR = File.dirname(__FILE__)
+Gemspec_filename='trepanning.gemspec'
 require File.join %W(#{ROOT_DIR} app options)
 
 def gemspec
-  @gemspec ||= eval(File.read('.gemspec'), binding, '.gemspec')
+  @gemspec ||= eval(File.read(Gemspec_filename), binding, Gemspec_filename)
 end
 
 require 'rake/gempackagetask'
@@ -14,7 +15,7 @@ desc "Build the gem"
 task :package=>:gem
 task :gem=>:gemspec do
   Dir.chdir(ROOT_DIR) do
-    sh "gem build .gemspec"
+    sh "gem build #{Gemspec_filename}"
     FileUtils.mkdir_p 'pkg'
     FileUtils.mv gemspec.file_name, 'pkg'
   end
