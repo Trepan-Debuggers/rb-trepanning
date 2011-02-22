@@ -4,7 +4,7 @@ class Trepan
     def valid_condition?(str)
       begin
         RubyVM::InstructionSequence.compile(str)
-      rescue SyntaxError
+      rescue SyntaxError => e
         return nil
       rescue
         nil
