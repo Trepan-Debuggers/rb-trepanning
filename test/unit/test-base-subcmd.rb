@@ -56,4 +56,13 @@ class TestBaseSubCommand < Test::Unit::TestCase
     assert_equal('unset', @exit_subcmd.show_onoff(nil))
     assert_equal('??', @exit_subcmd.show_onoff(5))
   end
+
+  def test_prefix_set
+    Trepanning::Subcommand.set_name_prefix('/tmp/show_subcmd/foo.rb', 
+                                           self.class)
+    assert_equal('foo', NAME, "should have set NAME")
+    assert_equal('show foo', CMD)
+    assert_equal(%w(show foo), PREFIX)
+  end
+
 end

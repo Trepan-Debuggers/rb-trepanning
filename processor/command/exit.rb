@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 class Trepan::Command::ExitCommand < Trepan::Command
 
@@ -43,6 +43,9 @@ See also the commands "quit" and "kill".
     exitrc = (args.size > 1) ? exitrc = Integer(args[1]) rescue 0 : 0
     # No graceful way to stop threads...
     # A little harsh, but for now let's go with this.
+    # FIXME: Is this the best/most general way?
+    @proc.finalize
+    @proc.dbgr.intf[-1].finalize
     exit! exitrc
   end
 end

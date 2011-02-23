@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 
 class Trepan::Command::AliasCommand < Trepan::Command
@@ -10,7 +10,7 @@ class Trepan::Command::AliasCommand < Trepan::Command
 
 Add an alias for a COMMAND
 
-See also 'unalias'.
+See also 'unalias' and 'show #{NAME}'.
     HELP
 
     CATEGORY      = 'support'

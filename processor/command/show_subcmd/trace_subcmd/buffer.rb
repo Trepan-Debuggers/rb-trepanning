@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
 class Trepan::SubSubcommand::ShowTraceBuffer < Trepan::ShowBoolSubSubcommand
+  Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
   unless defined?(HELP)
-    HELP         = 
-"show trace buffer [NUM]
+    HELP         = <<-EOH
+#{CMD} [NUM]
 
 Show the events recorded in the event buffer. If NUM is a negative
 number, events run starting from that many debugger stops back. If NUM
@@ -13,15 +14,13 @@ is a positive number, we print starting from that (adjusted) position
 in the event buffer with Since the event buffer may be a ring, its
 zero being the first position. (Since the event buffer may be a ring
 the earliest position recorded may move around.)
-"
+    EOH
     MIN_ABBREV   = 'b'.size
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(show trace buffer)
     SHORT_HELP   = "Show tracing buffer"
   end
 
   def parse_show_buffer_args(args)
-    marksize = @proc.eventbuf.marks.size
+    marksize = @proc.eventbuf.size
     opts = {
       :max_value    => @proc.eventbuf.size,
       :min_value    => - marksize,
@@ -30,12 +29,8 @@ the earliest position recorded may move around.)
     }
     num = @proc.get_an_int(args[0], opts)
     return nil, nil unless num
-    first = 
-      if num < 0 
-        @proc.eventbuf.marks[marksize+num] 
-      else
-        @proc.eventbuf.zero_pos + num
-      end
+    num = marksize + num  if num < 0 
+    first = @proc.eventbuf.zero_pos + num
     return first, nil
   end
 
@@ -63,22 +58,7 @@ if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
   require_relative '../../../subcmd'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, show_cmd = MockDebugger::setup('show')
-  testcmdMgr     = Trepan::Subcmd.new(show_cmd)
-  trace_cmd      = Trepan::SubSubcommand::ShowTrace.new(dbgr.core.processor, 
-                                                        show_cmd)
-
-  # FIXME: remove the 'join' below
-  cmd_name       = Trepan::SubSubcommand::ShowTraceBuffer::PREFIX.join('')
-  tb_cmd         = Trepan::SubSubcommand::ShowTraceBuffer.new(show_cmd.proc, 
-                                                              trace_cmd,
-                                                              cmd_name)
-  # require_relative '../../../../lib/trepanning'
-  # dbgr = Trepan.new
-  # dbgr.debugger
-  tb_cmd.run([])
-
+  require_relative '../trace'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::ShowTrace,
+                                   Trepan::SubSubcommand::ShowTraceBuffer)
 end
