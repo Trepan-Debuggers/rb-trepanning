@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 require_relative '../breakpoint'
 require_relative '../../app/breakpoint'
@@ -12,7 +12,7 @@ class Trepan::Command::BreakCommand < Trepan::Command
 
 Set a breakpoint. If a line number is given, a breakpoint is set in
 that line number of the current instruction sequence. If an offset is
-given, a number prefaced with an "O", set a breakpoint at that
+given, a number prefaced with an "@", set a breakpoint at that
 instruction offset.
 
 With method name, a breakpoint it set at the beginning of the method.
@@ -23,7 +23,7 @@ Dir.pwd.
 Examples:
    #{NAME}
    #{NAME} 10    # set breakpoint on line 10
-   #{NAME} o20   # set breakpoint VM Instruction Sequence offset 20
+   #{NAME} @20   # set breakpoint VM Instruction Sequence offset 20
    #{NAME} Kernel.pp # Set a breakpoint at the beginning of Kernel.pp
     HELP
 
@@ -83,7 +83,7 @@ if __FILE__ == $0
   require 'thread_frame'
   tf = RubyVM::ThreadFrame.current
   pc_offset = tf.pc_offset
-  cmd.run([cmd.name, "O#{pc_offset}"])
+  cmd.run([cmd.name, "@#{pc_offset}"])
   def foo
     5 
   end

@@ -149,7 +149,7 @@ class Trepan
       err_str = "argument '%s' does not seem to be an integer" % 
         position_str.dup
       use_offset = 
-        if position_str.size > 0 && position_str[0].downcase == 'o'
+        if position_str.size > 0 && position_str[0] == '@'
           err_str << 'or an offset.'
           position_str[0] = ''
           true
@@ -200,8 +200,8 @@ class Trepan
             if args.empty? 
               # FIXME: *Still* have a bug stopping at offset 0.
               # So stop at next offset after 0.
-              # 'o0' 
-              "o#{@frame.iseq.offsetlines.keys.sort[1]}"
+              # '@0' 
+              "@#{@frame.iseq.offsetlines.keys.sort[1]}"
             else
               args.shift
             end
@@ -364,7 +364,7 @@ class Trepan
       end
 
       if show_errmsg
-        unless (allow_offset && arg.size > 0 && arg[0].downcase == 'o')
+        unless (allow_offset && arg.size > 0 && arg[0] == '@')
           errmsg("#{arg} is not a line number, read-in filename or method " +
                  "we can get location information about")
         end
@@ -413,13 +413,13 @@ if __FILE__ == $0
     puts proc.object_iseq('proc.object_iseq').inspect
     
     puts proc.parse_position_one_arg('tmpdir.rb').inspect
-    puts proc.parse_position_one_arg('O8').inspect
+    puts proc.parse_position_one_arg('@8').inspect
     puts proc.parse_position_one_arg('8').inspect
 
     puts '=' * 40
     ['Array.map', 'Trepan::CmdProcessor.new',
      'foo', 'proc.errmsg'].each do |str|
-      puts "#{str} should be method: #{proc.method?(str).inspect}"
+      puts "#{str} should be method: #{!!proc.method?(str)}"
     end
     puts '=' * 40
 
@@ -427,10 +427,10 @@ if __FILE__ == $0
     puts "Trepan::CmdProcessor.allocate is: #{proc.get_method('Trepan::CmdProcessor.allocate')}"
 
     ['food', '.errmsg'].each do |str|
-      puts "#{str} should be false: #{proc.method?(str).inspect}"
+      puts "#{str} should be false: #{proc.method?(str).to_s}"
     end
     puts '-' * 20
-    p proc.breakpoint_position(%w(O0))
+    p proc.breakpoint_position(%w(@0))
     p proc.breakpoint_position(%w(1))
     p proc.breakpoint_position(%w(2 if a > b))
     p proc.get_int_list(%w(1+0 3-1 3))

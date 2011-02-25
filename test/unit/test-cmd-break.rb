@@ -25,7 +25,7 @@ class TestCommandBreak < Test::Unit::TestCase
     end
     pc_offset = tf.pc_offset
     [[@name],
-     [@name, "O#{pc_offset}"],
+     [@name, "@#{pc_offset}"],
      #[@name, 'FileUtils.cp']
     ].each_with_index do |args, i|
       @my_cmd.run(args)
