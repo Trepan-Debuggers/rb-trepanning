@@ -14,6 +14,7 @@ class Trepan
     def resolve_method(match_data, bind, parent_class = nil)
       m = match_data
       name = m.value.name
+      # DEBUG p  name
       errmsg = nil
       if m.value.type == :constant
         begin
@@ -28,10 +29,10 @@ class Trepan
           raise NameError, errmsg unless
             klass.kind_of?(Class) or klass.kind_of?(Module)
           m = m.value.chain[1]
-          if klass.instance_methods.member?(:bind)
+          if klass.instance_methods.member?(:binding)
             bind = klass.bind
-          elsif klass.private_instance_methods.member?(:bind)
-            bind = klass.send(:bind)
+          elsif klass.private_instance_methods.member?(:binding)
+            bind = klass.send(:binding)
           else
             bind = nil
           end
@@ -89,7 +90,11 @@ class Trepan
     # and NameError is returned if we can't find a method
     # but we can parse the string.
     def meth_for_string(str, start_binding)
-      match = MethodName.parse(str, :root => :class_module_chain)
+      begin 
+        match = MethodName.parse(str, :root => :class_module_chain)
+      rescue Citrus::ParseError
+        return nil
+      end
       resolve_method(match, start_binding)
     end
   end
