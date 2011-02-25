@@ -39,9 +39,18 @@ See also 'set autoeval'
   def run(args)
     if args.size == 1
       text  = @proc.current_source_text
-      text.gsub!(/^\s*(?:if|elsif|until|while)\s*/,'') if 
-        '?' == args[0][-1..-1] 
-      msg "eval: #{text}"
+      if  '?' == args[0][-1..-1] 
+        if text =~ /^\s*(?:if|elsif)\s*/
+          text.gsub!(/^\s*(?:if|elsif|until|while|return)\s*/,'') 
+          text.gsub!(/\s+then\s*$/, '')
+        elsif text =~ /^\s*(?:until|while)\s*/
+          text.gsub!(/^\s*(?:until|while)\s*/,'') 
+          text.gsub!(/\s+do\s*$/, '')
+        elsif text =~ /^\s*return\s*/
+          text.gsub!(/^\s*return\s*/,'')
+        end
+        msg "eval: #{text}"
+      end
     else
       text = @proc.cmd_argstr
     end
