@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 require_relative '../../app/run'
 class Trepan::Command::RestartCommand < Trepan::Command
@@ -36,8 +36,8 @@ new copy of the debugger is used.
       else
         msg 'Restarting...'
         @proc.run_cmd(%w(save))
-        # FIXME: Run atexit finalize routines?
         Dir.chdir(RubyVM::OS_STARTUP_DIR)
+        @proc.finalize
         exec(*argv)
       end
     else
