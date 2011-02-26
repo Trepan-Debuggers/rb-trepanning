@@ -5,7 +5,7 @@
 
 require_relative '../app/condition'
 require_relative '../app/file'
-require_relative '../app/method_name'
+require_relative '../app/cmd_parse'
 require_relative '../app/thread'
 
 require_relative 'location' # for resolve_file_with_dir
