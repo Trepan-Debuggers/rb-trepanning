@@ -2,7 +2,7 @@
 require 'rubygems'
 require 'citrus'
 grammar_file = File.expand_path(File.join(File.dirname(__FILE__), 
-                                          'method_name.citrus'))
+                                          'cmd_parse.citrus'))
 Citrus.require grammar_file
 
 class Trepan
