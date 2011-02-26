@@ -147,5 +147,16 @@ if __FILE__ == $0
   def x.five; 5; end
   p  meth_for_string('x.five', binding)  
   p x.five
+
+  # Location stuff
+  ['fn', 'fn 5', 'fn @5', '@5', '5'].each do |location|
+    begin
+      match = MethodName.parse(location, :root => :location)
+      p [location, 'succeeded']
+    rescue Citrus::ParseError
+      p [location, 'failed']
+    end
+  end
+
 end
 

@@ -15,6 +15,10 @@ grammar MethodName
   rule id_symbol
     letter | '_' | [0-9]
   end
+
+  # Examples: 
+  # var1
+  # my_var? 
   rule variable_identifier
     ((downcase_letter | '_') id_symbol* suffix_letter?)
     { 
@@ -24,14 +28,21 @@ grammar MethodName
       end   
     }
   end 
+
+  # Examples: 
+  # MY_CONSTANT
+  # MyConstant_01
   rule constant_identifier
-    (upcase_letter id_symbol* suffix_letter?)
+    (upcase_letter id_symbol*)
     { 
       def value
          SymbolEntry.new(:constant, self.to_s)
       end   
     }
   end 
+
+  # Examples:
+  # $global_variable
   # We won't try for funny global names like $$, $? $:, $', etc
   rule global_identifier
     ('$' (constant_identifier | variable_identifier))
@@ -41,6 +52,10 @@ grammar MethodName
       end   
     }     
   end 
+
+  # Examples: 
+  #   Foo
+  #   foo
   rule local_identifier
     (constant_identifier | variable_identifier)
     {
@@ -49,6 +64,8 @@ grammar MethodName
       end   
     }     
   end 
+
+  # Example: @foo
   rule instance_identifier
     ('@' local_identifier )
     {
@@ -57,6 +74,9 @@ grammar MethodName
       end   
     }     
   end 
+
+
+  # Example: @@foo
   rule classvar_identifier
     ('@@' local_identifier )
     {
@@ -87,4 +107,37 @@ grammar MethodName
       end   
     }
   end
+
+  ##############################################################
+  # Location-specific things. This is used in conjunction with
+  # method-like things above.
+  rule sp
+    [ \t]+
+  end 
+
+  rule file_pos_sep
+    sp | ':'
+  end 
+
+  rule integer
+    [0-9]+
+  end 
+
+  rule vm_offset
+    '@' integer
+  end
+
+  rule line_number
+    integer
+  end  
+
+  rule position
+    vm_offset | line_number
+  end  
+
+  rule location
+    class_module_chain? file_pos_sep position 
+   | position | class_module_chain
+  end
+
 end
