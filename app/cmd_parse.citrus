@@ -119,25 +119,49 @@ grammar MethodName
     sp | ':'
   end 
 
+
   rule integer
-    [0-9]+
+    [0-9]+ { to_i }
   end 
 
-  rule vm_offset
-    '@' integer
+  rule vm_offset 
+    ('@' integer) 
+  {
+   Position = Struct.new(:type, :value) unless defined?(Position)
+   Position.new(:offset, integer.value)
+  }
   end
 
-  rule line_number
-    integer
+  rule line_number 
+    ([0-9]+)
+  {
+    Position = Struct.new(:type, :value) unless defined?(Position)
+    Position.new(:line, to_i)
+  }
   end  
 
+  # Examples:
+  #  @43
+  #  5
   rule position
-    vm_offset | line_number
+    (vm_offset | line_number)
   end  
 
   rule location
-    class_module_chain? file_pos_sep position 
-   | position | class_module_chain
+   (class_module_chain? file_pos_sep position
+     | position | meth2:(class_module_chain))
+   {
+    Location = Struct.new(:method_name, :position) unless defined?(Location)
+    pos_val = position ? position.value : nil
+    meth_val = 
+        if class_module_chain
+          class_module_chain.value
+        else        
+          # p ['++++2', meth2, meth2.class]
+          meth2 ? meth2.value : nil
+        end
+    Location.new(meth_val, pos_val)
+   }
   end
 
 end

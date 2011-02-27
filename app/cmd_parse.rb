@@ -148,11 +148,17 @@ if __FILE__ == $0
   p  meth_for_string('x.five', binding)  
   p x.five
 
+  match = MethodName.parse('5', :root => :line_number)
+  p match.value
+
+  match = MethodName.parse('@5', :root => :vm_offset)
+  p match.value
+
   # Location stuff
   ['fn', 'fn 5', 'fn @5', '@5', '5'].each do |location|
     begin
       match = MethodName.parse(location, :root => :location)
-      p [location, 'succeeded']
+      p [location, 'succeeded', match.value]
     rescue Citrus::ParseError
       p [location, 'failed']
     end
