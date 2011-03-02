@@ -8,9 +8,21 @@ class Trepan
     attr_reader :set
 
     def initialize
+      clear
+    end
+
+    def clear
       @list = []
       @next_id = 1
       @set = Set.new
+    end
+
+    # Remove all breakpoints that we have recorded
+    def finalize
+      @list.each do |bp|
+        bp.remove!
+      end
+      clear
     end
 
     def <<(brkpt)

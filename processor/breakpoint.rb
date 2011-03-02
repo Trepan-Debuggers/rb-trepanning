@@ -17,6 +17,10 @@ class Trepan
       @brkpt  = nil
     end
 
+    def breakpoint_finalize
+      @brkpts.finalize
+    end
+
     def breakpoint?
       @brkpt = @brkpts.find(@frame.iseq, @frame.pc_offset, @frame.binding)
       @brkpts.delete_by_brkpt(@brkpt) if @brkpt && @brkpt.temp?

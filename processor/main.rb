@@ -143,6 +143,10 @@ class Trepan
       
     end
 
+    def finalize
+      breakpoint_finalize
+    end
+
     # Check that we meed the criteria that cmd specifies it needs
     def ok_for_running(cmd, name, nargs)
       # TODO check execution_set against execution status.
