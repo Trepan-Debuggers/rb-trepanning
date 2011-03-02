@@ -33,7 +33,7 @@ class Trepan
       # str = "$d#{idx}"
       # Rubinius::Globals[str.to_sym] = obj
       # msg "#{str} = #{obj.inspect}"
-      msg "#{obj}"
+      msg "#{obj.inspect}"
       obj
     end
 

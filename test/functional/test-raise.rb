@@ -34,7 +34,7 @@ class TestRaise < Test::Unit::TestCase
            '-- ', 'x = 1',
            '-- ', 'y = 2',
            '-- ', 'd.stop',
-           'hi']
+           '"hi"']
     compare_output(out, d, cmds)
 
     # Try with explicit Exception name

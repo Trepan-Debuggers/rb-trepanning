@@ -24,7 +24,7 @@ is given we will also strip off any leading 'if', 'while', 'elseif' or
 #{NAME} 1+2  # 3
 #{NAME} @v
 #{NAME}      # Run current source-code line
-#{NAME}?     # but strips off leading 'if', 'while', 'elsif' or 'until'
+#{NAME}?     # but strips off leading 'if', 'while', ..
              # from command 
 
 See also 'set autoeval'
@@ -40,8 +40,8 @@ See also 'set autoeval'
     if args.size == 1
       text  = @proc.current_source_text
       if  '?' == args[0][-1..-1] 
-        if text =~ /^\s*(?:if|elsif)\s*/
-          text.gsub!(/^\s*(?:if|elsif|until|while|return)\s*/,'') 
+        if text =~ /^\s*(?:if|elsif|unless)\s*/
+          text.gsub!(/^\s*(?:if|elsif|unless)\s*/,'') 
           text.gsub!(/\s+then\s*$/, '')
         elsif text =~ /^\s*(?:until|while)\s*/
           text.gsub!(/^\s*(?:until|while)\s*/,'') 

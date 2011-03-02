@@ -93,7 +93,7 @@ class TestRaise < Test::Unit::TestCase
            "\tbrkpt, line",
            "-- ",
            "d.stop # ({:remove => true})",
-           "abc"]
+           '"abc"']
     compare_output(out, d, cmds)
   end
   
