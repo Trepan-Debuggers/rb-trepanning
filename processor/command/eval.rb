@@ -17,9 +17,9 @@ may be used again easily. The name of the global variable is printed
 next to the inspect output of the value.
 
 If no string is given we run the string from the current source code
-about to be run. If the command ends ? (via an alias) and no string
-is given we will also strip off any leading 'if', 'while', 'elseif', 'return',
-'case' or 'until' in the string. 
+about to be run. If the command ends ? (via an alias) and no string is
+given we will also strip off any leading 'if', 'while', 'elseif',
+'return', 'case', 'unless', or 'until' in the string.
 
 #{NAME} 1+2  # 3
 #{NAME} @v
@@ -27,7 +27,8 @@ is given we will also strip off any leading 'if', 'while', 'elseif', 'return',
 #{NAME}?     # but strips off leading 'if', 'while', ..
              # from command 
 
-See also 'set autoeval'
+See also 'set autoeval'. The command helps one predict future execution.
+See 'set buffer trace' for showing what may have already been run.
       HELP
 
   ALIASES       = %w(eval? ev? ev)
@@ -56,7 +57,7 @@ See also 'set autoeval'
     else
       text = @proc.cmd_argstr
     end
-    @proc.eval_code(text, @proc.settings[:maxstring])
+    @proc.eval_code(text, settings[:maxstring])
   end
 end
 
