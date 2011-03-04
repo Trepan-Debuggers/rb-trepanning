@@ -101,7 +101,7 @@ task :test do
   raise "Test failures" unless exceptions.empty?
 end
 
-desc "Run each library Ruby file in standalone mode."
+desc "Run each Ruby app file in standalone mode."
 task :'check:app' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} app)))
 end
@@ -109,6 +109,14 @@ end
 desc "Run each command in standalone mode."
 task :'check:commands' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} processor command)))
+end
+
+desc "Run each of the sub-sub commands in standalone mode."
+task :'check:sub:commands' do
+  p "#{ROOT_DIR}/processor/command/*_subcmd/*_subcmd/*.rb"
+  Dir.glob("#{ROOT_DIR}/processor/command/*_subcmd").each do |sub_dir|
+    run_standalone_ruby_file(sub_dir)
+  end
 end
 
 desc "Run each of the sub-sub commands in standalone mode."
@@ -187,10 +195,6 @@ task :doc => :rdoc
 
 task :clobber_package do
   FileUtils.rm_rf File.join(ROOT_DIR, 'pkg')
-end
-
-task :rm_patch_residue do
-  FileUtils.rm_rf FileList['**/*.{rej,orig}'].to_a
 end
 
 task :clobber_rdoc do
