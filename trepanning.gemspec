@@ -39,7 +39,6 @@ EOF
   spec.add_dependency('rb-threadframe', '~> 0.38.dev')
   spec.add_dependency('rb-trace', '>= 0.4')
   spec.add_dependency('linecache-tf', '~> 1.0.dev')
-  spec.add_dependency('citrus')
   spec.add_dependency('columnize')
   spec.add_dependency('diff-lcs') # For testing only
   spec.author       = 'R. Bernstein'

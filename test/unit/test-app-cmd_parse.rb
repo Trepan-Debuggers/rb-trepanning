@@ -4,7 +4,7 @@ require_relative '../../app/cmd_parse'
 
 class TestCmdParse < Test::Unit::TestCase
 
-  def test_parse_location
+  def no__test_parse_location
     ['fn', 'fn 5', 'fn @5', '@5', '5', 'fn:5', 'fn:@5'].each do |location|
       begin
         match = MethodName.parse(location, :root => :location)
@@ -38,47 +38,33 @@ class TestCmdParse < Test::Unit::TestCase
 
   def test_parse_identifier
     %w(a a1 $global __FILE__ Constant).each do |name|
-      begin
-        match = MethodName.parse(name, :root => :identifier)
-        assert_equal name, match.to_s, "should be able to parse of #{name}"
-      rescue Citrus::ParseError
-        assert false, "should be able to parse of #{name}"
-      end
+      cp = CmdParse.new(name)
+      assert cp._identifier, "should be able to parse of #{name}"
     end
-    %w(0 1e10 a.b).each do |name|
-      begin
-        match = MethodName.parse(name, :root => :identifier)
-        assert false, "should not have been able to parse of #{name}"
-      rescue Citrus::ParseError
-        assert true, "should not have been able to parse of #{name}"
-      end
+    %w(0 1e10 @10).each do |name|
+      cp = CmdParse.new(name)
+      assert_equal(true, !cp._identifier, 
+                   "should not have been able to parse of #{name}")
     end
   end
 
   def test_parse_method
     [['Object', 0], ['A::B', 1], ['A::B::C', 2],
      ['A::B::C::D', 3], ['A::B.c', 2], ['A.b.c.d', 3]].each do |name, count|
-      begin
-        match = MethodName.parse(name, :root => :class_module_chain)
-        assert_equal match.to_s, name, "should be able to parse of #{name}"
-        m = match.value.chain[1]
-        count.times do |i|
-          assert m, "Chain item #{i} of #{name} should not be nil"
-          m = m.value.chain[1]
-        end
-        assert_nil m, "#{count} chain item in #{match} should be nil"
-      rescue Citrus::ParseError
-        assert false, "should be able to parse of #{name}"
+      cp = CmdParse.new(name)
+      assert cp._class_module_chain, "should be able to parse of #{name}"
+      m = cp.result
+      count.times do |i|
+        assert m, "Chain item #{i} of #{name} should not be nil"
+        m = m.chain[1]
       end
+      assert_nil m.chain, "#{count} chain item in #{cp.result} should be nil"
     end
     ['A(5)'].each do |name|
-      begin
-        match = MethodName.parse(name, :root => :class_module_chain)
-        p match
-        assert false, "should not have been able to parse of #{name}"
-      rescue Citrus::ParseError
-        assert true, "should not have been able to parse of #{name}"
-      end
+      cp = CmdParse.new(name)
+      cp._class_module_chain
+      assert_not_equal(name, cp.result.name,
+                   "should not have been able to parse of #{name}")
     end
   end
 
@@ -99,14 +85,10 @@ class TestCmdParse < Test::Unit::TestCase
     %w(Array.map).each do |str|
       meth = meth_for_string(str, binding)
       assert meth.kind_of?(UnboundMethod), "#{meth.class}"
-  end
+    end
     %w(O5).each do |str|
-      begin 
-        meth = meth_for_string(str, binding)
-        assert false, "should have found a method for #{str}"
-      rescue NameError
-        assert_nil meth, "Should not have found a method for #{str}"
-      end
+      meth = meth_for_string(str, binding)
+      assert_equal nil, meth, "should have found a method for #{str}"
     end
   end
 end

@@ -162,19 +162,30 @@ Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
   rdoc.title    = "Trepanning #{Trepan::VERSION} Documentation"
 
-  rdoc.rdoc_files.include('lib/*.rb', 'app/*.rb', 'bin/trepan')
+  rdoc.rdoc_files.include(%w(lib/*.rb 
+                          app/*.rb intf/*.rb io/*.rb
+                          bin/trepan
+                         ))
 end
+
 desc "Same as rdoc"
 task :doc => :rdoc
 
-desc "Remove built files"
-task :clean => [:clobber_package, :clobber_rdoc]
-
 task :clobber_package do
   FileUtils.rm_rf File.join(ROOT_DIR, 'pkg')
+end
+
+task :rm_patch_residue do
+  FileUtils.rm_rf FileList['**/*.{rej,orig}'].to_a
 end
 
 task :clobber_rdoc do
   FileUtils.rm_rf File.join(ROOT_DIR, 'doc')
 end
 
+task :rm_patch_residue do
+  FileUtils.rm_rf FileList['**/*.{rej,orig}'].to_a
+end
+
+desc "Remove built files"
+task :clean => [:clobber_package, :clobber_rdoc, :rm_patch_residue]

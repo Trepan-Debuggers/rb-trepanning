@@ -255,13 +255,7 @@ class Trepan
     # FIXME: this is a ? method but we return 
     # the method value. 
     def method?(method_string)
-      begin
-        get_method(method_string)
-      rescue Citrus::ParseError
-        return false
-      rescue NameError
-        return false
-      end
+      get_method(method_string)
     end
 
     # parse_position(self, arg)->(fn, container, lineno)

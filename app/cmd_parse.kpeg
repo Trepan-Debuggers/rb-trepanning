@@ -1,0 +1,183 @@
+# -*- Ruby -*-
+%% {
+      SymbolEntry = Struct.new(:type, :name, :chain)
+
+   }
+
+      upcase_letter = /[A-Z]/
+    downcase_letter = /[a-z]/
+      suffix_letter = /[=!?]/ 
+             letter = upcase_letter
+                    | downcase_letter
+          id_symbol = letter | "_" | [0-9]
+
+
+# An variable or a method identifier
+# Examples: 
+#   var1
+#   my_var? 
+# But not: Variable or @var
+vm_identifier = < (downcase_letter | "_") id_symbol* suffix_letter? >
+    { 
+      SymbolEntry.new(:variable, text)
+    }
+
+# Examples: 
+#   var1
+# But not: my_var?, my_var! 
+variable_identifier = < (downcase_letter | "_") id_symbol* >
+    { 
+      SymbolEntry.new(:variable, text)
+    }
+
+# Examples: 
+#   MY_CONSTANT
+#   MyConstant_01
+# But not:
+#   MyConstant_01?
+constant_identifier = < upcase_letter id_symbol* >
+    { 
+      SymbolEntry.new(:constant, text)
+    }
+
+# Examples:
+#   $global_variable
+# We won't try for funny global names like $$, $? $:, $', etc
+global_identifier = < "$" (constant_identifier | variable_identifier) >
+    {
+      SymbolEntry.new(:global, text)
+    }
+
+# Examples: 
+#   Foo
+#   foo
+# But not
+#   foo!, @foo, Class.foo
+   local_internal_identifier = < constant_identifier | variable_identifier >
+    {
+      SymbolEntry.new(:instance, text)
+    }     
+
+# Examples: 
+#   Foo, foo, foo!
+#   foo
+#   @foo, Class.foo
+   local_identifier = < constant_identifier | vm_identifier >
+    {
+      SymbolEntry.new(:instance, text)
+    }     
+
+# Example: @foo
+instance_identifier = < '@' local_identifier >
+    {
+      SymbolEntry.new(:instance, text)
+    }     
+
+
+# Example: @@foo
+classvar_identifier = ('@@' local_identifier )
+    {
+     SymbolEntry.new(:classvar, text)
+    }     
+
+leading_identifier = global_identifier 
+       | instance_identifier 
+       | classvar_identifier 
+       | local_internal_identifier 
+
+identifier = global_identifier 
+       | instance_identifier 
+       | classvar_identifier 
+       | local_identifier 
+
+id_separator = < '::'|'.' > { text }
+
+# Like of class_module_chain after the first name. So we don't
+# allow sigils in the initial id. That is we don't allow:
+#   Class.@name1.@@name2.$name3
+# But we do allow final sigils:
+#   class.name!, class.name=
+internal_class_module_chain = 
+    local_internal_identifier:parent id_separator:sep  internal_class_module_chain:child
+      {
+         let = parent.name[0..0]
+         type = (let.capitalize == let) ? :constant : :variable
+         SymbolEntry.new(type, string, [parent, child, sep])
+      }
+    | local_identifier
+
+
+# I think strict Ruby rules are that once one goes from :: to .
+# There is no going back. That is, A.B::C is invalid. 
+# 
+# Also I think method names can't be constants. But such 
+# subtleties we'll handle when we process the final structure.
+# Examples:
+#  Object, A::B, A.b @@foo.bar, $foo.bar.baz? 
+
+class_module_chain = 
+    leading_identifier:parent id_separator:sep  internal_class_module_chain:child
+      {
+         let = parent.name[0..0]
+         type = (let.capitalize == let) ? :constant : :variable
+         SymbolEntry.new(type, string, [parent, child, sep])
+      }
+    | identifier
+
+#   ##############################################################
+#   # Location-specific things. This is used in conjunction with
+#   # method-like things above.
+#   rule sp
+#     [ \t]+
+#   end 
+
+#   rule file_pos_sep
+#     sp | ':'
+#   end 
+
+
+#   rule integer
+#     [0-9]+ { to_i }
+#   end 
+
+#   rule vm_offset 
+#     ('@' integer) 
+#   {
+#    Position = Struct.new(:type, :value) unless defined?(Position)
+#    Position.new(:offset, integer.value)
+#   }
+#   end
+
+#   rule line_number 
+#     ([0-9]+)
+#   {
+#     Position = Struct.new(:type, :value) unless defined?(Position)
+#     Position.new(:line, to_i)
+#   }
+#   end  
+
+#   # Examples:
+#   #  @43
+#   #  5
+#   rule position
+#     (vm_offset | line_number)
+#   end  
+
+#   rule location
+#    (class_module_chain? file_pos_sep position
+#      | position | meth2:(class_module_chain))
+#    {
+#     Location = Struct.new(:method_name, :position) unless defined?(Location)
+#     pos_val = position ? position.value : nil
+#     meth_val = 
+#         if class_module_chain
+#           class_module_chain.value
+#         else        
+#           # p ['++++2', meth2, meth2.class]
+#           meth2 ? meth2.value : nil
+#         end
+#     Location.new(meth_val, pos_val)
+#    }
+#   end
+
+# end
