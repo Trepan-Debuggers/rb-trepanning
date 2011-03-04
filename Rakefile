@@ -136,6 +136,20 @@ task :'check:functional' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test functional)))
 end
 
+task :'check:cmd_parse' do
+  sh "kpeg --test --debug #{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))}"
+end
+
+task :'cmd_parse' do
+  require 'tmpdir'
+  temp_file = 
+    File.join(Dir.tmpdir, 
+              Dir::Tmpname.make_tmpname(['cmd_parser_', '.rb'], nil))
+
+  sh("kpeg --name CmdParse --verbose --stand-alone --output #{temp_file} " + 
+     "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))}")
+end
+
 task :'check:integration' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test integration)))
 end

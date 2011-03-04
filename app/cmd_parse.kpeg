@@ -51,7 +51,7 @@ global_identifier = < "$" (constant_identifier | variable_identifier) >
 # Examples: 
 #   Foo
 #   foo
-# But not
+# But not:
 #   foo!, @foo, Class.foo
    local_internal_identifier = < constant_identifier | variable_identifier >
     {
@@ -61,6 +61,7 @@ global_identifier = < "$" (constant_identifier | variable_identifier) >
 # Examples: 
 #   Foo, foo, foo!
 #   foo
+# But not:
 #   @foo, Class.foo
    local_identifier = < constant_identifier | vm_identifier >
     {
@@ -92,9 +93,9 @@ identifier = global_identifier
 
 id_separator = < '::'|'.' > { text }
 
-# Like of class_module_chain after the first name. So we don't
+# Like of class_module_chain *after* the first name. So we don't
 # allow sigils in the initial id. That is we don't allow:
-#   Class.@name1.@@name2.$name3
+#   Class.@name1.@@name2.$name3  
 # But we do allow final sigils:
 #   class.name!, class.name=
 internal_class_module_chain = 
@@ -116,8 +117,9 @@ internal_class_module_chain =
 #  Object, A::B, A.b @@foo.bar, $foo.bar.baz? 
 
 class_module_chain = 
-    leading_identifier:parent id_separator:sep  internal_class_module_chain:child
-      {
+    leading_identifier:parent id_separator:sep  
+                              internal_class_module_chain:child
+       {
          let = parent.name[0..0]
          type = (let.capitalize == let) ? :constant : :variable
          SymbolEntry.new(type, string, [parent, child, sep])
