@@ -80,7 +80,7 @@ class Trepan::SubcommandMgr < Trepan::Command
       begin
         cmd = subcmd_class.send(:new, self, parent)
       rescue
-        puts "Subcmd #{name} is bad"
+        puts "Subcmd #{name} in #{parent.name.inspect} is bad"
       end
       @subcmds.add(cmd)
     end

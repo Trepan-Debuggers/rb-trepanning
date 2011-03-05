@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 require_relative '../trace'
 class Trepan::SubSubcommand::SetTraceVar < Trepan::SubSubcommand
   unless defined?(HELP)
-    HELP         = 
-"set trace var GLOBAL_VARIABLE
+    HELP         = <<-EOH
+#{CMD} var GLOBAL_VARIABLE
 
 The debugger calls 'trace_var' to trace changes to the value of
 GLOBAL_VARIABLE.  Note in contrast to other events, stopping for
 variable tracing occurs *after* the event, not before.
 
-See also 'set events'."
+See also 'set events'.
+    EOH
 
     MIN_ABBREV   = 'v'.size  
     NAME         = File.basename(__FILE__, '.rb')
