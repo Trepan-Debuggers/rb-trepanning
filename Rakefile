@@ -140,22 +140,26 @@ task :'check:unit' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test unit)))
 end
 
+desc "Run functional tests in standalone mode."
 task :'check:functional' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test functional)))
 end
 
+desc "Run command parser grammar."
 task :'check:cmd_parse' do
   sh "kpeg --test --debug #{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))}"
 end
 
+desc "Generate command parser."
 task :'cmd_parse' do
   require 'tmpdir'
   temp_file = 
     File.join(Dir.tmpdir, 
               Dir::Tmpname.make_tmpname(['cmd_parser_', '.rb'], nil))
 
-  sh("kpeg --name CmdParse --verbose --stand-alone --output #{temp_file} " + 
-     "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))}")
+  sh("kpeg --name CmdParse --verbose --stand-alone  " + 
+     "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))} " + 
+     "--output #{temp_file}")
 end
 
 task :'check:integration' do

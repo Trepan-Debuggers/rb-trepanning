@@ -1,8 +1,17 @@
 # -*- Ruby -*-
+
 %% {
-      SymbolEntry = Struct.new(:type, :name, :chain)
+##################################################### 
+  # Structure to hold composite method names
+  SymbolEntry = Struct.new(:type, :name, :chain)
+
+
+  # Structure to hold position information
+  Position = Struct.new(:container_type, :container,
+                       :position_type,  :position)
 
    }
+#####################################################
 
       upcase_letter = /[A-Z]/
     downcase_letter = /[a-z]/
@@ -126,60 +135,62 @@ class_module_chain =
       }
     | identifier
 
-#   ##############################################################
-#   # Location-specific things. This is used in conjunction with
-#   # method-like things above.
-#   rule sp
-#     [ \t]+
-#   end 
+##############################################################
+# Location-specific things. This is used in conjunction with
+# method-like things above.
+          sp    = /[ \t]/
+   not_space    = (("\\" sp) | /[^ \t]/)+
+not_space_colon = (("\\" sp) | /[^ \t:]/)+
+    filename    = < not_space > { text }
+file_no_colon   = < not_space_colon > { text }
+file_pos_sep    = sp+ | ':'
+     integer    = </[0-9]+/> { text.to_i }
+ line_number    = integer
 
-#   rule file_pos_sep
-#     sp | ':'
-#   end 
+vm_offset = '@' integer:int
+  {
+    Position.new(nil, nil, :offset, int)
+  }
 
+# Examples:
+#  @43
+#  5
+position = 
+  vm_offset 
+  | line_number:l { 
+  Position.new(nil, nil, :line, l) 
+}
 
-#   rule integer
-#     [0-9]+ { to_i }
-#   end 
+file_colon_line = file_no_colon:file ':' position:pos { 
+  Position.new(:file, file, pos.position_type, pos.position) 
+}
 
-#   rule vm_offset 
-#     ('@' integer) 
-#   {
-#    Position = Struct.new(:type, :value) unless defined?(Position)
-#    Position.new(:offset, integer.value)
-#   }
-#   end
+# Examples:
+#   Myclass.fn @5  # bytecode offset 5 of fn
+#   Myclass.fn:@5  # same as above
+#   Myclass.fn 5   # line number 5 of fn
+# Note: Myclass.fn could be either a filename or a method name
 
-#   rule line_number 
-#     ([0-9]+)
-#   {
-#     Position = Struct.new(:type, :value) unless defined?(Position)
-#     Position.new(:line, to_i)
-#   }
-#   end  
+# The below ordering is important. 
+# 1. Numbers can't be method names they are first. If there's a 
+#    file with that name, later we'll allow quoting to indicate filename.
+# 2. filename:position can't also be a method so that's next
+# 3. It is possible a filename can be a method name, but we
+#    test using File.exist? so we want to put this first.
+#    Later "quoting" will skip the File.exist?
+# 4. Class module *with* a position is next and has to be before
+#    without a position, else we would stop early before handling
+#    the position.
 
-#   # Examples:
-#   #  @43
-#   #  5
-#   rule position
-#     (vm_offset | line_number)
-#   end  
-
-#   rule location
-#    (class_module_chain? file_pos_sep position
-#      | position | meth2:(class_module_chain))
-#    {
-#     Location = Struct.new(:method_name, :position) unless defined?(Location)
-#     pos_val = position ? position.value : nil
-#     meth_val = 
-#         if class_module_chain
-#           class_module_chain.value
-#         else        
-#           # p ['++++2', meth2, meth2.class]
-#           meth2 ? meth2.value : nil
-#         end
-#     Location.new(meth_val, pos_val)
-#    }
-#   end
-
-# end
+location = 
+   position 
+ | file_colon_line
+ | <filename>:file &{ File.exist?(file) } {
+      Position.new(:file, file, pos.position_type, pos.position)
+    }
+ | class_module_chain?:fn file_pos_sep position:pos {
+      Position.new(:fn, fn, pos.position_type, pos.position)
+    }
+ | class_module_chain?:fn  {
+      Position.new(:fn, fn, nil, nil)
+    }

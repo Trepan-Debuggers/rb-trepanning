@@ -292,7 +292,14 @@ class CmdParse
     #
 
 
-      SymbolEntry = Struct.new(:type, :name, :chain)
+##################################################### 
+  # Structure to hold composite method names
+  SymbolEntry = Struct.new(:type, :name, :chain)
+
+
+  # Structure to hold position information
+  Position = Struct.new(:container_type, :container,
+                       :position_type,  :position)
 
    
 
@@ -901,14 +908,487 @@ class CmdParse
 
     return _tmp
   end
+
+  # sp = /[ \t]/
+  def _sp
+    _tmp = scan(/\A(?-mix:[ \t])/)
+    return _tmp
+  end
+
+  # not_space = ("\\" sp | /[^ \t]/)+
+  def _not_space
+    _save = self.pos
+
+    _save1 = self.pos
+    while true # choice
+
+    _save2 = self.pos
+    while true # sequence
+    _tmp = match_string("\\")
+    unless _tmp
+      self.pos = _save2
+      break
+    end
+    _tmp = apply('sp', :_sp)
+    unless _tmp
+      self.pos = _save2
+    end
+    break
+    end # end sequence
+
+    break if _tmp
+    self.pos = _save1
+    _tmp = scan(/\A(?-mix:[^ \t])/)
+    break if _tmp
+    self.pos = _save1
+    break
+    end # end choice
+
+    if _tmp
+      while true
+    
+    _save3 = self.pos
+    while true # choice
+
+    _save4 = self.pos
+    while true # sequence
+    _tmp = match_string("\\")
+    unless _tmp
+      self.pos = _save4
+      break
+    end
+    _tmp = apply('sp', :_sp)
+    unless _tmp
+      self.pos = _save4
+    end
+    break
+    end # end sequence
+
+    break if _tmp
+    self.pos = _save3
+    _tmp = scan(/\A(?-mix:[^ \t])/)
+    break if _tmp
+    self.pos = _save3
+    break
+    end # end choice
+
+        break unless _tmp
+      end
+      _tmp = true
+    else
+      self.pos = _save
+    end
+    return _tmp
+  end
+
+  # not_space_colon = ("\\" sp | /[^ \t:]/)+
+  def _not_space_colon
+    _save = self.pos
+
+    _save1 = self.pos
+    while true # choice
+
+    _save2 = self.pos
+    while true # sequence
+    _tmp = match_string("\\")
+    unless _tmp
+      self.pos = _save2
+      break
+    end
+    _tmp = apply('sp', :_sp)
+    unless _tmp
+      self.pos = _save2
+    end
+    break
+    end # end sequence
+
+    break if _tmp
+    self.pos = _save1
+    _tmp = scan(/\A(?-mix:[^ \t:])/)
+    break if _tmp
+    self.pos = _save1
+    break
+    end # end choice
+
+    if _tmp
+      while true
+    
+    _save3 = self.pos
+    while true # choice
+
+    _save4 = self.pos
+    while true # sequence
+    _tmp = match_string("\\")
+    unless _tmp
+      self.pos = _save4
+      break
+    end
+    _tmp = apply('sp', :_sp)
+    unless _tmp
+      self.pos = _save4
+    end
+    break
+    end # end sequence
+
+    break if _tmp
+    self.pos = _save3
+    _tmp = scan(/\A(?-mix:[^ \t:])/)
+    break if _tmp
+    self.pos = _save3
+    break
+    end # end choice
+
+        break unless _tmp
+      end
+      _tmp = true
+    else
+      self.pos = _save
+    end
+    return _tmp
+  end
+
+  # filename = < not_space > { text }
+  def _filename
+
+    _save = self.pos
+    while true # sequence
+    _text_start = self.pos
+    _tmp = apply('not_space', :_not_space)
+    if _tmp
+      set_text(_text_start)
+    end
+    unless _tmp
+      self.pos = _save
+      break
+    end
+    @result = begin;  text ; end
+    _tmp = true
+    unless _tmp
+      self.pos = _save
+    end
+    break
+    end # end sequence
+
+    return _tmp
+  end
+
+  # file_no_colon = < not_space_colon > { text }
+  def _file_no_colon
+
+    _save = self.pos
+    while true # sequence
+    _text_start = self.pos
+    _tmp = apply('not_space_colon', :_not_space_colon)
+    if _tmp
+      set_text(_text_start)
+    end
+    unless _tmp
+      self.pos = _save
+      break
+    end
+    @result = begin;  text ; end
+    _tmp = true
+    unless _tmp
+      self.pos = _save
+    end
+    break
+    end # end sequence
+
+    return _tmp
+  end
+
+  # file_pos_sep = (sp+ | ":")
+  def _file_pos_sep
+
+    _save = self.pos
+    while true # choice
+    _save1 = self.pos
+    _tmp = apply('sp', :_sp)
+    if _tmp
+      while true
+        _tmp = apply('sp', :_sp)
+        break unless _tmp
+      end
+      _tmp = true
+    else
+      self.pos = _save1
+    end
+    break if _tmp
+    self.pos = _save
+    _tmp = match_string(":")
+    break if _tmp
+    self.pos = _save
+    break
+    end # end choice
+
+    return _tmp
+  end
+
+  # integer = < /[0-9]+/ > { text.to_i }
+  def _integer
+
+    _save = self.pos
+    while true # sequence
+    _text_start = self.pos
+    _tmp = scan(/\A(?-mix:[0-9]+)/)
+    if _tmp
+      set_text(_text_start)
+    end
+    unless _tmp
+      self.pos = _save
+      break
+    end
+    @result = begin;  text.to_i ; end
+    _tmp = true
+    unless _tmp
+      self.pos = _save
+    end
+    break
+    end # end sequence
+
+    return _tmp
+  end
+
+  # line_number = integer
+  def _line_number
+    _tmp = apply('integer', :_integer)
+    return _tmp
+  end
+
+  # vm_offset = "@" integer:int {     Position.new(nil, nil, :offset, int)   }
+  def _vm_offset
+
+    _save = self.pos
+    while true # sequence
+    _tmp = match_string("@")
+    unless _tmp
+      self.pos = _save
+      break
+    end
+    _tmp = apply('integer', :_integer)
+    int = @result
+    unless _tmp
+      self.pos = _save
+      break
+    end
+    @result = begin; 
+    Position.new(nil, nil, :offset, int)
+  ; end
+    _tmp = true
+    unless _tmp
+      self.pos = _save
+    end
+    break
+    end # end sequence
+
+    return _tmp
+  end
+
+  # position = (vm_offset | line_number:l {    Position.new(nil, nil, :line, l)  })
+  def _position
+
+    _save = self.pos
+    while true # choice
+    _tmp = apply('vm_offset', :_vm_offset)
+    break if _tmp
+    self.pos = _save
+
+    _save1 = self.pos
+    while true # sequence
+    _tmp = apply('line_number', :_line_number)
+    l = @result
+    unless _tmp
+      self.pos = _save1
+      break
+    end
+    @result = begin;  
+  Position.new(nil, nil, :line, l) 
+; end
+    _tmp = true
+    unless _tmp
+      self.pos = _save1
+    end
+    break
+    end # end sequence
+
+    break if _tmp
+    self.pos = _save
+    break
+    end # end choice
+
+    return _tmp
+  end
+
+  # file_colon_line = file_no_colon:file ":" position:pos {    Position.new(:file, file, pos.position_type, pos.position)  }
+  def _file_colon_line
+
+    _save = self.pos
+    while true # sequence
+    _tmp = apply('file_no_colon', :_file_no_colon)
+    file = @result
+    unless _tmp
+      self.pos = _save
+      break
+    end
+    _tmp = match_string(":")
+    unless _tmp
+      self.pos = _save
+      break
+    end
+    _tmp = apply('position', :_position)
+    pos = @result
+    unless _tmp
+      self.pos = _save
+      break
+    end
+    @result = begin;  
+  Position.new(:file, file, pos.position_type, pos.position) 
+; end
+    _tmp = true
+    unless _tmp
+      self.pos = _save
+    end
+    break
+    end # end sequence
+
+    return _tmp
+  end
+
+  # location = (position | file_colon_line | < filename >:file &{ File.exist?(file) } {       Position.new(:file, file, pos.position_type, pos.position)     } | class_module_chain?:fn file_pos_sep position:pos {       Position.new(:fn, fn, pos.position_type, pos.position)     } | class_module_chain?:fn {       Position.new(:fn, fn, nil, nil)     })
+  def _location
+
+    _save = self.pos
+    while true # choice
+    _tmp = apply('position', :_position)
+    break if _tmp
+    self.pos = _save
+    _tmp = apply('file_colon_line', :_file_colon_line)
+    break if _tmp
+    self.pos = _save
+
+    _save1 = self.pos
+    while true # sequence
+    _text_start = self.pos
+    _tmp = apply('filename', :_filename)
+    if _tmp
+      set_text(_text_start)
+    end
+    file = @result
+    unless _tmp
+      self.pos = _save1
+      break
+    end
+    _save2 = self.pos
+    _tmp = begin;  File.exist?(file) ; end
+    self.pos = _save2
+    unless _tmp
+      self.pos = _save1
+      break
+    end
+    @result = begin; 
+      Position.new(:file, file, pos.position_type, pos.position)
+    ; end
+    _tmp = true
+    unless _tmp
+      self.pos = _save1
+    end
+    break
+    end # end sequence
+
+    break if _tmp
+    self.pos = _save
+
+    _save3 = self.pos
+    while true # sequence
+    _save4 = self.pos
+    _tmp = apply('class_module_chain', :_class_module_chain)
+    @result = nil unless _tmp
+    unless _tmp
+      _tmp = true
+      self.pos = _save4
+    end
+    fn = @result
+    unless _tmp
+      self.pos = _save3
+      break
+    end
+    _tmp = apply('file_pos_sep', :_file_pos_sep)
+    unless _tmp
+      self.pos = _save3
+      break
+    end
+    _tmp = apply('position', :_position)
+    pos = @result
+    unless _tmp
+      self.pos = _save3
+      break
+    end
+    @result = begin; 
+      Position.new(:fn, fn, pos.position_type, pos.position)
+    ; end
+    _tmp = true
+    unless _tmp
+      self.pos = _save3
+    end
+    break
+    end # end sequence
+
+    break if _tmp
+    self.pos = _save
+
+    _save5 = self.pos
+    while true # sequence
+    _save6 = self.pos
+    _tmp = apply('class_module_chain', :_class_module_chain)
+    @result = nil unless _tmp
+    unless _tmp
+      _tmp = true
+      self.pos = _save6
+    end
+    fn = @result
+    unless _tmp
+      self.pos = _save5
+      break
+    end
+    @result = begin; 
+      Position.new(:fn, fn, nil, nil)
+    ; end
+    _tmp = true
+    unless _tmp
+      self.pos = _save5
+    end
+    break
+    end # end sequence
+
+    break if _tmp
+    self.pos = _save
+    break
+    end # end choice
+
+    return _tmp
+  end
 end
 if __FILE__ == $0
-  require 'rubygems'; require 'trepanning';
+  # require 'rubygems'; require 'trepanning';
   %w(A::B  @@classvar abc01! @ivar
     Object A::B::C A::B::C::D A::B.c A.b.c.d).each do |name|
     cp = CmdParse.new(name, true)
-    # debugger
     res = cp._class_module_chain
+    p res
+    p cp.string
+    p cp.result
+  end
+  %w(A::B:5 A::B:@5 @@classvar abc01!:10 @ivar).each do |name|
+    cp = CmdParse.new(name, true)
+    res = cp._location
+    p res
+    p cp.string
+    p cp.result
+  end
+  # require 'trepanning'; 
+  ["#{__FILE__}:10", 'A::B  5'].each do |name|
+    cp = CmdParse.new(name, true)
+    res = cp._location
     p res
     p cp.string
     p cp.result
