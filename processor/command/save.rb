@@ -6,7 +6,7 @@ class Trepan::Command::SaveCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [filename]
+#{NAME} [--[no-]erase] [filename ]
 
 Save settings to file FILENAME. If FILENAME not given one will be made
 selected.
@@ -15,12 +15,27 @@ selected.
     CATEGORY     = 'running'
     MAX_ARGS     = 1  # Need at most this many
     SHORT_HELP  = 'Send debugger state to a file'
+
+    DEFAULT_OPTIONS = { :erase => true, }
   end
     
+  def parse_options(options, args) # :nodoc
+    parser = OptionParser.new do |opts|
+      opts.on("-e", "--[no-]erase", 
+              "Add line to erase after reading") do
+        |v| 
+        options[:erase] = v
+      end
+    end
+    parser.parse(args)
+    return options
+  end
+
   # This method runs the command
   def run(args)
+    options = parse_options(DEFAULT_OPTIONS.dup, args[1..-2])
     save_filename = 
-      if args.size > 1
+      if args.size > 1 
         args[1]
       else
         @proc.settings[:save_cmdfile] ||
@@ -48,6 +63,8 @@ selected.
         end
       end
     end
+    save_file.puts "!FileUtils.rm #{save_file.to_path.inspect}" if 
+      options[:erase]
     save_file.close
     msg "Debugger commands written to file: #{save_file.to_path}"
   end
