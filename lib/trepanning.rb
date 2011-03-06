@@ -105,8 +105,6 @@ class Trepan
 
     # Run user debugger command startup files.
     add_startup_files unless @settings[:nx]
-    add_command_file(@settings[:restore_profile]) if 
-      @settings[:restore_profile] && File.readable?(@settings[:restore_profile])
 
     at_exit do 
       clear_trace_func
@@ -181,6 +179,10 @@ class Trepan
     if opts[:hide_stack]
       @core.processor.hidelevels[Thread.current] = 
         RubyVM::ThreadFrame.current.stack_size
+    end
+    unless defined?(PROG_UNRESOLVED_SCRIPT)
+      # We may later do more sophisticated things...
+     Trepan.const_set('PROG_UNRESOLVED_SCRIPT', RubyVM::OS_ARGV.index($0) ? $0 : nil)
     end
     th = Thread.current
     if block

@@ -3,6 +3,7 @@
 require_relative '../../base/subsubcmd'
 require_relative '../trace'
 class Trepan::SubSubcommand::SetTraceVar < Trepan::SubSubcommand
+  Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
   unless defined?(HELP)
     HELP         = <<-EOH
 #{CMD} var GLOBAL_VARIABLE
@@ -15,9 +16,7 @@ See also 'set events'.
     EOH
 
     MIN_ABBREV   = 'v'.size  
-    NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP   = "Set to display trace a global variable."
-    PREFIX       = %w(set trace var)
   end
 
   def run(args)
@@ -40,7 +39,6 @@ if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
   require_relative '../../../subcmd'
-  name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
   dbgr, set_cmd = MockDebugger::setup('set')
@@ -55,8 +53,5 @@ if __FILE__ == $0
   # dbgr = Trepan.new
   # dbgr.debugger
   eval('set_cmd.proc.frame_setup(RubyVM::ThreadFrame::current); setx_cmd.run([])')
-
-  # name = File.basename(__FILE__, '.rb')
-  # subcommand.summary_help(name)
 end
 

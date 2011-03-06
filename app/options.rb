@@ -81,13 +81,6 @@ EOB
         |num| 
         options[:port] = num
       end
-      opts.on("--restore PROFILE", String, 
-              "Restore debugger state using PROFILE") do |profile|
-        if File.readable?(profile)
-          options[:restore_profile] = profile
-          stderr.puts "Debugger command file #{profile} is not readable. --restore option ignored."
-        end
-      end
       opts.on('--server',
               "Set up for out-of-process debugging") do
         if options[:client]
@@ -97,7 +90,7 @@ EOB
         end
       end
       opts.on('--[no-]highlight',
-              "Use [no] syntax highligh output") do |v|
+              "Use [no] syntax highlight output") do |v|
         options[:highlight] = ((v) ? :term : nil)
       end
       opts.on('--[no-]readline',

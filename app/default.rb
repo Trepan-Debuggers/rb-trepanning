@@ -20,7 +20,6 @@ class Trepan
 
     :restart_argv    => RubyVM::OS_ARGV,
                                # Command run when "restart" is given.
-    :restore_profile => nil,   # Profile used to set/restore debugger state
     :server          => false, # Out-of-process debugging?
   } unless defined?(DEFAULT_SETTINGS)
 

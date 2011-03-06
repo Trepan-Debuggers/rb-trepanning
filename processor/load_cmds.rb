@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net> 
+require 'tmpdir'
 
 # Part of Trepan::CmdProcess that loads up debugger commands from
 # builtin and user directories.  
@@ -60,23 +61,6 @@ class Trepan
       end
     end
 
-    # Instantiate a Trepan::Command and extract info: the NAME, ALIASES
-    # and store the command in @commands.
-    def setup_command(command)
-      # Note: there is probably a non-eval way to instantiate the
-      # command, but I don't know it. And eval works.
-      klass = self.instance_eval("Trepan::Command::#{command}")
-      cmd = klass.send(:new, self)
-      
-      # Add to list of commands and aliases.
-      cmd_name = klass.const_get(:NAME)
-      if klass.constants.member?(:ALIASES)
-        aliases= klass.const_get(:ALIASES)  
-        aliases.each {|a| @aliases[a] = cmd_name}
-      end
-      @commands[cmd_name] = cmd
-    end
-
     # Looks up cmd_array[0] in @commands and runs that. We do lots of 
     # validity testing on cmd_array.
     def run_cmd(cmd_array)
@@ -98,6 +82,54 @@ class Trepan
       if @commands.member?(cmd_name)
         @commands[cmd_name].run(cmd_array)
       end
+    end
+
+    def save_commands(opts)
+      save_filename = opts[:filename] || 
+        File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname(['trepanning-save', '.txt'], nil))
+      begin
+        save_file = File.open(save_filename, 'w')
+      rescue => exc
+        errmsg("Can't open #{save_filename} for writing.")
+        errmsg("System reports: #{exc.inspect}")
+        return nil
+      end
+      save_file.puts "#\n# Commands to restore trepanning environment\n#\n"
+      @commands.each do |cmd_name, cmd_obj|
+        cmd_obj.save_command if cmd_obj.respond_to?(:save_command)
+        next unless cmd_obj.is_a?(Trepan::SubcommandMgr)
+        cmd_obj.subcmds.subcmds.each do |subcmd_name, subcmd_obj|
+          save_file.puts subcmd_obj.save_command if 
+            subcmd_obj.respond_to?(:save_command)
+          next unless subcmd_obj.is_a?(Trepan::SubSubcommandMgr)
+          subcmd_obj.subcmds.subcmds.each do |subsubcmd_name, subsubcmd_obj|
+            save_file.puts subsubcmd_obj.save_command if 
+              subsubcmd_obj.respond_to?(:save_command)
+          end
+        end
+      end
+      save_file.puts "!FileUtils.rm #{save_file.to_path.inspect}" if 
+        opts[:erase]
+      save_file.close
+
+      return save_filename
+    end
+
+    # Instantiate a Trepan::Command and extract info: the NAME, ALIASES
+    # and store the command in @commands.
+    def setup_command(command)
+      # Note: there is probably a non-eval way to instantiate the
+      # command, but I don't know it. And eval works.
+      klass = self.instance_eval("Trepan::Command::#{command}")
+      cmd = klass.send(:new, self)
+      
+      # Add to list of commands and aliases.
+      cmd_name = klass.const_get(:NAME)
+      if klass.constants.member?(:ALIASES)
+        aliases= klass.const_get(:ALIASES)  
+        aliases.each {|a| @aliases[a] = cmd_name}
+      end
+      @commands[cmd_name] = cmd
     end
 
     # Handle initial completion. We draw from the commands, aliases,

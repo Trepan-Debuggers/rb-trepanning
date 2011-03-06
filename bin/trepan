@@ -48,9 +48,9 @@ if File.basename(__FILE__) == File.basename($0)
       end
     end
 
-    program_to_debug = ARGV.shift
-    program_to_debug = whence_file(program_to_debug) unless 
-      File.exist?(program_to_debug)
+    program_to_debug = (Trepan::PROG_UNRESOLVED_SCRIPT = ARGV.shift).dup
+    program_to_debug = whence_file(Trepan::PROG_UNRESOLVED_SCRIPT) unless 
+      File.exist?(Trepan::PROG_UNRESOLVED_SCRIPT)
     Trepan::PROG_SCRIPT = program_to_debug
 
     opts = {}

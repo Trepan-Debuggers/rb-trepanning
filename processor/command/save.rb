@@ -1,5 +1,5 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-require 'tmpdir'
+# -*- coding: utf-8 -*-
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
 class Trepan::Command::SaveCommand < Trepan::Command
 
@@ -34,39 +34,10 @@ selected.
   # This method runs the command
   def run(args)
     options = parse_options(DEFAULT_OPTIONS.dup, args[1..-2])
-    save_filename = 
-      if args.size > 1 
-        args[1]
-      else
-        @proc.settings[:save_cmdfile] ||
-          File.join(Dir.tmpdir, 
-                    Dir::Tmpname.make_tmpname(['trepanning-save', '.txt'], nil))
-      end
-    begin
-      save_file = File.open(save_filename, 'w')
-    rescue => exc
-      errmsg("Can't open #{save_filename} for writing.")
-      errmsg("System reports: #{exc.inspect}")
-      return
-    end
-    save_file.puts "#\n# Commands to restore trepanning environment\n#\n"
-    @proc.commands.each do |cmd_name, cmd_obj|
-      cmd_obj.save_command if cmd_obj.respond_to?(:save_command)
-      next unless cmd_obj.is_a?(Trepan::SubcommandMgr)
-      cmd_obj.subcmds.subcmds.each do |subcmd_name, subcmd_obj|
-        save_file.puts subcmd_obj.save_command if 
-          subcmd_obj.respond_to?(:save_command)
-        next unless subcmd_obj.is_a?(Trepan::SubSubcommandMgr)
-        subcmd_obj.subcmds.subcmds.each do |subsubcmd_name, subsubcmd_obj|
-        save_file.puts subsubcmd_obj.save_command if 
-            subsubcmd_obj.respond_to?(:save_command)
-        end
-      end
-    end
-    save_file.puts "!FileUtils.rm #{save_file.to_path.inspect}" if 
-      options[:erase]
-    save_file.close
-    msg "Debugger commands written to file: #{save_file.to_path}"
+    options[:filename] = args[i] if args.size > 1 
+    save_filename = @proc.save_commands(options)
+    msg "Debugger commands written to file: #{save_filename}" if
+      save_filename
   end
 end
 

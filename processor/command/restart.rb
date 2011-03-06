@@ -30,13 +30,17 @@ new copy of the debugger is used.
       #        "Adding Ruby interpreter."])
       #   argv.unshift Trepanning::ruby_path
       # end
-      @proc.run_cmd(%w(show args))
       if not confirm('Restart (exec)?', false)
         msg "Restart not confirmed"
       else
-        msg 'Restarting...'
-        @proc.run_cmd(%w(save))
+        if defined?(Trepan::PROG_UNRESOLVED_SCRIPT) &&
+            position = argv.index(Trepan::PROG_UNRESOLVED_SCRIPT)
+          save_filename = @proc.save_commands(:erase =>true)
+          argv.insert(position, '--command', save_filename) if save_filename
+        end
         Dir.chdir(RubyVM::OS_STARTUP_DIR)
+        msg 'Restarting using...'
+        msg "\t #{argv.inspect}"
         @proc.finalize
         exec(*argv)
       end
