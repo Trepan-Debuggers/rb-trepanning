@@ -30,6 +30,7 @@ class TestAppOptions < Test::Unit::TestCase
     assert_equal(orig_cd, @options[:chdir])
     assert_not_equal('', @stderr.string)
     assert_equal('', @stdout.string)
+    File.unlink tf.path
     # FIXME: add test where directory isn't executable.
   end
 
