@@ -180,10 +180,10 @@ class Trepan
       @core.processor.hidelevels[Thread.current] = 
         RubyVM::ThreadFrame.current.stack_size
     end
-    unless defined?(PROG_UNRESOLVED_SCRIPT)
-      # We may later do more sophisticated things...
-     Trepan.const_set('PROG_UNRESOLVED_SCRIPT', RubyVM::OS_ARGV.index($0) ? $0 : nil)
-    end
+    # unless defined?(PROG_UNRESOLVED_SCRIPT)
+    #  # We may later do more sophisticated things...
+    #  Trepan.const_set('PROG_UNRESOLVED_SCRIPT', RubyVM::OS_ARGV.index($0) ? $0 : nil)
+    # end
     th = Thread.current
     if block
       start
@@ -281,8 +281,9 @@ class Trepan
     opts = {:hide_stack => false}.merge(opts)
     unless defined?($trepanning) && $trepanning.is_a?(Trepan)
       $trepanning = Trepan.new(opts)
-      $trepanning.trace_filter << self.method(:debug)
     end
+    tf = $trepanning.trace_filter
+    tf << self.method(:debugger) unless tf.member? self.method(:debugger)
     $trepanning.debugger(opts, &block)
   end
 
@@ -302,8 +303,9 @@ module Kernel
     opts = {:hide_stack => false}.merge(opts)
     unless defined?($trepanning) && $trepanning.is_a?(Trepan)
       $trepanning = Trepan.new(opts)
-      $trepanning.trace_filter << self.method(:debugger)
     end
+    tf = $trepanning.trace_filter
+    tf << self.method(:debugger) unless tf.member? self.method(:debugger)
     $trepanning.debugger(opts)
   end
 end
