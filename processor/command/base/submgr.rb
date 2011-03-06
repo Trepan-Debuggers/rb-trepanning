@@ -80,7 +80,6 @@ class Trepan::SubcommandMgr < Trepan::Command
       begin
         cmd = subcmd_class.send(:new, self, parent)
       rescue Exception => exc
-        require 'trepanning'; debugger
         puts "Subcmd #{name} in #{parent.name.inspect} is bad: #{exc}"
       end
       @subcmds.add(cmd)
