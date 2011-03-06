@@ -25,11 +25,7 @@ new copy of the debugger is used.
     dbgr = @proc.dbgr
     argv = dbgr.restart_argv
     if argv and argv.size > 0
-      # unless File.executable?(argv[0])
-      #   msg(["File #{argv[0]} not executable.",
-      #        "Adding Ruby interpreter."])
-      #   argv.unshift Trepanning::ruby_path
-      # end
+      @proc.run_cmd(%w(show args))
       if not confirm('Restart (exec)?', false)
         msg "Restart not confirmed"
       else

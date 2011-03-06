@@ -108,7 +108,7 @@ class Trepan
           end
         end
       end
-      save_file.puts "!FileUtils.rm #{save_file.to_path.inspect}" if 
+      save_file.puts "!FileUtils.rm #{save_filename.inspect}" if 
         opts[:erase]
       save_file.close
 
