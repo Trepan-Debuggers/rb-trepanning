@@ -173,9 +173,6 @@ end
 
 if __FILE__ == $0 && caller.size == 0 && ARGV.size > 0
   # Demo it.
-  puts "++++++++++++HAY!"
-  puts caller.size
-  puts caller
   require 'thread_frame'
   require_relative 'frame'
   require_relative '../app/mock'
