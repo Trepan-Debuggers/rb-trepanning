@@ -1,5 +1,6 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'linecache'
+require 'pathname'  # For cleanpath
 require_relative 'msg'
 require_relative '../app/frame'
 class Trepan
@@ -28,7 +29,7 @@ class Trepan
     def current_source_text
       opts = {:reload_on_change => @reload_on_change}
       junk1, junk2, text, found_line = 
-        loc_and_text(nil, frame, frame.source_location[0], 
+        loc_and_text('', frame, frame.source_location[0], 
                      frame.source_container, opts)
       text
     end
@@ -168,4 +169,42 @@ class Trepan
     end # source_location_info
 
   end
+end
+
+if __FILE__ == $0 && caller.size == 0 && ARGV.size > 0
+  # Demo it.
+  puts "++++++++++++HAY!"
+  puts caller.size
+  puts caller
+  require 'thread_frame'
+  require_relative 'frame'
+  require_relative '../app/mock'
+  require_relative 'main'   # Have to include before defining CmdProcessor!
+                            # FIXME
+  class Trepan::CmdProcessor
+    def errmsg(msg)
+      puts msg
+    end
+    def print_location
+      puts "#{@frame.source_container} #{frame.source_location[0]}"
+    end
+  end
+
+  proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
+  proc.instance_variable_set('@settings', {})
+  proc.frame_initialize
+  proc.frame_setup(RubyVM::ThreadFrame.current)
+  proc.frame_initialize
+
+  proc.location_initialize
+  puts proc.canonic_file(__FILE__)
+  proc.instance_variable_set('@settings', {:basename => true})
+  puts proc.canonic_file(__FILE__)
+  puts proc.current_source_text
+  xx = eval <<-END
+     proc.frame_initialize
+     proc.frame_setup(RubyVM::ThreadFrame.current)
+     proc.location_initialize
+     proc.current_source_text
+  END
 end
