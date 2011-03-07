@@ -171,8 +171,12 @@ class Trepan
         if ary = iseq.lineoffsets[position]
           vm_offset = ary.first
           line_no   = position
+        elsif found_iseq = find_iseq_with_line_from_iseq(iseq, position)
+          return position_to_line_and_offset(found_iseq, filename, position, 
+                                             offset_type)
         elsif found_iseq = find_iseqs_with_lineno(filename, position)
-          position_to_line_and_offset(found_iseq, filename, position, offset_type)
+          return position_to_line_and_offset(found_iseq, filename, position, 
+                                             offset_type)
         else
           errmsg("Unable to find offset for line #{position}\n\t" + 
                  "in #{iseq.name} of file #{filename}")
@@ -212,7 +216,7 @@ class Trepan
             return [iseq, line_no, vm_offset, true] 
           end
         else
-          errmsg("Unable to set breakpoint in  #{meth_or_frame}")
+          errmsg("Unable to set breakpoint in #{meth_or_frame}")
         end
       elsif file && position
         if :line == offset_type
