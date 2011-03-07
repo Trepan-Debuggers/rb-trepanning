@@ -44,7 +44,11 @@ module IRB # :nodoc:
             opts.join(' ')
           end
         dbg_cmdproc = conf.workspace.instance_variable_get('@dbg_cmdproc')
-        dbg_cmdproc.run_command($trepan_command)
+        if dbg_cmdproc
+          dbg_cmdproc.run_command($trepan_command) 
+        else
+          puts "Something's wrong with debugger setup of irb"
+        end
       end
     end
 

@@ -811,7 +811,7 @@ class CmdParse
     return _tmp
   end
 
-  # internal_class_module_chain = (local_internal_identifier:parent id_separator:sep internal_class_module_chain:child {          let = parent.name[0..0]          type = (let.capitalize == let) ? :constant : :variable          SymbolEntry.new(type, string, [parent, child, sep])       } | local_identifier)
+  # internal_class_module_chain = (local_internal_identifier:parent id_separator:sep internal_class_module_chain:child {          let = parent.name[0..0]          type = (let =~ /A-Z/) ? :constant : :variable          SymbolEntry.new(type, string, [parent, child, sep])       } | local_identifier)
   def _internal_class_module_chain
 
     _save = self.pos
@@ -839,7 +839,7 @@ class CmdParse
     end
     @result = begin; 
          let = parent.name[0..0]
-         type = (let.capitalize == let) ? :constant : :variable
+         type = (let =~ /A-Z/) ? :constant : :variable
          SymbolEntry.new(type, string, [parent, child, sep])
       ; end
     _tmp = true
@@ -860,7 +860,7 @@ class CmdParse
     return _tmp
   end
 
-  # class_module_chain = (leading_identifier:parent id_separator:sep internal_class_module_chain:child {          let = parent.name[0..0]          type = (let.capitalize == let) ? :constant : :variable          SymbolEntry.new(type, string, [parent, child, sep])       } | identifier)
+  # class_module_chain = (leading_identifier:parent id_separator:sep internal_class_module_chain:child {          let = parent.name[0..0]          type = (let =~ /A-Z/) ? :constant : :variable          SymbolEntry.new(type, string, [parent, child, sep])       } | identifier)
   def _class_module_chain
 
     _save = self.pos
@@ -888,7 +888,7 @@ class CmdParse
     end
     @result = begin; 
          let = parent.name[0..0]
-         type = (let.capitalize == let) ? :constant : :variable
+         type = (let =~ /A-Z/) ? :constant : :variable
          SymbolEntry.new(type, string, [parent, child, sep])
       ; end
     _tmp = true
@@ -1254,7 +1254,7 @@ class CmdParse
     return _tmp
   end
 
-  # location = (position | file_colon_line | < filename >:file &{ File.exist?(file) } {       Position.new(:file, file, pos.position_type, pos.position)     } | class_module_chain?:fn file_pos_sep position:pos {       Position.new(:fn, fn, pos.position_type, pos.position)     } | class_module_chain?:fn {       Position.new(:fn, fn, nil, nil)     })
+  # location = (position | file_colon_line | < filename >:file &{ File.exist?(file) } file_pos_sep position:pos {       Position.new(:file, file, pos.position_type, pos.position)     } | < filename >:file &{ File.exist?(file) } {       Position.new(:file, file, nil, nil)     } | class_module_chain?:fn file_pos_sep position:pos {       Position.new(:fn, fn, pos.position_type, pos.position)     } | class_module_chain?:fn {       Position.new(:fn, fn, nil, nil)     })
   def _location
 
     _save = self.pos
@@ -1285,6 +1285,17 @@ class CmdParse
       self.pos = _save1
       break
     end
+    _tmp = apply('file_pos_sep', :_file_pos_sep)
+    unless _tmp
+      self.pos = _save1
+      break
+    end
+    _tmp = apply('position', :_position)
+    pos = @result
+    unless _tmp
+      self.pos = _save1
+      break
+    end
     @result = begin; 
       Position.new(:file, file, pos.position_type, pos.position)
     ; end
@@ -1300,31 +1311,25 @@ class CmdParse
 
     _save3 = self.pos
     while true # sequence
+    _text_start = self.pos
+    _tmp = apply('filename', :_filename)
+    if _tmp
+      set_text(_text_start)
+    end
+    file = @result
+    unless _tmp
+      self.pos = _save3
+      break
+    end
     _save4 = self.pos
-    _tmp = apply('class_module_chain', :_class_module_chain)
-    @result = nil unless _tmp
-    unless _tmp
-      _tmp = true
-      self.pos = _save4
-    end
-    fn = @result
-    unless _tmp
-      self.pos = _save3
-      break
-    end
-    _tmp = apply('file_pos_sep', :_file_pos_sep)
-    unless _tmp
-      self.pos = _save3
-      break
-    end
-    _tmp = apply('position', :_position)
-    pos = @result
+    _tmp = begin;  File.exist?(file) ; end
+    self.pos = _save4
     unless _tmp
       self.pos = _save3
       break
     end
     @result = begin; 
-      Position.new(:fn, fn, pos.position_type, pos.position)
+      Position.new(:file, file, nil, nil)
     ; end
     _tmp = true
     unless _tmp
@@ -1350,12 +1355,50 @@ class CmdParse
       self.pos = _save5
       break
     end
+    _tmp = apply('file_pos_sep', :_file_pos_sep)
+    unless _tmp
+      self.pos = _save5
+      break
+    end
+    _tmp = apply('position', :_position)
+    pos = @result
+    unless _tmp
+      self.pos = _save5
+      break
+    end
+    @result = begin; 
+      Position.new(:fn, fn, pos.position_type, pos.position)
+    ; end
+    _tmp = true
+    unless _tmp
+      self.pos = _save5
+    end
+    break
+    end # end sequence
+
+    break if _tmp
+    self.pos = _save
+
+    _save7 = self.pos
+    while true # sequence
+    _save8 = self.pos
+    _tmp = apply('class_module_chain', :_class_module_chain)
+    @result = nil unless _tmp
+    unless _tmp
+      _tmp = true
+      self.pos = _save8
+    end
+    fn = @result
+    unless _tmp
+      self.pos = _save7
+      break
+    end
     @result = begin; 
       Position.new(:fn, fn, nil, nil)
     ; end
     _tmp = true
     unless _tmp
-      self.pos = _save5
+      self.pos = _save7
     end
     break
     end # end sequence
@@ -1370,24 +1413,27 @@ class CmdParse
 end
 if __FILE__ == $0
   # require 'rubygems'; require 'trepanning';
-  %w(A::B  @@classvar abc01! @ivar
+  
+  cp = CmdParse.new('', true)
+  %w(A::B  @@classvar abc01! @ivar @ivar.meth
     Object A::B::C A::B::C::D A::B.c A.b.c.d).each do |name|
-    cp = CmdParse.new(name, true)
+    cp.setup_parser(name, true)
     res = cp._class_module_chain
     p res
     p cp.string
     p cp.result
   end
   %w(A::B:5 A::B:@5 @@classvar abc01!:10 @ivar).each do |name|
-    cp = CmdParse.new(name, true)
+    cp.setup_parser(name, true)
     res = cp._location
     p res
     p cp.string
     p cp.result
   end
   # require 'trepanning'; 
-  ["#{__FILE__}:10", 'A::B  5'].each do |name|
-    cp = CmdParse.new(name, true)
+  ["#{__FILE__}:10", 'A::B  5',
+   "#{__FILE__} 20"].each do |name|
+    cp.setup_parser(name, true)
     res = cp._location
     p res
     p cp.string

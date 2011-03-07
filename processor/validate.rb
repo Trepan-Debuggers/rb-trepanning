@@ -165,58 +165,74 @@ class Trepan
       [position, use_offset]
     end
 
+    def position_to_line_and_offset(iseq, position, offset_type)
+      case offset_type
+      when :line
+        if ary = iseq.lineoffsets[position]
+          vm_offset = ary.first
+          line_no   = position
+        else
+          errmsg "Unable to find offset for line #{position} in #{iseq}"
+          return [nil, nil]
+        end
+      when :offset
+        if ary=iseq.offset2lines(position)
+          line_no   = ary.first
+          vm_offset = position
+        else
+          errmsg "Unable to find line for offset #{position} in #{iseq}"
+          return [nil, nil]
+        end
+      when nil
+        vm_offset = 0
+        line_no   = iseq.offset2lines(vm_offset).first
+      else
+        errmsg "Bad parse offset_type: #{offset_type.inspect}"
+        return [nil, nil]
+      end
+      return [line_no, vm_offset]
+    end
+
     # Parse a breakpoint position. Return
-    # - the position - a Fixnum
     # - the instruction sequence to use
-    # - whether the position is an offset or a line number
+    # - the line number - a Fixnum
+    # - vm_offset       - a Fixnum
     # - the condition (by default 'true') to use for this breakpoint
-    def breakpoint_position(args)
-      first = args.shift
-      name, container, position = parse_position(first, nil, true)
-      if container && position
-        iseq = find_iseqs_with_lineno(container[1], position) || object_iseq(first)
-        unless iseq
-          if @frame.iseq && 
-              File.basename(@frame.iseq.source_container[1]) == 
-              File.basename(container[1])
-            iseq = @frame.iseq
+    def breakpoint_position(position_str)
+      meth_or_frame, file, position, offset_type = 
+        parse_position(position_str)
+      if meth_or_frame
+        if iseq = meth_or_frame.iseq
+          line_no, vm_offset = position_to_line_and_offset(iseq, position, 
+                                                           offset_type)
+          if vm_offset && line_no
+            return [iseq, line_no, vm_offset, true] 
+          end
+        else
+          errmsg("Unable to set breakpoint in  #{meth_or_frame}")
+        end
+      elsif file && position
+        if :line == offset_type
+          iseq = find_iseqs_with_lineno(file, position)
+          if iseq
+            line_no, vm_offset = position_to_line_and_offset(iseq, position, 
+                                                             offset_type)
+            return [@frame.iseq, line_no, vm_offset, true] 
           else
             errmsg("Unable to find instruction sequence for" + 
-                   " position #{position} in #{container[1]}")
-            return [nil, nil, nil, true]
+                   " position #{position} in #{file}")
           end
-        end
-        if args.empty? || 'if' == args[0]
-          use_offset = false 
         else
-          position, use_offset = parse_num_or_offset(args[0])
+          errmsg "Come back later..."
         end
+      elsif @frame.iseq.source_container[1] == file 
+        line_no, vm_offset = position_to_line_and_offset(@frame.iseq, position, 
+                                                         offset_type)
+        return [@frame.iseq, line_no, vm_offset, true] 
       else
-        iseq = object_iseq(first)
-        position_str = 
-          if iseq
-            # Got name and possibly position
-            name = first
-            if args.empty? 
-              # FIXME: *Still* have a bug stopping at offset 0.
-              # So stop at next offset after 0.
-              # '@0' 
-              "@#{@frame.iseq.offsetlines.keys.sort[1]}"
-            else
-              args.shift
-            end
-          else
-            iseq = @frame.iseq unless container
-            first
-          end
-        position, use_offset = parse_num_or_offset(position_str)
+        errmsg("Unable to parse breakpoint position #{position_str}")
       end
-      condition = 'true'
-      if args.size > 0 && 'if' == args[0] 
-        condition_try = args[1..-1].join(' ')
-        condition = condition_try if valid_condition?(condition_try)
-      end
-      return [position, iseq, use_offset, condition, name]
+      return [nil, nil, nil, true]
     end
 
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.
@@ -242,129 +258,144 @@ class Trepan
 
     include CmdParser
 
-    def get_method(method_string)
+    def get_method(meth)
       start_binding = 
         begin
           @frame.binding
         rescue
           binding
         end
-      meth_for_string(method_string, start_binding)
+      if meth.kind_of?(String)
+        meth_for_string(meth, start_binding)
+      else
+        begin
+          meth_for_parse_struct(meth, start_binding)
+        rescue NameError
+          errmsg("Can't evalution #{meth.name} to get a method")
+          return nil
+        end
+      end
     end
 
     # FIXME: this is a ? method but we return 
     # the method value. 
-    def method?(method_string)
-      get_method(method_string)
+    def method?(meth)
+      get_method(meth)
     end
 
-    # parse_position(self, arg)->(fn, container, lineno)
-    # 
+    # parse_position(self, arg)->(meth, filename, offset, offset_type)
+    # See app/cmd_parser.kpeg for the syntax of a position which
+    # should include things like:
     # Parse arg as [filename:]lineno | function | module
     # Make sure it works for C:\foo\bar.py:12
-    def parse_position(arg, old_mod=nil, allow_offset = false)
-      if meth = method?(arg)
-        if meth.kind_of?(Method) && iseq = meth.iseq
-          line_no = iseq.offsetlines.values.flatten.min
-          if iseq.source_container[0] == 'file'
-            filename = iseq.source_container[1]
-            return arg, ['file', canonic_file(filename)], line_no
-          else
-            return arg, iseq.container, line_no
-          end
+    def parse_position(arg)
+      info = parse_location(arg)
+      case info.container_type
+      when :fn
+        if meth = method?(info.container)
+          return [meth, meth.iseq.source_container[1], info.position, 
+                  info.position_type]
+        else
+          errmsg "string #{info.name} of #{arg} doesn't resolve to method we can find"
+          return nil, nil, nil, nil
         end
-      end
-      colon = arg.rindex(':') 
-      if colon
-        # First handle part before the colon
-        arg1 = arg[0...colon].rstrip
-          lineno_str = arg[colon+1..-1].lstrip
-        mf, container, lineno = parse_position_one_arg(arg1, old_mod, false, allow_offset)
-        return nil, nil, nil unless container
-        filename = canonic_file(arg1) 
-        # Next handle part after the colon
-        val = get_an_int(lineno_str)
-        lineno = val if val
+      when :file
+        filename = canonic_file(info.container)
+        # ?? Try to look up method here? 
+        return nil, info.container,  info.position, info.position_type
+        errmsg "Unknown container type #{info.container_type} for string #{info.name} of #{arg}"
+        return nil, nil, nil, nil
+      when nil
+        if [:line, :offset].member?(info.position_type)
+          container = frame_container(@frame, false)
+          filename  = container[1]
+          return @frame, canonic_file(filename), info.position, info.position_type
+        elsif !info.position_type
+          errmsg "Can't parse #{arg} as a position"
+          return nil, nil, nil, nil
+        else
+          errmsg "Unknown position type #{info.position_type} for location #{arg}"
+          return nil, nil, nil, nil
+        end
       else
-        mf, container, lineno = parse_position_one_arg(arg, old_mod, true, allow_offset)
+        errmsg "Unknown container type #{info.container_type} for location #{arg}"
+        return nil, nil, nil, nil
       end
-      
-      return mf, container, lineno
     end
 
-    # parse_position_one_arg(self,arg)->(module/function, container, lineno)
-    #
-    # See if arg is a line number, function name, or module name.
-    # Return what we've found. nil can be returned as a value in
-    # the triple.
-    def parse_position_one_arg(arg, old_mod=nil, show_errmsg=true, allow_offset=false)
-      name, filename = nil, nil, nil
-      begin
-        # First see if argument is an integer
-        lineno    = Integer(arg)
-      rescue
-      else
-        container = frame_container(@frame, false)
-        filename  = container[1] unless old_mod
-        return nil, [container[0], canonic_file(filename)], lineno
-      end
+    # # parse_position_one_arg(self,arg)->(module/function, container, lineno)
+    # #
+    # # See if arg is a line number, function name, or module name.
+    # # Return what we've found. nil can be returned as a value in
+    # # the triple.
+    # def parse_position_one_arg(arg, old_mod=nil, show_errmsg=true, allow_offset=false)
+    #   name, filename = nil, nil, nil
+    #   begin
+    #     # First see if argument is an integer
+    #     lineno    = Integer(arg)
+    #   rescue
+    #   else
+    #     container = frame_container(@frame, false)
+    #     filename  = container[1] unless old_mod
+    #     return nil, [container[0], canonic_file(filename)], lineno
+    #   end
 
-      # Next see if argument is a file name 
-      found = 
-        if arg[0..0] == File::SEPARATOR
-          LineCache::cached?(arg)
-        else
-          resolve_file_with_dir(arg)
-        end
-      if found
-        return nil, [container && container[0], canonic_file(arg)], 1 
-      else
-        matches = find_scripts(arg)
-        if matches.size > 1
-          if show_errmsg
-            errmsg "#{arg} is matches several files:"
-            errmsg Columnize::columnize(matches.sort, 
-                                        @settings[:width], ' ' * 4, 
-                                        true, true, ' ' * 2).chomp
-          end
-          return nil, nil, nil
-        elsif matches.size == 1
-          LineCache::cache(matches[0])
-          return nil, ['file', matches[0]], 1
-        end
-      end
+    #   # Next see if argument is a file name 
+    #   found = 
+    #     if arg[0..0] == File::SEPARATOR
+    #       LineCache::cached?(arg)
+    #     else
+    #       resolve_file_with_dir(arg)
+    #     end
+    #   if found
+    #     return nil, [container && container[0], canonic_file(arg)], 1 
+    #   else
+    #     matches = find_scripts(arg)
+    #     if matches.size > 1
+    #       if show_errmsg
+    #         errmsg "#{arg} is matches several files:"
+    #         errmsg Columnize::columnize(matches.sort, 
+    #                                     @settings[:width], ' ' * 4, 
+    #                                     true, true, ' ' * 2).chomp
+    #       end
+    #       return nil, nil, nil
+    #     elsif matches.size == 1
+    #       LineCache::cache(matches[0])
+    #       return nil, ['file', matches[0]], 1
+    #     end
+    #   end
 
-      # How about something with an instruction sequence?
-      meth = method?(arg)
-      if meth
-        if 'instruction sequence' == meth.type
-          iseq = meth.iseq
-        else
-          errmsg("#{meth.class} #{arg} is of type #{meth.type}; " +
-                 "it doesn't have an instruction sequence.")
-          return meth, nil, nil
-        end
-      end
+    #   # How about something with an instruction sequence?
+    #   meth = method?(arg)
+    #   if meth
+    #     if 'instruction sequence' == meth.type
+    #       iseq = meth.iseq
+    #     else
+    #       errmsg("#{meth.class} #{arg} is of type #{meth.type}; " +
+    #              "it doesn't have an instruction sequence.")
+    #       return meth, nil, nil
+    #     end
+    #   end
 
-      iseq = object_iseq(arg)
-      if iseq 
-        line_no = iseq.offsetlines.values.flatten.min
-        if iseq.source_container[0] == 'file'
-          filename = iseq.source_container[1]
-          return arg, ['file', canonic_file(filename)], line_no
-        else
-          return arg, iseq.source_container, line_no
-        end
-      end
+    #   iseq = object_iseq(arg)
+    #   if iseq 
+    #     line_no = iseq.offsetlines.values.flatten.min
+    #     if iseq.source_container[0] == 'file'
+    #       filename = iseq.source_container[1]
+    #       return arg, ['file', canonic_file(filename)], line_no
+    #     else
+    #       return arg, iseq.source_container, line_no
+    #     end
+    #   end
 
-      if show_errmsg
-        unless (allow_offset && arg.size > 0 && arg[0] == '@')
-          errmsg("#{arg} is not a line number, read-in filename or method " +
-                 "we can get location information about")
-        end
-      end
-      return nil, nil, nil
-    end
+    #   if show_errmsg
+    #     unless (allow_offset && arg.size > 0 && arg[0] == '@')
+    #       errmsg("#{arg} is not a line number, read-in filename or method " +
+    #              "we can get location information about")
+    #     end
+    #   end
+    #   return nil, nil, nil
+    # end
     
     def validate_initialize
       ## top_srcdir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
@@ -400,15 +431,16 @@ if __FILE__ == $0
     def proc.errmsg(msg)
       puts msg
     end
-    puts proc.object_iseq('food').inspect
-    puts proc.object_iseq('foo').inspect
+    # puts proc.object_iseq('food').inspect
+    # puts proc.object_iseq('foo').inspect
 
-    puts proc.object_iseq('foo@validate.rb').inspect
-    puts proc.object_iseq('proc.object_iseq').inspect
+    # puts proc.object_iseq('foo@validate.rb').inspect
+    # puts proc.object_iseq('proc.object_iseq').inspect
     
-    puts proc.parse_position_one_arg('tmpdir.rb').inspect
-    puts proc.parse_position_one_arg('@8').inspect
-    puts proc.parse_position_one_arg('8').inspect
+    puts proc.parse_position(__FILE__).inspect
+    puts proc.parse_position('@8').inspect
+    puts proc.parse_position('8').inspect
+    puts proc.parse_position("#{__FILE__} #{__LINE__}").inspect
 
     puts '=' * 40
     ['Array.map', 'Trepan::CmdProcessor.new',
@@ -424,9 +456,14 @@ if __FILE__ == $0
       puts "#{str} should be false: #{proc.method?(str).to_s}"
     end
     puts '-' * 20
-    p proc.breakpoint_position(%w(@0))
-    p proc.breakpoint_position(%w(1))
-    p proc.breakpoint_position(%w(2 if a > b))
+    p proc.breakpoint_position('@0')
+    p proc.breakpoint_position("#{__LINE__}")
+    p proc.breakpoint_position("#{__FILE__}   @0")
+    p proc.breakpoint_position("#{__FILE__}:#{__LINE__}")
+    p proc.breakpoint_position("#{__FILE__} #{__LINE__}")
+    p proc.breakpoint_position("proc.errmsg")
+    p proc.breakpoint_position("proc.errmsg:@0")
+    ### p proc.breakpoint_position(%w(2 if a > b))
     p proc.get_int_list(%w(1+0 3-1 3))
     p proc.get_int_list(%w(a 2 3))
   end

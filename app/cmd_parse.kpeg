@@ -111,7 +111,7 @@ internal_class_module_chain =
     local_internal_identifier:parent id_separator:sep  internal_class_module_chain:child
       {
          let = parent.name[0..0]
-         type = (let.capitalize == let) ? :constant : :variable
+         type = (let =~ /A-Z/) ? :constant : :variable
          SymbolEntry.new(type, string, [parent, child, sep])
       }
     | local_identifier
@@ -130,7 +130,7 @@ class_module_chain =
                               internal_class_module_chain:child
        {
          let = parent.name[0..0]
-         type = (let.capitalize == let) ? :constant : :variable
+         type = (let =~ /A-Z/) ? :constant : :variable
          SymbolEntry.new(type, string, [parent, child, sep])
       }
     | identifier
@@ -185,8 +185,11 @@ file_colon_line = file_no_colon:file ':' position:pos {
 location = 
    position 
  | file_colon_line
- | <filename>:file &{ File.exist?(file) } {
+ | <filename>:file &{ File.exist?(file) } file_pos_sep position:pos {
       Position.new(:file, file, pos.position_type, pos.position)
+    }
+ | <filename>:file &{ File.exist?(file) } {
+      Position.new(:file, file, nil, nil)
     }
  | class_module_chain?:fn file_pos_sep position:pos {
       Position.new(:fn, fn, pos.position_type, pos.position)

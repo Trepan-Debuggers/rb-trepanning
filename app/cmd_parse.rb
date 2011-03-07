@@ -4,6 +4,7 @@ require_relative 'cmd_parser'
 
 class Trepan
   module CmdParser
+
     # Given a KPeg parse object, return the method of that parse or raise a
     # Name error if we can't find a method. parent_class is the parent class of
     # the object we've found so far and "binding" is used if we need
@@ -56,16 +57,22 @@ class Trepan
         else
           begin
             errmsg = "Can't get method for #{name.inspect}"
-            # parent_class = eval('self', bind) if !parent_class && bind
+            if m.chain && m.chain[0]
+              parent_obj = eval("#{m.chain[0].name}", bind) if !parent_class && bind
+            end
+            parent = parent_class || parent_obj
             meth = 
-              if parent_class
-                errmsg << "in #{parent_class}"
-                if parent_class.respond_to?('instance_methods') && 
-                    parent_class.instance_methods.member?(name.to_sym)
-                  parent_class.instance_method(name.to_sym)
-                else
-                  parent_class.method(name)
+              if parent
+                errmsg << "in #{parent}"
+                lookup_name = m.chain && m.chain[1] ? m.chain[1].name : name
+                if parent.respond_to?('instance_methods') && 
+                    parent.instance_methods.member?(lookup_name.to_sym)
+                  parent.instance_method(lookup_name.to_sym)
+                elsif parent.respond_to?('methods')
+                  parent.method(lookup_name.to_sym)
                 end
+              elsif m.chain && m.chain[1]
+                eval("#{m.chain[0].name}.method(#{lookup_name.name.inspect})", bind)
               else
                 eval("self.method(#{name.inspect})", bind)
               end
@@ -77,15 +84,21 @@ class Trepan
       end
     end
 
+    # Return the method by evaluating parse_struct.
+    # nil is returned if we can't parse str
+    def meth_for_parse_struct(parse_struct, start_binding)
+      resolve_method(parse_struct, start_binding)
+    end
+
     # Parse str and return the method associated with that.
     # nil is returned if we can't parse str
     def meth_for_string(str, start_binding)
-      cp = CmdParse.new(str)
+      @cp ? @cp.setup_parser(str) : @cp = CmdParse.new(str)
       begin 
-        if cp._class_module_chain
+        if @cp._class_module_chain
           # Did we match all of it?
-          if cp.result.name == str
-            resolve_method(cp.result, start_binding)
+          if @cp.result.name == str
+            meth_for_parse_struct(@cp.result, start_binding)
           else
             nil
           end
@@ -96,6 +109,16 @@ class Trepan
       rescue NameError
         return nil
       end
+    end
+
+    def parse_terminal(terminal_name, loc_str)
+      @cp ? @cp.setup_parser(loc_str) : @cp = CmdParse.new(loc_str)
+      @cp.send(terminal_name) ? @cp : nil
+    end
+
+    def parse_location(loc_str)
+      parse = parse_terminal(:_location, loc_str)
+      parse ? parse.result : nil
     end
   end
 end
@@ -141,28 +164,18 @@ if __FILE__ == $0
   p meth_for_string('Testing.testing', binding)  
   p meth_for_string('File.basename', binding)  
   x = File
-  # require_relative '../lib/trepanning'
-  # debugger
   p meth_for_string('x.basename', binding)  
   def x.five; 5; end
   p  meth_for_string('x.five', binding)  
   p x.five
 
-  # match = MethodName.parse('5', :root => :line_number)
-  # p match.value
+  p parse_terminal(:_line_number, '5').result
+  p parse_terminal(:_vm_offset, '@5').result
 
-  # match = MethodName.parse('@5', :root => :vm_offset)
-  # p match.value
-
-  # # Location stuff
-  # ['fn', 'fn 5', 'fn @5', '@5', '5'].each do |location|
-  #   begin
-  #     match = MethodName.parse(location, :root => :location)
-  #     p [location, 'succeeded', match.value]
-  #   rescue Citrus::ParseError
-  #     p [location, 'failed']
-  #   end
-  # end
+  # Location stuff
+  ['fn', 'fn 5', 'fn @5', '@5', '5'].each do |location|
+    p parse_location(location)
+  end
 
 end
 
