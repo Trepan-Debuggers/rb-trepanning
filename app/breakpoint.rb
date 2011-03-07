@@ -59,7 +59,8 @@ class Trepan
         @id = @@next_id 
         @@next_id += 1
       end
-      set
+      raise RuntimeError,
+      "Unable to set breakpoint in #{iseq.name} at offset #{offset}" unless set
     end
 
     def condition?(bind)
