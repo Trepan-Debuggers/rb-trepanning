@@ -62,20 +62,14 @@ global_identifier = < "$" (constant_identifier | variable_identifier) >
 #   foo
 # But not:
 #   foo!, @foo, Class.foo
-   local_internal_identifier = < constant_identifier | variable_identifier >
-    {
-      SymbolEntry.new(:instance, text)
-    }     
+local_internal_identifier = constant_identifier | variable_identifier
 
 # Examples: 
 #   Foo, foo, foo!
 #   foo
 # But not:
 #   @foo, Class.foo
-   local_identifier = < constant_identifier | vm_identifier >
-    {
-      SymbolEntry.new(:instance, text)
-    }     
+local_identifier = constant_identifier | vm_identifier
 
 # Example: @foo
 instance_identifier = < '@' local_identifier >
@@ -90,11 +84,6 @@ classvar_identifier = ('@@' local_identifier )
      SymbolEntry.new(:classvar, text)
     }     
 
-leading_identifier = global_identifier 
-       | instance_identifier 
-       | classvar_identifier 
-       | local_internal_identifier 
-
 identifier = global_identifier 
        | instance_identifier 
        | classvar_identifier 
@@ -108,11 +97,10 @@ id_separator = < '::'|'.' > { text }
 # But we do allow final sigils:
 #   class.name!, class.name=
 internal_class_module_chain = 
-    local_internal_identifier:parent id_separator:sep  internal_class_module_chain:child
+    < local_internal_identifier:parent id_separator:sep  
+      internal_class_module_chain:child >
       {
-         let = parent.name[0..0]
-         type = (let =~ /A-Z/) ? :constant : :variable
-         SymbolEntry.new(type, string, [parent, child, sep])
+         SymbolEntry.new(parent.type, text, [parent, child, sep])
       }
     | local_identifier
 
@@ -126,12 +114,9 @@ internal_class_module_chain =
 #  Object, A::B, A.b @@foo.bar, $foo.bar.baz? 
 
 class_module_chain = 
-    leading_identifier:parent id_separator:sep  
-                              internal_class_module_chain:child
+    < identifier:parent id_separator:sep  internal_class_module_chain:child >
        {
-         let = parent.name[0..0]
-         type = (let =~ /A-Z/) ? :constant : :variable
-         SymbolEntry.new(type, string, [parent, child, sep])
+         SymbolEntry.new(parent.type, text, [parent, child, sep])
       }
     | identifier
 

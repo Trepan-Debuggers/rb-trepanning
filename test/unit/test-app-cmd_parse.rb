@@ -49,16 +49,28 @@ class TestCmdParse < Test::Unit::TestCase
   end
 
   def test_parse_method
-    [['Object', 0], ['A::B', 1], ['A::B::C', 2],
-     ['A::B::C::D', 3], ['A::B.c', 2], ['A.b.c.d', 3]].each do |name, count|
+    [['Object', [:constant]], 
+     ['AA::B', [:constant] * 2], 
+     ['Aa::Bb::C', [:constant] * 3],
+     ['A::B::C::D', [:constant] * 4], 
+     ['A::B.c', [:constant, :constant, :variable]], 
+     ['A.b.c.d', [:constant] + [:variable] * 3],
+     ['@ivar', [:instance]],
+     ['@@classvar', [:classvar]],
+     ['$global', [:global]],
+     ['$global.meth', [:global, :variable]],
+     ['@ivar.meth', [:instance, :variable]],
+    ].each do |name, types|
       cp = CmdParse.new(name)
       assert cp._class_module_chain, "should be able to parse of #{name}"
       m = cp.result
-      count.times do |i|
+      assert_equal m.type, types[0], "parse type of #{name}"
+      1.upto(types.size-1) do |i|
         assert m, "Chain item #{i} of #{name} should not be nil"
         m = m.chain[1]
+        assert_equal m.type, types[i], "parse type of #{name}"
       end
-      assert_nil m.chain, "#{count} chain item in #{cp.result} should be nil"
+      assert_nil m.chain, "chain item #{types.size} in #{cp.result} should be nil"
     end
     ['A(5)'].each do |name|
       cp = CmdParse.new(name)
@@ -70,6 +82,7 @@ class TestCmdParse < Test::Unit::TestCase
 
   include Trepan::CmdParser
   def test_method_name
+    # require_relative '../../lib/trepanning'
     def five; 5 end
     %w(five RubyVM::InstructionSequence.new Kernel.eval
         Testing.testing Kernel::eval File.basename).each do |str|

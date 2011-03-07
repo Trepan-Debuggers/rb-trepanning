@@ -97,7 +97,7 @@ class Trepan
       begin 
         if @cp._class_module_chain
           # Did we match all of it?
-          if @cp.result.name == str
+          if @cp.result.name == str.strip
             meth_for_parse_struct(@cp.result, start_binding)
           else
             nil

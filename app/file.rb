@@ -66,41 +66,15 @@ module Trepanning
   def find_iseqs_with_lineno(filename, lineno)
     files = find_scripts(filename)
     files.each do |file|
-      found = 
-        SCRIPT_ISEQS__[file].detect do |iseq|
-        iseq.offsetlines.values.flatten.uniq.member?(lineno)
+      SCRIPT_ISEQS__[file].each do |iseq|
+        iseq.child_iseqs.each do |child_iseq|
+          if child_iseq.offsetlines.values.flatten.uniq.member?(lineno)
+            return child_iseq
+          end
+        end
       end
-      return found if found
     end
     return nil
-  end
-
-  # parse_position(errmsg, arg)->(fn, name, lineno)
-  #    
-  #  Parse arg as [filename|module:]lineno
-  #  Make sure it works for C:\foo\bar.rb:12
-  def parse_position(errmsg, arg)
-    colon = arg.rindex(':') 
-    if colon
-      # FIXME: Handle double colons, e.g. File::open
-      filename = arg[0..colon-1].rstrip
-      m, f = lookupmodule(filename)
-      if not f
-        errmsg.call("'%s' not found using sys.path" % filename)
-        return nil, nil, nil
-      else
-        filename = f
-        arg = arg[colon+1..-1].lstrip
-      end
-      begin
-        lineno = Integer(arg)
-      rescue 
-        errmsg.call("Bad line number: %s", arg)
-        return nil, filename, nil
-      end
-      return nil, filename, lineno
-    end
-    return nil, nil, nil
   end
 end
 # Demo it

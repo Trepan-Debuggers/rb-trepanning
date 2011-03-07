@@ -584,78 +584,36 @@ class CmdParse
     return _tmp
   end
 
-  # local_internal_identifier = < (constant_identifier | variable_identifier) > {       SymbolEntry.new(:instance, text)     }
+  # local_internal_identifier = (constant_identifier | variable_identifier)
   def _local_internal_identifier
 
     _save = self.pos
-    while true # sequence
-    _text_start = self.pos
-
-    _save1 = self.pos
     while true # choice
     _tmp = apply('constant_identifier', :_constant_identifier)
     break if _tmp
-    self.pos = _save1
+    self.pos = _save
     _tmp = apply('variable_identifier', :_variable_identifier)
     break if _tmp
-    self.pos = _save1
+    self.pos = _save
     break
     end # end choice
-
-    if _tmp
-      set_text(_text_start)
-    end
-    unless _tmp
-      self.pos = _save
-      break
-    end
-    @result = begin; 
-      SymbolEntry.new(:instance, text)
-    ; end
-    _tmp = true
-    unless _tmp
-      self.pos = _save
-    end
-    break
-    end # end sequence
 
     return _tmp
   end
 
-  # local_identifier = < (constant_identifier | vm_identifier) > {       SymbolEntry.new(:instance, text)     }
+  # local_identifier = (constant_identifier | vm_identifier)
   def _local_identifier
 
     _save = self.pos
-    while true # sequence
-    _text_start = self.pos
-
-    _save1 = self.pos
     while true # choice
     _tmp = apply('constant_identifier', :_constant_identifier)
     break if _tmp
-    self.pos = _save1
+    self.pos = _save
     _tmp = apply('vm_identifier', :_vm_identifier)
     break if _tmp
-    self.pos = _save1
+    self.pos = _save
     break
     end # end choice
-
-    if _tmp
-      set_text(_text_start)
-    end
-    unless _tmp
-      self.pos = _save
-      break
-    end
-    @result = begin; 
-      SymbolEntry.new(:instance, text)
-    ; end
-    _tmp = true
-    unless _tmp
-      self.pos = _save
-    end
-    break
-    end # end sequence
 
     return _tmp
   end
@@ -729,29 +687,6 @@ class CmdParse
     return _tmp
   end
 
-  # leading_identifier = (global_identifier | instance_identifier | classvar_identifier | local_internal_identifier)
-  def _leading_identifier
-
-    _save = self.pos
-    while true # choice
-    _tmp = apply('global_identifier', :_global_identifier)
-    break if _tmp
-    self.pos = _save
-    _tmp = apply('instance_identifier', :_instance_identifier)
-    break if _tmp
-    self.pos = _save
-    _tmp = apply('classvar_identifier', :_classvar_identifier)
-    break if _tmp
-    self.pos = _save
-    _tmp = apply('local_internal_identifier', :_local_internal_identifier)
-    break if _tmp
-    self.pos = _save
-    break
-    end # end choice
-
-    return _tmp
-  end
-
   # identifier = (global_identifier | instance_identifier | classvar_identifier | local_identifier)
   def _identifier
 
@@ -811,7 +746,7 @@ class CmdParse
     return _tmp
   end
 
-  # internal_class_module_chain = (local_internal_identifier:parent id_separator:sep internal_class_module_chain:child {          let = parent.name[0..0]          type = (let =~ /A-Z/) ? :constant : :variable          SymbolEntry.new(type, string, [parent, child, sep])       } | local_identifier)
+  # internal_class_module_chain = (< local_internal_identifier:parent id_separator:sep internal_class_module_chain:child > {          SymbolEntry.new(parent.type, text, [parent, child, sep])       } | local_identifier)
   def _internal_class_module_chain
 
     _save = self.pos
@@ -819,28 +754,39 @@ class CmdParse
 
     _save1 = self.pos
     while true # sequence
+    _text_start = self.pos
+
+    _save2 = self.pos
+    while true # sequence
     _tmp = apply('local_internal_identifier', :_local_internal_identifier)
     parent = @result
     unless _tmp
-      self.pos = _save1
+      self.pos = _save2
       break
     end
     _tmp = apply('id_separator', :_id_separator)
     sep = @result
     unless _tmp
-      self.pos = _save1
+      self.pos = _save2
       break
     end
     _tmp = apply('internal_class_module_chain', :_internal_class_module_chain)
     child = @result
     unless _tmp
+      self.pos = _save2
+    end
+    break
+    end # end sequence
+
+    if _tmp
+      set_text(_text_start)
+    end
+    unless _tmp
       self.pos = _save1
       break
     end
     @result = begin; 
-         let = parent.name[0..0]
-         type = (let =~ /A-Z/) ? :constant : :variable
-         SymbolEntry.new(type, string, [parent, child, sep])
+         SymbolEntry.new(parent.type, text, [parent, child, sep])
       ; end
     _tmp = true
     unless _tmp
@@ -860,7 +806,7 @@ class CmdParse
     return _tmp
   end
 
-  # class_module_chain = (leading_identifier:parent id_separator:sep internal_class_module_chain:child {          let = parent.name[0..0]          type = (let =~ /A-Z/) ? :constant : :variable          SymbolEntry.new(type, string, [parent, child, sep])       } | identifier)
+  # class_module_chain = (< identifier:parent id_separator:sep internal_class_module_chain:child > {          SymbolEntry.new(parent.type, text, [parent, child, sep])       } | identifier)
   def _class_module_chain
 
     _save = self.pos
@@ -868,28 +814,39 @@ class CmdParse
 
     _save1 = self.pos
     while true # sequence
-    _tmp = apply('leading_identifier', :_leading_identifier)
+    _text_start = self.pos
+
+    _save2 = self.pos
+    while true # sequence
+    _tmp = apply('identifier', :_identifier)
     parent = @result
     unless _tmp
-      self.pos = _save1
+      self.pos = _save2
       break
     end
     _tmp = apply('id_separator', :_id_separator)
     sep = @result
     unless _tmp
-      self.pos = _save1
+      self.pos = _save2
       break
     end
     _tmp = apply('internal_class_module_chain', :_internal_class_module_chain)
     child = @result
     unless _tmp
+      self.pos = _save2
+    end
+    break
+    end # end sequence
+
+    if _tmp
+      set_text(_text_start)
+    end
+    unless _tmp
       self.pos = _save1
       break
     end
     @result = begin; 
-         let = parent.name[0..0]
-         type = (let =~ /A-Z/) ? :constant : :variable
-         SymbolEntry.new(type, string, [parent, child, sep])
+         SymbolEntry.new(parent.type, text, [parent, child, sep])
       ; end
     _tmp = true
     unless _tmp
@@ -1412,12 +1369,13 @@ class CmdParse
   end
 end
 if __FILE__ == $0
-  # require 'rubygems'; require 'trepanning';
+  # require 'rubygems'; require_relative '../lib/trepanning';
   
   cp = CmdParse.new('', true)
-  %w(A::B  @@classvar abc01! @ivar @ivar.meth
+  %w(A::B @@classvar abc01! @ivar @ivar.meth
     Object A::B::C A::B::C::D A::B.c A.b.c.d).each do |name|
     cp.setup_parser(name, true)
+    # debugger if name == '@ivar.meth'
     res = cp._class_module_chain
     p res
     p cp.string

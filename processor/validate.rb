@@ -165,14 +165,17 @@ class Trepan
       [position, use_offset]
     end
 
-    def position_to_line_and_offset(iseq, position, offset_type)
+    def position_to_line_and_offset(iseq, filename, position, offset_type)
       case offset_type
       when :line
         if ary = iseq.lineoffsets[position]
           vm_offset = ary.first
           line_no   = position
+        elsif found_iseq = find_iseqs_with_lineno(filename, position)
+          position_to_line_and_offset(found_iseq, filename, position, offset_type)
         else
-          errmsg "Unable to find offset for line #{position} in #{iseq}"
+          errmsg("Unable to find offset for line #{position}\n\t" + 
+                 "in #{iseq.name} of file #{filename}")
           return [nil, nil]
         end
       when :offset
@@ -190,7 +193,7 @@ class Trepan
         errmsg "Bad parse offset_type: #{offset_type.inspect}"
         return [nil, nil]
       end
-      return [line_no, vm_offset]
+      return [iseq, line_no, vm_offset]
     end
 
     # Parse a breakpoint position. Return
@@ -203,8 +206,8 @@ class Trepan
         parse_position(position_str)
       if meth_or_frame
         if iseq = meth_or_frame.iseq
-          line_no, vm_offset = position_to_line_and_offset(iseq, position, 
-                                                           offset_type)
+          iseq, line_no, vm_offset = 
+            position_to_line_and_offset(iseq, file, position, offset_type)
           if vm_offset && line_no
             return [iseq, line_no, vm_offset, true] 
           end
@@ -215,8 +218,8 @@ class Trepan
         if :line == offset_type
           iseq = find_iseqs_with_lineno(file, position)
           if iseq
-            line_no, vm_offset = position_to_line_and_offset(iseq, position, 
-                                                             offset_type)
+            junk, line_no, vm_offset = position_to_line_and_offset(iseq, position, 
+                                                                   offset_type)
             return [@frame.iseq, line_no, vm_offset, true] 
           else
             errmsg("Unable to find instruction sequence for" + 
@@ -296,7 +299,6 @@ class Trepan
           return [meth, meth.iseq.source_container[1], info.position, 
                   info.position_type]
         else
-          errmsg "string #{info.name} of #{arg} doesn't resolve to method we can find"
           return nil, nil, nil, nil
         end
       when :file

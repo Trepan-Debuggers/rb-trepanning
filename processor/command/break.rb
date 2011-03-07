@@ -42,15 +42,10 @@ Examples:
       bp = @proc.breakpoint_offset(@proc.frame.pc_offset, 
                                    @proc.frame.iseq) 
     else
-      position, iseq, use_offset, condition, name = 
-        @proc.breakpoint_position(args[1..-1])
-      return false unless position && iseq
-      bp = 
-        if use_offset
-          @proc.breakpoint_offset(position, iseq)
-        else
-          @proc.breakpoint_line(position, iseq)
-        end
+      iseq, line_number, vm_offset, condition = 
+        @proc.breakpoint_position(@proc.cmd_argstr)
+      return false unless iseq && vm_offset
+      bp = @proc.breakpoint_offset(vm_offset, iseq)
     end
     if bp
       bp.condition = condition
@@ -78,18 +73,25 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  cmd.run([cmd.name])
-  cmd.run([cmd.name, __LINE__.to_s])
+  # require_relative '../../lib/trepanning'
+  def run_cmd(cmd, args) 
+    cmd.proc.instance_variable_set('@cmd_argstr', args[1..-1].join(' '))
+    cmd.run(args)
+  end
+
+  run_cmd(cmd, [cmd.name])
+  run_cmd(cmd, [cmd.name, __LINE__.to_s])
   require 'thread_frame'
   tf = RubyVM::ThreadFrame.current
   pc_offset = tf.pc_offset
-  cmd.run([cmd.name, "@#{pc_offset}"])
+  run_cmd(cmd, [cmd.name, "@#{pc_offset}"])
   def foo
     5 
   end
-  cmd.run([cmd.name, 'foo', (__LINE__-2).to_s])
-  cmd.run([cmd.name, 'foo'])
-  cmd.run([cmd.name, "MockDebugger::setup"])
+  run_cmd(cmd, [cmd.name, 'foo', (__LINE__-2).to_s])
+  run_cmd(cmd, [cmd.name, 'foo'])
+  run_cmd(cmd, [cmd.name, "MockDebugger::setup"])
   require 'irb'
-  cmd.run([cmd.name, "IRB.start"])
+  run_cmd(cmd, [cmd.name, "IRB.start"])
+  run_cmd(cmd, [cmd.name, 'foo93'])
 end
