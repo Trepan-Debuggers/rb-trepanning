@@ -66,11 +66,13 @@ module Trepanning
   def find_iseqs_with_lineno(filename, lineno)
     files = find_scripts(filename)
     files.each do |file|
-      found = 
-        SCRIPT_ISEQS__[file].detect do |iseq|
-        iseq.offsetlines.values.flatten.uniq.member?(lineno)
+      SCRIPT_ISEQS__[file].each do |iseq|
+        iseq.child_iseqs.each do |child_iseq|
+          if child_iseq.offsetlines.values.flatten.uniq.member?(lineno)
+            return child_iseq
+          end
+        end
       end
-      return found if found
     end
     return nil
   end
