@@ -40,7 +40,7 @@ See also: backtrace
 
   def run(args)
     frame = @proc.frame
-    section "Frame #{frame.method}"
+    section "Frame %2d: #{frame.method}" % @proc.frame_index
     msg "  %-6s: %s" % frame.source_container
     msg "  line  : %s" % @proc.frame_line
     msg "  argc  : %d" % frame.argc
