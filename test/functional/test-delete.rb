@@ -29,7 +29,8 @@ class TestDelete < Test::Unit::TestCase
     out = ['-- ',
            'va = 1',
            'basename is on.',
-           "Breakpoint 1 set at line 55 in file foo.rb,\n\tVM offset 55 of instruction sequence \"test_delete\".",
+           "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_delete\",
+\tline 55 in file foo.rb",
            "Deleted breakpoint 1."]
     compare_output(out, d, cmds)
 
@@ -57,10 +58,10 @@ class TestDelete < Test::Unit::TestCase
            "va = 1",
            "basename is on.",
            "Evaluation of unrecognized debugger commands is on.",
-           "Breakpoint 1 set at line 55 in file foo.rb,
-\tVM offset 55 of instruction sequence \"test_delete\".",
-           "Breakpoint 2 set at line 55 in file foo.rb,
-\tVM offset 55 of instruction sequence \"test_delete\".",
+           "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_delete\",
+\tline 55 in file foo.rb",
+           "Breakpoint 2 set at VM offset 55 of instruction sequence \"test_delete\",
+\tline 55 in file foo.rb",
            "Deleted breakpoint 1.",
            "xx ",
            "vd = 4",

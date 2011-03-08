@@ -169,7 +169,10 @@ class Trepan
       case offset_type
       when :line
         if ary = iseq.lineoffsets[position]
-          vm_offset = ary.first
+          # Normally the first offset is a trace instruction and doesn't
+          # register as the given line, so we need to take the next instruction
+          # after the first one, when available.
+          vm_offset = ary.size > 1 ? ary[1] : ary[0]
           line_no   = position
         elsif found_iseq = find_iseqs_with_lineno(filename, position)
           return position_to_line_and_offset(found_iseq, filename, position, 
@@ -213,7 +216,7 @@ class Trepan
           iseq, line_no, vm_offset = 
             position_to_line_and_offset(iseq, file, position, offset_type)
           if vm_offset && line_no
-            return [iseq, line_no, vm_offset, true] 
+            return [iseq, line_no, vm_offset, 'true'] 
           end
         else
           errmsg("Unable to set breakpoint in #{meth_or_frame}")
@@ -329,80 +332,6 @@ class Trepan
       end
     end
 
-    # # parse_position_one_arg(self,arg)->(module/function, container, lineno)
-    # #
-    # # See if arg is a line number, function name, or module name.
-    # # Return what we've found. nil can be returned as a value in
-    # # the triple.
-    # def parse_position_one_arg(arg, old_mod=nil, show_errmsg=true, allow_offset=false)
-    #   name, filename = nil, nil, nil
-    #   begin
-    #     # First see if argument is an integer
-    #     lineno    = Integer(arg)
-    #   rescue
-    #   else
-    #     container = frame_container(@frame, false)
-    #     filename  = container[1] unless old_mod
-    #     return nil, [container[0], canonic_file(filename)], lineno
-    #   end
-
-    #   # Next see if argument is a file name 
-    #   found = 
-    #     if arg[0..0] == File::SEPARATOR
-    #       LineCache::cached?(arg)
-    #     else
-    #       resolve_file_with_dir(arg)
-    #     end
-    #   if found
-    #     return nil, [container && container[0], canonic_file(arg)], 1 
-    #   else
-    #     matches = find_scripts(arg)
-    #     if matches.size > 1
-    #       if show_errmsg
-    #         errmsg "#{arg} is matches several files:"
-    #         errmsg Columnize::columnize(matches.sort, 
-    #                                     @settings[:width], ' ' * 4, 
-    #                                     true, true, ' ' * 2).chomp
-    #       end
-    #       return nil, nil, nil
-    #     elsif matches.size == 1
-    #       LineCache::cache(matches[0])
-    #       return nil, ['file', matches[0]], 1
-    #     end
-    #   end
-
-    #   # How about something with an instruction sequence?
-    #   meth = method?(arg)
-    #   if meth
-    #     if 'instruction sequence' == meth.type
-    #       iseq = meth.iseq
-    #     else
-    #       errmsg("#{meth.class} #{arg} is of type #{meth.type}; " +
-    #              "it doesn't have an instruction sequence.")
-    #       return meth, nil, nil
-    #     end
-    #   end
-
-    #   iseq = object_iseq(arg)
-    #   if iseq 
-    #     line_no = iseq.offsetlines.values.flatten.min
-    #     if iseq.source_container[0] == 'file'
-    #       filename = iseq.source_container[1]
-    #       return arg, ['file', canonic_file(filename)], line_no
-    #     else
-    #       return arg, iseq.source_container, line_no
-    #     end
-    #   end
-
-    #   if show_errmsg
-    #     unless (allow_offset && arg.size > 0 && arg[0] == '@')
-    #       errmsg("#{arg} is not a line number, read-in filename or method " +
-    #              "we can get location information about")
-    #     end
-    #   end
-    #   return nil, nil, nil
-    # end
-    
     def validate_initialize
       ## top_srcdir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
       ## @dbgr_script_iseqs, @dbgr_iseqs = filter_scripts(top_srcdir)
@@ -462,6 +391,7 @@ if __FILE__ == $0
       puts "#{str} should be false: #{proc.method?(str).to_s}"
     end
     puts '-' * 20
+    p proc.breakpoint_position('foo')
     p proc.breakpoint_position('@0')
     p proc.breakpoint_position("#{__LINE__}")
     p proc.breakpoint_position("#{__FILE__}   @0")

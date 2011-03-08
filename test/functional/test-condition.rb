@@ -27,8 +27,8 @@ class TestBreak < Test::Unit::TestCase
     out = ['-- ',
            'x = 6',
            'basename is on.',
-           "Breakpoint 1 set at line 55 in file foo.rb,
-\tVM offset 55 of instruction sequence \"test_condition\"."]
+           "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_condition\",
+\tline 55 in file foo.rb"]
     compare_output(out, d, cmds)
 
     # Try a condition that fails
@@ -47,8 +47,8 @@ class TestBreak < Test::Unit::TestCase
     out = ["-- ",
            "x = 6",
            "basename is on.",
-           "Breakpoint 1 set at line 55 in file foo.rb,
-\tVM offset 55 of instruction sequence \"test_condition\".",
+           "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_condition\",
+\tline 55 in file foo.rb",
            "xx ",
            "y = 7"]
     compare_output(out, d, cmds)

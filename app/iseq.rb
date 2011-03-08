@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Things related to RubyVM::InstructionSequence's
+
 module Trepanning
   # Returns a RubyVM::Instruction for the specified line. We search the
   # current instruction sequence +iseq+ and then up the parent scope.  If we hit
@@ -26,4 +30,17 @@ module Trepanning
     end
     return nil
   end
+
 end
+# Demo it
+# if __FILE__ == $0
+#   require 'thread_frame'
+#   include Trepanning
+#   if !(ARGV.size == 1 && ARGV[0] == 'noload')
+#     ISEQS__        = {}
+#     SCRIPT_ISEQS__ = {}
+#     ARGV[0..-1]    = ['noload']
+#     load(__FILE__)
+#   else    
+#   end
+# end

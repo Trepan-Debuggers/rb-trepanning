@@ -84,21 +84,19 @@ module FnTestHelper
 
     # Canonicalize breakpoint messages. 
     # For example: 
-    #   Set breakpoint 1: test/functional/test-tbreak.rb:10 (@0)
+    #   Breakpoint 1 set at VM offset 10
     # becomes :
-    #   Set breakpoint 1: foo.rb:55 (@3)
+    #  Breakpoint 1 set at VM offset 55
     a3 = a2.map do |s|
-      s.gsub(/^Breakpoint (\d+) set at line (\d+) in file .+,/, 
-             'Breakpoint \1 set at line 55 in file foo.rb,')
+      s.gsub(/^Breakpoint (\d+) set at VM offset (\d+)/, 
+             'Breakpoint \1 set at VM offset 55')
     end
 
-    # Remove VM offset locations. 
-    # For example: 
-    #	VM offset 2 of instruction sequence "block in compare_output".
+    #	line 14 in file test/functional/test-break.rb.
     # becomes 
-    #   VM offset 55 of instruction sequence "block in compare_output".
+    #   line 55 of file foo.rb
     a4 = a3.map do |s|
-      s.gsub(/VM offset \d+/, 'VM offset 55')
+      s.gsub(/line (\d+) in file .+/, 'line 55 in file foo.rb')
     end
     return a4
   end

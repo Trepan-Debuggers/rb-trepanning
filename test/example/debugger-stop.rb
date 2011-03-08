@@ -10,5 +10,5 @@ module Foo
     5
   end
 end
-debugger
+debugger(:nx=>true)
 Foo::five

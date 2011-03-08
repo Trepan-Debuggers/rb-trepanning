@@ -48,6 +48,8 @@ def run_standalone_ruby_files(list)
   puts '*' * 40
   list.each do |ruby_file|
     system(RUBY_PATH, ruby_file)
+    p $?.exitstatus
+    break if $?.exitstatus != 0 && !opts[:continue]
   end
 end
 

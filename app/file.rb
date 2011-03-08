@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Things related to file/module status
 require 'thread_frame'
 require_relative 'iseq'
@@ -46,11 +46,6 @@ module Trepanning
     return [scripts, rejected]
   end
 
-  def find_scripts(filename)
-    filename_pat = file_match_pat(filename)
-    return SCRIPT_ISEQS__.keys.grep(/#{filename_pat}/)
-  end
-
   def find_iseqs(iseqs_hash, name)
     iseq_name, filename = name.split(/@/)
     return [] unless iseqs_hash.member?(iseq_name)
@@ -74,6 +69,12 @@ module Trepanning
     end
     return nil
   end
+
+  def find_scripts(filename)
+    filename_pat = file_match_pat(filename)
+    return SCRIPT_ISEQS__.keys.grep(/#{filename_pat}/)
+  end
+
 end
 # Demo it
 if __FILE__ == $0
@@ -105,5 +106,6 @@ if __FILE__ == $0
     p SCRIPT_ISEQS__.keys
     # require_relative '../lib/trepanning'; debugger
     p find_iseqs_with_lineno(__FILE__, __LINE__)
+    p find_iseqs(ISEQS__, 'find_scripts')
   end
 end
