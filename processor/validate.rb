@@ -171,10 +171,10 @@ class Trepan
         if ary = iseq.lineoffsets[position]
           vm_offset = ary.first
           line_no   = position
-        elsif found_iseq = find_iseq_with_line_from_iseq(iseq, position)
+        elsif found_iseq = find_iseqs_with_lineno(filename, position)
           return position_to_line_and_offset(found_iseq, filename, position, 
                                              offset_type)
-        elsif found_iseq = find_iseqs_with_lineno(filename, position)
+        elsif found_iseq = find_iseq_with_line_from_iseq(iseq, position)
           return position_to_line_and_offset(found_iseq, filename, position, 
                                              offset_type)
         else
@@ -222,8 +222,8 @@ class Trepan
         if :line == offset_type
           iseq = find_iseqs_with_lineno(file, position)
           if iseq
-            junk, line_no, vm_offset = position_to_line_and_offset(iseq, position, 
-                                                                   offset_type)
+            junk, line_no, vm_offset = 
+              position_to_line_and_offset(iseq, file, position, offset_type)
             return [@frame.iseq, line_no, vm_offset, true] 
           else
             errmsg("Unable to find instruction sequence for" + 

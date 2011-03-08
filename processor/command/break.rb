@@ -46,6 +46,7 @@ Examples:
         @proc.breakpoint_position(@proc.cmd_argstr)
       return false unless iseq && vm_offset
       bp = @proc.breakpoint_offset(vm_offset, iseq)
+      # bp = @proc.breakpoint_line(line_number, iseq)
     end
     if bp
       bp.condition = condition

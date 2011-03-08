@@ -252,7 +252,12 @@ class Trepan
           @dbgr.stop
           raise
         rescue Exception => exc
-          errmsg("Internal debugger error: #{exc.inspect}")
+          # If we are inside the script interface errmsg may fail.
+          begin
+            errmsg("Internal debugger error: #{exc.inspect}")
+          rescue
+            $stderr.puts "Internal debugger error: #{exc.inspect}"
+          end
           exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end
       end
