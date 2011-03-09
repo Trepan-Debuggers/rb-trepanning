@@ -19,6 +19,9 @@ class Trepan
     attr_reader   :offset    # Fixnum. Offset into an instruction
                              # sequence for the location of the
                              # breakpoint
+    attr_reader   :negate    # Boolean. Negate sense of condition. Used in 
+                             # break if .. and break unless ..
+                             # breakpoint
     attr_reader   :type      # String. 'line' if breakpoint requested
                              # at "line" boundary or 'offset'
                              # requested at a specific offset
@@ -29,6 +32,7 @@ class Trepan
       :enabled   => 'true',
       :ignore    =>  0,
       :temp      =>  false,
+      :negate    =>  false,
       :type      => 'line',
     } unless defined?(BRKPT_DEFAULT_SETTINGS)
     
@@ -53,6 +57,11 @@ class Trepan
         self.instance_variable_set('@'+key.to_s, opts[key])
       end
 
+      if @negate
+        p opts
+        puts caller 
+      end
+
       @hits = 0
 
       unless @id
@@ -64,7 +73,7 @@ class Trepan
     end
 
     def condition?(bind)
-      if eval(@condition, bind)
+      if @negate != eval(@condition, bind)
         if @ignore > 0
           @ignore -= 1
           return false

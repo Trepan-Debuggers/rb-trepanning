@@ -40,17 +40,10 @@ See also 'step', 'next', 'finish', and 'nexti' commands.
       # Form is: "continue"
       @proc.continue
     else
-      # FIXME: handle more general condition parameter rather than just
-      # a line number
-      position, iseq, use_offset, condition = 
-        @proc.breakpoint_position(args[1..-1])
-      return false unless position && iseq
-      bp = 
-        if use_offset
-          @proc.breakpoint_offset(position, iseq, true)
-        else
-          @proc.breakpoint_line(position, iseq, true)
-        end
+      iseq, line_number, vm_offset, condition, negate = 
+        @proc.breakpoint_position(@proc.cmd_argstr, false)
+      return false unless iseq && vm_offset
+      bp = @proc.breakpoint_offset(vm_offset, condition, negate, iseq)
       return unless bp
       @proc.continue
     end

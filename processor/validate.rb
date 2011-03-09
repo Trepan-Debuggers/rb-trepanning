@@ -208,15 +208,24 @@ class Trepan
     # - the line number - a Fixnum
     # - vm_offset       - a Fixnum
     # - the condition (by default 'true') to use for this breakpoint
-    def breakpoint_position(position_str)
+    # - true if 'if' given for condition, false if 'unless'
+    def breakpoint_position(position_str, allow_condition)
+      break_cmd_parse = if allow_condition
+                          parse_breakpoint(position_str)
+                        else
+                          parse_breakpoint_location_no_condition(position_str)
+                        end
+      return [nil] * 5 unless break_cmd_parse
+      debugger if break_cmd_parse.negate
+      tail = [break_cmd_parse.condition, break_cmd_parse.negate]
       meth_or_frame, file, position, offset_type = 
-        parse_position(position_str)
+        parse_position(break_cmd_parse.position)
       if meth_or_frame
         if iseq = meth_or_frame.iseq
           iseq, line_no, vm_offset = 
             position_to_line_and_offset(iseq, file, position, offset_type)
           if vm_offset && line_no
-            return [iseq, line_no, vm_offset, 'true'] 
+            return [iseq, line_no, vm_offset] + tail
           end
         else
           errmsg("Unable to set breakpoint in #{meth_or_frame}")
@@ -227,7 +236,7 @@ class Trepan
           if iseq
             junk, line_no, vm_offset = 
               position_to_line_and_offset(iseq, file, position, offset_type)
-            return [@frame.iseq, line_no, vm_offset, true] 
+            return [@frame.iseq, line_no, vm_offset] + tail
           else
             errmsg("Unable to find instruction sequence for" + 
                    " position #{position} in #{file}")
@@ -238,11 +247,11 @@ class Trepan
       elsif @frame.iseq.source_container[1] == file 
         line_no, vm_offset = position_to_line_and_offset(@frame.iseq, position, 
                                                          offset_type)
-        return [@frame.iseq, line_no, vm_offset, true] 
+        return [@frame.iseq, line_no, vm_offset] + tail
       else
         errmsg("Unable to parse breakpoint position #{position_str}")
       end
-      return [nil, nil, nil, true]
+      return [nil] * 5
     end
 
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.
@@ -298,8 +307,8 @@ class Trepan
     # should include things like:
     # Parse arg as [filename:]lineno | function | module
     # Make sure it works for C:\foo\bar.py:12
-    def parse_position(arg)
-      info = parse_location(arg)
+    def parse_position(info)
+      info = parse_location(info) if info.kind_of?(String)
       case info.container_type
       when :fn
         if meth = method?(info.container)

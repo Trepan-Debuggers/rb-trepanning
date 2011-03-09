@@ -120,6 +120,21 @@ class Trepan
       parse = parse_terminal(:_location, loc_str)
       parse ? parse.result : nil
     end
+
+    def parse_breakpoint(str)
+      parse = parse_terminal(:_breakpoint_stmt, str)
+      parse ? parse.result : nil
+    end
+
+    def parse_breakpoint_no_condition(str)
+      parse = parse_terminal(:_breakpoint_stmt_no_condition, str)
+      parse ? parse.result : nil
+    end
+
+    def parse_list(str)
+      parse = parse_terminal(:_list_stmt, str)
+      parse ? parse.result : nil
+    end
   end
 end
 
@@ -176,6 +191,12 @@ if __FILE__ == $0
   ['fn', 'fn 5', 'fn @5', '@5', '5'].each do |location|
     p parse_location(location)
   end
+
+  # Location stuff
+  ['fn if a > b', 'fn 5 unless c > d', 'fn:5 if x', '@5', '5'].each do |str|
+    p parse_breakpoint(str)
+  end
+
 
 end
 

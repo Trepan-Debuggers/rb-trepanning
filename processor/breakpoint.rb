@@ -75,13 +75,14 @@ class Trepan
       @brkpts.add(found_iseq, offset, :temp => temp)
     end
 
-    def breakpoint_offset(offset, iseq, temp=false)
+    def breakpoint_offset(offset, iseq, condition, negate, temp=false)
       # FIXME: handle breakpoint conditions.
       unless iseq.offsetlines.keys.member?(offset)
         errmsg("Offset #{offset} not found in #{iseq.name} for breakpoint.")
         return nil
       end
-      @brkpts.add(iseq, offset, :temp => temp, :type => 'offset')
+      @brkpts.add(iseq, offset, :temp => temp, :condition => condition,
+                  :negate => negate, :type => 'offset')
     end
 
     # Delete a breakpoint given its breakpoint number.

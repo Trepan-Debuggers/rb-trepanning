@@ -10,6 +10,12 @@
   Position = Struct.new(:container_type, :container,
                        :position_type,  :position)
 
+  # Structure to hold breakpoint information
+  Breakpoint = Struct.new(:position, :negate, :condition)
+
+  # Structure to hold list information
+  List = Struct.new(:position, :num)
+
    }
 #####################################################
 
@@ -79,9 +85,9 @@ instance_identifier = < '@' local_identifier >
 
 
 # Example: @@foo
-classvar_identifier = ('@@' local_identifier )
+classvar_identifier = ('@@' local_identifier:id )
     {
-     SymbolEntry.new(:classvar, text)
+     SymbolEntry.new(:classvar, id)
     }     
 
 identifier = global_identifier 
@@ -182,3 +188,26 @@ location =
  | class_module_chain?:fn  {
       Position.new(:fn, fn, nil, nil)
     }
+
+if_unless = <"if" | "unless"> { text }
+condition = </.+/> { text}
+
+breakpoint_stmt_no_condition = location:loc  {
+  Breakpoint.new(loc, false, 'true')
+}
+
+# Note that the first word "break" is handled in the command.
+# Also, "break" with nothing else is handled there as well
+breakpoint_stmt = location:loc if_unless:iu condition:cond {
+     Breakpoint.new(loc, iu == 'unless', cond)
+}
+ | breakpoint_stmt_no_condition
+
+# Note that the first word "list", "list>" or handled in
+# the command.  Also, "list" with nothing else is
+# handled there as well
+list_special_targets = <'.' '-'> { text }
+list_stmt = (list_special_target | location):loc (integer:int)? {
+  List.new(loc, int)
+}
+

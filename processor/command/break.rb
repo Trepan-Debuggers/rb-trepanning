@@ -40,13 +40,12 @@ Examples:
       # usage is "break"  which means break right here
       # FIXME: should handle condition
       bp = @proc.breakpoint_offset(@proc.frame.pc_offset, 
-                                   @proc.frame.iseq) 
+                                   @proc.frame.iseq, 'true', false) 
     else
-      iseq, line_number, vm_offset, condition = 
-        @proc.breakpoint_position(@proc.cmd_argstr)
+      iseq, line_number, vm_offset, condition, negate = 
+        @proc.breakpoint_position(@proc.cmd_argstr, true)
       return false unless iseq && vm_offset
-      bp = @proc.breakpoint_offset(vm_offset, iseq)
-      # bp = @proc.breakpoint_line(line_number, iseq)
+      bp = @proc.breakpoint_offset(vm_offset, iseq, condition, negate)
     end
     if bp
       bp.condition = condition
