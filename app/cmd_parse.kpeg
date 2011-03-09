@@ -211,4 +211,3 @@ list_special_targets = <'.' '-'> { text }
 list_stmt = (list_special_target | location):loc - (integer:int)? {
   List.new(loc, int)
 }
-

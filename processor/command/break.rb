@@ -7,24 +7,24 @@ class Trepan::Command::BreakCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [LINE-NUMBER|OFFSET]
-#{NAME} METHOD [LINE-NUMBER|OFFSET]
+#{NAME} 
+#{NAME} LOCATION [ {if|unless} CONDITION ]
 
-Set a breakpoint. If a line number is given, a breakpoint is set in
-that line number of the current instruction sequence. If an offset is
-given, a number prefaced with an "@", set a breakpoint at that
-instruction offset.
-
-With method name, a breakpoint it set at the beginning of the method.
-current instruction sequence. Currently you can add a module name in
-front of the method name, like FileUtils.cp, but not a class name like
-Dir.pwd. 
+Set a breakpoint. In the second form where CONDITIOn is given, the
+condition is evaluated in the context of the position. We stop only If
+CONDITION evalutes to non-false/nil and the "if" form used, or it is
+false and the "unless" form used.\
 
 Examples:
    #{NAME}
-   #{NAME} 10    # set breakpoint on line 10
+   #{NAME} 10               # set breakpoint on line 10
+   #{NAME} 10 if 1 == a     # like above but only if a is equal to 1
+   #{NAME} 10 unless 1 == a # like above but only if a is equal to 1
+   #{NAME} me.rb:10
    #{NAME} @20   # set breakpoint VM Instruction Sequence offset 20
    #{NAME} Kernel.pp # Set a breakpoint at the beginning of Kernel.pp
+
+See also condition, continue and "help location".
     HELP
 
     ALIASES      = %w(b)

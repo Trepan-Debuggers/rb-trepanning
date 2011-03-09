@@ -7,7 +7,7 @@ class Trepan::Command::ContinueCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [breakpoint-position]
+#{NAME} [LOCATION]
 
 Leave the debugger loop and continue execution. Subsequent entry to
 the debugger however may occur via breakpoints or explicit calls, or
@@ -24,7 +24,7 @@ Examples:
    #{NAME} gcd   # continue to first instruction of method gcd
    #{NAME} IRB.start o7 # continue to IRB.start offset 7
 
-See also 'step', 'next', 'finish', and 'nexti' commands.
+See also 'step', 'next', 'finish', 'nexti' commands and "help location".
     HELP
 
     ALIASES      = %w(c cont)

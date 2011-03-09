@@ -20,6 +20,8 @@ made unconditional.
 Examples:
    #{NAME} 5 x > 10  # Breakpoint 5 now has condition x > 10
    #{NAME} 5         # Remove above condition
+
+See also "break", "enable" and "disable".
     HELP
 
     ALIASES       = %w(cond)
