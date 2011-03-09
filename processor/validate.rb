@@ -314,14 +314,12 @@ class Trepan
           return [meth, meth.iseq.source_container[1], info.position, 
                   info.position_type]
         else
-          return nil, nil, nil, nil
+          return [nil] * 4
         end
       when :file
         filename = canonic_file(info.container)
         # ?? Try to look up method here? 
         return nil, info.container,  info.position, info.position_type
-        errmsg "Unknown container type #{info.container_type} for string #{info.name} of #{arg}"
-        return nil, nil, nil, nil
       when nil
         if [:line, :offset].member?(info.position_type)
           container = frame_container(@frame, false)
@@ -332,11 +330,11 @@ class Trepan
           return nil, nil, nil, nil
         else
           errmsg "Unknown position type #{info.position_type} for location #{arg}"
-          return nil, nil, nil, nil
+          return [nil] * 4
         end
       else
         errmsg "Unknown container type #{info.container_type} for location #{arg}"
-        return nil, nil, nil, nil
+        return [nil] * 4
       end
     end
 
