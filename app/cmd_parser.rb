@@ -878,63 +878,13 @@ class CmdParse
     return _tmp
   end
 
-  # not_space = ("\\" sp | /[^ \t]/)+
-  def _not_space
+  # - = sp+
+  def __hyphen_
     _save = self.pos
-
-    _save1 = self.pos
-    while true # choice
-  
-    _save2 = self.pos
-      while true # sequence
-        _tmp = match_string("\\")
-        unless _tmp
-          self.pos = _save2
-          break
-        end
-        _tmp = apply(:_sp)
-        unless _tmp
-          self.pos = _save2
-        end
-        break
-      end # end sequence
-
-      break if _tmp
-      self.pos = _save1
-      _tmp = scan(/\A(?-mix:[^ \t])/)
-      break if _tmp
-      self.pos = _save1
-      break
-    end # end choice
-
+    _tmp = apply(:_sp)
     if _tmp
         while true
-            
-    _save3 = self.pos
-        while true # choice
-      
-    _save4 = self.pos
-          while true # sequence
-            _tmp = match_string("\\")
-            unless _tmp
-              self.pos = _save4
-              break
-            end
-            _tmp = apply(:_sp)
-            unless _tmp
-              self.pos = _save4
-            end
-            break
-          end # end sequence
-
-          break if _tmp
-          self.pos = _save3
-          _tmp = scan(/\A(?-mix:[^ \t])/)
-          break if _tmp
-          self.pos = _save3
-          break
-        end # end choice
-
+                _tmp = apply(:_sp)
             break unless _tmp
           end
           _tmp = true
@@ -944,8 +894,8 @@ class CmdParse
     return _tmp
   end
 
-  # not_space_colon = ("\\" sp | /[^ \t:]/)+
-  def _not_space_colon
+  # not_space = ("\\" sp | /[^ \t]/)+
+  def _not_space
         _save = self.pos
     
     _save1 = self.pos
@@ -967,7 +917,7 @@ class CmdParse
 
           break if _tmp
           self.pos = _save1
-          _tmp = scan(/\A(?-mix:[^ \t:])/)
+          _tmp = scan(/\A(?-mix:[^ \t])/)
           break if _tmp
           self.pos = _save1
           break
@@ -995,7 +945,7 @@ class CmdParse
 
               break if _tmp
               self.pos = _save3
-              _tmp = scan(/\A(?-mix:[^ \t:])/)
+              _tmp = scan(/\A(?-mix:[^ \t])/)
               break if _tmp
               self.pos = _save3
               break
@@ -1010,583 +960,664 @@ class CmdParse
     return _tmp
   end
 
+  # not_space_colon = ("\\" sp | /[^ \t:]/)+
+  def _not_space_colon
+            _save = self.pos
+        
+    _save1 = self.pos
+            while true # choice
+          
+    _save2 = self.pos
+              while true # sequence
+                _tmp = match_string("\\")
+                unless _tmp
+                  self.pos = _save2
+                  break
+                end
+                _tmp = apply(:_sp)
+                unless _tmp
+                  self.pos = _save2
+                end
+                break
+              end # end sequence
+
+              break if _tmp
+              self.pos = _save1
+              _tmp = scan(/\A(?-mix:[^ \t:])/)
+              break if _tmp
+              self.pos = _save1
+              break
+            end # end choice
+
+            if _tmp
+                while true
+                            
+    _save3 = self.pos
+                while true # choice
+              
+    _save4 = self.pos
+                  while true # sequence
+                    _tmp = match_string("\\")
+                    unless _tmp
+                      self.pos = _save4
+                      break
+                    end
+                    _tmp = apply(:_sp)
+                    unless _tmp
+                      self.pos = _save4
+                    end
+                    break
+                  end # end sequence
+
+                  break if _tmp
+                  self.pos = _save3
+                  _tmp = scan(/\A(?-mix:[^ \t:])/)
+                  break if _tmp
+                  self.pos = _save3
+                  break
+                end # end choice
+
+                    break unless _tmp
+                  end
+                  _tmp = true
+                else
+                  self.pos = _save
+                end
+    return _tmp
+  end
+
   # filename = < not_space > { text }
   def _filename
-        
+            
     _save = self.pos
-            while true # sequence
-              _text_start = self.pos
-              _tmp = apply(:_not_space)
-              if _tmp
-                text = get_text(_text_start)
-              end
-              unless _tmp
-                self.pos = _save
-                break
-              end
-              @result = begin;            text ; end
-              _tmp = true
-              unless _tmp
-                self.pos = _save
-              end
-              break
-            end # end sequence
+                while true # sequence
+                  _text_start = self.pos
+                  _tmp = apply(:_not_space)
+                  if _tmp
+                    text = get_text(_text_start)
+                  end
+                  unless _tmp
+                    self.pos = _save
+                    break
+                  end
+                  @result = begin;                text ; end
+                  _tmp = true
+                  unless _tmp
+                    self.pos = _save
+                  end
+                  break
+                end # end sequence
 
     return _tmp
   end
 
   # file_no_colon = < not_space_colon > { text }
   def _file_no_colon
-        
+            
     _save = self.pos
-            while true # sequence
-              _text_start = self.pos
-              _tmp = apply(:_not_space_colon)
-              if _tmp
-                text = get_text(_text_start)
-              end
-              unless _tmp
-                self.pos = _save
-                break
-              end
-              @result = begin;            text ; end
-              _tmp = true
-              unless _tmp
-                self.pos = _save
-              end
-              break
-            end # end sequence
+                while true # sequence
+                  _text_start = self.pos
+                  _tmp = apply(:_not_space_colon)
+                  if _tmp
+                    text = get_text(_text_start)
+                  end
+                  unless _tmp
+                    self.pos = _save
+                    break
+                  end
+                  @result = begin;                text ; end
+                  _tmp = true
+                  unless _tmp
+                    self.pos = _save
+                  end
+                  break
+                end # end sequence
 
     return _tmp
   end
 
   # file_pos_sep = (sp+ | ":")
   def _file_pos_sep
-        
+            
     _save = self.pos
-            while true # choice
-              _save1 = self.pos
-              _tmp = apply(:_sp)
-              if _tmp
-                  while true
-                                    _tmp = apply(:_sp)
-                      break unless _tmp
-                    end
-                    _tmp = true
-                  else
-                    self.pos = _save1
-                  end
-                  break if _tmp
-                  self.pos = _save
-                  _tmp = match_string(":")
-                  break if _tmp
-                  self.pos = _save
-                  break
-                end # end choice
+                while true # choice
+                  _save1 = self.pos
+                  _tmp = apply(:_sp)
+                  if _tmp
+                      while true
+                                            _tmp = apply(:_sp)
+                          break unless _tmp
+                        end
+                        _tmp = true
+                      else
+                        self.pos = _save1
+                      end
+                      break if _tmp
+                      self.pos = _save
+                      _tmp = match_string(":")
+                      break if _tmp
+                      self.pos = _save
+                      break
+                    end # end choice
 
     return _tmp
   end
 
   # integer = < /[0-9]+/ > { text.to_i }
   def _integer
-            
+                
     _save = self.pos
-                while true # sequence
-                  _text_start = self.pos
-                  _tmp = scan(/\A(?-mix:[0-9]+)/)
-                  if _tmp
-                    text = get_text(_text_start)
-                  end
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  @result = begin;                text.to_i ; end
-                  _tmp = true
-                  unless _tmp
-                    self.pos = _save
-                  end
-                  break
-                end # end sequence
+                    while true # sequence
+                      _text_start = self.pos
+                      _tmp = scan(/\A(?-mix:[0-9]+)/)
+                      if _tmp
+                        text = get_text(_text_start)
+                      end
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      @result = begin;                    text.to_i ; end
+                      _tmp = true
+                      unless _tmp
+                        self.pos = _save
+                      end
+                      break
+                    end # end sequence
 
     return _tmp
   end
 
   # line_number = integer
   def _line_number
-                _tmp = apply(:_integer)
+                    _tmp = apply(:_integer)
     return _tmp
   end
 
   # vm_offset = "@" integer:int {     Position.new(nil, nil, :offset, int)   }
   def _vm_offset
-            
+                
     _save = self.pos
-                while true # sequence
-                  _tmp = match_string("@")
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  _tmp = apply(:_integer)
-                  int = @result
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  @result = begin;               
+                    while true # sequence
+                      _tmp = match_string("@")
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      _tmp = apply(:_integer)
+                      int = @result
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      @result = begin;                   
     Position.new(nil, nil, :offset, int)
   ; end
-                  _tmp = true
-                  unless _tmp
-                    self.pos = _save
-                  end
-                  break
-                end # end sequence
+                      _tmp = true
+                      unless _tmp
+                        self.pos = _save
+                      end
+                      break
+                    end # end sequence
 
     return _tmp
   end
 
   # position = (vm_offset | line_number:l {    Position.new(nil, nil, :line, l)  })
   def _position
-            
+                
     _save = self.pos
-                while true # choice
-                  _tmp = apply(:_vm_offset)
-                  break if _tmp
-                  self.pos = _save
-              
+                    while true # choice
+                      _tmp = apply(:_vm_offset)
+                      break if _tmp
+                      self.pos = _save
+                  
     _save1 = self.pos
-                  while true # sequence
-                    _tmp = apply(:_line_number)
-                    l = @result
-                    unless _tmp
-                      self.pos = _save1
-                      break
-                    end
-                    @result = begin;                  
+                      while true # sequence
+                        _tmp = apply(:_line_number)
+                        l = @result
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        @result = begin;                      
   Position.new(nil, nil, :line, l) 
 ; end
-                    _tmp = true
-                    unless _tmp
-                      self.pos = _save1
-                    end
-                    break
-                  end # end sequence
+                        _tmp = true
+                        unless _tmp
+                          self.pos = _save1
+                        end
+                        break
+                      end # end sequence
 
-                  break if _tmp
-                  self.pos = _save
-                  break
-                end # end choice
+                      break if _tmp
+                      self.pos = _save
+                      break
+                    end # end choice
 
     return _tmp
   end
 
   # file_colon_line = file_no_colon:file ":" position:pos {    Position.new(:file, file, pos.position_type, pos.position)  }
   def _file_colon_line
-            
+                
     _save = self.pos
-                while true # sequence
-                  _tmp = apply(:_file_no_colon)
-                  file = @result
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  _tmp = match_string(":")
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  _tmp = apply(:_position)
-                  pos = @result
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  @result = begin;                
+                    while true # sequence
+                      _tmp = apply(:_file_no_colon)
+                      file = @result
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      _tmp = match_string(":")
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      _tmp = apply(:_position)
+                      pos = @result
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      @result = begin;                    
   Position.new(:file, file, pos.position_type, pos.position) 
 ; end
-                  _tmp = true
-                  unless _tmp
-                    self.pos = _save
-                  end
-                  break
-                end # end sequence
+                      _tmp = true
+                      unless _tmp
+                        self.pos = _save
+                      end
+                      break
+                    end # end sequence
 
     return _tmp
   end
 
   # location = (position | file_colon_line | < filename >:file &{ File.exist?(file) } file_pos_sep position:pos {       Position.new(:file, file, pos.position_type, pos.position)     } | < filename >:file &{ File.exist?(file) } {       Position.new(:file, file, nil, nil)     } | class_module_chain?:fn file_pos_sep position:pos {       Position.new(:fn, fn, pos.position_type, pos.position)     } | class_module_chain?:fn {       Position.new(:fn, fn, nil, nil)     })
   def _location
-            
+                
     _save = self.pos
-                while true # choice
-                  _tmp = apply(:_position)
-                  break if _tmp
-                  self.pos = _save
-                  _tmp = apply(:_file_colon_line)
-                  break if _tmp
-                  self.pos = _save
-              
+                    while true # choice
+                      _tmp = apply(:_position)
+                      break if _tmp
+                      self.pos = _save
+                      _tmp = apply(:_file_colon_line)
+                      break if _tmp
+                      self.pos = _save
+                  
     _save1 = self.pos
-                  while true # sequence
-                    _text_start = self.pos
-                    _tmp = apply(:_filename)
-                    if _tmp
-                      text = get_text(_text_start)
-                    end
-                    file = @result
-                    unless _tmp
-                      self.pos = _save1
-                      break
-                    end
-                    _save2 = self.pos
-                    _tmp = begin;  File.exist?(file) ; end
-                    self.pos = _save2
-                    unless _tmp
-                      self.pos = _save1
-                      break
-                    end
-                    _tmp = apply(:_file_pos_sep)
-                    unless _tmp
-                      self.pos = _save1
-                      break
-                    end
-                    _tmp = apply(:_position)
-                    pos = @result
-                    unless _tmp
-                      self.pos = _save1
-                      break
-                    end
-                    @result = begin;                 
+                      while true # sequence
+                        _text_start = self.pos
+                        _tmp = apply(:_filename)
+                        if _tmp
+                          text = get_text(_text_start)
+                        end
+                        file = @result
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        _save2 = self.pos
+                        _tmp = begin;  File.exist?(file) ; end
+                        self.pos = _save2
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        _tmp = apply(:_file_pos_sep)
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        _tmp = apply(:_position)
+                        pos = @result
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        @result = begin;                     
       Position.new(:file, file, pos.position_type, pos.position)
     ; end
-                    _tmp = true
-                    unless _tmp
-                      self.pos = _save1
-                    end
-                    break
-                  end # end sequence
+                        _tmp = true
+                        unless _tmp
+                          self.pos = _save1
+                        end
+                        break
+                      end # end sequence
 
-                  break if _tmp
-                  self.pos = _save
-              
+                      break if _tmp
+                      self.pos = _save
+                  
     _save3 = self.pos
-                  while true # sequence
-                    _text_start = self.pos
-                    _tmp = apply(:_filename)
-                    if _tmp
-                      text = get_text(_text_start)
-                    end
-                    file = @result
-                    unless _tmp
-                      self.pos = _save3
-                      break
-                    end
-                    _save4 = self.pos
-                    _tmp = begin;  File.exist?(file) ; end
-                    self.pos = _save4
-                    unless _tmp
-                      self.pos = _save3
-                      break
-                    end
-                    @result = begin;                 
+                      while true # sequence
+                        _text_start = self.pos
+                        _tmp = apply(:_filename)
+                        if _tmp
+                          text = get_text(_text_start)
+                        end
+                        file = @result
+                        unless _tmp
+                          self.pos = _save3
+                          break
+                        end
+                        _save4 = self.pos
+                        _tmp = begin;  File.exist?(file) ; end
+                        self.pos = _save4
+                        unless _tmp
+                          self.pos = _save3
+                          break
+                        end
+                        @result = begin;                     
       Position.new(:file, file, nil, nil)
     ; end
-                    _tmp = true
-                    unless _tmp
-                      self.pos = _save3
-                    end
-                    break
-                  end # end sequence
+                        _tmp = true
+                        unless _tmp
+                          self.pos = _save3
+                        end
+                        break
+                      end # end sequence
 
-                  break if _tmp
-                  self.pos = _save
-              
+                      break if _tmp
+                      self.pos = _save
+                  
     _save5 = self.pos
-                  while true # sequence
-                    _save6 = self.pos
-                    _tmp = apply(:_class_module_chain)
-                    @result = nil unless _tmp
-                    unless _tmp
-                      _tmp = true
-                      self.pos = _save6
-                    end
-                    fn = @result
-                    unless _tmp
-                      self.pos = _save5
-                      break
-                    end
-                    _tmp = apply(:_file_pos_sep)
-                    unless _tmp
-                      self.pos = _save5
-                      break
-                    end
-                    _tmp = apply(:_position)
-                    pos = @result
-                    unless _tmp
-                      self.pos = _save5
-                      break
-                    end
-                    @result = begin;                 
+                      while true # sequence
+                        _save6 = self.pos
+                        _tmp = apply(:_class_module_chain)
+                        @result = nil unless _tmp
+                        unless _tmp
+                          _tmp = true
+                          self.pos = _save6
+                        end
+                        fn = @result
+                        unless _tmp
+                          self.pos = _save5
+                          break
+                        end
+                        _tmp = apply(:_file_pos_sep)
+                        unless _tmp
+                          self.pos = _save5
+                          break
+                        end
+                        _tmp = apply(:_position)
+                        pos = @result
+                        unless _tmp
+                          self.pos = _save5
+                          break
+                        end
+                        @result = begin;                     
       Position.new(:fn, fn, pos.position_type, pos.position)
     ; end
-                    _tmp = true
-                    unless _tmp
-                      self.pos = _save5
-                    end
-                    break
-                  end # end sequence
+                        _tmp = true
+                        unless _tmp
+                          self.pos = _save5
+                        end
+                        break
+                      end # end sequence
 
-                  break if _tmp
-                  self.pos = _save
-              
+                      break if _tmp
+                      self.pos = _save
+                  
     _save7 = self.pos
-                  while true # sequence
-                    _save8 = self.pos
-                    _tmp = apply(:_class_module_chain)
-                    @result = nil unless _tmp
-                    unless _tmp
-                      _tmp = true
-                      self.pos = _save8
-                    end
-                    fn = @result
-                    unless _tmp
-                      self.pos = _save7
-                      break
-                    end
-                    @result = begin;                 
+                      while true # sequence
+                        _save8 = self.pos
+                        _tmp = apply(:_class_module_chain)
+                        @result = nil unless _tmp
+                        unless _tmp
+                          _tmp = true
+                          self.pos = _save8
+                        end
+                        fn = @result
+                        unless _tmp
+                          self.pos = _save7
+                          break
+                        end
+                        @result = begin;                     
       Position.new(:fn, fn, nil, nil)
     ; end
-                    _tmp = true
-                    unless _tmp
-                      self.pos = _save7
-                    end
-                    break
-                  end # end sequence
+                        _tmp = true
+                        unless _tmp
+                          self.pos = _save7
+                        end
+                        break
+                      end # end sequence
 
-                  break if _tmp
-                  self.pos = _save
-                  break
-                end # end choice
+                      break if _tmp
+                      self.pos = _save
+                      break
+                    end # end choice
 
     return _tmp
   end
 
   # if_unless = < ("if" | "unless") > { text }
   def _if_unless
-            
+                
     _save = self.pos
-                while true # sequence
-                  _text_start = self.pos
-              
+                    while true # sequence
+                      _text_start = self.pos
+                  
     _save1 = self.pos
-                  while true # choice
-                    _tmp = match_string("if")
-                    break if _tmp
-                    self.pos = _save1
-                    _tmp = match_string("unless")
-                    break if _tmp
-                    self.pos = _save1
-                    break
-                  end # end choice
+                      while true # choice
+                        _tmp = match_string("if")
+                        break if _tmp
+                        self.pos = _save1
+                        _tmp = match_string("unless")
+                        break if _tmp
+                        self.pos = _save1
+                        break
+                      end # end choice
 
-                  if _tmp
-                    text = get_text(_text_start)
-                  end
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  @result = begin;                text ; end
-                  _tmp = true
-                  unless _tmp
-                    self.pos = _save
-                  end
-                  break
-                end # end sequence
+                      if _tmp
+                        text = get_text(_text_start)
+                      end
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      @result = begin;                    text ; end
+                      _tmp = true
+                      unless _tmp
+                        self.pos = _save
+                      end
+                      break
+                    end # end sequence
 
     return _tmp
   end
 
   # condition = < /.+/ > { text}
   def _condition
-            
+                
     _save = self.pos
-                while true # sequence
-                  _text_start = self.pos
-                  _tmp = scan(/\A(?-mix:.+)/)
-                  if _tmp
-                    text = get_text(_text_start)
-                  end
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  @result = begin;                text; end
-                  _tmp = true
-                  unless _tmp
-                    self.pos = _save
-                  end
-                  break
-                end # end sequence
+                    while true # sequence
+                      _text_start = self.pos
+                      _tmp = scan(/\A(?-mix:.+)/)
+                      if _tmp
+                        text = get_text(_text_start)
+                      end
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      @result = begin;                    text; end
+                      _tmp = true
+                      unless _tmp
+                        self.pos = _save
+                      end
+                      break
+                    end # end sequence
 
     return _tmp
   end
 
   # breakpoint_stmt_no_condition = location:loc {   Breakpoint.new(loc, false, 'true') }
   def _breakpoint_stmt_no_condition
-            
+                
     _save = self.pos
-                while true # sequence
-                  _tmp = apply(:_location)
-                  loc = @result
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  @result = begin;               
+                    while true # sequence
+                      _tmp = apply(:_location)
+                      loc = @result
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      @result = begin;                   
   Breakpoint.new(loc, false, 'true')
 ; end
-                  _tmp = true
-                  unless _tmp
-                    self.pos = _save
-                  end
-                  break
-                end # end sequence
+                      _tmp = true
+                      unless _tmp
+                        self.pos = _save
+                      end
+                      break
+                    end # end sequence
 
     return _tmp
   end
 
-  # breakpoint_stmt = (location:loc if_unless:iu condition:cond {      Breakpoint.new(loc, iu == 'unless', cond) } | breakpoint_stmt_no_condition)
+  # breakpoint_stmt = (location:loc - if_unless:iu - condition:cond {      Breakpoint.new(loc, iu == 'unless', cond) } | breakpoint_stmt_no_condition)
   def _breakpoint_stmt
-            
+                
     _save = self.pos
-                while true # choice
-              
+                    while true # choice
+                  
     _save1 = self.pos
-                  while true # sequence
-                    _tmp = apply(:_location)
-                    loc = @result
-                    unless _tmp
-                      self.pos = _save1
-                      break
-                    end
-                    _tmp = apply(:_if_unless)
-                    iu = @result
-                    unless _tmp
-                      self.pos = _save1
-                      break
-                    end
-                    _tmp = apply(:_condition)
-                    cond = @result
-                    unless _tmp
-                      self.pos = _save1
-                      break
-                    end
-                    @result = begin;                 
+                      while true # sequence
+                        _tmp = apply(:_location)
+                        loc = @result
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        _tmp = apply(:__hyphen_)
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        _tmp = apply(:_if_unless)
+                        iu = @result
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        _tmp = apply(:__hyphen_)
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        _tmp = apply(:_condition)
+                        cond = @result
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        @result = begin;                     
      Breakpoint.new(loc, iu == 'unless', cond)
 ; end
-                    _tmp = true
-                    unless _tmp
-                      self.pos = _save1
-                    end
-                    break
-                  end # end sequence
+                        _tmp = true
+                        unless _tmp
+                          self.pos = _save1
+                        end
+                        break
+                      end # end sequence
 
-                  break if _tmp
-                  self.pos = _save
-                  _tmp = apply(:_breakpoint_stmt_no_condition)
-                  break if _tmp
-                  self.pos = _save
-                  break
-                end # end choice
+                      break if _tmp
+                      self.pos = _save
+                      _tmp = apply(:_breakpoint_stmt_no_condition)
+                      break if _tmp
+                      self.pos = _save
+                      break
+                    end # end choice
 
     return _tmp
   end
 
   # list_special_targets = < "." "-" > { text }
   def _list_special_targets
-            
+                
     _save = self.pos
-                while true # sequence
-                  _text_start = self.pos
-              
+                    while true # sequence
+                      _text_start = self.pos
+                  
     _save1 = self.pos
-                  while true # sequence
-                    _tmp = match_string(".")
-                    unless _tmp
-                      self.pos = _save1
-                      break
-                    end
-                    _tmp = match_string("-")
-                    unless _tmp
-                      self.pos = _save1
-                    end
-                    break
-                  end # end sequence
+                      while true # sequence
+                        _tmp = match_string(".")
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        _tmp = match_string("-")
+                        unless _tmp
+                          self.pos = _save1
+                        end
+                        break
+                      end # end sequence
 
-                  if _tmp
-                    text = get_text(_text_start)
-                  end
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  @result = begin;                text ; end
-                  _tmp = true
-                  unless _tmp
-                    self.pos = _save
-                  end
-                  break
-                end # end sequence
+                      if _tmp
+                        text = get_text(_text_start)
+                      end
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      @result = begin;                    text ; end
+                      _tmp = true
+                      unless _tmp
+                        self.pos = _save
+                      end
+                      break
+                    end # end sequence
 
     return _tmp
   end
 
-  # list_stmt = (list_special_target | location):loc integer:int? {   List.new(loc, int) }
+  # list_stmt = (list_special_target | location):loc - integer:int? {   List.new(loc, int) }
   def _list_stmt
-            
+                
     _save = self.pos
-                while true # sequence
-              
+                    while true # sequence
+                  
     _save1 = self.pos
-                  while true # choice
-                    _tmp = apply(:_list_special_target)
-                    break if _tmp
-                    self.pos = _save1
-                    _tmp = apply(:_location)
-                    break if _tmp
-                    self.pos = _save1
-                    break
-                  end # end choice
+                      while true # choice
+                        _tmp = apply(:_list_special_target)
+                        break if _tmp
+                        self.pos = _save1
+                        _tmp = apply(:_location)
+                        break if _tmp
+                        self.pos = _save1
+                        break
+                      end # end choice
 
-                  loc = @result
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  _save2 = self.pos
-                  _tmp = apply(:_integer)
-                  int = @result
-                  unless _tmp
-                    _tmp = true
-                    self.pos = _save2
-                  end
-                  unless _tmp
-                    self.pos = _save
-                    break
-                  end
-                  @result = begin;               
+                      loc = @result
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      _tmp = apply(:__hyphen_)
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      _save2 = self.pos
+                      _tmp = apply(:_integer)
+                      int = @result
+                      unless _tmp
+                        _tmp = true
+                        self.pos = _save2
+                      end
+                      unless _tmp
+                        self.pos = _save
+                        break
+                      end
+                      @result = begin;                   
   List.new(loc, int)
 ; end
-                  _tmp = true
-                  unless _tmp
-                    self.pos = _save
-                  end
-                  break
-                end # end sequence
+                      _tmp = true
+                      unless _tmp
+                        self.pos = _save
+                      end
+                      break
+                    end # end sequence
 
     return _tmp
   end

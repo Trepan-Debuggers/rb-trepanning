@@ -213,10 +213,9 @@ class Trepan
       break_cmd_parse = if allow_condition
                           parse_breakpoint(position_str)
                         else
-                          parse_breakpoint_location_no_condition(position_str)
+                          parse_breakpoint_no_condition(position_str)
                         end
       return [nil] * 5 unless break_cmd_parse
-      debugger if break_cmd_parse.negate
       tail = [break_cmd_parse.condition, break_cmd_parse.negate]
       meth_or_frame, file, position, offset_type = 
         parse_position(break_cmd_parse.position)
@@ -400,14 +399,14 @@ if __FILE__ == $0
       puts "#{str} should be false: #{proc.method?(str).to_s}"
     end
     puts '-' * 20
-    p proc.breakpoint_position('foo')
-    p proc.breakpoint_position('@0')
-    p proc.breakpoint_position("#{__LINE__}")
-    p proc.breakpoint_position("#{__FILE__}   @0")
-    p proc.breakpoint_position("#{__FILE__}:#{__LINE__}")
-    p proc.breakpoint_position("#{__FILE__} #{__LINE__}")
-    p proc.breakpoint_position("proc.errmsg")
-    p proc.breakpoint_position("proc.errmsg:@0")
+    p proc.breakpoint_position('foo', true)
+    p proc.breakpoint_position('@0', true)
+    p proc.breakpoint_position("#{__LINE__}", true)
+    p proc.breakpoint_position("#{__FILE__}   @0", false)
+    p proc.breakpoint_position("#{__FILE__}:#{__LINE__}", true)
+    p proc.breakpoint_position("#{__FILE__} #{__LINE__} if 1 == a", true)
+    p proc.breakpoint_position("proc.errmsg", false)
+    p proc.breakpoint_position("proc.errmsg:@0", false)
     ### p proc.breakpoint_position(%w(2 if a > b))
     p proc.get_int_list(%w(1+0 3-1 3))
     p proc.get_int_list(%w(a 2 3))

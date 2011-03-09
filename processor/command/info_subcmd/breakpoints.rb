@@ -48,7 +48,8 @@ EOH
     msg("\t#{other_loc}") if verbose
 
     if bp.condition && bp.condition != 'true'
-      msg("\tstop only if %s" % bp.condition)
+      msg("\tstop %s %s" %
+          [bp.negate ? "unless" : "only if", bp.condition])
     end
     if bp.ignore > 0
       msg("\tignore next %d hits" % bp.ignore)

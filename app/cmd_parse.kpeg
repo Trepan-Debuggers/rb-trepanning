@@ -130,6 +130,7 @@ class_module_chain =
 # Location-specific things. This is used in conjunction with
 # method-like things above.
           sp    = /[ \t]/
+           -    = sp+
    not_space    = (("\\" sp) | /[^ \t]/)+
 not_space_colon = (("\\" sp) | /[^ \t:]/)+
     filename    = < not_space > { text }
@@ -198,7 +199,7 @@ breakpoint_stmt_no_condition = location:loc  {
 
 # Note that the first word "break" is handled in the command.
 # Also, "break" with nothing else is handled there as well
-breakpoint_stmt = location:loc if_unless:iu condition:cond {
+breakpoint_stmt = location:loc - if_unless:iu - condition:cond {
      Breakpoint.new(loc, iu == 'unless', cond)
 }
  | breakpoint_stmt_no_condition
@@ -207,7 +208,7 @@ breakpoint_stmt = location:loc if_unless:iu condition:cond {
 # the command.  Also, "list" with nothing else is
 # handled there as well
 list_special_targets = <'.' '-'> { text }
-list_stmt = (list_special_target | location):loc (integer:int)? {
+list_stmt = (list_special_target | location):loc - (integer:int)? {
   List.new(loc, int)
 }
 

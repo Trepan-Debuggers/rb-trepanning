@@ -57,11 +57,6 @@ class Trepan
         self.instance_variable_set('@'+key.to_s, opts[key])
       end
 
-      if @negate
-        p opts
-        puts caller 
-      end
-
       @hits = 0
 
       unless @id
