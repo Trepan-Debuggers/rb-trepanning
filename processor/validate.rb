@@ -203,12 +203,12 @@ class Trepan
       return [iseq, line_no, vm_offset]
     end
 
-    # Parse a breakpoint position. Return
-    # - the instruction sequence to use
-    # - the line number - a Fixnum
-    # - vm_offset       - a Fixnum
-    # - the condition (by default 'true') to use for this breakpoint
-    # - true if 'if' given for condition, false if 'unless'
+    # Parse a breakpoint position. On success return:
+    #   - the instruction sequence to use
+    #   - the line number - a Fixnum
+    #   - vm_offset       - a Fixnum
+    #   - the condition (by default 'true') to use for this breakpoint
+    #   - true if 'if' given for condition, false if 'unless'
     def breakpoint_position(position_str, allow_condition)
       break_cmd_parse = if allow_condition
                           parse_breakpoint(position_str)
@@ -327,10 +327,10 @@ class Trepan
           return @frame, canonic_file(filename), info.position, info.position_type
         elsif !info.position_type
           errmsg "Can't parse #{arg} as a position"
-          return nil, nil, nil, nil
+          return [nil] * 4
         else
           errmsg "Unknown position type #{info.position_type} for location #{arg}"
-          return [nil] * 4
+          return [nil]  * 4
         end
       else
         errmsg "Unknown container type #{info.container_type} for location #{arg}"
@@ -358,55 +358,55 @@ if __FILE__ == $0
     require_relative 'main' # Have to include before defining CmdProcessor!
                             # FIXME
 
-    proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
-    proc.frame_initialize
-    proc.instance_variable_set('@settings', 
+    cmdproc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
+    cmdproc.frame_initialize
+    cmdproc.instance_variable_set('@settings', 
                                Trepan::CmdProcessor::DEFAULT_SETTINGS)
-    proc.frame_setup(RubyVM::ThreadFrame.current)
+    cmdproc.frame_setup(RubyVM::ThreadFrame.current)
     onoff = %w(1 0 on off)
-    onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }
+    onoff.each { |val| puts "onoff(#{val}) = #{cmdproc.get_onoff(val)}" }
     %w(1 1E bad 1+1 -5).each do |val| 
-      puts "get_int_noerr(#{val}) = #{proc.get_int_noerr(val).inspect}" 
+      puts "get_int_noerr(#{val}) = #{cmdproc.get_int_noerr(val).inspect}" 
     end
     def foo; 5 end
-    def proc.errmsg(msg)
+    def cmdproc.errmsg(msg)
       puts msg
     end
-    # puts proc.object_iseq('food').inspect
-    # puts proc.object_iseq('foo').inspect
+    # puts cmdproc.object_iseq('food').inspect
+    # puts cmdproc.object_iseq('foo').inspect
 
-    # puts proc.object_iseq('foo@validate.rb').inspect
-    # puts proc.object_iseq('proc.object_iseq').inspect
+    # puts cmdproc.object_iseq('foo@validate.rb').inspect
+    # puts cmdproc.object_iseq('cmdproc.object_iseq').inspect
     
-    puts proc.parse_position(__FILE__).inspect
-    puts proc.parse_position('@8').inspect
-    puts proc.parse_position('8').inspect
-    puts proc.parse_position("#{__FILE__} #{__LINE__}").inspect
+    puts cmdproc.parse_position(__FILE__).inspect
+    puts cmdproc.parse_position('@8').inspect
+    puts cmdproc.parse_position('8').inspect
+    puts cmdproc.parse_position("#{__FILE__} #{__LINE__}").inspect
 
     puts '=' * 40
     ['Array.map', 'Trepan::CmdProcessor.new',
-     'foo', 'proc.errmsg'].each do |str|
-      puts "#{str} should be method: #{!!proc.method?(str)}"
+     'foo', 'cmdproc.errmsg'].each do |str|
+      puts "#{str} should be method: #{!!cmdproc.method?(str)}"
     end
     puts '=' * 40
 
     # FIXME:
-    puts "Trepan::CmdProcessor.allocate is: #{proc.get_method('Trepan::CmdProcessor.allocate')}"
+    puts "Trepan::CmdProcessor.allocate is: #{cmdproc.get_method('Trepan::CmdProcessor.allocate')}"
 
     ['food', '.errmsg'].each do |str|
-      puts "#{str} should be false: #{proc.method?(str).to_s}"
+      puts "#{str} should be false: #{cmdproc.method?(str).to_s}"
     end
     puts '-' * 20
-    p proc.breakpoint_position('foo', true)
-    p proc.breakpoint_position('@0', true)
-    p proc.breakpoint_position("#{__LINE__}", true)
-    p proc.breakpoint_position("#{__FILE__}   @0", false)
-    p proc.breakpoint_position("#{__FILE__}:#{__LINE__}", true)
-    p proc.breakpoint_position("#{__FILE__} #{__LINE__} if 1 == a", true)
-    p proc.breakpoint_position("proc.errmsg", false)
-    p proc.breakpoint_position("proc.errmsg:@0", false)
-    ### p proc.breakpoint_position(%w(2 if a > b))
-    p proc.get_int_list(%w(1+0 3-1 3))
-    p proc.get_int_list(%w(a 2 3))
+    p cmdproc.breakpoint_position('foo', true)
+    p cmdproc.breakpoint_position('@0', true)
+    p cmdproc.breakpoint_position("#{__LINE__}", true)
+    p cmdproc.breakpoint_position("#{__FILE__}   @0", false)
+    p cmdproc.breakpoint_position("#{__FILE__}:#{__LINE__}", true)
+    p cmdproc.breakpoint_position("#{__FILE__} #{__LINE__} if 1 == a", true)
+    p cmdproc.breakpoint_position("cmdproc.errmsg", false)
+    p cmdproc.breakpoint_position("cmdproc.errmsg:@0", false)
+    ### p cmdproc.breakpoint_position(%w(2 if a > b))
+    p cmdproc.get_int_list(%w(1+0 3-1 3))
+    p cmdproc.get_int_list(%w(a 2 3))
   end
 end
