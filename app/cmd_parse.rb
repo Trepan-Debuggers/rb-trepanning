@@ -41,7 +41,7 @@ class Trepan
       else
         is_class = 
           begin
-            m.chain[0] && 
+            m.chain && m.chain[0] && 
               Class == eval("#{m.chain[0].name}.class", bind) 
           rescue 
             false
