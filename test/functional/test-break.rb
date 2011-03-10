@@ -2,7 +2,7 @@
 require 'test/unit'
 require_relative 'fn_helper'
 
-class TestBreak2 < Test::Unit::TestCase
+class TestBreak < Test::Unit::TestCase
 
   include FnTestHelper
 

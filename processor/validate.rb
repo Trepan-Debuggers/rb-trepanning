@@ -145,26 +145,6 @@ class Trepan
       nil
     end
 
-    def parse_num_or_offset(position_str)
-      err_str = "argument '%s' does not seem to be an integer" % 
-        position_str.dup
-      use_offset = 
-        if position_str.size > 0 && position_str[0] == '@'
-          err_str << 'or an offset.'
-          position_str[0] = ''
-          true
-        else
-          err_str << '.'
-          false
-        end
-      opts = {
-        :msg_on_error => err_str,
-        :min_value => 0 
-      }
-      position = get_an_int(position_str, opts)
-      [position, use_offset]
-    end
-
     def position_to_line_and_offset(iseq, filename, position, offset_type)
       case offset_type
       when :line
@@ -208,7 +188,7 @@ class Trepan
     #   - the line number - a Fixnum
     #   - vm_offset       - a Fixnum
     #   - the condition (by default 'true') to use for this breakpoint
-    #   - true if 'if' given for condition, false if 'unless'
+    #   - true condition should be negated. Used in *condition* if/unless
     def breakpoint_position(position_str, allow_condition)
       break_cmd_parse = if allow_condition
                           parse_breakpoint(position_str)
