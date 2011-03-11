@@ -269,7 +269,7 @@ class Trepan
         begin
           meth_for_parse_struct(meth, start_binding)
         rescue NameError
-          errmsg("Can't evalution #{meth.name} to get a method")
+          errmsg("Can't evalute #{meth.name} to get a method")
           return nil
         end
       end

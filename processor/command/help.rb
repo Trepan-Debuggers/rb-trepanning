@@ -2,7 +2,6 @@
 require_relative 'base/cmd'
 require_relative '../../app/complete'
 class Trepan::Command::HelpCommand < Trepan::Command
-
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
@@ -38,6 +37,10 @@ See also 'examine' and 'whatis'.
     CATEGORY      = 'support'
     NEED_STACK    = false
     SHORT_HELP    = 'Print commands or give help for command(s)'
+
+    require 'thread_frame'
+    ROOT_DIR = File.dirname(RubyVM::ThreadFrame.current.source_container[1])
+    HELP_DIR      = File.join(ROOT_DIR, 'help')
   end
 
   def complete(prefix)
@@ -169,53 +172,7 @@ Type "help" followed by command name for full documentation.
 
   def show_command_syntax
     section "Debugger command syntax"
-    msg <<-EOS
-Command tokenization syntax is very simple-minded. 
-
-If a line starts with #, the command is ignored. 
-If a line starts with !, the line is eval'd. 
-
-If the command you want eval'd uses the Ruby ! initally, add that
-after the first !.
-
-Commands are split at whereever ;; appears. This process disregards
-any quotes or other symbols that have meaning in Ruby. The strings
-after the leading command string are put back on a command queue. 
-
-Within a single command, tokens are then white-space split. Again,
-this process disregards quotes or symbols that have meaning in Ruby.
-Some commands like 'eval' and 'macro' have access to the untokenized
-string entered and make use of that rather than the tokenized list.
-
-The leading token is first looked up in the macro table. If it
-found there, the expansion is replaces the current command and possibly
-other commands pushed onto a command queue.  Next the leading token is
-looked up in the debugger alias table and the name may be substituted
-there. Finally, the leading token is looked up in the debugger alias
-table. If a match is found, the command name and arguments are
-dispatched to the command object that process the command.
-
-If the command is not found and "auto eval" is set on, then the
-command is eval'd in the context that the program is currently stopped
-at. If "auto eval" is not set on, then we display an error message
-that the entered string is "undefined".
-
-If you want irb-like command-processing, it's possible to go into an
-irb shell with the "irb" command. It is also possible to arrange going
-into an irb shell every time you enter the debugger.
-
-Examples:
-
-# This line does nothing. It is a comment
-s    # by default, this is an alias for the "step" command
-!s   # shows the value of variable step. 
-!!s  # Evaluates !s (or "not s"). The first ! is indicates evaluate.
-info program;; list # Runs two commands "info program" and "list"
-pr  "hi ;;-)"  # Syntax error since ;; splits the line and " is not closed.
-!puts "hi ;;-)" # One way to do the above.
-
-See also "alias", "irb", "set auto eval", and "set auto irb".
-    EOS
+    msg File.open(File.join(HELP_DIR, 'syntax.txt')).read
   end
 
   def show_macros

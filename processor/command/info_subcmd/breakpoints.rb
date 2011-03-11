@@ -5,8 +5,8 @@ require_relative '../base/subcmd'
 class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = <<EOH
-info breakpoints [num1 ...] [verbose]
+    HELP         = <<-EOH
+#{PREFIX.join(' ')} [num1 ...] [verbose]
 
 Show status of user-settable breakpoints. If no breakpoint numbers are
 given, the show all breakpoints. Otherwise only those breakpoints
@@ -20,11 +20,10 @@ The "enb" column indicates whether the breakpoint is enabled.
 
 The "Where" column indicates where the breakpoint is located.
 EOH
-
-    MIN_ABBREV   = 'br'.size 
-    SHORT_HELP = "Status of user-settable breakpoints"
+    MIN_ABBREV   = 'br'.size
+    SHORT_HELP   = 'Status of user-settable breakpoints'
   end
-
+  
   def bpprint(bp, verbose=false)
     disp  = bp.temp?    ? 'del  ' : 'keep '
     disp += bp.enabled? ? 'y  '   : 'n  '
@@ -106,7 +105,7 @@ EOH
       msg('No breakpoints.')
     else
       # There's at least one
-      msg("Num Type          Disp Enb Where")
+      section("Num Type          Disp Enb Where")
       if show_all
         bpmgr.list.each do |bp|
           bpprint(bp, verbose)
@@ -134,7 +133,7 @@ if __FILE__ == $0
   require_relative '../../mock'
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Trepan::Subcommand::InfoBreak.new(cmd)
+  subcommand = Trepan::Subcommand::InfoBreakpoints.new(cmd)
 
   puts '-' * 20
   subcommand.run(%w(info break))

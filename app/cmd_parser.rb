@@ -5,10 +5,8 @@ class CmdParse
       @pos = 0
       @memoizations = Hash.new { |h,k| h[k] = {} }
       @result = nil
-      @failing_offset = -1
-      @expected_string = []
-
-      enhance_errors! if debug
+      @failed_rule = nil
+      @failing_rule_offset = -1
     end
 
     # This is distinct from setup_parser so that a standalone parser
@@ -20,19 +18,16 @@ class CmdParse
     end
 
     attr_reader :string
-    attr_reader :result, :failing_offset, :expected_string
+    attr_reader :result, :failing_rule_offset
     attr_accessor :pos
 
     # STANDALONE START
     def current_column(target=pos)
-      offset = 0
-      string.each_line do |line|
-        len = line.size
-        return (target - offset) if offset + len >= target
-        offset += len
+      if c = string.rindex("\n", target-1)
+        return target - c - 1
       end
 
-      -1
+      target + 1
     end
 
     def current_line(target=pos)
@@ -54,44 +49,6 @@ class CmdParse
       lines
     end
 
-    def error_expectation
-      error_pos = failing_offset()
-      line_no = current_line(error_pos)
-      col_no = current_column(error_pos)
-
-      expected = expected_string()
-
-      prefix = nil
-
-      case expected
-      when String
-        prefix = expected.inspect
-      when Range
-        prefix = "to be between #{expected.begin} and #{expected.end}"
-      when Array
-        prefix = "to be one of #{expected.inspect}"
-      when nil
-        prefix = "anything (no more input)"
-      else
-        prefix = "unknown"
-      end
-
-      return "Expected #{prefix} at line #{line_no}, column #{col_no} (offset #{error_pos})"
-    end
-
-    def show_error(io=STDOUT)
-      error_pos = failing_offset()
-      line_no = current_line(error_pos)
-      col_no = current_column(error_pos)
-
-      io.puts error_expectation()
-      io.puts "Got: #{string[error_pos,1].inspect}"
-      line = lines[line_no-1]
-      io.puts "=> #{line}"
-      io.print(" " * (col_no + 3))
-      io.puts "^"
-    end
-
     #
 
     def get_text(start)
@@ -107,10 +64,68 @@ class CmdParse
       end
     end
 
-    def add_failure(obj)
-      @expected_string = obj
-      @failing_offset = @pos if @pos > @failing_offset
+    def failure_info
+      l = current_line @failing_rule_offset
+      c = current_column @failing_rule_offset
+      info = self.class::Rules[@failed_rule]
+
+      "line #{l}, column #{c}: failed rule '#{info.name}' = '#{info.rendered}'"
     end
+
+    def failure_caret
+      l = current_line @failing_rule_offset
+      c = current_column @failing_rule_offset
+
+      line = lines[l-1]
+      "#{line}\n#{' ' * (c - 1)}^"
+    end
+
+    def failure_character
+      l = current_line @failing_rule_offset
+      c = current_column @failing_rule_offset
+      lines[l-1][c-1, 1]
+    end
+
+    def failure_oneline
+      l = current_line @failing_rule_offset
+      c = current_column @failing_rule_offset
+
+      info = self.class::Rules[@failed_rule]
+      char = lines[l-1][c-1, 1]
+
+      "@#{l}:#{c} failed rule '#{info.name}', got '#{char}'"
+    end
+
+    class ParseError < RuntimeError
+    end
+
+    def raise_error
+      raise ParseError, failure_oneline
+    end
+
+    def show_error(io=STDOUT)
+      error_pos = @failing_rule_offset
+      line_no = current_line(error_pos)
+      col_no = current_column(error_pos)
+
+      info = self.class::Rules[@failed_rule]
+      io.puts "On line #{line_no}, column #{col_no}:"
+      io.puts "Failed to match '#{info.rendered}' (rule '#{info.name}')"
+      io.puts "Got: #{string[error_pos,1].inspect}"
+      line = lines[line_no-1]
+      io.puts "=> #{line}"
+      io.print(" " * (col_no + 3))
+      io.puts "^"
+    end
+
+    def set_failed_rule(name)
+      if @pos > @failing_rule_offset
+        @failed_rule = name
+        @failing_rule_offset = @pos
+      end
+    end
+
+    attr_reader :failed_rule
 
     def match_string(str)
       len = str.size
@@ -119,15 +134,7 @@ class CmdParse
         return str
       end
 
-      add_failure(str)
-
       return nil
-    end
-
-    def fail_range(start,fin)
-      @pos -= 1
-
-      add_failure Range.new(start, fin)
     end
 
     def scan(reg)
@@ -137,15 +144,12 @@ class CmdParse
         return true
       end
 
-      add_failure reg
-
       return nil
     end
 
     if "".respond_to? :getbyte
       def get_byte
         if @pos >= @string.size
-          add_failure nil
           return nil
         end
 
@@ -156,7 +160,6 @@ class CmdParse
     else
       def get_byte
         if @pos >= @string.size
-          add_failure nil
           return nil
         end
 
@@ -164,41 +167,6 @@ class CmdParse
         @pos += 1
         s
       end
-    end
-
-    module EnhancedErrors
-      def add_failure(obj)
-        @expected_string << obj
-        @failing_offset = @pos if @pos > @failing_offset
-      end
-
-      def match_string(str)
-        if ans = super
-          @expected_string.clear
-        end
-
-        ans
-      end
-
-      def scan(reg)
-        if ans = super
-          @expected_string.clear
-        end
-
-        ans
-      end
-
-      def get_byte
-        if ans = super
-          @expected_string.clear
-        end
-
-        ans
-      end
-    end
-
-    def enhance_errors!
-      extend EnhancedErrors
     end
 
     def parse
@@ -288,6 +256,19 @@ class CmdParse
       return m.ans
     end
 
+    class RuleInfo
+      def initialize(name, rendered)
+        @name = name
+        @rendered = rendered
+      end
+
+      attr_reader :name, :rendered
+    end
+
+    def self.rule_info(name, rendered)
+      RuleInfo.new(name, rendered)
+    end
+
     #
 
 
@@ -312,18 +293,21 @@ class CmdParse
   # upcase_letter = /[A-Z]/
   def _upcase_letter
     _tmp = scan(/\A(?-mix:[A-Z])/)
+    set_failed_rule :_upcase_letter unless _tmp
     return _tmp
   end
 
   # downcase_letter = /[a-z]/
   def _downcase_letter
     _tmp = scan(/\A(?-mix:[a-z])/)
+    set_failed_rule :_downcase_letter unless _tmp
     return _tmp
   end
 
   # suffix_letter = /[=!?]/
   def _suffix_letter
     _tmp = scan(/\A(?-mix:[=!?])/)
+    set_failed_rule :_suffix_letter unless _tmp
     return _tmp
   end
 
@@ -341,6 +325,7 @@ class CmdParse
       break
     end # end choice
 
+    set_failed_rule :_letter unless _tmp
     return _tmp
   end
 
@@ -355,18 +340,20 @@ class CmdParse
       _tmp = match_string("_")
       break if _tmp
       self.pos = _save
+      _save1 = self.pos
       _tmp = get_byte
       if _tmp
-          unless _tmp >= 48 and _tmp <= 57
-            fail_range('0', '9')
-            _tmp = nil
-          end
+        unless _tmp >= 48 and _tmp <= 57
+          self.pos = _save1
+          _tmp = nil
+        end
       end
       break if _tmp
       self.pos = _save
       break
     end # end choice
 
+    set_failed_rule :_id_symbol unless _tmp
     return _tmp
   end
 
@@ -433,6 +420,7 @@ class CmdParse
       break
     end # end sequence
 
+    set_failed_rule :_vm_identifier unless _tmp
     return _tmp
   end
 
@@ -489,6 +477,7 @@ class CmdParse
       break
     end # end sequence
 
+    set_failed_rule :_variable_identifier unless _tmp
     return _tmp
   end
 
@@ -534,6 +523,7 @@ class CmdParse
       break
     end # end sequence
 
+    set_failed_rule :_constant_identifier unless _tmp
     return _tmp
   end
 
@@ -586,6 +576,7 @@ class CmdParse
       break
     end # end sequence
 
+    set_failed_rule :_global_identifier unless _tmp
     return _tmp
   end
 
@@ -603,6 +594,7 @@ class CmdParse
       break
     end # end choice
 
+    set_failed_rule :_local_internal_identifier unless _tmp
     return _tmp
   end
 
@@ -620,6 +612,7 @@ class CmdParse
       break
     end # end choice
 
+    set_failed_rule :_local_identifier unless _tmp
     return _tmp
   end
 
@@ -661,6 +654,7 @@ class CmdParse
       break
     end # end sequence
 
+    set_failed_rule :_instance_identifier unless _tmp
     return _tmp
   end
 
@@ -690,6 +684,7 @@ class CmdParse
       break
     end # end sequence
 
+    set_failed_rule :_classvar_identifier unless _tmp
     return _tmp
   end
 
@@ -713,6 +708,7 @@ class CmdParse
       break
     end # end choice
 
+    set_failed_rule :_identifier unless _tmp
     return _tmp
   end
 
@@ -749,6 +745,7 @@ class CmdParse
       break
     end # end sequence
 
+    set_failed_rule :_id_separator unless _tmp
     return _tmp
   end
 
@@ -809,6 +806,7 @@ class CmdParse
       break
     end # end choice
 
+    set_failed_rule :_internal_class_module_chain unless _tmp
     return _tmp
   end
 
@@ -869,12 +867,14 @@ class CmdParse
       break
     end # end choice
 
+    set_failed_rule :_class_module_chain unless _tmp
     return _tmp
   end
 
   # sp = /[ \t]/
   def _sp
     _tmp = scan(/\A(?-mix:[ \t])/)
+    set_failed_rule :_sp unless _tmp
     return _tmp
   end
 
@@ -883,19 +883,87 @@ class CmdParse
     _save = self.pos
     _tmp = apply(:_sp)
     if _tmp
-        while true
-                _tmp = apply(:_sp)
-            break unless _tmp
-          end
-          _tmp = true
-        else
-          self.pos = _save
-        end
+      while true
+        _tmp = apply(:_sp)
+        break unless _tmp
+      end
+      _tmp = true
+    else
+      self.pos = _save
+    end
+    set_failed_rule :__hyphen_ unless _tmp
     return _tmp
   end
 
   # not_space = ("\\" sp | /[^ \t]/)+
   def _not_space
+      _save = self.pos
+  
+    _save1 = self.pos
+      while true # choice
+    
+    _save2 = self.pos
+        while true # sequence
+          _tmp = match_string("\\")
+          unless _tmp
+            self.pos = _save2
+            break
+          end
+          _tmp = apply(:_sp)
+          unless _tmp
+            self.pos = _save2
+          end
+          break
+        end # end sequence
+
+        break if _tmp
+        self.pos = _save1
+        _tmp = scan(/\A(?-mix:[^ \t])/)
+        break if _tmp
+        self.pos = _save1
+        break
+      end # end choice
+
+      if _tmp
+        while true
+      
+    _save3 = self.pos
+          while true # choice
+        
+    _save4 = self.pos
+            while true # sequence
+              _tmp = match_string("\\")
+              unless _tmp
+                self.pos = _save4
+                break
+              end
+              _tmp = apply(:_sp)
+              unless _tmp
+                self.pos = _save4
+              end
+              break
+            end # end sequence
+
+            break if _tmp
+            self.pos = _save3
+            _tmp = scan(/\A(?-mix:[^ \t])/)
+            break if _tmp
+            self.pos = _save3
+            break
+          end # end choice
+
+          break unless _tmp
+        end
+        _tmp = true
+      else
+        self.pos = _save
+      end
+    set_failed_rule :_not_space unless _tmp
+    return _tmp
+  end
+
+  # not_space_colon = ("\\" sp | /[^ \t:]/)+
+  def _not_space_colon
         _save = self.pos
     
     _save1 = self.pos
@@ -917,15 +985,15 @@ class CmdParse
 
           break if _tmp
           self.pos = _save1
-          _tmp = scan(/\A(?-mix:[^ \t])/)
+          _tmp = scan(/\A(?-mix:[^ \t:])/)
           break if _tmp
           self.pos = _save1
           break
         end # end choice
 
         if _tmp
-            while true
-                    
+          while true
+        
     _save3 = self.pos
             while true # choice
           
