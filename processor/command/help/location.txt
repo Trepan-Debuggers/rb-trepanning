@@ -1,3 +1,5 @@
+syntax for source code locations; e.g. used "list" and "break"
+
 Locations are used to indicates places in the source code or the
 places in bytecode compiled from source code. Locations are used in
 the listing commands like "list" or "disassemble"; they are also used

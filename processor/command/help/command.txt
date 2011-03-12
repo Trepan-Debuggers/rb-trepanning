@@ -1,10 +1,12 @@
+overall debugger command syntax
+
 Command tokenization syntax is very simple-minded. 
 
 If a line starts with #, the command is ignored. 
 If a line starts with !, the line is eval'd. 
 
-If the command you want eval'd uses the Ruby ! initally, add that
-after the first !.
+If the command you want eval'd uses the Ruby ! initially, add that
+after the first ! or start the line with a space.
 
 Commands are split at whereever ;; appears. This process disregards
 any quotes or other symbols that have meaning in Ruby. The strings
@@ -12,12 +14,13 @@ after the leading command string are put back on a command queue.
 
 Within a single command, tokens are then white-space split. Again,
 this process disregards quotes or symbols that have meaning in Ruby.
-Some commands like 'eval' and 'macro' have access to the untokenized
-string entered and make use of that rather than the tokenized list.
+Some commands like 'eval', 'macro', and 'break' have access to the
+untokenized string entered and make use of that rather than the
+tokenized list.
 
-The leading token is first looked up in the macro table. If it
-found there, the expansion is replaces the current command and possibly
-other commands pushed onto a command queue.  Next the leading token is
+The leading token is first looked up in the macro table. If it is in
+the tabke, the expansion is replaces the current command and possibly
+other commands pushed onto a command queue.  Next, the leading token is
 looked up in the debugger alias table and the name may be substituted
 there. Finally, the leading token is looked up in the debugger alias
 table. If a match is found, the command name and arguments are

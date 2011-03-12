@@ -1,3 +1,5 @@
+syntax for indicating a filename
+
 There are two ways you can give a file name:
   - unadorned (without double-quotes) with possible escapes
   - as a double-quoted string with possible escapes in the string

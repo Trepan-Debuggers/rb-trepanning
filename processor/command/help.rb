@@ -45,6 +45,15 @@ See also 'examine' and 'whatis'.
   end
 
   def complete(prefix)
+    matches = Trepan::Complete.complete_token(CATEGORIES.keys + 
+                                              %w(* syntax all) + 
+                                          @proc.commands.keys, prefix)
+    aliases = Trepan::Complete.complete_token_filtered(@proc.aliases, prefix, 
+                                                       matches)
+    (matches + aliases).sort
+  end    
+
+  def complete(prefix)
     matches = Trepan::Complete.complete_token(CATEGORIES.keys + %w(* all) + 
                                               @proc.commands.keys, prefix)
     aliases = Trepan::Complete.complete_token_filtered(@proc.aliases, prefix, 
@@ -55,22 +64,29 @@ See also 'examine' and 'whatis'.
   def complete_token_with_next(prefix)
     complete(prefix).map do |cmd| 
       [cmd, @proc.commands.member?(cmd) ? @proc.commands[cmd] : nil]
+      # complete_method = 
+      #   if 'syntax' == cmd
+      #     Syntax.new(syntax_files)
+      #   else
+      #     @proc.commands.member?(cmd) ? @proc.commands[cmd] : nil
+      #   end
+      # [cmd, complete_method]
     end
   end
 
   # List the command categories and a short description of each.
   def list_categories
-    section 'Classes of commands:'
+    section 'Help classes:'
     CATEGORIES.keys.sort.each do |cat|
       msg("%-13s -- %s" % [cat, CATEGORIES[cat]])
     end
     final_msg = '
-Type "help" followed by a class name for a list of commands in that class.
-Type "help aliases" for a list of current aliases
-Type "help macros" for a list of current macros
+Type "help" followed by a class name for a list of help items in that class.
+Type "help aliases" for a list of current aliases.
+Type "help macros" for a list of current macros.
 Type "help *" for the list of all commands, macros and aliases.
 Type "help all" for the list of all commands.
-Type "help REGEXP" for the list of commands matching /^#{REGEXP}/
+Type "help REGEXP" for the list of commands matching /^#{REGEXP}/.
 Type "help CLASS *" for the list of all commands in class CLASS.
 Type "help" followed by command name for full documentation.
 '
@@ -140,7 +156,7 @@ Type "help" followed by command name for full documentation.
 
   # Show short help for all commands in `category'.
   def show_category(category, args)
-      
+    
     if args.size == 1 && args[0] == '*'
       section "Commands in class %s:" % category
       
@@ -150,7 +166,7 @@ Type "help" followed by command name for full documentation.
       width = settings[:maxwidth]
       return columnize_commands(cmds)
     end
-        
+    
     msg('')
     section "Command class: %s" % category
     msg('')
@@ -159,21 +175,32 @@ Type "help" followed by command name for full documentation.
       msg("%-13s -- %s" % [name, @proc.commands[name].short_help])
     end
   end
-
-  def show_command_syntax(args)
-    @files ||= Dir.glob(File.join(HELP_DIR, '*.txt')).map do |txt| 
+  
+  def syntax_files
+    @syntax_files ||= Dir.glob(File.join(HELP_DIR, '*.txt')).map do |txt| 
       basename = File.basename(txt, '.txt')
     end
+  end
+  
+  def show_command_syntax(args)
     if args.size == 2
+      @syntax_summary_help ||= {}
       section "List of syntax help"
-      @files.each do |file|
-        msg "  #{file}"
+      syntax_files.each do |name|
+        @syntax_summary_help[name] ||= 
+          File.open(File.join(HELP_DIR, "#{name}.txt")).readline.chomp
+        msg "  %-8s -- %s" % [name, @syntax_summary_help[name]]
       end
     else
       args[2..-1].each do |name|
-        if @files.member?(name)
-          section "Debugger command syntax for #{name}"
-          msg File.open(File.join(HELP_DIR, "#{name}.txt")).read
+        if syntax_files.member?(name)
+          @syntax_help ||= {}
+          @syntax_help[name] = 
+            File.open(File.join(HELP_DIR, "#{name}.txt")).readlines[2..-1].join
+          section "Debugger syntax for a #{name}:"
+          msg @syntax_help[name]
+        else
+          errmsg "No syntax help for #{name}"
         end
       end
     end

@@ -25,10 +25,14 @@ class TestCompletion < Test::Unit::TestCase
      ['set auto e', 'e', ['eval']],
      ['disas', 'disas', ['disassemble']], # Another single completion
      ['help syn', 'syn', ['syntax']],
+     ## FIXME:
+     ## ['help syntax', 'co', ['command']],
      ['help br', 'br', ['break', 'breakpoints']],
      ['where', 'where', ['where']],  # Single alias completion
      ['set basename o', 'o', ['off', 'on']],
     ].each do |line, token, expect_completion|
+      require_relative '../../lib/trepanning'
+      # debugger if line == 'help syntax co'
       assert_equal(expect_completion, 
                    dbgr.completion_method(token, line),
                    "Bad completion on #{line.inspect} with #{token.inspect}")
