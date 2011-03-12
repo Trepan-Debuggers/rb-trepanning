@@ -36,6 +36,3 @@ Here are some examples of quoted filenames:
   "/tmp/RubyProgram \"foo\".rb    => /tmp/RubyProgram "foo".rb
   "/Ruby\nProgram.rb"             => /tmp/Ruby
 Program.rb
-
-   
-

@@ -1,5 +1,25 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 class Trepan
+  # class SubHelp
+  #   def initialize(name, dir)
+  #     @name = name
+  #     @dir  = dir
+  #     load_sub_help_files(dir)
+  #   end
+
+  #   def load_sub_help_files(dir)
+  #     Dir.glob(dir, '*.txt').each do |txt| 
+  #       basename = File.basename(txt, '.txt')
+  #       @list << basename
+  #     end
+  #   end if File.directory?(dir)
+
+  #   def summary_help
+  #     section "List of #{@name} help"
+  #     msg @list
+  #   end
+  # end
+
   module Help
 
     def abbrev_stringify(name, min_abbrev)
