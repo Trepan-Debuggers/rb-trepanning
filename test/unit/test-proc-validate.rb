@@ -47,14 +47,16 @@ class TestValidate < Test::Unit::TestCase
   def test_parse_position
     tf = RubyVM::ThreadFrame.current
     @proc.frame_setup(tf)
-    [[__FILE__, [false, __FILE__, nil, nil]],
-     ['@8', [true, __FILE__, 8, :offset]],
-     ['8' , [true, __FILE__, 8, :line]],
-     ["#{__FILE__}:#{__LINE__}" , [false, __FILE__, __LINE__, :line]],
-     ["#{__FILE__} #{__LINE__}" , [false, __FILE__, __LINE__, :line]]
+    file = File.basename(__FILE__)
+    [[__FILE__, [true, file, nil, nil]],
+     ['@8', [true, file, 8, :offset]],
+     ['8' , [true, file, 8, :line]],
+     ["#{__FILE__}:#{__LINE__}" , [true, file, __LINE__, :line]],
+     ["#{__FILE__} #{__LINE__}" , [true, file, __LINE__, :line]]
     ].each do |pos_str, expected|
       result = @proc.parse_position(pos_str)
       result[0] = !!result[0]
+      result[1] = File.basename(result[1])
       assert_equal(expected, result, "parsing position #{pos_str}")
     end
   end

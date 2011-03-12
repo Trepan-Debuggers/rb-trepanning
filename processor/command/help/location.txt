@@ -9,7 +9,7 @@ name. And a position is either a line number or a bytecode offset.
 Bytecode offsets are prefaced with an '@'. So 4 is a line number 4, but
 @4 is bytecode offset 4. 
 
-Filenames are distinguished from method names purely by semantic
+File names are distinguished from method names purely by semantic
 means.  That its "foo" (without the quotes) could conceivably be
 either a method or a file name. The debugger does a file check to see
 if "foo" is a file. 

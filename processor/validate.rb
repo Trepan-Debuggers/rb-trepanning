@@ -299,7 +299,13 @@ class Trepan
       when :file
         filename = canonic_file(info.container)
         # ?? Try to look up method here? 
-        return nil, info.container,  info.position, info.position_type
+        container = frame_container(@frame, false)
+        try_filename  = container[1]
+        frame = (canonic_file(try_filename) == filename) ? @frame : nil
+        # else 
+        #   LineCache.compiled_method(filename)
+        # end
+        return frame, filename,  info.position, info.position_type
       when nil
         if [:line, :offset].member?(info.position_type)
           container = frame_container(@frame, false)

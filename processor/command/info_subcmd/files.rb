@@ -66,8 +66,15 @@ EOH
     return if args.size < 2
     args << '.' if 2 == args.size 
     if '*' == args[2]
-      section 'Files names cached:'
-      msg columnize_commands(file_list.sort)
+      section 'Canonic Files names cached:'
+      primary = LineCache.class_variable_get('@@file_cache')
+      remap = LineCache.class_variable_get('@@file2file_remap')
+      msg columnize_commands(remap.keys.uniq.sort)
+      names = remap.keys - primary.keys
+      unless names.empty?
+        section 'Non-canonic names cached:'
+        msg columnize_commands(names.sort)
+      end
       return
     end
     filename = 
@@ -77,19 +84,21 @@ EOH
           return false
           nil
         else
-          File.expand_path(@proc.frame.source_container[1])
+          frame_file = @proc.frame.source_container[1]
+          LineCache::map_file(frame_file) || File.expand_path(frame_file)
         end
       else
         args[2]
       end
     args += DEFAULT_FILE_ARGS if args.size == 3
 
-    m = filename + ' is'
-    canonic_name = LineCache::map_file(filename) || filename
+    m = filename
+    canonic_name = @proc.canonic_file(filename)
+    canonic_name = LineCache::map_file(canonic_name) || canonic_name
     if LineCache::cached?(canonic_name)
-      m += " cached in debugger"
+      m += " is cached in debugger"
       if canonic_name != filename
-        m += (' as:' + canonic_name)
+        m += (" as:\n  " + canonic_name)
       end
       m += '.'
       msg(m)
@@ -111,9 +120,11 @@ EOH
         matches.sort.each { |match_file| msg "\t%s" % match_file }
         return
       elsif 1 == matches.size
-        canonic_name = LineCache::map_file(matches[1])
+        canonic_name = LineCache::map_file(matches[0])
+        m += " matched debugger cache file:\n  "  + canonic_name
+        msg m
       else
-        msg(m + ' not cached in debugger.')
+        msg(m + ' is not cached in debugger.')
         return
       end
     end
@@ -139,7 +150,7 @@ EOH
       if %w(all brkpts).member?(arg)
         unless seen[:brkpts]
           msg("Possible breakpoint line numbers:")
-          lines = LineCache::trace_line_numbers(canonic_name)
+          lines = LineCache.trace_line_numbers(canonic_name)
           fmt_lines = columnize_numbers(lines)
           msg(fmt_lines)
         end

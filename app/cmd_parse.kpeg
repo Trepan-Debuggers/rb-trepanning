@@ -129,12 +129,25 @@ class_module_chain =
 ##############################################################
 # Location-specific things. This is used in conjunction with
 # method-like things above.
-          sp    = /[ \t]/
-           -    = sp+
-   not_space    = (("\\" sp) | /[^ \t]/)+
-not_space_colon = (("\\" sp) | /[^ \t:]/)+
-    filename    = < not_space > { text }
-file_no_colon   = < not_space_colon > { text }
+          sp     = /[ \t]/
+           -     = sp+
+     dbl_escapes = "\\\"" { '"' }
+                 | "\\n"  { "\n" }
+                 | "\\t"  { "\t" }
+                 | "\\\\" { "\\" }
+     escapes    = "\\\"" { '"' }
+                 | "\\n"  { "\n" }
+                 | "\\t"  { "\t" }
+                 | "\\ "  { " " }
+                 | "\\:"  { ":" }
+                 | "\\\\" { "\\" }
+   dbl_seq       = < /[^\\"]+/ > { text }
+   dbl_not_quote = (dbl_escapes | dbl_seq)+:ary { ary }
+      dbl_string = "\"" dbl_not_quote:ary "\"" { ary.join }
+not_space_colon  = escapes 
+                 | < /[^ \t\n:]/ > { text }
+not_space_colons = ( not_space_colon )+:ary { ary.join }
+    filename    = dbl_string | not_space_colons
 file_pos_sep    = sp+ | ':'
      integer    = </[0-9]+/> { text.to_i }
  line_number    = integer
@@ -151,10 +164,6 @@ position =
   vm_offset 
   | line_number:l { 
   Position.new(nil, nil, :line, l) 
-}
-
-file_colon_line = file_no_colon:file ':' position:pos { 
-  Position.new(:file, file, pos.position_type, pos.position) 
 }
 
 # Examples:
@@ -176,7 +185,6 @@ file_colon_line = file_no_colon:file ':' position:pos {
 
 location = 
    position 
- | file_colon_line
  | <filename>:file &{ File.exist?(file) } file_pos_sep position:pos {
       Position.new(:file, file, pos.position_type, pos.position)
     }
