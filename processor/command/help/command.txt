@@ -19,7 +19,7 @@ untokenized string entered and make use of that rather than the
 tokenized list.
 
 The leading token is first looked up in the macro table. If it is in
-the tabke, the expansion is replaces the current command and possibly
+the table, the expansion is replaces the current command and possibly
 other commands pushed onto a command queue.  Next, the leading token is
 looked up in the debugger alias table and the name may be substituted
 there. Finally, the leading token is looked up in the debugger alias

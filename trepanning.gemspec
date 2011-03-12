@@ -6,24 +6,6 @@ require 'rubygems' unless
 require File.dirname(__FILE__) + "/app/options" unless 
   Object.const_defined?(:'Trepan')
 
-FILES = FileList[
-  'README.textile',
-  'LICENSE',
-  'NEWS',
-  'ChangeLog',
-  'Rakefile',
-  'bin/*',
-  'app/*',
-  'data/*',                  
-  'interface/*',
-  'io/*',
-  'lib/*',
-  'processor/**/*.rb',
-  'test/data/**/*.cmd',
-  'test/data/**/*.right',
-  'test/**/*.rb',
-]                        
-
 Gem::Specification.new do |spec|
   spec.authors      = ['R. Bernstein']
   spec.date         = Time.now
@@ -45,7 +27,7 @@ EOF
   spec.bindir       = 'bin'
   spec.email        = 'rockyb@rubyforge.net'
   spec.executables = ['trepan']
-  spec.files        = FILES.to_a  
+  spec.files        = `git ls-files`.split("\n")
   spec.has_rdoc     = true
   spec.homepage     = 'http://wiki.github.com/rocky/rb-trepanning'
   spec.name         = 'trepanning'
