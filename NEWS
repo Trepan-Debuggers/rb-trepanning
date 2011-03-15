@@ -1,3 +1,18 @@
+March 15, 2011  (0.0.6)
+- Revise breakpoint location parsing
+  * Add: break <location> if/unless <condition>
+  * Add: step until <condition>
+  * VM offsets are now specified via @ rather than o or O
+  * Filenames can be quoted and blanks and characters inside escaped
+- Document command syntax by adding it as a new category with sub help
+- More controlled parsing of method names 
+- Add eval (no args) and eval? to run current source line or source line
+  eval? strips:
+   * leading "if", "elsif", "while", "until" "return" or "case", or "unless"
+   * trailing "then", "do"
+- Save and restore some debugger state across a restart
+- Redo command completion
+
 Feb 15, 2011  (0.0.5)
 - "disassemble" command: allow disassembly of specified line numbers
 - GNU Readline: 
