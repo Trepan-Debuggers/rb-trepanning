@@ -8,23 +8,6 @@ class TestBinTrepan < Test::Unit::TestCase
 
   include Trepanning
 
-  def test_ruby_path
-    rb_path = ruby_path
-    assert_equal(true, File.executable?(rb_path),
-                 "#{rb_path} should be an executable Ruby interpreter")
-
-    # Let us test that we get *exactly* the same configuration as we
-    # have in this. I'm a ball buster.
-    cmd = "#{rb_path} -rrbconfig -e 'puts Marshal.dump(RbConfig::CONFIG)'"
-    rb_config = Marshal.load(`#{cmd}`)
-    assert_equal(RbConfig::CONFIG, rb_config,
-                 "#{rb_path} config doesn't match got:
-#{rb_config.pretty_inspect}
-expected: 
-#{RbConfig::CONFIG.pretty_inspect}
-")
-  end
-
   def test_whence_file
     abs_path_me = File.expand_path(__FILE__)
     assert_equal(abs_path_me, whence_file(abs_path_me),

@@ -41,13 +41,11 @@ desc "same as test"
 task :check => :test
 
 require 'rbconfig'
-RUBY_PATH = File.join(RbConfig::CONFIG['bindir'],  
-                      RbConfig::CONFIG['RUBY_INSTALL_NAME'])
 
 def run_standalone_ruby_files(list)
   puts '*' * 40
   list.each do |ruby_file|
-    system(RUBY_PATH, ruby_file)
+    system(RbConfig.ruby, ruby_file)
     p $?.exitstatus
     break if $?.exitstatus != 0 && !opts[:continue]
   end
@@ -58,7 +56,7 @@ def run_standalone_ruby_file(directory, opts={})
   Dir.chdir(directory) do
     Dir.glob('*.rb').each do |ruby_file|
       puts(('-' * 20) + ' ' + ruby_file + ' ' + ('-' * 20))
-      system(RUBY_PATH, ruby_file)
+      system(RbConfig.ruby, ruby_file)
       break if $?.exitstatus != 0 && !opts[:continue]
     end
   end

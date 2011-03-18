@@ -8,8 +8,6 @@ class TestAppRun < Test::Unit::TestCase
     assert_equal(true, File.executable?(whence_file('irb')))
     ng = whence_file('probably-does-not-exist')
     assert_equal(true, File.executable?(ng) || ng == 'probably-does-not-exist')
-    rp = ruby_path
-    assert_equal(true, File.executable?(rp))
   end
 
 end

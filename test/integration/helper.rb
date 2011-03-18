@@ -1,6 +1,5 @@
 require 'diff/lcs'
 require 'fileutils'
-require_relative '../../app/run' # for ruby_path
 
 DEFAULT_DEBUGGER_OPTS = {
   :args        => '', 
@@ -36,10 +35,10 @@ def run_debugger(testname, ruby_file, opts={})
   cmd += 
     if opts[:standalone]
       "%s %s %s >%s 2>&1" %
-        [Trepanning::ruby_path, programfile, opts[:args], outfile]
+        [RbConfig.ruby, programfile, opts[:args], outfile]
     else
       "%s %s --nx --command %s %s '%s' %s >%s 2>&1" %
-        [Trepanning::ruby_path, dbgr_path, cmdfile, opts[:dbgr], 
+        [RbConfig.ruby, dbgr_path, cmdfile, opts[:dbgr], 
          programfile, opts[:args], outfile]
     end
   puts cmd if opts[:verbose]

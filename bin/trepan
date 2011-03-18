@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Invoke debugger from the command line. 
+require 'rbconfig' # For RbConfig.ruby
 require_relative '../app/run'
 require_relative '../app/options'
 require_relative '../app/client'
@@ -33,7 +34,6 @@ if File.basename(__FILE__) == File.basename($0)
 
     # FIXME: do we need to test defined? 
     # FIXME: Should (some of) these be instance variables?
-    Trepan::RUBY_PATH    = ruby_path
     Trepan::TREPAN_PATH  = trepan_path
 
     if ARGV.empty?
@@ -61,7 +61,7 @@ if File.basename(__FILE__) == File.basename($0)
 
     # Set global so others may use this debugger.
     $trepan = Trepan.new(opts)
-    debug_program($trepan, Trepan::RUBY_PATH, 
+    debug_program($trepan, RbConfig.ruby,
                   File.expand_path(program_to_debug))
   end
 end

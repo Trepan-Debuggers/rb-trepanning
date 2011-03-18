@@ -14,7 +14,7 @@ module Trepanning
     # Make sure Ruby script syntax checks okay.
     # Otherwise we get a load message that looks like trepanning has 
     # a problem. 
-    output = `#{ruby_path} -c #{program_to_debug.inspect} 2>&1`
+    output = `#{RbConfig.ruby} -c #{program_to_debug.inspect} 2>&1`
     if $?.exitstatus != 0 and RUBY_PLATFORM !~ /mswin/
       puts output
       exit $?.exitstatus 
@@ -49,11 +49,6 @@ module Trepanning
     untrace_var(:$0, dollar_0_tracker)
   end
 
-  # Path name of Ruby interpreter we were invoked with.
-  def ruby_path
-    File.join(%w(bindir RUBY_INSTALL_NAME).map{|k| RbConfig::CONFIG[k]})
-  end
-
   # Do a shell-like path lookup for prog_script and return the results.
   # If we can't find anything return prog_script.
   def whence_file(prog_script)
@@ -75,5 +70,4 @@ if __FILE__ == $0
   include  Trepanning
   puts whence_file('irb')
   puts whence_file('probably-does-not-exist')
-  puts ruby_path
 end
