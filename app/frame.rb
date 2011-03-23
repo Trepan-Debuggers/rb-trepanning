@@ -16,6 +16,8 @@ class Trepan
 
     include Trepan::Util
 
+    module_function
+
     def all_param_names(iseq, delineate=true)
       return '' unless iseq
       params = param_names(iseq, 0, iseq.argc-1, '')
@@ -75,7 +77,10 @@ class Trepan
       retval = $1 if retval =~ /^\(eval "(.+)"\)/
       retval
     end
-    module_function :eval_string
+
+    def file
+      source_container[1]
+    end
 
     def format_stack_call(frame, opts)
       # FIXME: prettify 

@@ -114,7 +114,7 @@ class Trepan
         @hook_arg = arg
         
         ### debug:
-        ### puts "#{frame.source_container[1]}:#{frame.source_location[0]}:in `#{frame.method}' #{event}" # if %w(line).member?(event)
+        ### puts "#{frame.file[1]}:#{frame.source_location[0]}:in `#{frame.method}' #{event}" # if %w(line).member?(event)
         @processor.process_commands(@frame)
                 
         # FIXME: There should be a Trace.event_mask which should return the first

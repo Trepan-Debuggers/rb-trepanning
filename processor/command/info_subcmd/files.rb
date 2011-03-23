@@ -84,7 +84,7 @@ EOH
           return false
           nil
         else
-          frame_file = @proc.frame.source_container[1]
+          frame_file = @proc.frame.file
           LineCache::map_file(frame_file) || File.expand_path(frame_file)
         end
       else

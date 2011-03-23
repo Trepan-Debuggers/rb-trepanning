@@ -32,10 +32,9 @@ Editing targets can also be specified.
       text = @proc.cmd_argstr
     end
     editor = ENV['EDITOR'] || '/bin/ex'
-    file = @proc.frame.source_container[1]
-    line_number = @proc.frame_line
+    file = @proc.frame.file
     if File.readable?(file)
-      edit_cmd = "#{editor} +#{line_number} \"#{file}\""
+      edit_cmd = "#{editor} +#{@proc.frame.line} \"#{file}\""
       msg "Running #{edit_cmd}..."
       system(edit_cmd)
       msg "Warning: return code was #{$?.exitstatus}" if $?.exitstatus != 0
@@ -48,7 +47,6 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  arg_str = '1 + 2'
-  cmd.proc.instance_variable_set('@cmd_argstr', arg_str)
-  puts "eval #{arg_str} is: #{cmd.run([cmd.name, arg_str])}"
+  dbgr, cmd = MockDebugger::setup
+  cmd.run [cmd.name] if ARGV.size > 0
 end
