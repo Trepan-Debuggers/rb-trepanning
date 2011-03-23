@@ -6,7 +6,7 @@ class Trepan::Command::EvalCommand < Trepan::Command
 
   old_verbose = $VERBOSE  
   $VERBOSE    = nil
-  NAME          = File.basename(__FILE__, '.rb')
+  NAME        = File.basename(__FILE__, '.rb')
   HELP    = <<-HELP
 #{NAME} [STRING]
 
