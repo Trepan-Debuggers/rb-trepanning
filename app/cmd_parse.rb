@@ -131,7 +131,7 @@ class Trepan
       parse ? parse.result : nil
     end
 
-    def parse_list(str)
+    def parse_list_cmd(str)
       parse = parse_terminal(:_list_stmt, str)
       parse ? parse.result : nil
     end

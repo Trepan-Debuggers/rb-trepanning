@@ -1,4 +1,8 @@
-March 15, 2011  (0.0.6)
+March 28, 2011  (0.1.2)
+- Release to correct threadrame and trace package dependencies
+- add "edit" command
+
+March 15, 2011  (0.1.1)
 - Revise breakpoint location parsing
   * Add: break <location> if/unless <condition>
   * Add: step until <condition>
@@ -12,8 +16,6 @@ March 15, 2011  (0.0.6)
    * trailing "then", "do"
 - Save and restore some debugger state across a restart
 - Redo command completion
-
-Feb 15, 2011  (0.0.5)
 - "disassemble" command: allow disassembly of specified line numbers
 - GNU Readline: 
   * Start GNU readline tab (command) completion. 

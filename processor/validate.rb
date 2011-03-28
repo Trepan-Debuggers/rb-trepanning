@@ -281,7 +281,7 @@ class Trepan
       get_method(meth)
     end
 
-    # parse_position(self, arg)->(meth, filename, offset, offset_type)
+    # parse_position(self)->(meth, filename, offset, offset_type)
     # See app/cmd_parser.kpeg for the syntax of a position which
     # should include things like:
     # Parse arg as [filename:]lineno | function | module

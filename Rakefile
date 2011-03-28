@@ -168,7 +168,7 @@ end
 
 task :check => %w(check:lib check:processor check:commands).map{|c| c.to_sym}
 
-desc "Test everything - same as test."
+desc "Default action is same as 'test'."
 task :default => :test
 
 desc "Generate the gemspec"

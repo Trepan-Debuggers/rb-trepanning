@@ -1,3 +1,45 @@
+2011-03-23  rocky <rockyb@rubyforge.org>
+
+	* app/core.rb, app/frame.rb, processor/command/edit.rb,
+	processor/command/info_subcmd/files.rb: Add frame.file. Fix up
+	"edit" command demo code.
+
+2011-03-23  rocky <rockyb@rubyforge.org>
+
+	* processor/command/edit.rb, processor/command/eval.rb: Add "edit"
+	command
+
+2011-03-17  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2011-03-17  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, app/options.rb, app/run.rb, bin/trepan,
+	test/integration/helper.rb, test/unit/test-app-run.rb,
+	test/unit/test-bin-trepan.rb: Trepan::ruby_path -> RbConfig.ruby
+
+2011-03-15  rocky <rockyb@rubyforge.org>
+
+	Dependency administrivia
+
+2011-03-15  rocky <rockyb@rubyforge.org>
+
+	* trepanning.gemspec: Remove mention of intermediate dev's in
+	dependency.
+
+2011-03-15  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2011-03-15  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb, trepanning.gemspec: Get ready for release 1.1
+
+2011-03-15  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, NEWS: Get ready for release.
+
 2011-03-12  rocky <rockyb@rubyforge.org>
 
 	* processor/command/help/command.txt, trepanning.gemspec: tabke ->
@@ -100,6 +142,10 @@
 	test/functional/test-condition.rb, test/functional/test-delete.rb: 
 	All functional, integration and unit tests work again after KPEG
 	refactoring
+
+2011-03-07  rocky <rockyb@rubyforge.org>
+
+	* processor/main.rb: Handle error when errmsg is borked
 
 2011-03-07  rocky <rockyb@rubyforge.org>
 
