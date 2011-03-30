@@ -16,6 +16,8 @@ class Trepan
 
     attr_reader :dbgr_script_iseqs
     attr_reader :dbgr_iseqs
+    attr_reader :file_exists_proc  # Like File.exists? but checks using
+                                   # cached files
 
     include Trepanning
     include Trepan::ThreadHelper
@@ -166,7 +168,7 @@ class Trepan
           return [nil, nil]
         end
       when :offset
-        if ary=iseq.offset2lines(position)
+        if ary=iseq.offset2lines(position.position)
           line_no   = ary.first
           vm_offset = position
         else
@@ -290,7 +292,7 @@ class Trepan
       info = parse_location(info) if info.kind_of?(String)
       case info.container_type
       when :fn
-        if meth = method?(info.container)
+        if (meth = method?(info.container)) && meth.iseq
           return [meth, meth.iseq.source_container[1], info.position, 
                   info.position_type]
         else
@@ -327,6 +329,20 @@ class Trepan
     def validate_initialize
       ## top_srcdir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
       ## @dbgr_script_iseqs, @dbgr_iseqs = filter_scripts(top_srcdir)
+      @file_exists_proc = Proc.new {|filename|
+        if LineCache.cached?(filename) || LineCache.cached_script?(filename) ||
+            (File.readable?(filename) && !File.directory?(filename))
+          true
+        else
+          matches = find_scripts(filename)
+          if matches.size == 1 
+            LineCache.remap_file(filename, matches[0])
+            true
+          else
+            false
+          end
+        end
+      }
     end
   end
 end

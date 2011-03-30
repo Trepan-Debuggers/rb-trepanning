@@ -4,7 +4,7 @@ require_relative '../../app/cmd_parser'
 
 class TestAppCmdParser < Test::Unit::TestCase
   def setup
-    @cp = CmdParse.new('', true)
+    @cp = CmdParse.new('', :debug=>true)
   end
 
   def test_parse_filename
@@ -14,7 +14,7 @@ class TestAppCmdParser < Test::Unit::TestCase
      ['this\ is\ another\ filename', 'this is another filename'],
      ['C\:filename', 'C:filename']
     ].each do |name, expect|
-      @cp.setup_parser(name, true)
+      @cp.setup_parser(name, :debug => true)
       res = @cp._filename
       assert_equal(expect, @cp.result)
     end

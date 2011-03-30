@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 require 'linecache'
 require_relative 'base/cmd'
+require_relative '../../app/cmd_parse'
 
 class Trepan::Command::ListCommand < Trepan::Command
   unless defined?(HELP)
@@ -63,7 +64,7 @@ Some examples:
                      # if . > 3. Otherwise we list from . to 3.
 #{NAME} -            # List lines previous to those just shown
 
-The output of the #{NAME} command give a line number, and some status
+The output of the #{NAME} command gives a line number, and some status
 information about the line and the text of the line. Here is some 
 hypothetical #{NAME} output modeled roughly around line 251 of one
 version of this code:
@@ -86,25 +87,19 @@ disabled.
     SHORT_HELP    = 'List source code'
   end
 
+  include Trepan::CmdParser
+  
   # If last is less than first, assume last is a count rather than an
   # end line number.
   def adjust_last(first, last)
     last < first ? first + last - 1 : last
   end
 
-  # What a f*cking mess. Necessitated I suppose because we want to 
-  # allow somewhat flexible parsing with either module names, files or none
-  # and optional line counts or end-line numbers.
-  
-  # Parses arguments for the "list" command and returns the tuple:
-  # filename, start, last
-  # or sets these to nil if there was some problem.
-  def parse_list_cmd(args, listsize, center_correction)
-    
+  def frame_filename
     frame = @proc.frame
     
     container = @proc.frame_container(frame, false)
-
+    
     # FIXME: put into a helper routine
     # See also duplicate code in print_location
     if container[0] != 'file'
@@ -115,84 +110,74 @@ disabled.
       end
       container = try_container if try_container[0] == 'file'
     end
-
-    filename = container[1]
     
-    last = nil
-    if args.empty? and not frame
-      errmsg("No Ruby program loaded.")
-      return nil, nil, nil
-    end
-    
-    if args.size > 0
-      if args[0] == '-'
-        return no_frame_msg unless @proc.line_no
-        first = [1, @proc.line_no - 2*listsize - 1].max
-      elsif args[0] == '.'
-        return no_frame_msg unless @proc.line_no
-        if args.size == 2
-          opts = {
-            :msg_on_error => 
-            "#{NAME} command last or count parameter expected, " +
-            'got: %s.' % args[2]
-          }
-          second = @proc.get_an_int(args[1], opts)
-          return nil, nil, nil unless second
-          first = @proc.frame_line 
-          last = adjust_last(first, second)
-        else
-          first = [1, @proc.frame_line - center_correction].max
-        end
+    return container[1]
+  end
 
-      else
-        modfunc, container, first = @proc.parse_position(args[0])
-        if first == nil and container == nil
-          # error should have been shown previously
-          return nil, nil, nil
-        end
-        if args.size == 1
-          first = 1 if !first and modfunc
-          first = [1, first - center_correction].max
-        elsif args.size == 2 or (args.size == 3 and modfunc)
-          opts = {
-            :msg_on_error => 
-            "#{NAME} command starting line expected, got %s." % args[-1]
-          }
-          last = @proc.get_an_int(args[1], opts)
-          return nil, nil, nil unless last
-          if modfunc
-            if first
-              first = last
-              if args.size == 3 and modfunc
-                opts[:msg_on_error] = 
-                  ("#{NAME} command last or count parameter expected, " +
-                   'got: %s.' % args[2])
-                last = @proc.get_an_int(args[2], opts)
-                return nil, nil, nil unless last
-              end
-            end
-          end
-          last = adjust_last(first, last)
-        elsif not modfunc
-          errmsg('At most 2 parameters allowed when no module' +
-                  ' name is found/given. Saw: %d parameters' % args.size)
-          return nil, nil, nil
-        else
-          errmsg(('At most 3 parameters allowed when a module' +
-                  ' name is given. Saw: %d parameters') % args.size)
-          return nil, nil, nil
-        end
-      end
-    elsif !@proc.line_no and @proc.frame
+
+  # What a f*cking mess. Necessitated I suppose because we want to 
+  # allow somewhat flexible parsing with either module names, files or none
+  # and optional line counts or end-line numbers.
+  
+  # Parses arguments for the "list" command and returns the tuple:
+  # filename, start, last
+  # or sets these to nil if there was some problem.
+  def parse_list_cmd(arg_str, listsize, center_correction)
+
+    iseq = nil
+    if arg_str.empty?
+      filename = frame_filename
       first = [1, @proc.frame_line - center_correction].max
     else
-      first = [1, @proc.line_no - center_correction].max 
+      list_cmd_parse = parse_list(arg_str, 
+                                  :file_exists_proc => @proc.file_exists_proc)
+      last = list_cmd_parse.num
+      position  = list_cmd_parse.position
+
+      if position.is_a?(String)
+        if position == '-'
+          return no_frame_msg unless @proc.line_no
+          first = [1, @proc.line_no - 2*listsize - 1].max
+        elsif position == '.'
+          return no_frame_msg unless @proc.line_no
+          if (second = list_cmd_parse.num)
+            first = @proc.frame_line 
+            last = adjust_last(first, second)
+          else
+            first = [1, @proc.frame_line - center_correction].max
+            last = first + listsize - 1
+          end
+        end
+        filename = frame_filename
+      else
+        meth, filename, offset, offset_type = @proc.parse_position(position)
+        iseq = meth.iseq if meth
+        return unless filename
+        if offset_type == :line
+          first = offset
+        elsif meth
+          iseq, first, vm_offset = 
+            @proc.position_to_line_and_offset(meth.iseq, filename,
+                                              position,  offset_type)
+          return [nil] * 3 unless first
+        elsif !offset 
+          # Have just a filename. Go with line 1
+          first = 1
+        else
+          errmsg "Dunno what to do here"
+          return [nil] * 3
+        end
+      end
     end
-    last = first + listsize - 1 unless last
-  
-    LineCache::cache(container[1]) unless 
-        'file' != container[0] || LineCache::cached?(container[1])
-    return container, first, last
+
+    if last
+      last = adjust_last(first, last)
+    else
+      first = [1, first - center_correction].max 
+      last = first + listsize - 1 unless last
+    end
+    LineCache::cache(filename) unless LineCache::cached?(filename)
+    return iseq, filename, first, last
   end
 
   def no_frame_msg
@@ -201,6 +186,10 @@ disabled.
   end
     
   def run(args)
+    if args.empty? and not frame
+      errmsg("No Ruby program loaded.")
+      return
+    end
     listsize = settings[:maxlist]
     center_correction = 
       if args[0][-1..-1] == '>'
@@ -209,22 +198,24 @@ disabled.
         (listsize-1) / 2
       end
 
-    container, first, last = 
-      parse_list_cmd(args[1..-1], listsize, center_correction)
-    frame = @proc.frame
-    return unless container
+    # require_relative '../../lib/trepanning';
+    # debugger if @proc.cmd_argstr == "Columnize.columnize 30 3"
+    iseq, filename, first, last = 
+      parse_list_cmd(@proc.cmd_argstr, listsize, center_correction)
+    return unless filename
+    container = iseq ? iseq.source_container : ['file', filename]
     breaklist = @proc.brkpts.line_breaks(container)
 
     # We now have range information. Do the listing.
-    max_line = LineCache::size(container[1])
+    max_line = LineCache::size(filename)
     unless max_line 
-      errmsg('File "%s" not found.' % container[1])
+      errmsg('File "%s" not found.' % filename)
       return
     end
 
     if first > max_line
       errmsg('Bad line range [%d...%d]; file "%s" has only %d lines' %
-             [first, last, container[1], max_line])
+             [first, last, filename, max_line])
       return
     end
 
@@ -238,8 +229,9 @@ disabled.
         :reload_on_change => @proc.reload_on_change,
         :output => settings[:highlight]
       }
+      frame = @proc.frame
       first.upto(last).each do |lineno|
-        line = LineCache::getline(container[1], lineno, opts)
+        line = LineCache::getline(filename, lineno, opts)
         unless line
           msg('[EOF]')
           break
@@ -256,7 +248,7 @@ disabled.
                ' ' 
              end
         s += (frame && lineno == @proc.frame_line &&
-              container == frame.source_container) ? '->' : a_pad
+              filename == frame.source_container[1]) ? '->' : a_pad
         msg(s + "\t" + line, {:unlimited => true})
         @proc.line_no = lineno
       end
@@ -278,69 +270,77 @@ if __FILE__ == $0
     require_relative '../frame'
     dbgr, cmd = MockDebugger::setup
     cmd.proc.send('frame_initialize')
-    LineCache::cache(__FILE__)
-    cmd.run([cmd.name])
-    cmd.run([cmd.name, __FILE__ + ':10'])
 
     def run_cmd(cmd, args)
+      cmd.proc.instance_variable_set('@cmd_argstr', args[1..-1].join(' '))
+      cmd.run(args)
+    end
+
+    LineCache::cache(__FILE__)
+    run_cmd(cmd, [cmd.name])
+    run_cmd(cmd, [cmd.name, __FILE__ + ':10'])
+
+    def run_cmd2(cmd, args)
       seps = '--' * 10
       puts "%s %s %s" % [seps, args.join(' '), seps]
-      cmd.run(args)
+      run_cmd(cmd,args)
     end
       
 
     load 'tmpdir.rb'
-    run_cmd(cmd, %w(list tmpdir.rb 10))
-    run_cmd(cmd, %w(list tmpdir.rb))
+    run_cmd2(cmd, %w(list tmpdir.rb 10))
+    run_cmd2(cmd, %w(list tmpdir.rb))
 
     # cmd.proc.frame = sys._getframe()
     # cmd.proc.setup()
-    # cmd.run(['list'])
+    # run_cmd2(['list'])
 
-    run_cmd(cmd, %w(list .))
-    run_cmd(cmd, %w(list 30))
+    run_cmd2(cmd, %w(list .))
+    run_cmd2(cmd, %w(list 30))
 
-    # cmd.run(['list', '9+1'])
+    # run_cmd2(['list', '9+1'])
 
-    run_cmd(cmd, %w(list> 10))
-    run_cmd(cmd, %w(list 3000))
-    run_cmd(cmd, %w(list run_cmd))
+    run_cmd2(cmd, %w(list> 10))
+    run_cmd2(cmd, %w(list 3000))
+    run_cmd2(cmd, %w(list run_cmd2))
 
     p = Proc.new do 
       |x,y| x + y
     end
-    run_cmd(cmd, %w(list p))
-
-    # Function from a file found via an instruction sequence
-    run_cmd(cmd, %w(list Columnize.columnize))
-
-    # Use Class/method name. 15 isn't in the function - should this be okay?
-    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 15))
-
-    # Start line and count, since 3 < 30
-    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 30 3))
-
-    # Start line finish line 
-    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 40 50))
-
-    # puts '--' * 10
-    # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '4'])
-    # puts '--' * 10
-    # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '12-10'])
-    # cmd.run([cmd.name, 'os.path:5'])
-
     require 'thread_frame'
     tf = RubyVM::ThreadFrame.current
     cmd.proc.frame_setup(tf)
+    run_cmd2(cmd, %w(list p))
+
+    # Function from a file found via an instruction sequence
+    run_cmd2(cmd, %w(list Columnize.columnize))
+
+    # Use Class/method name. 15 isn't in the function - should this be okay?
+    run_cmd2(cmd, %W(#{cmd.name} Columnize.columnize 15))
+
+    # Start line and count, since 3 < 30
+    run_cmd2(cmd, %W(#{cmd.name} Columnize.columnize 30 3))
+
+    # Start line finish line 
+    run_cmd2(cmd, %W(#{cmd.name} Columnize.columnize 40 50))
+
+    # puts '--' * 10
+    # run_cmd2([cmd.name, os.path.abspath(__file__)+':3', '4'])
+    # puts '--' * 10
+    # run_cmd2([cmd.name, os.path.abspath(__file__)+':3', '12-10'])
+    # run_cmd2([cmd.name, 'os.path:5'])
+
     brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
     brkpt_cmd.run(['break'])
     line = __LINE__
-    run_cmd(cmd, [cmd.name, __LINE__.to_s])
+    run_cmd2(cmd, [cmd.name, __LINE__.to_s])
 
     disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
     disable_cmd.run(['disable', '1'])
 
-    run_cmd(cmd, [cmd.name, line.to_s])
-    run_cmd(cmd, %W(#{cmd.name} run_cmd))
+    run_cmd2(cmd, [cmd.name, line.to_s])
+    run_cmd2(cmd, %W(#{cmd.name} run_cmd2))
+    run_cmd2(cmd, %W(#{cmd.name} run_cmd2))
+    run_cmd2(cmd, %W(#{cmd.name} @713))
   end
 end

@@ -111,28 +111,28 @@ class Trepan
       end
     end
 
-    def parse_terminal(terminal_name, loc_str)
-      @cp ? @cp.setup_parser(loc_str) : @cp = CmdParse.new(loc_str)
+    def parse_terminal(terminal_name, loc_str, opts={})
+      @cp ? @cp.setup_parser(loc_str) : @cp = CmdParse.new(loc_str, opts)
       @cp.send(terminal_name) ? @cp : nil
     end
 
-    def parse_location(loc_str)
-      parse = parse_terminal(:_location, loc_str)
+    def parse_location(loc_str, opts={})
+      parse = parse_terminal(:_location, loc_str, opts)
       parse ? parse.result : nil
     end
 
-    def parse_breakpoint(str)
-      parse = parse_terminal(:_breakpoint_stmt, str)
+    def parse_breakpoint(str, opts={})
+      parse = parse_terminal(:_breakpoint_stmt, str, opts)
       parse ? parse.result : nil
     end
 
-    def parse_breakpoint_no_condition(str)
-      parse = parse_terminal(:_breakpoint_stmt_no_condition, str)
+    def parse_breakpoint_no_condition(str, opts={})
+      parse = parse_terminal(:_breakpoint_stmt_no_condition, str, opts)
       parse ? parse.result : nil
     end
 
-    def parse_list_cmd(str)
-      parse = parse_terminal(:_list_stmt, str)
+    def parse_list(str, opts={})
+      parse = parse_terminal(:_list_stmt, str, opts)
       parse ? parse.result : nil
     end
   end

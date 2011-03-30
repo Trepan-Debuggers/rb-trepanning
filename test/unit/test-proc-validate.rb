@@ -61,6 +61,16 @@ class TestValidate < Test::Unit::TestCase
     end
   end
 
+  def test_file_exists_proc
+    load 'tmpdir.rb'
+    %W(#{__FILE__} tmpdir.rb mock.rb).each do |name|
+      assert_equal true, @proc.file_exists_proc.call(name), "Should find #{name}"
+    end
+    %W(#{File.dirname(__FILE__)} tmpdir).each do |name|
+      assert_equal false, @proc.file_exists_proc.call(name), "Should not find #{name}"
+    end
+  end
+
   # def test_breakpoint_position
   #   tf = RubyVM::ThreadFrame.current
   #   @proc.frame_setup(tf)

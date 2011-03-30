@@ -16,6 +16,19 @@
   # Structure to hold list information
   List = Struct.new(:position, :num)
 
+  DEFAULT_OPTS = {
+    :debug=>false, 
+    :file_exists_proc => Proc.new{|filename|
+        File.readable?(filename) && !File.directory?(filename)
+    }
+  }
+  def initialize(str, opts={})
+    @opts = DEFAULT_OPTS.merge(opts)
+    setup_parser(str, opts[:debug])
+    @file_exists_proc = @opts[:file_exists_proc]
+  end
+
+
    }
 #####################################################
 
@@ -185,10 +198,10 @@ position =
 
 location = 
    position 
- | <filename>:file &{ File.exist?(file) } file_pos_sep position:pos {
+ | <filename>:file &{ @file_exists_proc.call(file) } file_pos_sep position:pos {
       Position.new(:file, file, pos.position_type, pos.position)
     }
- | <filename>:file &{ File.exist?(file) } {
+ | <filename>:file &{ @file_exists_proc.call(file) } {
       Position.new(:file, file, nil, nil)
     }
  | class_module_chain?:fn file_pos_sep position:pos {
@@ -215,7 +228,10 @@ breakpoint_stmt = location:loc - if_unless:iu - condition:cond {
 # Note that the first word "list", "list>" or handled in
 # the command.  Also, "list" with nothing else is
 # handled there as well
-list_special_targets = <'.' '-'> { text }
-list_stmt = (list_special_target | location):loc - (integer:int)? {
+list_special_targets = <'.' | '-'> { text }
+list_stmt = (list_special_targets | location):loc - (integer:int)? {
   List.new(loc, int)
+}
+  | (list_special_targets | location):loc {
+  List.new(loc, nil)
 }

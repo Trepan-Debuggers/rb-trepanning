@@ -19,8 +19,7 @@ class Trepan
     def canonic_file(filename)
       # For now we want resolved filenames 
       @settings[:basename] ? File.basename(filename) : 
-        # Cache this?
-        File.expand_path(Pathname.new(filename).cleanpath.to_s)
+        File.expand_path(Pathname.new(LineCache::map_file(filename)).cleanpath.to_s)
     end
 
     # Return the text to the current source line.
