@@ -72,7 +72,7 @@ module Trepanning
 
   def find_scripts(filename)
     filename_pat = file_match_pat(filename)
-    return SCRIPT_ISEQS__.keys.grep(/#{filename_pat}/)
+    return SCRIPT_LINES__.keys.grep(/#{filename_pat}/)
   end
 
 end
@@ -82,6 +82,7 @@ if __FILE__ == $0
   if !(ARGV.size == 1 && ARGV[0] == 'noload')
     ISEQS__        = {}
     SCRIPT_ISEQS__ = {}
+    SCRIPT_LINES__ = {}
     ARGV[0..-1]    = ['noload']
     load(__FILE__)
   else    
