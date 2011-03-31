@@ -50,11 +50,11 @@ just something that evaluates to a positive integer.
 Some examples:
 
 #{NAME} 5            # List centered around line 5
-#{NAME} 4+1          # Same as above.
+#{NAME} @5           # List lines centered around bytecode offset 5.
 #{NAME} 5>           # List starting at line 5
 #{NAME} foo.rb:5     # List centered around line 5 of foo.rb
 #{NAME} foo.rb 5     # Same as above.
-#{NAME} foo.rb:5>    # List starting around line 5 of foo.rb
+#{NAME}> foo.rb:5    # List starting around line 5 of foo.rb
 #{NAME} foo.rb  5 6  # list lines 5 and 6 of foo.rb
 #{NAME} foo.rb  5 2  # Same as above, since 2 < 5.
 #{NAME} foo.rb:5 2   # Same as above
@@ -198,8 +198,6 @@ disabled.
         (listsize-1) / 2
       end
 
-    # require_relative '../../lib/trepanning';
-    # debugger if @proc.cmd_argstr == "Columnize.columnize 30 3"
     iseq, filename, first, last = 
       parse_list_cmd(@proc.cmd_argstr, listsize, center_correction)
     return unless filename

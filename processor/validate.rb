@@ -3,9 +3,12 @@
 # Trepan command input validation routines.  A String type is
 # usually passed in as the argument to validation routines.
 
+require 'rubygems'
+require 'linecache'
+
+require_relative '../app/cmd_parse'
 require_relative '../app/condition'
 require_relative '../app/file'
-require_relative '../app/cmd_parse'
 require_relative '../app/thread'
 
 require_relative 'location' # for resolve_file_with_dir
@@ -168,7 +171,8 @@ class Trepan
           return [nil, nil]
         end
       when :offset
-        if ary=iseq.offset2lines(position.position)
+        position = position.position unless position.kind_of?(Fixnum)
+        if ary=iseq.offset2lines(position)
           line_no   = ary.first
           vm_offset = position
         else
@@ -271,7 +275,7 @@ class Trepan
         begin
           meth_for_parse_struct(meth, start_binding)
         rescue NameError
-          errmsg("Can't evalute #{meth.name} to get a method")
+          errmsg("Can't evaluate #{meth.name} to get a method")
           return nil
         end
       end

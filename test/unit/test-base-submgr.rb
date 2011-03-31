@@ -13,7 +13,7 @@ class TestBaseSubcommandMgr < Test::Unit::TestCase
   def test_basic
     my_cmd = @cmds['show']
     # require 'trepanning'; debugger
-    assert_equal([:debug, :different], my_cmd.complete('d'),
+    assert_equal([:debug, :different, :directories], my_cmd.complete('d'),
                  "Should be able to complete 'd'")
     assert_equal(%w(show args), my_cmd.subcmds.lookup('ar').prefix,
                  "Should be able to complete lookup('ar')")
