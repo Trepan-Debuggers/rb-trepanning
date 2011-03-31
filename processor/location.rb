@@ -16,10 +16,16 @@ class Trepan
       [container[0], canonic_file(container[1])]
     end
 
-    def canonic_file(filename)
+    def canonic_file(filename, resolve=true)
       # For now we want resolved filenames 
-      @settings[:basename] ? File.basename(filename) : 
-        File.expand_path(Pathname.new(LineCache::map_file(filename)).cleanpath.to_s)
+      if @settings[:basename]
+        File.basename(filename)
+      elsif resolve
+        filename = LineCache::map_file(filename)
+        File.expand_path(Pathname.new(filename).cleanpath.to_s)
+      else
+        filename
+      end
     end
 
     # Return the text to the current source line.
@@ -161,7 +167,7 @@ class Trepan
           eval_str = frame.iseq.eval_source
           'eval "' + safe_repr(eval_str.gsub(/\n/,';'), 15) + '"'
         else
-          canonic_file(filename)
+          canonic_file(filename, false)
         end
       loc = "#{canonic_filename}:#{line_no}"
       return loc
