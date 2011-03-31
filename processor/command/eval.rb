@@ -19,7 +19,8 @@ next to the inspect output of the value.
 If no string is given we run the string from the current source code
 about to be run. If the command ends ? (via an alias) and no string is
 given we will also strip off any leading 'if', 'while', 'elseif',
-'return', 'case', 'unless', or 'until' in the string.
+'return', 'case', 'unless', or 'until' in the string, and def xxx(...) 
+gets transformed to [...].
 
 #{NAME} 1+2  # 3
 #{NAME} @v
@@ -51,6 +52,8 @@ See 'set buffer trace' for showing what may have already been run.
           text.gsub!(/^\s*return\s+/,'')
         elsif text =~ /^\s*case\s+/
           text.gsub!(/^\s*case\s*/,'')
+        elsif text =~ /^\s*def\s*.*\(.+\)/
+          text.gsub!(/^\s*def\s*.*\((.*)\)/,'[\1]')
         end
         msg "eval: #{text}"
       end
