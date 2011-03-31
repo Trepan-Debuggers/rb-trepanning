@@ -16,11 +16,22 @@ The value of the expression is stored into a global variable so it
 may be used again easily. The name of the global variable is printed
 next to the inspect output of the value.
 
-If no string is given we run the string from the current source code
+If no string is given, we run the string from the current source code
 about to be run. If the command ends ? (via an alias) and no string is
-given we will also strip off any leading 'if', 'while', 'elseif',
-'return', 'case', 'unless', or 'until' in the string, and def xxx(...) 
-gets transformed to [...].
+given we will the following translations occur:
+
+   {if|elsif|unless} expr [then]  => expr
+   {until|while} expr [do]        => expr
+   return expr                    => expr
+   case expr                      => expr
+   def fn(params)                 => [params]
+   var = expr                     => expr
+
+The above is done via regular expression. No fancy parsing is done, say,
+to look to see if expr is split across a line or whether var an assigment
+might have multiple variables on the left-hand side.
+
+Examples:
 
 #{NAME} 1+2  # 3
 #{NAME} @v
@@ -54,6 +65,8 @@ See 'set buffer trace' for showing what may have already been run.
           text.gsub!(/^\s*case\s*/,'')
         elsif text =~ /^\s*def\s*.*\(.+\)/
           text.gsub!(/^\s*def\s*.*\((.*)\)/,'[\1]')
+        elsif text =~ /^\s*[A-Za-z_][A-Za-z0-9_\[\]]*\s*=[^=>]/
+          text.gsub!(/^\s*[A-Za-z_][A-Za-z0-9_\[\]]*\s*=/,'')
         end
         msg "eval: #{text}"
       end
