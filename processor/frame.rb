@@ -44,7 +44,15 @@ class Trepan
       if frame 
         @frame = frame
         @frame_index = frame_num
-        print_location unless @settings[:traceprint]
+        unless @settings[:traceprint]
+          opts = {
+            :basename    => settings[:basename],
+            :current_pos => frame_num,
+            :maxwidth    => settings[:maxwidth],
+          }
+          print_stack_trace_from_to(frame_num, frame_num, frame, opts)
+          print_location 
+        end
         @line_no = frame_line() - 1
         @frame
       else

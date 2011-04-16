@@ -19,6 +19,9 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
     @proc.frame_index = 0
     @proc.frame_initialize
     class << @proc
+      def msg(msg)
+        $msgs << msg
+      end
       def errmsg(msg)
         $errors << msg
       end
@@ -38,7 +41,7 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
     0.upto(@proc.top_frame.stack_size-1) do |i| 
       @proc.adjust_frame(i, true) 
       assert_equal(0, $errors.size)
-      assert_equal(i+1, $msgs.size)
+      assert_equal(true, $msgs.size >= i+1)
     end
 
     # Test absolute before the beginning fo the stack

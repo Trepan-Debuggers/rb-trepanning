@@ -51,6 +51,7 @@ See also the commands "exit" and "kill".
 
     exitrc = (args.size > 1) ? exitrc = Integer(args[1]) rescue 0 : 0
     # No graceful way to stop threads...
+    msg "#{Trepan::PROGRAM}: That's all, folks..."
     exit exitrc
   end
 end

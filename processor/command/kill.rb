@@ -50,9 +50,6 @@ Examples:
         errmsg("Signal name '#{sig}' is not a signal I know about.\n")
         return false
       end
-      if 'KILL' == sig || Signal['KILL'] == sig
-        @proc.intf.finalize
-      end
     else
       if not (unconditional || confirm('Really quit?', false))
         msg('Kill not confirmed.')
@@ -62,6 +59,10 @@ Examples:
       end
     end
     begin
+      if 'KILL' == sig || Signal['KILL'] == sig
+        msg "#{Trepan::PROGRAM}: That's all, folks..."
+        @proc.intf.finalize
+      end
       Process.kill(sig, Process.pid)
     rescue Errno::ESRCH
       errmsg "Unable to send kill #{sig} to process #{Process.pid}"
