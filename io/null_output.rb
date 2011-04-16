@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Nukes output. Used for example in sourcing where you don't want
 # to see output.
@@ -10,10 +10,16 @@ require_relative 'base_io'
 class Trepan
   class OutputNull < Trepan::OutputBase
     def initialize(out, opts={})
+      @closed = false
       super
     end
 
     def close
+      @closed = true
+    end
+
+    def closed?
+      !!@closed
     end
 
     def flush

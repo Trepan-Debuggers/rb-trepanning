@@ -59,10 +59,7 @@ Examples:
       end
     end
     begin
-      if 'KILL' == sig || Signal['KILL'] == sig
-        msg "#{Trepan::PROGRAM}: That's all, folks..."
-        @proc.intf.finalize
-      end
+      @proc.intf.finalize  if 'KILL' == sig || Signal['KILL'] == sig
       Process.kill(sig, Process.pid)
     rescue Errno::ESRCH
       errmsg "Unable to send kill #{sig} to process #{Process.pid}"

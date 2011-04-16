@@ -59,6 +59,10 @@ class Trepan
     end
 
     def finalize(last_wishes=nil)
+      if @output && !@output.closed?
+        msg "%sThat's all, folks..." % 
+          (defined?(Trepan::PROGRAM) ? "#{Trepan::PROGRAM}: " : '')
+      end
       close
     end
 
