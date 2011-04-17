@@ -3,3 +3,4 @@ Foo::five
 (trepan): Program stop event: line; PC offset 100 <top debugger-stop.rb>
 -- debugger-stop.rb:10 @1954)
 5
+trepan: That's all, folks...

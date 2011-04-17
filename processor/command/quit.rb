@@ -51,6 +51,8 @@ See also the commands "exit" and "kill".
 
     exitrc = (args.size > 1) ? exitrc = Integer(args[1]) rescue 0 : 0
     # No graceful way to stop threads...
+    @proc.finalize
+    @proc.dbgr.intf[-1].finalize
     exit exitrc
   end
 end
