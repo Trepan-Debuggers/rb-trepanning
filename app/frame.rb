@@ -158,7 +158,9 @@ class Trepan
 
     def offset_for_return(event)
       raise RuntimeError unless %w(return c-return).member?(event)
-      'return' == event ? 1 : 2
+      # FIXME: C calls have a RubyVM::Env added to the stack.
+      # Where? Why?
+      'return' == event ? 1 : 4
     end
     module_function :offset_for_return
 

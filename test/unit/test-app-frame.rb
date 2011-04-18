@@ -40,7 +40,7 @@ class TestAppFrame < Test::Unit::TestCase
 
   def test_return
     assert_equal(1, offset_for_return('return'))
-    assert_equal(2, offset_for_return('c-return'))
+    assert_equal(4, offset_for_return('c-return'))
     assert_raises RuntimeError do
       offset_for_return('c-call')
     end

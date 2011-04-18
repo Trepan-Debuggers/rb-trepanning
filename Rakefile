@@ -163,7 +163,7 @@ task :'cmd_parse' do
 end
 
 task :'check:integration' do
-  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test integration)))
+  run_standalone_ruby_files(FileList['test/integration/**/test-*.rb'])
 end
 
 task :check => %w(check:lib check:processor check:commands).map{|c| c.to_sym}

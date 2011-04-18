@@ -28,7 +28,7 @@ module Registers
         # to do, possibly in the Ruby 1.9 interpeter, we'll handle
         # this here.  It is also conceivable to handle this in
         # thread_frame's sp handling.
-        position + 2
+        position + 3
       else
         position
       end
