@@ -1,18 +1,17 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 module Registers
-  def register_array_index(name, args, max_value=nil)
-    if args.size == 0
+  def register_array_index(name, arg, max_value=nil)
+    if !arg or arg.empty?
       # Form is: "info xx" which means "info xx 0"
       lookup_pos = position = 0
     else
-      position_str = args[0]
       opts = {
         :msg_on_error => 
-        "The 'info registers %s' command argument must eval to an integer. Got: %s" % [name, position_str],
-        # :min_value => 0,
+        "The 'info registers %s' command argument must eval to an integer. Got: %s" % [name, arg],
+        :min_value => 0,
         :max_value => max_value
       }
-      position = @proc.get_an_int(position_str, opts)
+      position = @proc.get_an_int(arg, opts)
       return nil unless position
     end
     lookup_pos = 

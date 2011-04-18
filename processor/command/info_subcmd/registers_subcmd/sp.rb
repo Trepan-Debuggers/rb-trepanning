@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 require_relative 'helper'
 
 class Trepan::Subcommand::InfoRegistersSp < Trepan::SubSubcommand
   unless defined?(HELP)
-    NAME = File.basename(__FILE__, '.rb')
+    Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
     HELP = <<EOH
-usage: 
-   info register #{NAME} [NUMBER NUMBER ...|size]
+#{CMD} [NUMBER NUMBER ...|size]
 
 With no arguments, all SP values for the current frame of the debugged
 program are shown.  If a number is given, then the entry at that
@@ -26,7 +25,7 @@ EOH
 
     MIN_ABBREV   = 'sp'.size
     NEED_STACK   = true
-    PREFIX       = %W(info registers #{NAME})
+    SHORT_HELP   = "Show value(s) of the VM stack pointer (SP)."
   end
 
   include Registers

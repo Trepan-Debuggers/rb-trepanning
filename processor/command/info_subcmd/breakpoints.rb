@@ -6,7 +6,7 @@ class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
-#{PREFIX.join(' ')} [num1 ...] [verbose]
+#{CMD} [num1 ...] [verbose]
 
 Show status of user-settable breakpoints. If no breakpoint numbers are
 given, the show all breakpoints. Otherwise only those breakpoints
@@ -90,7 +90,7 @@ EOH
       if args.size > 2
         opts = {
         :msg_on_error => 
-        "An '#{PREFIX.join(' ')}' argument must eval to a breakpoint between 1..#{@proc.brkpts.max}.",
+        "An '#{CMD}' argument must eval to a breakpoint between 1..#{@proc.brkpts.max}.",
         :min_value => 1,
         :max_value => @proc.brkpts.max
       }

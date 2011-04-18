@@ -46,7 +46,11 @@ info reg lfp       # show lfp(0)
       key_name    = PREFIX.join('') + subcmd_name
       remain_args = args[3..-1]
       if all_regs.member?(key_name)
-        @subcmds.subcmds[key_name].run(remain_args) 
+        subcmd = @subcmds.subcmds[key_name]
+        if @proc.ok_for_running(subcmd, subcmd.class.const_get('CMD'),
+                                remain_args.size)
+          @subcmds.subcmds[key_name].run(remain_args) 
+        end
       elsif unavailable_regs.member?(key_name)
         msg("info registers: %s can not be displayed for frame type %s." % 
             [subcmd_name, @proc.frame.type])

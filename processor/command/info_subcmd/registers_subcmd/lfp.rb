@@ -1,21 +1,26 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 require_relative 'helper'
 
 class Trepan::Subcommand::InfoRegistersLfp < Trepan::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show the value of the VM local frame pointer (LFP).
+    Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
+    HELP = <<EOH
+#{CMD} NUMBER
 
+Show the value of the VM local frame pointer (LFP).
 When a local variable is defined for the first time, this stack
 is pushed and the value for local variable is assigned to this stack entry.
 
 See also "info register sp".'
+EOH
 
     MIN_ABBREV   = 'lf'.size
-    NAME         = File.basename(__FILE__, '.rb')
+    MIN_ARGS     = 1
+    MAX_ARGS     = 1
     NEED_STACK   = true
-    PREFIX       = %w(info registers lfp)
+    SHORT_HELP   = "Show the value of the VM local frame pointer (LFP)."
   end
 
   include Registers
@@ -25,7 +30,7 @@ See also "info register sp".'
       msg "local_name not available for C function"
     else
       iseq = frame.iseq
-      index = register_array_index(PREFIX[-1], args, iseq.local_size-1)
+      index = register_array_index(PREFIX[-1], args[0], iseq.local_size-1)
       msg("local_name(%d)=%s" % [index, iseq.local_name(index)]) if index
     end
   end

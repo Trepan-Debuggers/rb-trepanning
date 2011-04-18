@@ -1,19 +1,24 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
 class Trepan::SubSubcommand::InfoRegistersPc < Trepan::SubSubcommand
   unless defined?(HELP)
-    HELP         = 'Show the value of the VM program counter (PC).
+    Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
+    HELP         = <<EOH
+#{CMD}
 
+Show the value of the VM program counter (PC).
 The VM program is an offset into the instruction sequence for the next
 VM instruction in the sequence to be executed. 
 
 See also "info disassemble" and "info registers".'
+EOH
     MIN_ABBREV   = 'pc'.size
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = true
-    PREFIX       = %W(info registers #{NAME})
+    MIN_ARGS     = 0
+    MAX_ARGS     = 0
+    SHORT_HELP   = 'Show the value of the VM program counter (PC).'
   end
 
   def run(args)

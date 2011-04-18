@@ -10,12 +10,18 @@ class Trepan
     def mark_disassembly(disassembly_str, iseq_equal, pc_offset,
                          brkpt_offsets=[], max_width=80, highlight=nil)
 
+      dis_array = disassembly_str.split(/\n/)
       if highlight
-        require_relative '../app/yarv'
-        @highlighter ||= CodeRay::Duo[:yarv, :term]
+        begin
+          require_relative '../app/yarv'
+          @highlighter ||= CodeRay::Duo[:yarv, :term]
+        rescue LoadError
+          dis_array.
+            unshift('** Highlighting requested but CodeRay is not installed.')
+          highlight = false
+        end
       end
 
-      dis_array = disassembly_str.split(/\n/)
       dis_array.map do |line|
         if line =~ /^(.*?)(\s+)(\(\s+\d+\))?$/
           line_begin   = $1
@@ -90,5 +96,9 @@ local table (size: 6, argc: 1 [opts: 0, rest: -1, post: 0, block: -1] s1)
   puts str
   puts '=' * 40
   require 'pp'
+  PP.pp(disassemble_split(dis_string), $stdout)
+  str = mark_disassembly(dis_string, false, 2, [], 70, true).join("\n")
+  puts str
+  puts '=' * 40
   PP.pp(disassemble_split(dis_string), $stdout)
 end
