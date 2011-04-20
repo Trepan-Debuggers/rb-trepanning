@@ -8,6 +8,8 @@ class Trepan::Subcommand::InfoArgs < Trepan::Subcommand
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 'Show argument variables of the current stack frame'
     MIN_ABBREV   = 'ar'.size 
+    MIN_ARGS     = 0
+    MAX_ARGS     = 0
     NEED_STACK   = true
   end
 

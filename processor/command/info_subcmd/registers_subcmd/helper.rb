@@ -8,8 +8,8 @@ module Registers
       opts = {
         :msg_on_error => 
         "The 'info registers %s' command argument must eval to an integer. Got: %s" % [name, arg],
-        :min_value => 0,
-        :max_value => max_value
+        :min_value => -10,
+        :max_value => max_value + 10
       }
       position = @proc.get_an_int(arg, opts)
       return nil unless position

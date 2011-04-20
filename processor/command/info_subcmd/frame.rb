@@ -34,6 +34,8 @@ Frame basename
 See also: backtrace
     EOH
     MIN_ABBREV   = 'fr'.size # Note we have "info file"
+    MIN_ARGS     = 0
+    MAX_ARGS     = 0
     NEED_STACK   = true
     SHORT_HELP   = 'Show information about the selected frame'
   end

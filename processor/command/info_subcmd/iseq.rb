@@ -9,7 +9,7 @@ class Trepan::Subcommand::InfoIseq < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = <<-EOH
-#{CMD} iseq [METHOD|.]
+#{CMD} [METHOD|.]
 
 Show information about an instruction sequence.
 
@@ -20,6 +20,8 @@ Examples:
   #{CMD} require_relative
   EOH
     MIN_ABBREV   = 'is'.size
+    MIN_ARGS     = 0
+    MAX_ARGS     = 1
     NEED_STACK   = true
     SHORT_HELP   = 'Information about an instruction sequence'
   end

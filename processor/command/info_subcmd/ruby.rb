@@ -15,6 +15,8 @@ See also constants: RUBY_DESCRIPTION, RUBY_VERSION, and RUBY_RELEASE_DATE."
     EOH
     MIN_ABBREV   = 'ru'.size
     NEED_STACK   = false
+    MIN_ARGS     = 0
+    MAX_ARGS     = 0
     SHORT_HELP   = 'Ruby version information'
    end
 

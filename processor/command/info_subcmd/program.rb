@@ -6,6 +6,8 @@ class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 'Information about debugged program and its environment'
+    MIN_ARGS     = 0
+    MAX_ARGS     = 0
     MIN_ABBREV   = 'pr'.size
     NEED_STACK   = true
   end

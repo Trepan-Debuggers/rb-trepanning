@@ -8,6 +8,7 @@ class Trepan::Subcommand::InfoLocals < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = 'Show local variables of the current stack frame'
+    MIN_ARGS     = 0
     MAX_ARGS     = 1
     MIN_ABBREV   = 'lo'.size 
     NEED_STACK   = true

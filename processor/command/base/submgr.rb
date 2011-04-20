@@ -174,7 +174,10 @@ class Trepan::SubcommandMgr < Trepan::Command
     # Run that.
     subcmd = @subcmds.lookup(subcmd_prefix)
     if subcmd
-      subcmd.run(args)
+      if @proc.ok_for_running(subcmd, subcmd.class.const_get('CMD'),
+                              args.size-2)
+        subcmd.run(args)
+      end
     else
       undefined_subcmd(@name, subcmd_prefix)
     end
