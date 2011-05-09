@@ -254,7 +254,7 @@ class Trepan
           # If we are inside the script interface errmsg may fail.
           begin
             errmsg("Internal debugger error: #{exc.inspect}")
-          rescue
+          rescue IOError
             $stderr.puts "Internal debugger error: #{exc.inspect}"
           end
           exception_dump(exc, @settings[:debugexcept], $!.backtrace)
@@ -323,17 +323,24 @@ class Trepan
       # Eval anything that's not a command or has been
       # requested to be eval'd
       if settings[:autoeval] || eval_command
-        ## eval_code(current_command, @settings[:maxstring])
-        msg 'D=> ' + debug_eval(current_command).inspect
-      else
-        undefined_command(cmd_name)
+        # eval_code(current_command, @settings[:maxstring])
+        begin
+          msg 'D=> ' + debug_eval_with_exception(current_command).inspect
+          return false
+        rescue 
+        end
       end
+      undefined_command(cmd_name)
       return false
     end
 
     # Error message when a command doesn't exist
     def undefined_command(cmd_name)
-      errmsg('Undefined command: "%s". Try "help".' % cmd_name)
+      begin 
+        errmsg('Undefined command: "%s". Try "help".' % cmd_name)
+      rescue
+        $stderr.puts 'Undefined command: "%s". Try "help".' % cmd_name
+      end
     end
 
     # FIXME: Allow access to both Trepan::CmdProcessor and Trepan

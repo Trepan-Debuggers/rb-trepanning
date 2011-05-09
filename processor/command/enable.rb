@@ -12,10 +12,12 @@ class Trepan::Command::EnableCommand < Trepan::Command::DisableCommand
   $VERBOSE    = nil
   NAME        = File.basename(__FILE__, '.rb')
   HELP        = <<-HELP
-#{NAME} [display] bpnumber [bpnumber ...]
+#{NAME} [display] BPNUM1 [BPNUM2 ...]
     
-Enables the breakpoints given as a space separated list of breakpoint
-numbers. See also "info break" to get a list.
+Enables breakpoints BPNUM1. Breakpoints numbers are given as a space-
+separated list numbers. 
+
+See also "info break" to get a list of breakpoints.
   HELP
 
   ALIASES       = %w(en)
