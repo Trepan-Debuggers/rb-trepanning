@@ -45,15 +45,6 @@ See also 'examine' and 'whatis'.
   end
 
   def complete(prefix)
-    matches = Trepan::Complete.complete_token(CATEGORIES.keys + 
-                                              %w(* syntax all) + 
-                                          @proc.commands.keys, prefix)
-    aliases = Trepan::Complete.complete_token_filtered(@proc.aliases, prefix, 
-                                                       matches)
-    (matches + aliases).sort
-  end    
-
-  def complete(prefix)
     matches = Trepan::Complete.complete_token(CATEGORIES.keys + %w(* all) + 
                                               @proc.commands.keys, prefix)
     aliases = Trepan::Complete.complete_token_filtered(@proc.aliases, prefix, 

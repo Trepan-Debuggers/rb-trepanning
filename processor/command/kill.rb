@@ -51,11 +51,11 @@ Examples:
         return false
       end
     else
-      if not (unconditional || confirm('Really quit?', false))
+      if unconditional || confirm('Really quit?', false)
+        sig = 'KILL'
+      else 
         msg('Kill not confirmed.')
         return
-      else 
-        sig = 'KILL'
       end
     end
     begin

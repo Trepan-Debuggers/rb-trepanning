@@ -277,7 +277,7 @@ class Trepan
         commands = current_command.split(';;')
         if commands.size > 1
           current_command = commands.shift
-          @cmd_queue.unshift *commands
+          @cmd_queue.unshift(*commands)
         end
         args = current_command.split
         # Expand macros. FIXME: put in a procedure
@@ -327,7 +327,7 @@ class Trepan
         begin
           msg 'D=> ' + debug_eval_with_exception(current_command).inspect
           return false
-        rescue 
+        rescue NameError
         end
       end
       undefined_command(cmd_name)

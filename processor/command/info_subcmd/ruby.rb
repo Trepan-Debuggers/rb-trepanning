@@ -18,7 +18,7 @@ See also constants: RUBY_DESCRIPTION, RUBY_VERSION, and RUBY_RELEASE_DATE."
     MIN_ARGS     = 0
     MAX_ARGS     = 0
     SHORT_HELP   = 'Ruby version information'
-   end
+  end
 
   # def parse_options(args) # :nodoc
   #   options = {}

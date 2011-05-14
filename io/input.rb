@@ -37,7 +37,7 @@ class Trepan
           line = Readline.readline(prompt, true)
         else
           line = @input.gets
-          end
+        end
       rescue Interrupt
         return ''
       rescue EOFError
@@ -76,13 +76,14 @@ class Trepan
           rescue
           end
           @@readline_finalized = true
-        end
+       end
       end
     end
   end
 end
 
 def Trepan::GNU_readline?
+  @have_readline ||= nil
   begin
     return @have_readline unless @have_readline.nil?
     @have_readline = require 'readline'
