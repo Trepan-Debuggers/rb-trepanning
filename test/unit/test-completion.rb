@@ -13,7 +13,7 @@ class TestCompletion < Test::Unit::TestCase
   def test_completion
     dbgr = Trepan.new
     [
-     ['sh', 'sh', ['show']],  # Simple single completion
+     ['sho', 'sho', ['show']],  # Simple single completion
      ['se', 'se', ['server', 'set']],  # Simple multiple completion
      ['show', 'show', ['show']], # Completion when word is complete
      ['irb ', 'irb ', []],        # Don't add anything - no more

@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'irb'
 require_relative 'base/cmd'
 require_relative '../../app/irb'
@@ -32,6 +32,7 @@ Here then is a loop to query VM stack values:
   (-1..1).each {|i| dbgr(\"info reg sp \#{i}\")}
      HELP
 
+    ALIASES      = %w(irb)
     CATEGORY     = 'support'
     MAX_ARGS     = 1  # Need at most this many
     SHORT_HELP  = "Run #{NAME} as a command subshell"
