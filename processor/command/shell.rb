@@ -5,7 +5,7 @@ require_relative '../../app/irb'
 class Trepan::Command::IRBCommand < Trepan::Command
 
   unless defined?(HELP)
-    NAME         = File.basename(__FILE__, '.rb')
+    NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
 #{NAME} [-d]\tstarts an Interactive Ruby (IRB) session.
 
@@ -32,10 +32,10 @@ Here then is a loop to query VM stack values:
   (-1..1).each {|i| dbgr(\"info reg sp \#{i}\")}
      HELP
 
-    ALIASES      = %w(irb)
-    CATEGORY     = 'support'
-    MAX_ARGS     = 1  # Need at most this many
-    SHORT_HELP  = "Run #{NAME} as a command subshell"
+    ALIASES    = %w(irb)
+    CATEGORY   = 'support'
+    MAX_ARGS   = 1  # Need at most this many
+    SHORT_HELP = "Run #{NAME} as a command subshell"
   end
 
   # This method runs the command
