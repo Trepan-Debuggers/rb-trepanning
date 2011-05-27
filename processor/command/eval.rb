@@ -2,6 +2,7 @@
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative './base/cmd'
 
+
 class Trepan::Command::EvalCommand < Trepan::Command
 
   old_verbose = $VERBOSE  
@@ -49,9 +50,18 @@ See 'set buffer trace' for showing what may have already been run.
   SHORT_HELP    = 'Run code in the current context'
   $VERBOSE      = old_verbose 
 
+  def complete(prefix)
+    if prefix.empty? 
+      @proc.current_source_text 
+    else
+      prefix
+    end
+  end
+  
   def run(args)
     if args.size == 1
       text  = @proc.current_source_text
+      ## FIXME turn into a subroutine and use in complete.
       if  '?' == args[0][-1..-1] 
         if text =~ /^\s*(?:if|elsif|unless)\s+/
           text.gsub!(/^\s*(?:if|elsif|unless)\s+/,'') 
