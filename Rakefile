@@ -4,7 +4,7 @@ require 'rubygems'
 
 ROOT_DIR = File.dirname(__FILE__)
 Gemspec_filename='trepanning.gemspec'
-require File.join %W(#{ROOT_DIR} app options)
+require_relative './app/options'
 
 def gemspec
   @gemspec ||= eval(File.read(Gemspec_filename), binding, Gemspec_filename)
