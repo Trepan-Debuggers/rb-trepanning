@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative './base/cmd'
-
+require_relative '../../app/util'
 
 class Trepan::Command::EvalCommand < Trepan::Command
 
@@ -52,32 +52,21 @@ See 'set buffer trace' for showing what may have already been run.
 
   def complete(prefix)
     if prefix.empty? 
-      @proc.current_source_text 
+      if @proc.leading_str.start_with?('eval?')
+        Trepan::Util.extract_expression @proc.current_source_text
+      else
+        @proc.current_source_text 
+      end
     else
       prefix
     end
   end
-  
+
   def run(args)
     if args.size == 1
       text  = @proc.current_source_text
-      ## FIXME turn into a subroutine and use in complete.
       if  '?' == args[0][-1..-1] 
-        if text =~ /^\s*(?:if|elsif|unless)\s+/
-          text.gsub!(/^\s*(?:if|elsif|unless)\s+/,'') 
-          text.gsub!(/\s+then\s*$/, '')
-        elsif text =~ /^\s*(?:until|while)\s+/
-          text.gsub!(/^\s*(?:until|while)\s+/,'') 
-          text.gsub!(/\s+do\s*$/, '')
-        elsif text =~ /^\s*return\s+/
-          text.gsub!(/^\s*return\s+/,'')
-        elsif text =~ /^\s*case\s+/
-          text.gsub!(/^\s*case\s*/,'')
-        elsif text =~ /^\s*def\s*.*\(.+\)/
-          text.gsub!(/^\s*def\s*.*\((.*)\)/,'[\1]')
-        elsif text =~ /^\s*[A-Za-z_][A-Za-z0-9_\[\]]*\s*=[^=>]/
-          text.gsub!(/^\s*[A-Za-z_][A-Za-z0-9_\[\]]*\s*=/,'')
-        end
+        text = Trepan::Util::extract_expression(text)
         msg "eval: #{text}"
       end
     else
@@ -93,4 +82,10 @@ if __FILE__ == $0
   arg_str = '1 + 2'
   cmd.proc.instance_variable_set('@cmd_argstr', arg_str)
   puts "eval #{arg_str} is: #{cmd.run([cmd.name, arg_str])}"
+  arg_str = 'return "foo"'
+  # def cmd.proc.current_source_text
+  #   'return "foo"'
+  # end
+  # cmd.proc.instance_variable_set('@cmd_argstr', arg_str)
+  # puts "eval? #{arg_str} is: #{cmd.run([cmd.name + '?'])}"
 end
