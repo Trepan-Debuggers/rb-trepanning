@@ -53,6 +53,8 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
+  puts "before #{cmd.name}"
   fork { cmd.run([cmd.name]) }
+  puts "before #{cmd.name} 10"
   cmd.run([cmd.name, '10'])
 end

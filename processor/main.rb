@@ -12,7 +12,7 @@ end
 require_relative '../app/brkptmgr'
 
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     # SEE ALSO attr's in require_relative's of loop above.
 

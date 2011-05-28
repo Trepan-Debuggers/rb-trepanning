@@ -1,9 +1,10 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'linecache'
 require_relative '../app/complete'
 require_relative '../app/frame'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     attr_reader   :current_thread
 

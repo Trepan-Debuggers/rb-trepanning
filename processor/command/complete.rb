@@ -29,6 +29,7 @@ if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   %w(d b bt).each do |prefix|
+    cmd.proc.instance_variable_set('@cmd_argstr', prefix)
     cmd.run [cmd.name, prefix]
     puts '=' * 40
   end

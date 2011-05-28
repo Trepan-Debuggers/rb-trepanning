@@ -6,8 +6,9 @@ require 'tmpdir'
 # builtin and user directories.  
 # Sets @commands, @aliases, @macros
 require_relative '../app/complete'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     attr_reader   :aliases         # Hash[String] of command names
                                    # indexed by alias name
@@ -36,10 +37,14 @@ class Trepan
     def load_debugger_commands(file_or_dir)
       if File.directory?(file_or_dir)
         dir = File.expand_path(file_or_dir)
+        # change $0 so it doesn't get in the way of __FILE__ = $0
+        old_dollar0 = $0
+        $0 = ''
         Dir.glob(File.join(dir, '*.rb')).each do |rb| 
           # We use require so that multiple calls have no effect.
           require rb
         end
+        $0 = old_dollar0
       elsif File.readable?(file_or_dir)
         # We use load in case we are reloading. 
         # 'require' would not be effective here
