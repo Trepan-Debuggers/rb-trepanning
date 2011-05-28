@@ -129,17 +129,6 @@ module MockDebugger
 
 end
 
-# To get Trepan::CmdProcessor defined and with the 
-# with the correct initialize parameters.
-class Trepan
-  class << CmdProcessor
-    def initialize(core, settings={})
-      @core            = core
-      @settings        = settings
-    end
-  end
-end
-
 if __FILE__ == $0
   dbgr = MockDebugger::MockDebugger.new
   p dbgr.settings
