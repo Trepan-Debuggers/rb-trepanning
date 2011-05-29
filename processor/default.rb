@@ -1,7 +1,8 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../app/default'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     DEFAULT_SETTINGS = {
       :autoeval      => true,      # Ruby eval non-debugger commands

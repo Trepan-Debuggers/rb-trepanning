@@ -1,8 +1,10 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # I/O related command processor methods
 require_relative '../app/util'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
+
     attr_accessor :ruby_highlighter
 
     def errmsg(message, opts={})

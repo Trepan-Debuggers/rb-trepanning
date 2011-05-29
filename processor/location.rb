@@ -3,8 +3,9 @@ require 'linecache'
 require 'pathname'  # For cleanpath
 require_relative 'msg'
 require_relative '../app/frame'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
     attr_accessor :reload_on_change
     include Frame
 

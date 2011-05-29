@@ -13,9 +13,10 @@ require_relative '../app/thread'
 
 require_relative 'location' # for resolve_file_with_dir
 require_relative 'msg'      # for errmsg, msg
+require_relative 'virtual'
 
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     attr_reader :dbgr_script_iseqs
     attr_reader :dbgr_iseqs
