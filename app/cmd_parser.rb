@@ -274,6 +274,7 @@ class CmdParse
 
 ##################################################### 
   # Structure to hold composite method names
+unless defined? SymbolEntry
   SymbolEntry = Struct.new(:type, :name, :chain)
 
 
@@ -293,6 +294,8 @@ class CmdParse
         File.readable?(filename) && !File.directory?(filename)
     }
   }
+end
+
   def initialize(str, opts={})
     @opts = DEFAULT_OPTS.merge(opts)
     setup_parser(str, opts[:debug])

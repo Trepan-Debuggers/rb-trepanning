@@ -2,10 +2,7 @@ require 'test/unit'
 require 'thread_frame'
 require_relative '../../app/core'
 require_relative '../../app/mock'
-require_relative '../../processor/main' # Have to include before frame!
-                                        # FIXME
 require_relative '../../processor/frame'
-
 
 module UnitHelper
 
