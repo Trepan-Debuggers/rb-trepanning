@@ -43,7 +43,7 @@ See also 'step', 'next', 'finish', 'nexti' commands and "help location".
       iseq, line_number, vm_offset, condition, negate = 
         @proc.breakpoint_position(@proc.cmd_argstr, false)
       return false unless iseq && vm_offset
-      bp = @proc.breakpoint_offset(vm_offset, iseq, condition, negate)
+      bp = @proc.breakpoint_offset(vm_offset, iseq, condition, negate, true)
       return unless bp
       @proc.continue
     end
