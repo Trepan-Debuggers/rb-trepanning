@@ -6,7 +6,7 @@ require_relative '../base/subsubmgr'
 class Trepan::Subcommand::ShowHighlight < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = 'Show whether we use syntax highlighting'
+    HELP         = 'Show whether we use terminal highlighting'
     MIN_ABBREV   = 'high'.size
   end
 
