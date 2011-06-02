@@ -3,10 +3,6 @@ require 'test/unit'
 require_relative '../../processor/main'
 require_relative '../../app/core'
 
-# Mock debugger stub. FIXME: put in comment helper routine.
-class Trepan
-end
-
 # Test Trepan::CmdProcessor
 class TestSubCmdHelp < Test::Unit::TestCase
 

@@ -5,7 +5,7 @@ require_relative '../base/subsubcmd'
 class Trepan::Subcommand::ShowHidelevel < Trepan::ShowIntSubcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP = 'Show the number of stack levels to hide'
+    HELP         = 'Show the number of stack levels to hide'
     MIN_ABBREV   = 'hide'.size
   end
   def run(args)
