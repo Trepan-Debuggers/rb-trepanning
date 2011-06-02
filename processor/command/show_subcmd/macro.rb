@@ -19,7 +19,7 @@ In the second form, all macro names and their definitions are show.
 In the last form the only definitions of the given macro names is shown.
     HELP
     SHORT_HELP = "Show defined macros"
-    MIN_ABBREV = 'ma'.size
+    MIN_ABBREV = 'mac'.size
   end
 
   def complete(prefix)
