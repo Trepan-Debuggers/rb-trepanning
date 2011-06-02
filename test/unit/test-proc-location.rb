@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'thread_frame'
-require_relative '../../processor/main' # Have to include before frame!
-                                        # FIXME
 require_relative '../../processor/frame'
 require_relative '../../app/mock'
 
