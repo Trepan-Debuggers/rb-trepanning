@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
 class Trepan::Subcommand::SetAutoIrb < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = "Set to automatically go into irb each time we enter the debugger"
     MIN_ABBREV = 'ir'.size
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %W(set auto #{NAME})
   end
 
   def run(args)
