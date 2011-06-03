@@ -51,6 +51,10 @@ class Trepan::ServerInterface < Trepan::Interface
     end
   end
   
+  def closed?
+    @inout.closed?
+  end
+
   # Called when a dangerous action is about to be done to make sure
   # it's okay. `prompt' is printed; user response is returned.
   # FIXME: make common routine for this and user.rb

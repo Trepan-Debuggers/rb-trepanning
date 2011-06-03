@@ -37,6 +37,10 @@ class Trepan::UserInterface < Trepan::Interface
     at_exit { finalize }
   end
 
+  def closed?
+    @input.closed? && @output.closed?
+  end
+
   # Called when a dangerous action is about to be done, to make
   # sure it's okay. Expect a yes/no answer to `prompt' which is printed,
   # suffixed with a question mark and the default value.  The user
@@ -146,4 +150,5 @@ if __FILE__ == $0
       puts "EOF is now: %s" % intf.input.eof?.inspect
     end
   end
+  puts "User interface closed?: #{intf.closed?}"
 end
