@@ -12,4 +12,14 @@ class TestAppUtil < Test::Unit::TestCase
     string = "'The time has come to talk of many things.'"
     assert_equal("'The tim... things.'", safe_repr(string, 17))
   end
+
+  def test_extract_expression
+    [['if condition("if")',        'condition("if")'],
+     ['until until_termination',   'until_termination'],
+     ['return return_value',       'return_value'],
+     ['nothing_to_be.done',         'nothing_to_be.done'],
+    ].each do |stmt, expect|
+      assert_equal expect, extract_expression(stmt)
+    end
+  end
 end

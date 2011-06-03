@@ -4,6 +4,7 @@ require_relative '../../base/subsubcmd'
 
 class Trepan::SubSubcommand::SetAutoEval < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = "Evaluate unrecognized debugger commands.
 
 Often inside the debugger, one would like to be able to run arbitrary
@@ -35,8 +36,6 @@ problem. Another possibility is to go into a real Ruby shell via the
 'irb' command.
 "
     MIN_ABBREV = 'ev'.size
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %W(set auto #{NAME})
     SHORT_HELP = "Set evaluation of unrecognized debugger commands"
   end
 

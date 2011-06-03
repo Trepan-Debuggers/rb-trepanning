@@ -16,6 +16,8 @@ class Trepan
                                    # indexed by name
     attr_reader   :macros          # Hash[String] of Proc objects 
                                    # indexed by macro name.
+    attr_reader   :leading_str     # leading part of string. Used in 
+                                   # command completion
     
     # "initialize" for multi-file class. Called from main.rb's "initialize".
     def load_cmds_initialize
@@ -141,6 +143,7 @@ class Trepan
     # and macros for completion. However we won't include aliases which
     # are prefixes of other commands.
     def complete(str, last_token)
+      @leading_str = str
       next_blank_pos, token = Trepan::Complete.next_token(str, 0)
       return [''] if token.empty? && !last_token.empty?
       match_pairs = Trepan::Complete.complete_token_with_next(@commands,

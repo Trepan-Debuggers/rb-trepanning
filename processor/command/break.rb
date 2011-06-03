@@ -33,7 +33,7 @@ See also condition, continue and "help location".
   end
 
   # This method runs the command
-  def run(args)
+  def run(args, temp=false)
     # FIXME: handle more conditions
     # a line number
     if args.size == 1
@@ -45,12 +45,16 @@ See also condition, continue and "help location".
       iseq, line_number, vm_offset, condition, negate = 
         @proc.breakpoint_position(@proc.cmd_argstr, true)
       return false unless iseq && vm_offset
-      bp = @proc.breakpoint_offset(vm_offset, iseq, condition, negate)
+      bp = @proc.breakpoint_offset(vm_offset, iseq, condition, negate, temp)
     end
     if bp
       bp.condition = condition
 
-      mess = "Breakpoint %d set at " % bp.id
+      if temp
+        mess = "Temporary breakpoint %d set at " % bp.id
+      else
+        mess = "Breakpoint %d set at " % bp.id
+      end
 
       line_loc = "line %s in %s" % 
         [bp.source_location.join(', '),
