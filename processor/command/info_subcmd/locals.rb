@@ -33,7 +33,7 @@ class Trepan::Subcommand::InfoLocals < Trepan::Subcommand
           if local_names.empty?
             msg "No local variables defined."
           else
-            msg "Local variable names:"
+            section "Local variable names:"
             width = settings[:maxwidth]
             mess = Columnize::columnize(local_names, 
                                         @proc.settings[:maxwidth], ', ',
@@ -59,7 +59,7 @@ class Trepan::Subcommand::InfoLocals < Trepan::Subcommand
         if local_names.empty?
           msg "No local variables defined."
         else
-          msg "Local variables:"
+          section "Local variables:"
           get_local_names.each_with_index do |var_name, i| 
             var_value = @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
             msg("#{var_name} = #{var_value}")
@@ -75,14 +75,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  require_relative '../../subcmd'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Trepan::Subcommand::InfoLocals.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
-
-  name = File.basename(__FILE__, '.rb')
-  subcommand.summary_help(name)
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoLocals, false)
+  cmd.run(cmd.prefix)
+  cmd.run(cmd.prefix + ['name'])
 end
