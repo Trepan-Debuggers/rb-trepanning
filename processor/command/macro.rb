@@ -40,7 +40,7 @@ With the above, 'dbgcmd list 5' will ultimately expand to:
 
 and will debug the debugger's 'list' command on the command 'list 5'.
 
-See also 'show macro'.
+See also 'info macro'.
     HELP
 
     CATEGORY      = 'support'
