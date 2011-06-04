@@ -7,14 +7,21 @@ require_relative '../../../app/frame'
 class Trepan::Subcommand::InfoLocals < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = 'Show local variables of the current stack frame'
+    HELP         = <<-EOH
+#{CMD}
+#{CMD} [names]
+
+Show local variables including parameters of the current stack frame.
+Normally for each which show both the name and value. If you just
+want a list of names add parameter 'names'.
+EOH
+    SHORT_HELP   = 'Show local variables of the current stack frame'
     MIN_ARGS     = 0
     MAX_ARGS     = 1
     MIN_ABBREV   = 'lo'.size 
     NEED_STACK   = true
   end
 
-  include Trepan::Frame
   def get_local_names
     iseq = @proc.frame.iseq
     0.upto(iseq.local_size-2).map do
