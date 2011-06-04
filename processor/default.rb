@@ -4,6 +4,7 @@ require_relative 'virtual'
 class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
 
   DEFAULT_SETTINGS = {
+    :abbrev        => true,      # Allow abbreviations of debugger commands?
     :autoeval      => true,      # Ruby eval non-debugger commands
     :autoirb       => false,     # Go into IRB in debugger command loop
     :autolist      => false,     # Run 'list' 

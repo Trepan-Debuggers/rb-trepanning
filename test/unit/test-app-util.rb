@@ -13,6 +13,17 @@ class TestAppUtil < Test::Unit::TestCase
     assert_equal("'The tim... things.'", safe_repr(string, 17))
   end
 
+  def test_abbrev
+    list = %w(disassemble disable distance up)
+    [['dis', 'dis'],
+     ['disas', 'disassemble'],
+     ['u', 'up'],
+     ['upper', 'upper'],
+     ['foo', 'foo']].each do |name, expect|
+      assert_equal expect, uniq_abbrev(list, name)
+    end
+  end
+
   def test_extract_expression
     [['if condition("if")',        'condition("if")'],
      ['until until_termination',   'until_termination'],
