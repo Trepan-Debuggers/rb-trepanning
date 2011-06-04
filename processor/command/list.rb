@@ -224,7 +224,7 @@ disabled.
 
     begin
       opts = {
-        :reload_on_change => @proc.reload_on_change,
+        :reload_on_change => settings[:reload_on_change],
         :output => settings[:highlight]
       }
       frame = @proc.frame
