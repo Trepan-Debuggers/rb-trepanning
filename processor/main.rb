@@ -308,7 +308,10 @@ class Trepan
           else
             @cmd_name
           end
-            
+        
+        run_cmd_name = uniq_abbrev(@commands.keys, run_cmd_name) if
+          !@commands.member?(run_cmd_name) && @settings[:abbrev]
+          
         if @commands.member?(run_cmd_name)
           cmd = @commands[run_cmd_name]
           if ok_for_running(cmd, run_cmd_name, args.size-1)
