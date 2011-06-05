@@ -5,7 +5,7 @@ the command is ignored.
 
 If a line starts with ! in column one, the line is eval'd. 
 
-If the command you want eval'd uses the Ruby ! initially, add that
+If the command you want Ruby to eval uses ! initially, add that
 after the first ! or start the line with a space.
 
 Commands are split at whereever ;; appears. This process disregards
@@ -18,8 +18,8 @@ Some commands like 'eval', 'macro', and 'break' have access to the
 untokenized string entered and make use of that rather than the
 tokenized list.
 
-Resolving a command name involves possibly 4 steps. Some steps
-may be omitted depending on some debugger settings:
+Resolving a command name involves possibly 4 steps. Some steps may be
+omitted depending on early success or some debugger settings:
 
 1. The leading token is first looked up in the macro table. If it is in
 the table, the expansion is replaces the current command and possibly
@@ -32,15 +32,15 @@ the name may be substituted there. See "help alias" for how to define
 aliases, and "show alias" for the current list of aliases.
 
 3. After the above, The leading token is looked up a table of debugger
-commands. If an exact match is found, the command name and arguments are
-dispatched to the command object that process the command. Otherwise
-we check to see the the token is a unique prefix of a valid
-command. For example, "dis" is not a unique prefix because there are
-both "display" and "disable" commands, but "disp" is a unique
-prefix. You can disallow abbreviations for commands using "set
-abbrev".
+commands. If an exact match is found, the command name and arguments
+are dispatched to that command. Otherwise, we may check to see the the
+token is a unique prefix of a valid command. For example, "dis" is not
+a unique prefix because there are both "display" and "disable"
+commands, but "disp" is a unique prefix. You can allow or disallow
+abbreviations for commands using "set abbrev". The default is
+abbreviations are on.
 
-4. If after all of the above if still don't find a command, the line
+4. If after all of the above, we still don't find a command, the line
 may be evaluated as a Ruby statement in the current context of the
 program at the point it is stoppped. However this is done only if
 "autoeval" is on.  (It is on by default.)
@@ -67,5 +67,5 @@ pr  "hi ;;-)"  # Syntax error since ;; splits the line and " is not closed.
 !puts "hi ;;-)" # One way to do the above.
 
 See also "macro" "alias", "irb", "set auto eval", "set auto irb", "set
-abbrev".  "info macro", and "show" variants of the above "set"
+abbrev", "info macro", and "show" variants of the above "set"
 commands.
