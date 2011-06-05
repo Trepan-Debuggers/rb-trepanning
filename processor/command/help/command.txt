@@ -1,9 +1,9 @@
-overall debugger command syntax
+Overall Debugger Command Syntax
 
-Command tokenization syntax is very simple-minded. 
+If the first non-blank character of a line starts with #, 
+the command is ignored. 
 
-If a line starts with #, the command is ignored. 
-If a line starts with !, the line is eval'd. 
+If a line starts with ! in column one, the line is eval'd. 
 
 If the command you want eval'd uses the Ruby ! initially, add that
 after the first ! or start the line with a space.
@@ -18,18 +18,36 @@ Some commands like 'eval', 'macro', and 'break' have access to the
 untokenized string entered and make use of that rather than the
 tokenized list.
 
-The leading token is first looked up in the macro table. If it is in
-the table, the expansion is replaces the current command and possibly
-other commands pushed onto a command queue.  Next, the leading token is
-looked up in the debugger alias table and the name may be substituted
-there. Finally, the leading token is looked up in the debugger alias
-table. If a match is found, the command name and arguments are
-dispatched to the command object that process the command.
+Resolving a command name involves possibly 4 steps. Some steps
+may be omitted depending on some debugger settings:
 
-If the command is not found and "auto eval" is set on, then the
-command is eval'd in the context that the program is currently stopped
-at. If "auto eval" is not set on, then we display an error message
-that the entered string is "undefined".
+1. The leading token is first looked up in the macro table. If it is in
+the table, the expansion is replaces the current command and possibly
+other commands pushed onto a command queue. See the "help macros" for
+help on how to define macros, and "info macro" for current macro
+definitions. 
+
+2. The leading token is next looked up in the debugger alias table and
+the name may be substituted there. See "help alias" for how to define
+aliases, and "show alias" for the current list of aliases.
+
+3. After the above, The leading token is looked up a table of debugger
+commands. If an exact match is found, the command name and arguments are
+dispatched to the command object that process the command. Otherwise
+we check to see the the token is a unique prefix of a valid
+command. For example, "dis" is not a unique prefix because there are
+both "display" and "disable" commands, but "disp" is a unique
+prefix. You can disallow abbreviations for commands using "set
+abbrev".
+
+4. If after all of the above if still don't find a command, the line
+may be evaluated as a Ruby statement in the current context of the
+program at the point it is stoppped. However this is done only if
+"autoeval" is on.  (It is on by default.)
+
+If "auto eval" is not set on, or if running the Ruby statement
+produces an error, we display an error message that the entered string
+is "undefined".
 
 If you want irb-like command-processing, it's possible to go into an
 irb shell with the "irb" command. It is also possible to arrange going
@@ -37,12 +55,17 @@ into an irb shell every time you enter the debugger.
 
 Examples:
 
-# This line does nothing. It is a comment
+# This line does nothing. It is a comment. Useful in debugger command files.
+     # This line also does nothing. 
 s    # by default, this is an alias for the "step" command
-!s   # shows the value of variable step. 
-!!s  # Evaluates !s (or "not s"). The first ! is indicates evaluate.
+!s   # shows the value of variable "s".
+!!s  # Evaluates "!s" (or "not s"). The first ! is indicates evaluate.
+ !s  # Same as above, since there is a space in column one.
+
 info program;; list # Runs two commands "info program" and "list"
 pr  "hi ;;-)"  # Syntax error since ;; splits the line and " is not closed.
 !puts "hi ;;-)" # One way to do the above.
 
-See also "alias", "irb", "set auto eval", and "set auto irb".
+See also "macro" "alias", "irb", "set auto eval", "set auto irb", "set
+abbrev".  "info macro", and "show" variants of the above "set"
+commands.
