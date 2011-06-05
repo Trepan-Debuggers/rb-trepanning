@@ -27,7 +27,7 @@ class Trepan::ScriptInterface < Trepan::Interface
     @input           = opts[:input] || 
       Trepan::UserInput.open(script_name, :line_edit => false)
     @buffer_output   = []
-    unless opts[:verbose] or out
+    unless @opts[:verbose] or out
       out = Trepan::StringArrayOutput.open(@buffer_output)
     end
     super(@input, out, @opts)
