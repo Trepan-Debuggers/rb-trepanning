@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
-require_relative '../eval'
 class Trepan::Command::PrCommand < Trepan::Command
 
   unless defined?(HELP)
