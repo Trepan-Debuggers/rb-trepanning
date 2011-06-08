@@ -5,6 +5,7 @@ require_relative 'cmd_parser'
 class Trepan
   module CmdParser
 
+    module_function
     # Given a KPeg parse object, return the method of that parse or raise a
     # Name error if we can't find a method. parent_class is the parent class of
     # the object we've found so far and "binding" is used if we need
