@@ -31,7 +31,6 @@ HELP
       case args.size
       when 1
         method_name = @proc.frame.method
-        p [method_name, method_name.class]
       when 2
         method_name = args[1]
       else
