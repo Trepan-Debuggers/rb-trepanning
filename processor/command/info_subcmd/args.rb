@@ -13,7 +13,6 @@ class Trepan::Subcommand::InfoArgs < Trepan::Subcommand
     NEED_STACK   = true
   end
 
-  include Trepan::Frame
   def run(args)
     if 'CFUNC' == @proc.frame.type
       argc = @proc.frame.argc
@@ -25,12 +24,13 @@ class Trepan::Subcommand::InfoArgs < Trepan::Subcommand
         msg("No parameters in C call.")
       end
     else
-      param_names = all_param_names(@proc.frame.iseq, false)
+      param_names = Trepan::Frame::all_param_names(@proc.frame.iseq, false)
       if param_names.empty?
         msg("No parameters in call.")
       else
         param_names.each_with_index do |var_name, i|
-          var_value = @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
+          var_value = 
+            @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
           msg("#{var_name} = #{var_value}")
         end
         unless 'call' == @proc.event and 0 == @proc.frame_index
@@ -44,6 +44,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoLocals, false)
-  cmd.run([cmd.prefix])
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoArgs, false)
+  cmd.run(cmd.prefix)
 end

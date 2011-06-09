@@ -5,13 +5,19 @@ require_relative '../base/subcmd'
 class Trepan::Subcommand::SetHighlight < Trepan::SetBoolSubcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP       = 'Set whether we use highlight highlighting'
+    HELP       = 'Set whether we use terminal highlighting'
     IN_LIST    = true
-    MIN_ABBREV = 'ba'.size
+    MIN_ABBREV = 'hi'.size
   end
+
+  def complete(prefix)
+    Trepan::Complete.complete_token(%w(on off reset), prefix)
+  end
+
   def run(args)
     if args.size == 3 && 'reset' == args[2]
       LineCache::clear_file_format_cache
+      @proc.settings[:highlight] = :term 
     else
       super
       @proc.settings[:highlight] = :term if @proc.settings[:highlight]
