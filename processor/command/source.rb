@@ -49,37 +49,37 @@ unless option -c or --continue is given.
   end
 
   def complete(prefix)
-    # opts = %w(-c --continue --no-continue -N --no -y --yes
-    #           --verbose --no-verbose)
-    # return Trepan::Complete.complete_token(opts, prefix) if prefix.empty?
-    Readline::FILENAME_COMPLETION_PROC.call(prefix) || []
+    files = Readline::FILENAME_COMPLETION_PROC.call(prefix) || []
+    opts = %w(-c --continue --no-continue -N --no -y --yes
+              --verbose --no-verbose) + files
+    Trepan::Complete.complete_token(opts, prefix) 
   end
     
   def parse_options(options, args) # :nodoc
     seen_yes_no = false
     parser = OptionParser.new do |opts|
-      opts.on("-c", "--[no-]continue", 
-              "Continue in the face of errors") do
+      opts.on('-c', '--[no-]continue', 
+              'Continue in the face of errors') do
         |v| 
         options[:abort_on_error] = !v
       end
-      opts.on("-v", 
-              "--[no-]verbose", "echo each command as it is executed") do
+      opts.on('-v', 
+              '--[no-]verbose', 'echo each command as it is executed') do
         |v| 
         options[:verbose] = v
       end
-      opts.on("-N", "--no", "Use 'no' in any confirmation prompts") do
+      opts.on('-N', '--no', "Use 'no' in any confirmation prompts") do
         |v| 
         if seen_yes_no
-          msg("Yes/No option already seen. This option (no) ignored.")
+          msg('Yes/No option already seen. This option (no) ignored.')
         end
         options[:confirm_val] = false
       end
-      opts.on("-q", "--[no-]quiet", "Silence debugger output") do
+      opts.on('-q', '--[no-]quiet', 'Silence debugger output') do
         |v| 
         options[:quiet] = v
       end
-      opts.on("-Y", "--yes", "Use 'yes' in any confirmation prompts") do
+      opts.on('-Y', '--yes', "Use 'yes' in any confirmation prompts") do
         |v| 
         if seen_yes_no
           msg("Yes/No option already seen. This option, --yes, ignored.")
@@ -94,14 +94,15 @@ unless option -c or --continue is given.
 
   def run(args)
     options = parse_options(DEFAULT_OPTIONS.dup, args[1..-2])
-    intf = @proc.dbgr.intf
+    intf = @proc.interfaces
     output  = options[:quiet] ? Trepan::OutputNull.new(nil) : intf[-1].output
     
     filename = args[-1]
     
     expanded_file = File.expand_path(filename)
     unless File.readable?(expanded_file)
-      errmsg("Debugger command file '%s' is not a readable file" % filename)
+      errmsg("Debugger command file '%s' (%s) is not a readable file" % 
+             [filename, expanded_file])
       return false
     end
     
