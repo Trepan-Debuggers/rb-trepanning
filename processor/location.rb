@@ -1,4 +1,5 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+require 'rubygems'
 require 'linecache'
 require 'pathname'  # For cleanpath
 require_relative 'msg'
@@ -6,9 +7,6 @@ require_relative '../app/frame'
 require_relative 'virtual'
 class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   include Trepan::Frame
-
-  def location_initialize
-  end
 
   def canonic_container(container)
     [container[0], canonic_file(container[1])]
@@ -30,7 +28,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   # FIXME: loc_and_text should call this rather than the other
   # way around.
   def current_source_text
-    opts = {:reload_on_change => @reload_on_change}
+    opts = {:reload_on_change => @reload}
     junk1, junk2, text, found_line = 
       loc_and_text('', frame, frame.source_location[0], 
                    frame.source_container, opts)
@@ -58,7 +56,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   # if there was a problem. Leading blanks are stripped off.
   def line_at(filename, line_number,
               opts = {
-                :reload_on_change => @settings[:reload_on_change],
+                :reload_on_change => @settings[:reload],
                 :output => @settings[:highlight]
               })
     line = LineCache::getline(filename, line_number, opts)
@@ -78,7 +76,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
 
   def loc_and_text(loc, frame, line_no, source_container,
                    opts = {
-                     :reload_on_change => @settings[:reload_on_change],
+                     :reload_on_change => @settings[:reload],
                      :output => @settings[:highlight]
                    })
     found_line = true
@@ -177,8 +175,6 @@ if __FILE__ == $0 && caller.size == 0
   require 'thread_frame'
   require_relative 'frame'
   require_relative '../app/mock'
-  require_relative 'main'   # Have to include before defining CmdProcessor!
-                            # FIXME
   class Trepan::CmdProcessor
     def errmsg(msg)
       puts msg
@@ -194,7 +190,6 @@ if __FILE__ == $0 && caller.size == 0
   proc.frame_setup(RubyVM::ThreadFrame.current)
   proc.frame_initialize
 
-  proc.location_initialize
   puts proc.canonic_file(__FILE__)
   proc.instance_variable_set('@settings', {:basename => true})
   puts proc.canonic_file(__FILE__)
@@ -202,7 +197,6 @@ if __FILE__ == $0 && caller.size == 0
   xx = eval <<-END
      proc.frame_initialize
      proc.frame_setup(RubyVM::ThreadFrame.current)
-     proc.location_initialize
-     proc.current_source_text
+     puts proc.current_source_text
   END
 end

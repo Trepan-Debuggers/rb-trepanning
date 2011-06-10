@@ -91,6 +91,7 @@ class Trepan
       @debug_nest      = 1
       @dbgr            = core.dbgr
       @hidelevels      = {}
+      @interfaces      = @dbgr.intf
       @last_command    = nil
       @last_pos        = [nil, nil, nil, nil, nil, nil]
       @next_level      = 32000
@@ -119,7 +120,7 @@ class Trepan
 
       # Run initialization routines for each of the "submodule"s.
       # load_cmds has to come first.
-      %w(load_cmds breakpoint display eventbuf frame location running validate
+      %w(load_cmds breakpoint display eventbuf frame running validate
          ).each do |submod|
         self.send("#{submod}_initialize")
       end

@@ -34,7 +34,8 @@ module MockDebugger
     def initialize(settings={})
       @before_cmdloop_hooks = []
       @settings             = Trepan::DEFAULT_SETTINGS.merge(settings)
-      @intf                 = [Trepan::UserInterface.new]
+      @interfaces           = Trepan::UserInterface.new
+      @intf                 = @interfaces[-1]
       @core                 = Trepan::Core.new(self)
       @trace_filter         = []
 
