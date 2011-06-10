@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'pp'
 require 'linecache'
 require 'columnize'
@@ -29,7 +29,7 @@ EOH
   # Get file information
   def run(args)
     if not @proc.frame
-      errmsg("No frame - no default file.")
+      errmsg('No frame - no default file.')
       return false
     end
     frame_file = @proc.frame.source_container[1]
@@ -38,17 +38,17 @@ EOH
     canonic_name = LineCache::map_file(canonic_name) || canonic_name
     m = filename
     if LineCache::cached?(canonic_name)
-      m += " is cached in debugger"
+      m += ' is cached in debugger'
       if canonic_name != filename
-        m += (" as:\n  " + canonic_name)
+        m += (' as:\n  ' + canonic_name)
       end
       m += '.'
       msg(m)
     end
     max_line = LineCache::size(canonic_name)
-    msg "File has %d lines." % max_line if max_line
-    msg("SHA1 is %s." % LineCache::sha1(canonic_name))
-    msg("Possible breakpoint line numbers:")
+    msg 'File has %d lines.' % max_line if max_line
+    msg('SHA1 is %s.' % LineCache::sha1(canonic_name))
+    msg('Possible breakpoint line numbers:')
     lines = LineCache.trace_line_numbers(canonic_name)
     fmt_lines = columnize_numbers(lines)
     msg(fmt_lines)

@@ -43,7 +43,7 @@ EOH
             section "Local variable names:"
             width = settings[:maxwidth]
             mess = Columnize::columnize(local_names, 
-                                        @proc.settings[:maxwidth], ', ',
+                                        @proc.settings[:maxwidth], '  ',
                                         false, true, ' ' * 2).chomp
             msg mess
           end
