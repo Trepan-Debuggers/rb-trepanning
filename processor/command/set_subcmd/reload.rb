@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
-require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetReload < Trepan::SetBoolSubcommand
