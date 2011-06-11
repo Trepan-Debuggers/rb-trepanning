@@ -48,6 +48,8 @@ class Trepan
     attr_accessor :prompt          # String print before requesting input
     attr_reader   :settings        # Hash[:symbol] of command
                                    # processor settings
+    
+    attr_accessor :traced_vars     # list of traced global variables
 
     # The following are used in to force stopping at a different line
     # number. FIXME: could generalize to a position object.
@@ -101,6 +103,7 @@ class Trepan
       start_file       = settings.delete(:start_file)
 
       @settings        = DEFAULT_SETTINGS.merge(settings)
+      @traced_vars     = {}
       @different_pos   = @settings[:different]
 
       # FIXME: Rework using a general "set substitute file" command and
@@ -226,6 +229,24 @@ class Trepan
       @event = @core.event
 
       @unconditional_prehooks.run
+      
+      if 'trace-var' == @event 
+        variable_name, value = @core.hook_arg
+        action = @traced_vars[variable_name]
+        msg "trace: #{variable_name} = #{value}"
+        case action
+        when nil
+          errmsg "No action recorded for variable. Using 'stop'."
+        when 'stop'
+          msg "Note: we are stopped *after* the above location."
+        when 'nostop'
+          print_location
+          return
+        else
+          errmsg "Internal error: unknown trace_var action #{action}"
+        end
+      end
+
       if breakpoint?
         @last_pos = [@frame.source_container, frame_line,
                      @stack_size, @current_thread, @event, 
@@ -237,13 +258,10 @@ class Trepan
       @prompt = compute_prompt
 
       @leave_cmd_loop = false
+
       print_location unless @settings[:traceprint]
-      if 'trace-var' == @event 
-        msg "Note: we are stopped *after* the above location."
-      end
-
       @eventbuf.add_mark if @settings[:tracebuffer]
-
+ 
       @cmdloop_prehooks.run
       while not @leave_cmd_loop do
         begin

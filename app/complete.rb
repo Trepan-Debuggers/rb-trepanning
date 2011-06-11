@@ -76,4 +76,5 @@ if __FILE__ == $0
   [0, 2, 5, 8, 9, 13, 19].each do |pos|
     p next_token(x, pos)
   end
+  p complete_token(global_variables.map{|g| g.to_s}, '$s')
 end

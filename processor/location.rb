@@ -191,7 +191,7 @@ if __FILE__ == $0 && caller.size == 0
   proc.frame_initialize
 
   puts proc.canonic_file(__FILE__)
-  proc.instance_variable_set('@settings', {:basename => true})
+  proc.settings[:basename] = true
   puts proc.canonic_file(__FILE__)
   puts proc.current_source_text
   xx = eval <<-END
