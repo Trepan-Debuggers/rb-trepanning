@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
-# FIXME. 
-# NEED additional arguments "stop", "nostop", and "off"
 require_relative 'base/cmd'
 require_relative '../../app/complete'
 
