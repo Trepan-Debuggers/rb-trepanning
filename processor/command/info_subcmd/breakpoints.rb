@@ -124,6 +124,12 @@ EOH
           notfound.empty? 
       end
     end
+    if @proc.traced_vars.empty?
+      msg('No traced variables.')
+    else
+      section 'Traced Variables'
+      msg columnize_commands(@proc.traced_vars.keys.sort)
+    end
   end
 
 end

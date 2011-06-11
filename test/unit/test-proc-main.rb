@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
+require_relative '../../app/mock'
 require_relative '../../processor/main'
 require_relative '../../app/core'
 

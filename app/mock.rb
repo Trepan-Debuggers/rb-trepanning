@@ -1,11 +1,14 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 class Trepan
   attr_accessor :trace_filter # Procs/Methods we ignore.
+  attr_accessor :intf
   def initialize(opts={})
     @trace_filter = []
+    @intf = []
   end
   class MockDebugger
     attr_reader :initial_dir
+    attr_accessor :intf
     def initialize(settings={})
       @initial_dir = '.'
     end

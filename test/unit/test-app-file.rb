@@ -12,6 +12,7 @@ if defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 else  
   ISEQS__ = {}
 end
+SCRIPT_LINES__={} unless defined?(SCRIPT_LINES__)
 
 # To have something to work with.
 load 'tmpdir.rb'

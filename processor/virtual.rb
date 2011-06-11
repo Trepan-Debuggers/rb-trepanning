@@ -15,9 +15,8 @@
 class Trepan
   class VirtualCmdProcessor
     attr_reader :settings
-    def initialize(interfaces, settings={})
-      @interfaces      = interfaces
-      @intf            = interfaces[-1]
+    def initialize(core, settings={})
+      @core            = core
       @settings        = settings
     end
     def errmsg(message)

@@ -3,8 +3,8 @@
 require_relative '../../base/subsubcmd'
 require_relative '../trace'
 class Trepan::SubSubcommand::SetTraceBuffer < Trepan::SetBoolSubSubcommand
-  Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
   unless defined?(HELP)
+    Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
 #{CMD} [on|off|1|0]
 

@@ -169,8 +169,8 @@ class Trepan
     end
     
     # A trace-hook processor for 'trace var'
-    def trace_var_processor(val)
-      frame = RubyVM::ThreadFrame.current.prev
+    def trace_var_processor(var_name, value)
+      frame = RubyVM::ThreadFrame.current.prev(2)
       if 'CFUNC' == frame.type
         # Don't need the C call that got us here.
         prev = frame.prev
@@ -181,7 +181,7 @@ class Trepan
       Thread.current.tracing = true  
       
       @step_count = 0  # Make event processor stop
-      event_processor('trace-var', frame)
+      event_processor('trace-var', frame, [var_name, value])
     end
 
   end

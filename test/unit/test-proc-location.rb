@@ -1,37 +1,22 @@
 #!/usr/bin/env ruby
-require 'test/unit'
-require 'thread_frame'
-require_relative '../../processor/frame'
-require_relative '../../app/mock'
-
-$errors = []
-$msgs   = []
+require_relative 'cmd-helper'
 
 # Test Debugger:CmdProcessor Location portion
 class TestProcLocation < Test::Unit::TestCase
 
+  include UnitHelper
   def setup
-    $errors = []
-    $msgs   = []
-    @proc    = Trepan::CmdProcessor.new(Trepan::MockCore.new())
-    @proc.instance_variable_set('@settings', {:basename => true})
-    @proc.frame_index = 0
-    @proc.frame_initialize
-    @proc.location_initialize
-    class << @proc
-      def errmsg(msg)
-        $errors << msg
-      end
-    end
+    common_setup
+    @name = File.basename(__FILE__, '.rb').split(/-/)[2]
+    @cmdproc.settings[:basename] = true
   end
 
   def test_it
-    assert_equal File.basename(__FILE__), @proc.canonic_file(__FILE__)
+    assert_equal File.basename(__FILE__), @cmdproc.canonic_file(__FILE__)
     eval <<-EOE
-      @proc.frame_initialize
-      @proc.frame_setup(RubyVM::ThreadFrame.current)
-      @proc.location_initialize
-      assert @proc.current_source_text
+      @cmdproc.frame_initialize
+      @cmdproc.frame_setup(RubyVM::ThreadFrame.current)
+      assert @cmdproc.current_source_text
     EOE
   end
 end
