@@ -1,3 +1,66 @@
+2011-06-11  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/subcmd.rb,
+	processor/command/base/subsubcmd.rb,
+	processor/command/base/subsubmgr.rb,
+	processor/command/set_subcmd/trace_subcmd/buffer.rb,
+	processor/command/set_subcmd/trace_subcmd/print.rb,
+	processor/command/show_subcmd/trace_subcmd/buffer.rb,
+	processor/load_cmds.rb: Small changes and some lint-like things.
+
+2011-06-11  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/reload.rb,
+	processor/command/show_subcmd/reload.rb: We don't need or want
+	require-relative here.
+
+2011-06-11  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rb-trepanning
+
+2011-06-11  rocky <rockyb@rubyforge.org>
+
+	* processor/command/watchg.rb, processor/load_cmds.rb: Join class
+	Trepan; class CmdProcessor to make more compatible with
+	rb8-trepanning
+
+2011-06-11  rocky <rockyb@rubyforge.org>
+
+	* app/complete.rb, app/core.rb, app/mock.rb,
+	processor/command/info_subcmd/breakpoints.rb,
+	processor/command/quit.rb, processor/command/set_subcmd/trace.rb,
+	processor/command/set_subcmd/trace_subcmd/buffer.rb,
+	processor/command/set_subcmd/trace_subcmd/print.rb,
+	processor/command/set_subcmd/trace_subcmd/var.rb,
+	processor/command/watchg.rb, processor/location.rb,
+	processor/main.rb, processor/mock.rb,
+	test/functional/test-trace-var.rb, test/functional/test-watchg.rb,
+	test/unit/test-app-file.rb, test/unit/test-base-subcmd.rb,
+	test/unit/test-base-submgr.rb, test/unit/test-proc-location.rb,
+	test/unit/test-proc-main.rb: set trace var -> watchg which is more
+	gdb-like. Add on/off/stop/nostop which is more like ruby-debug had.
+	Show variable and value on change. And show in "info breakpoint". Go
+	over rake check:unit to make work. Test code setup has gotten
+	simpler.
+
+2011-06-10  rocky <rockyb@rubyforge.org>
+
+	* NEWS, processor/command/help/suffixes.txt,
+	processor/command/list.rb, processor/command/set_subcmd/reload.rb,
+	processor/command/show_subcmd/reload.rb, processor/default.rb,
+	processor/location.rb, processor/main.rb, processor/mock.rb,
+	processor/virtual.rb: Add set/show reload. Sync with rbx-trepanning.
+
+
+2011-06-10  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, NEWS: What's up.
+
+2011-06-09  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/locals.rb,
+	processor/command/info_subcmd/source.rb: Sync with rb8-trepanning
+
 2011-06-09  rocky <rockyb@rubyforge.org>
 
 	* processor/command/info_subcmd/globals.rb,
