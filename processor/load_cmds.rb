@@ -17,20 +17,20 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
                                  # indexed by macro name.
   attr_reader   :leading_str     # leading part of string. Used in 
                                  # command completion
-    
+
   # "initialize" for multi-file class. Called from main.rb's "initialize".
   def load_cmds_initialize
     @commands = {}
     @aliases = {}
     @macros = {}
-    
+
     cmd_dirs = [ File.join(File.dirname(__FILE__), 'command') ]
     cmd_dirs <<  @settings[:user_cmd_dir] if @settings[:user_cmd_dir]
     cmd_dirs.each do |cmd_dir| 
       load_debugger_commands(cmd_dir) if File.directory?(cmd_dir)
     end
   end
-  
+
   # Loads in debugger commands by require'ing each ruby file in the
   # 'command' directory. Then a new instance of each class of the 
   # form Trepan::xxCommand is added to @commands and that array
@@ -53,12 +53,13 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     else
       return false
     end
+    # Instantiate each Command class found by the above require(s).
     Trepan::Command.constants.grep(/.Command$/).each do |command|
       setup_command(command)
     end
     return true
   end
-  
+
   def load_debugger_command(command_file)
     return unless File.readable?(command_file)
     load command_file
@@ -66,7 +67,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       setup_command(command)
     end
   end
-  
+
   # Looks up cmd_array[0] in @commands and runs that. We do lots of 
   # validity testing on cmd_array.
   def run_cmd(cmd_array)
@@ -89,7 +90,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       @commands[cmd_name].run(cmd_array)
     end
   end
-  
+
   def save_commands(opts)
     save_filename = opts[:filename] || 
       File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname(['trepanning-save', '.txt'], nil))
@@ -117,10 +118,10 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     save_file.puts "!FileUtils.rm #{save_filename.inspect}" if 
       opts[:erase]
     save_file.close
-    
+
     return save_filename
   end
-  
+
   # Instantiate a Trepan::Command and extract info: the NAME, ALIASES
   # and store the command in @commands.
   def setup_command(command)
@@ -137,7 +138,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     end
     @commands[cmd_name] = cmd
   end
-  
+
   # Handle initial completion. We draw from the commands, aliases,
   # and macros for completion. However we won't include aliases which
   # are prefixes of other commands.
@@ -174,9 +175,8 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     # match_pairs.size == 1
     next_complete(str, next_blank_pos, match_pairs[0][1], last_token)
   end
-  
+
   def next_complete(str, next_blank_pos, cmd, last_token)
-    # debugger if 8 == next_blank_pos
     next_blank_pos, token = Trepan::Complete.next_token(str, next_blank_pos)
     return [] if token.empty? && !last_token.empty?
     
@@ -214,6 +214,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     end
   end
 end
+
 if __FILE__ == $0
   class Trepan::CmdProcessor
     def initialize(core, settings={})
@@ -241,7 +242,7 @@ if __FILE__ == $0
   cmdproc.run_cmd('foo')  # Invalid - not an Array
   cmdproc.run_cmd([])     # Invalid - empty Array
   cmdproc.run_cmd(['list', 5])  # Invalid - nonstring arg
-  p cmdproc.complete("d")
-  p cmdproc.complete("sho d")
-  p cmdproc.complete('')
+  p cmdproc.complete("d", 'd')
+  p cmdproc.complete("sho d", 'd')
+  p cmdproc.complete('', '')
 end

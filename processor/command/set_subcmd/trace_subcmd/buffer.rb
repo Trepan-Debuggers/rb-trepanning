@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
-require_relative '../trace'
+
 class Trepan::SubSubcommand::SetTraceBuffer < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
-require_relative '../trace'
+
 class Trepan::SubSubcommand::SetTracePrint < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
-"#{CMD} [on|off|1|0]
+#{CMD} [on|off|1|0]
 
 Set printing trace events.
     EOH

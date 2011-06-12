@@ -201,7 +201,7 @@ module Trepanning
       dirname    = File.basename(File.dirname(File.expand_path(__file__)))
       name = File.basename(__file__, '.rb')
       klass.const_set('NAME', name)
-      prefix = klass.const_set('PREFIX', %W(#{dirname[0...-'_subcmd'.size]} #{name}))
+      prefix = klass.const_set(:PREFIX, %W(#{dirname[0...-'_subcmd'.size]} #{name}))
       klass.const_set('CMD', prefix.join(' '))
     end
   end

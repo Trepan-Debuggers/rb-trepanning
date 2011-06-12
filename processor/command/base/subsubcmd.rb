@@ -99,9 +99,9 @@ module Trepanning
 
       short_dirname = dirname[0...-'_subcmd'.size]
       short_parent_dirname = parent_dirname[0...-'_subcmd'.size]
-      prefix = klass.const_set('PREFIX', %W(#{short_parent_dirname} 
+      prefix = klass.const_set(:PREFIX, %W(#{short_parent_dirname} 
                                             #{short_dirname} #{name}))
-      klass.const_set('CMD', prefix.join(' '))
+      klass.const_set(:CMD, prefix.join(' '))
     end
   end
 end
