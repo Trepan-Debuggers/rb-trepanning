@@ -23,6 +23,10 @@ EOH
     NEED_STACK   = true
   }
 
+  def complete(prefix)
+    ['name']
+  end
+
   def get_names
     iseq = @proc.frame.iseq
     0.upto(iseq.local_size-2).map do

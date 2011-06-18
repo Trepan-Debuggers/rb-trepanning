@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
-require 'columnize'
-require_relative '../../base/subsubcmd'
-require_relative '../../../../app/frame'
+require_relative 'locals'
 
-class Trepan::Subcommand::InfoVariablesGlobals < Trepan::SubSubcommand
+class Trepan::Subcommand::InfoVariablesGlobals <
+    Trepan::Subcommand::InfoVariablesLocals
   Trepan::Util.suppress_warnings {
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH

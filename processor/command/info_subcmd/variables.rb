@@ -7,7 +7,7 @@ class Trepan::SubSubcommand::InfoVariables < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = <<-EOH
-#{CMD} [locals|globals|instance]
+#{CMD} [class|globals|locals|instance]
 
 List various classes of variables for the current stack frame.
 
@@ -16,7 +16,7 @@ Examples:
 #{CMD} globals   # show global variables
     EOH
     NEED_STACK   = true
-    SHORT_HELP   = 'List names and/or values from the current stack frame'
+    SHORT_HELP   = 'List variable names/values via the current stack frame'
   end
 end
 
