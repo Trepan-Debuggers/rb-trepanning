@@ -21,7 +21,7 @@ EOH
   }
 
   def get_names
-    @proc.debug_eval('self.class_variables')
+    @proc.debug_eval_no_errmsg('self.class_variables') || []
   end
 
   def run(args)
