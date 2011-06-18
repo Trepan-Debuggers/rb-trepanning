@@ -33,9 +33,9 @@ See also 'unalias' and 'show #{NAME}'.
   # Run command. 
   def run(args)
     if args.size == 1
-      @proc.commands['show'].run(%w(show alias))
+      @proc.commands['show'].run(%W(show #{NAME}))
     elsif args.size == 2
-      @proc.commands['show'].run(%W(show alias #{args[1]}))
+      @proc.commands['show'].run(%W(show #{NAME} #{args[1]}))
     else
       junk, al, command = args
       old_command = @proc.aliases[al]

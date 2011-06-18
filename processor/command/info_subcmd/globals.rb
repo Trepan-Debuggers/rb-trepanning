@@ -22,10 +22,15 @@ EOH
     NEED_STACK   = true
   end
 
+  def get_names
+    global_variables
+  end
+
   def run(args)
     if args.size == 3
       if 0 == 'names'.index(args[-1].downcase)
-        if global_variables.empty?
+        names = get_names()
+        if names.empty?
             msg "No global variables defined."
         else
           section "Global variable names:"
@@ -39,12 +44,13 @@ EOH
         errmsg("unrecognized argument #{args[2]}")
       end
     elsif args.size == 2
-      if global_variables.empty?
+      names = get_names
+      if names.empty?
         msg "No global variables defined."
       else
         section "Global variables:"
-        global_variables.sort.each do |var_name| 
-          s = @proc.debug_eval(var_name)
+        name.sort.each do |var_name| 
+          s = @proc.debug_eval(var_name.to_s)
           msg("#{var_name} = #{s.inspect}")
         end
       end

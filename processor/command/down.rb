@@ -6,10 +6,10 @@ require_relative 'up'
 # direction (set by DIRECTION) reversed.
 class Trepan::Command::DownCommand < Trepan::Command::UpCommand
 
-  # Silence already initialized constant .. warnings
-  old_verbose = $VERBOSE  
-  $VERBOSE    = nil
-  HELP = <<-HELP
+  Trepan::Util.suppress_warnings {
+    old_verbose = $VERBOSE  
+    $VERBOSE    = nil
+    HELP = <<-HELP
 #{NAME} [count]
 
 Move the current frame down in the stack trace (to a newer frame). 0
@@ -18,10 +18,10 @@ is the most recent frame. If no count is given, move down 1.
 See also 'up' and 'frame'.
   HELP
 
-  ALIASES       = %w(d)
-  NAME          = File.basename(__FILE__, '.rb')
-  SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
-  $VERBOSE      = old_verbose 
+    ALIASES       = %w(d)
+    NAME          = File.basename(__FILE__, '.rb')
+    SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
+  }
 
   def initialize(proc)
     super

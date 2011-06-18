@@ -1,16 +1,15 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/cmd'
+require_relative '../../app/util'
 
-# up command. Like 'down' butthe direction (set by DIRECTION) is different.
+# up command. Like 'down' but the direction (set by DIRECTION) is different.
 #
 # NOTE: The down command  subclasses this, so beware when changing! 
 class Trepan::Command::UpCommand < Trepan::Command
 
-  # Silence already initialized constant .. warnings
-  old_verbose = $VERBOSE  
-  $VERBOSE    = nil
-  NAME        = File.basename(__FILE__, '.rb')
-  HELP        = <<-HELP
+  Trepan::Util.suppress_warnings {
+    NAME        = File.basename(__FILE__, '.rb')
+    HELP        = <<-HELP
 #{NAME} [count]
 
 Move the current frame up in the stack trace (to an older frame). 0 is
@@ -19,12 +18,12 @@ the most recent frame. If no count is given, move up 1.
 See also 'down' and 'frame'.
   HELP
 
-  ALIASES       = %w(u)
-  CATEGORY      = 'stack'
-  MAX_ARGS      = 1  # Need at most this many
-  NEED_STACK    = true
-  SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
-  $VERBOSE      = old_verbose 
+    ALIASES       = %w(u)
+    CATEGORY      = 'stack'
+    MAX_ARGS      = 1  # Need at most this many
+    NEED_STACK    = true
+    SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
+  }
   
   require_relative '../../app/frame'
   include Trepan::Frame

@@ -45,6 +45,16 @@ class Trepan
       end
       return text
     end
+
+    # Suppress warnings. The main one we encounter is "already initialized
+    # constant" because perhaps another version readline has done that already.
+    def suppress_warnings
+      original_verbosity = $VERBOSE
+      $VERBOSE = nil
+      result = yield
+      $VERBOSE = original_verbosity
+      return result
+    end  
   end
 end
 
