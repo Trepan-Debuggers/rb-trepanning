@@ -159,19 +159,19 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
 
   def run(args)
     args = @parent.last_args if args.size == 0
-    if args.size < 3 || args.size == 3 && args[-1] == '*'
+    if args.size < 3 || args.size == 3 && args[2] == '*'
       summary_list(obj_const(self, :NAME), @subcmds)
       return false
     end
 
-    subcmd_prefix = args[0..2].join('')
+    subcmd_prefix = obj_const(self, :PREFIX).join('')
     # We were given: cmd subcmd ...
     # Run that.
-    subcmd = @subcmds.lookup(subcmd_prefix)
+    subcmd = @subcmds.lookup(subcmd_prefix + args[2])
     if subcmd
       subcmd.run(args[2..-1])
     else
-      undefined_subcmd(obj_const(self, :PREFIX).join(' '), args[-1])
+      undefined_subcmd(obj_const(self, :PREFIX).join(' '), args[2])
     end
   end
 

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'columnize'
-require_relative '../base/subcmd'
-require_relative '../../../app/frame'
+require_relative '../../base/subsubcmd'
+require_relative '../../../../app/frame'
 
-class Trepan::Subcommand::InfoGlobals < Trepan::Subcommand
-  unless defined?(HELP)
+class Trepan::Subcommand::InfoVariablesGlobals < Trepan::SubSubcommand
+  Trepan::Util.suppress_warnings {
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
 #{CMD}
@@ -18,16 +18,15 @@ EOH
     SHORT_HELP   = 'Show global variables'
     MIN_ARGS     = 0
     MAX_ARGS     = 1
-    MIN_ABBREV   = 'gl'.size 
     NEED_STACK   = true
-  end
+  }
 
   def get_names
     global_variables
   end
 
   def run(args)
-    if args.size == 3
+    if args.size == 2
       if 0 == 'names'.index(args[-1].downcase)
         names = get_names()
         if names.empty?
@@ -41,15 +40,15 @@ EOH
           msg mess
         end
       else
-        errmsg("unrecognized argument #{args[2]}")
+        errmsg("unrecognized argument: #{args[-1]}")
       end
-    elsif args.size == 2
+    elsif args.size == 1
       names = get_names
       if names.empty?
         msg "No global variables defined."
       else
         section "Global variables:"
-        name.sort.each do |var_name| 
+        names.sort.each do |var_name| 
           s = @proc.debug_eval(var_name.to_s)
           msg("#{var_name} = #{s.inspect}")
         end
@@ -62,8 +61,9 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative '../../mock'
-  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoGlobals, false)
+  require_relative '../../../mock'
+  cmd = MockDebugger::subsub_setup(Trepan::Subcommand::InfoVariablesGlobals, 
+                                   false)
   cmd.run(cmd.prefix)
   cmd.run(cmd.prefix + ['name'])
 end
