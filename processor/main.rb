@@ -34,6 +34,7 @@ class Trepan
     attr_accessor :event           # Stop event. Same as @core.event
     attr_reader   :intf            # Current interface
                                    # Trepan::Core instance)
+    attr_reader   :interfaces      # Array of all interfaces
     attr_accessor :leave_cmd_loop  # Commands set this to signal to leave
                                    # the command loop (which often continues to 
                                    # run the debugged program). 
