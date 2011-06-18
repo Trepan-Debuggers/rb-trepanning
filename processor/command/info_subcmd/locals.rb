@@ -68,7 +68,7 @@ EOH
           msg "No #{type} variables defined."
         else
           section "#{type.capitalize} variables:"
-          get_names.each_with_index do |var_name, i| 
+          names.each do |var_name| 
             var_value = @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
             msg("#{var_name} = #{var_value}")
           end
