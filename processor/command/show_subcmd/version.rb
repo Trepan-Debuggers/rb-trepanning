@@ -6,7 +6,7 @@ require_relative '../../../app/options'
 class Trepan::Subcommand::ShowVersion < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP = "Show debugger name and version'"
+    HELP = "Show debugger name and version"
   end
 
   def run(args)
