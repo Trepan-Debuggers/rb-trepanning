@@ -42,11 +42,10 @@ EOH
         if 'CFUNC' == @proc.frame.type
           errmsg("info #{type} names not supported for C frames")
         else
-          names = get_names()
           if names.empty?
             msg "No #{type} variables defined."
           else
-            section "#{type.capitalize} variable names:"
+            section "#{type.capitalize} variable names#{suffix}:"
             width = settings[:maxwidth]
             mess = Columnize::columnize(names, 
                                         @proc.settings[:maxwidth], '  ',
@@ -68,15 +67,14 @@ EOH
           msg("No parameters in C call; showing other C locals is not supported.")
         end
       else
-        names = get_names
         if names.empty?
-          msg "No #{type} variables defined."
+          msg "No #{type} variables defined#{suffix}."
         else
           section "#{type.capitalize} variables#{suffix}:"
           names.each do |var_name| 
             var_value = 
               @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
-            msg("#{var_name} = #{var_value}", :code =>true)
+            msg("#{var_name} = #{var_value}", :code => true)
           end
         end
       end

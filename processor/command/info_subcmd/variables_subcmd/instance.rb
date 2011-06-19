@@ -26,7 +26,7 @@ EOH
   end
 
   def run(args)
-    run_for_type(args, 'instance')
+    run_for_type(args, 'instance', @proc.debug_eval('self'))
   end
 end
 

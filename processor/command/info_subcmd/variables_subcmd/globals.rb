@@ -49,7 +49,7 @@ EOH
         section "Global variables:"
         names.sort.each do |var_name| 
           s = @proc.debug_eval(var_name.to_s)
-          msg("#{var_name} = #{s.inspect}")
+          msg("#{var_name} = #{s.inspect}", :code=>true)
         end
       end
     else
