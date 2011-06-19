@@ -25,7 +25,7 @@ EOH
   end
 
   def run(args)
-    run_for_type(args, 'class')
+    run_for_type(args, 'class', @proc.debug_eval('self'))
   end
 end
 
