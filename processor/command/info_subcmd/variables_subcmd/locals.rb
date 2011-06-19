@@ -35,7 +35,8 @@ EOH
     end
   end
 
-  def run_for_type(args, type)
+  def run_for_type(args, type, klass=nil)
+    suffix = klass ? " for #{klass.to_s}" : '' rescue ''
     if args.size == 2
       if 0 == 'names'.index(args[-1].downcase)
         if 'CFUNC' == @proc.frame.type
@@ -71,10 +72,11 @@ EOH
         if names.empty?
           msg "No #{type} variables defined."
         else
-          section "#{type.capitalize} variables:"
+          section "#{type.capitalize} variables#{suffix}:"
           names.each do |var_name| 
-            var_value = @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
-            msg("#{var_name} = #{var_value}")
+            var_value = 
+              @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
+            msg("#{var_name} = #{var_value}", :code =>true)
           end
         end
       end
@@ -83,7 +85,7 @@ EOH
     end
   end
   def run(args)
-    run_for_type(args, 'local')
+    run_for_type(args, 'local', @proc.debug_eval('self'))
   end
 end
 

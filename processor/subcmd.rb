@@ -14,16 +14,23 @@ class Trepan
     
     # Find subcmd in self.subcmds
     def lookup(subcmd_prefix, use_regexp=true)
-      compare = if use_regexp 
-                  lambda{|name| name.to_s =~ /^#{subcmd_prefix}/}
-                else
-                  lambda{|name| 0 == name.to_s.index(subcmd_prefix)}
-                end
+      compare = 
+        if !@cmd.settings[:abbrev]
+          lambda{|name| name.to_s == subcmd_prefix}
+        elsif use_regexp 
+          lambda{|name| name.to_s =~ /^#{subcmd_prefix}/}
+        else
+          lambda{|name| 0 == name.to_s.index(subcmd_prefix)}
+        end
+      candidates = []
       @subcmds.each do |subcmd_name, subcmd|
         if compare.call(subcmd_name) &&
             subcmd_prefix.size >= subcmd.class.const_get(:MIN_ABBREV)
-          return subcmd
+          candidates << subcmd
         end
+      end
+      if candidates.size == 1
+        return candidates.first
       end
       return nil
     end
@@ -96,12 +103,6 @@ class Trepan
 
     def list
       @subcmds.keys.sort
-    end
-    
-    # Error message when a subcommand doesn't exist.
-    def undefined_subcmd(cmd, subcmd)
-      @proc.errmsg('Undefined "%s" command: "%s". Try "help".' % 
-                   [cmd, subcmd])
     end
   end
 end
