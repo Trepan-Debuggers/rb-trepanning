@@ -6,8 +6,8 @@ require_relative '../../app/cmd_parse'
 
 class Trepan::Command::ListCommand < Trepan::Command
   unless defined?(HELP)
-    NAME = File.basename(__FILE__, '.rb')
-    HELP = <<-HELP
+    NAME    = File.basename(__FILE__, '.rb')
+    HELP     = <<-HELP
 #{NAME}[>] [MODULE] [FIRST [NUM]]
 #{NAME}[>] LOCATION [NUM]
 
@@ -81,7 +81,7 @@ enabled, while at line 255 there is an breakpoint 2 which is
 disabled.
     HELP
 
-    ALIASES       = %W(l #{NAME}> l>)
+    ALIASES       = %W(l #{NAME}> l> cat)
     CATEGORY      = 'files'
     MAX_ARGS      = 3
     SHORT_HELP    = 'List source code'

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'disable'
 
 # enable breakpoint command. Is like disable but the parameter
@@ -7,11 +7,9 @@ require_relative 'disable'
 # ENABLE_PARM below).
 class Trepan::Command::EnableCommand < Trepan::Command::DisableCommand
 
-  # Silence already initialized constant .. warnings
-  old_verbose = $VERBOSE  
-  $VERBOSE    = nil
-  NAME        = File.basename(__FILE__, '.rb')
-  HELP        = <<-HELP
+  Trepan::Util.suppress_warnings {
+    NAME        = File.basename(__FILE__, '.rb')
+    HELP        = <<-HELP
 #{NAME} [display] BPNUM1 [BPNUM2 ...]
     
 Enables breakpoints BPNUM1. Breakpoints numbers are given as a space-
@@ -20,9 +18,9 @@ separated list numbers.
 See also "info break" to get a list of breakpoints.
   HELP
 
-  ALIASES       = %w(en)
-  SHORT_HELP    = 'Enable some breakpoints'
-  $VERBOSE      = old_verbose 
+    ALIASES       = %w(en)
+    SHORT_HELP    = 'Enable some breakpoints'
+  }
 
   def initialize(proc)
     super

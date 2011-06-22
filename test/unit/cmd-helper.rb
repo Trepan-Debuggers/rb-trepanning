@@ -7,10 +7,10 @@ require_relative '../../processor/frame'
 module UnitHelper
 
   def common_setup
-    @dbg      = Trepan::MockDebugger.new(:nx => true)
-    @core     = Trepan::Core.new(@dbg)
-    @cmdproc  = @core.processor = Trepan::CmdProcessor.new(@core)
-    @cmds     = @cmdproc.commands
+    @dbg      ||= Trepan::MockDebugger.new(:nx => true)
+    @core     ||= Trepan::Core.new(@dbg)
+    @cmdproc  ||= @core.processor = Trepan::CmdProcessor.new(@core)
+    @cmds     ||= @cmdproc.commands
 
     def @cmdproc.msg(message, opts={})
       @msgs << message

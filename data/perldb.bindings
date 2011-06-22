@@ -1,0 +1,17 @@
+# Aliases to simulate some of the Perl debugger command set
+alias = alias
+alias R restart
+alias b break
+alias c continue
+alias f list
+alias n next
+alias p pr
+alias q quit
+alias s step
+alias v list
+macro - Proc.new{|*args| "list -"}
+macro E Proc.new{|*args| "info thread"}
+macro L Proc.new{|*args| "info break"}
+macro T Proc.new{|*args| "info stack"}
+macro l Proc.new{|*args| "list>"}
+macro r Proc.new{|*args| %w(finish step)}
