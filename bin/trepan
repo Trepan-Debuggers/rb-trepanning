@@ -61,7 +61,6 @@ if File.basename(__FILE__) == File.basename($0)
 
     # Set global so others may use this debugger.
     $trepan = Trepan.new(opts)
-    debug_program($trepan, RbConfig.ruby,
-                  File.expand_path(program_to_debug))
+    debug_program($trepan, File.expand_path(program_to_debug))
   end
 end

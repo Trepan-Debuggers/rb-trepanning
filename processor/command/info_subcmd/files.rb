@@ -3,11 +3,10 @@
 require 'linecache'
 require 'columnize'
 require_relative '../base/subcmd'
-require_relative '../../../app/file'
-require_relative '../../../app/complete'
+require_relative '../../../app/run'
 
 class Trepan::Subcommand::InfoFiles < Trepan::Subcommand
-  unless defined?(HELP)
+  Trepan::Util::suppress_warnings {
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     DEFAULT_FILE_ARGS = %w(size mtime sha1)
 
@@ -46,7 +45,7 @@ Examples:
 EOH
     MIN_ABBREV   = 'fi'.size  # Note we have "info frame"
     NEED_STACK   = false
-  end
+  }
 
   # completion %w(all brkpts iseq sha1 size stat)
 
@@ -84,7 +83,7 @@ EOH
           return false
           nil
         else
-          frame_file = @proc.frame.file
+          frame_file = @proc.frame.source_container[1]
           LineCache::map_file(frame_file) || File.expand_path(frame_file)
         end
       else
@@ -149,10 +148,15 @@ EOH
 
       if %w(all brkpts).member?(arg)
         unless seen[:brkpts]
-          msg("Possible breakpoint line numbers:")
-          lines = LineCache.trace_line_numbers(canonic_name)
-          fmt_lines = columnize_numbers(lines)
-          msg(fmt_lines)
+          syntax_errors = Trepanning::ruby_syntax_errors(canonic_name)
+          if syntax_errors
+            msg('Not a syntactically-correct Ruby program.')
+          else
+            msg("Possible breakpoint line numbers:")
+            lines = LineCache.trace_line_numbers(canonic_name)
+            fmt_lines = columnize_numbers(lines)
+            msg(fmt_lines)
+          end
         end
         processed_arg = seen[:brkpts] = true
       end

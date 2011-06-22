@@ -7,7 +7,6 @@ June 12, 2011  (0.1.3) Fleetwood Release
   * info stack      (is in gdb, same as backtrace)
   * info macro      (in in gdb; remove show macro)
   * show timer      (set timer was already there)
-  * parsetree
   * pp              (is in ruby-debug)
   * set/show reload (is in ruby-debug)
 

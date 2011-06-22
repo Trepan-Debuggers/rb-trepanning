@@ -1,11 +1,11 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 
 class Trepan
   module Util
 
     module_function 
     def safe_repr(str, max, elipsis='... ')
-      if str.is_a?(String) && str.size > max && !str.index("\n")
+      if str.is_a?(String) && max > 0 && str.size > max && !str.index("\n")
         "%s%s%s" % [ str[0...max/2], elipsis,  str[str.size-max/2..str.size]]
       else
         str
@@ -45,6 +45,16 @@ class Trepan
       end
       return text
     end
+
+    # Suppress warnings. The main one we encounter is "already initialized
+    # constant" because perhaps another version readline has done that already.
+    def suppress_warnings
+      original_verbosity = $VERBOSE
+      $VERBOSE = nil
+      result = yield
+      $VERBOSE = original_verbosity
+      return result
+    end  
   end
 end
 
