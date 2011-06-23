@@ -22,7 +22,7 @@ EOF
   spec.add_dependency('rb-trace', '>= 0.5')
   spec.add_dependency('linecache-tf', '>= 1.0')
   spec.add_dependency('columnize')
-  spec.add_dependency('diff-lcs') # For testing only
+  spec.add_development_dependency('diff-lcs') # For testing only
   spec.author       = 'R. Bernstein'
   spec.bindir       = 'bin'
   spec.email        = 'rockyb@rubyforge.net'
