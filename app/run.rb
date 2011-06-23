@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rbconfig'
 module Trepanning
 
@@ -9,17 +9,16 @@ module Trepanning
   # The caller must ensure that ARGV is set up to remove any debugger
   # arguments or things that the debugged program isn't supposed to
   # see.  FIXME: Should we make ARGV an explicit parameter?
-  def debug_program(dbgr, ruby_path, program_to_debug, start_opts={})
+  def debug_program(dbgr, program_to_debug)
 
     # Make sure Ruby script syntax checks okay.
     # Otherwise we get a load message that looks like trepanning has 
     # a problem. 
-    output = `#{RbConfig.ruby} -c #{program_to_debug.inspect} 2>&1`
-    if $?.exitstatus != 0 and RUBY_PLATFORM !~ /mswin/
+    output = ruby_syntax_errors(program_to_debug)
+    if output
       puts output
       exit $?.exitstatus 
     end
-    # print "\032\032starting\n" if Trepan.annotate and Trepan.annotate > 2
 
     dbgr.trace_filter << self.method(:debug_program)
     dbgr.trace_filter << Kernel.method(:load)
@@ -63,6 +62,14 @@ module Trepanning
     # Failure
     return prog_script
   end
+
+  def ruby_syntax_errors(prog_script)
+    output = `#{RbConfig.ruby} -c #{prog_script.inspect} 2>&1`
+    if $?.exitstatus != 0 and RUBY_PLATFORM !~ /mswin/
+      return output
+    end
+    return nil
+  end
 end
 
 if __FILE__ == $0
@@ -70,4 +77,10 @@ if __FILE__ == $0
   include  Trepanning
   puts whence_file('irb')
   puts whence_file('probably-does-not-exist')
+  puts RbConfig.ruby
+  puts "#{__FILE__} is syntactically correct" unless 
+    ruby_syntax_errors(__FILE__)
+  readme = File.join(File.dirname(__FILE__), '..', 'README.textile')
+  puts "#{readme} is not syntactically correct" if
+    ruby_syntax_errors(readme)
 end
