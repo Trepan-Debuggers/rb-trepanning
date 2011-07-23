@@ -1379,6 +1379,32 @@ end
     return _tmp
   end
 
+  # sinteger = < /[+-]?[0-9]+/ > { text.to_i }
+  def _sinteger
+        
+    _save = self.pos
+            while true # sequence
+              _text_start = self.pos
+              _tmp = scan(/\A(?-mix:[+-]?[0-9]+)/)
+              if _tmp
+                text = get_text(_text_start)
+              end
+              unless _tmp
+                self.pos = _save
+                break
+              end
+              @result = begin;            text.to_i ; end
+              _tmp = true
+              unless _tmp
+                self.pos = _save
+              end
+              break
+            end # end sequence
+
+    set_failed_rule :_sinteger unless _tmp
+    return _tmp
+  end
+
   # line_number = integer
   def _line_number
             _tmp = apply(:_integer)
@@ -1790,7 +1816,7 @@ end
     return _tmp
   end
 
-  # list_stmt = ((list_special_targets | location):loc - integer:int? {   List.new(loc, int) } | (list_special_targets | location):loc {   List.new(loc, nil) })
+  # list_stmt = ((list_special_targets | location):loc - sinteger:int? {   List.new(loc, int) } | (list_special_targets | location):loc {   List.new(loc, nil) })
   def _list_stmt
         
     _save = self.pos
@@ -1821,7 +1847,7 @@ end
                   break
                 end
                 _save3 = self.pos
-                _tmp = apply(:_integer)
+                _tmp = apply(:_sinteger)
                 int = @result
                 unless _tmp
                   _tmp = true
@@ -1912,6 +1938,7 @@ end
   Rules[:_filename] = rule_info("filename", "(dbl_string | not_space_colons)")
   Rules[:_file_pos_sep] = rule_info("file_pos_sep", "(sp+ | \":\")")
   Rules[:_integer] = rule_info("integer", "< /[0-9]+/ > { text.to_i }")
+  Rules[:_sinteger] = rule_info("sinteger", "< /[+-]?[0-9]+/ > { text.to_i }")
   Rules[:_line_number] = rule_info("line_number", "integer")
   Rules[:_vm_offset] = rule_info("vm_offset", "\"@\" integer:int {     Position.new(nil, nil, :offset, int)   }")
   Rules[:_position] = rule_info("position", "(vm_offset | line_number:l {    Position.new(nil, nil, :line, l)  })")
@@ -1921,7 +1948,7 @@ end
   Rules[:_breakpoint_stmt_no_condition] = rule_info("breakpoint_stmt_no_condition", "location:loc {   Breakpoint.new(loc, false, 'true') }")
   Rules[:_breakpoint_stmt] = rule_info("breakpoint_stmt", "(location:loc - if_unless:iu - condition:cond {      Breakpoint.new(loc, iu == 'unless', cond) } | breakpoint_stmt_no_condition)")
   Rules[:_list_special_targets] = rule_info("list_special_targets", "< (\".\" | \"-\") > { text }")
-  Rules[:_list_stmt] = rule_info("list_stmt", "((list_special_targets | location):loc - integer:int? {   List.new(loc, int) } | (list_special_targets | location):loc {   List.new(loc, nil) })")
+  Rules[:_list_stmt] = rule_info("list_stmt", "((list_special_targets | location):loc - sinteger:int? {   List.new(loc, int) } | (list_special_targets | location):loc {   List.new(loc, nil) })")
 end
 if __FILE__ == $0
   # require 'rubygems'; require_relative '../lib/trepanning';

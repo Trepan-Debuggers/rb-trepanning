@@ -41,8 +41,9 @@ A LOCATION is a either
 If the location form is used with a subsequent parameter, the
 parameter is the starting line number.  When there two numbers are
 given, the last number value is treated as a stopping line unless it
-is less than the start line, in which case it is taken to mean the
-number of lines to list instead.
+is positive and less than the start line. In this case, it is taken to
+mean the number of lines to list instead. If last is negative, we start
+that many lines back from first and list to first.
 
 Wherever a number is expected, it does not need to be a constant --
 just something that evaluates to a positive integer.
@@ -58,6 +59,7 @@ Some examples:
 #{NAME} foo.rb  5 6  # list lines 5 and 6 of foo.rb
 #{NAME} foo.rb  5 2  # Same as above, since 2 < 5.
 #{NAME} foo.rb:5 2   # Same as above
+#{NAME} foo.rb 15 -5 # List lines 10..15 of foo
 #{NAME} FileUtils.cp # List lines around the FileUtils.cp function.
 #{NAME} .            # List lines centered from where we currently are stopped
 #{NAME} . 3          # List 3 lines starting from where we currently are stopped

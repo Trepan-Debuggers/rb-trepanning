@@ -163,6 +163,7 @@ not_space_colons = ( not_space_colon )+:ary { ary.join }
     filename    = dbl_string | not_space_colons
 file_pos_sep    = sp+ | ':'
      integer    = </[0-9]+/> { text.to_i }
+     sinteger    = </[+-]?[0-9]+/> { text.to_i }
  line_number    = integer
 
 vm_offset = '@' integer:int
@@ -229,7 +230,7 @@ breakpoint_stmt = location:loc - if_unless:iu - condition:cond {
 # the command.  Also, "list" with nothing else is
 # handled there as well
 list_special_targets = <'.' | '-'> { text }
-list_stmt = (list_special_targets | location):loc - (integer:int)? {
+list_stmt = (list_special_targets | location):loc - (sinteger:int)? {
   List.new(loc, int)
 }
   | (list_special_targets | location):loc {

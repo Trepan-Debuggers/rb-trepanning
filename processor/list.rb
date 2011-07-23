@@ -11,7 +11,7 @@ class Trepan
   class CmdProcessor < VirtualCmdProcessor
 
     # If last is less than first, assume last is a count rather than an
-    # end line number.
+    # end line number. If last is negative, range is [first+last..first].
     def adjust_last(first, last)
       last < first ? first + last - 1 : last
     end
@@ -89,6 +89,7 @@ class Trepan
         end
       end
       if last
+        first, last = [first + last, first] if last < 0
         last = adjust_last(first, last)
       else
         first = [1, first - center_correction].max 
