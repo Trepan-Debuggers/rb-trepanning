@@ -79,7 +79,7 @@ class Trepan
     end
 
     def file
-      source_container[1]
+      iseq.source_container[1]
     end
 
     def format_stack_call(frame, opts)

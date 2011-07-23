@@ -230,7 +230,7 @@ class Trepan
         else
           errmsg "Come back later..."
         end
-      elsif @frame.iseq.source_container[1] == file 
+      elsif @frame.file == file 
         line_no, vm_offset = position_to_line_and_offset(@frame.iseq, position, 
                                                          offset_type)
         return [@frame.iseq, line_no, vm_offset] + tail

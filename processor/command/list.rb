@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 require 'linecache'
 require_relative 'base/cmd'
-require_relative '../../app/cmd_parse'
+require_relative '../list'
 
 class Trepan::Command::ListCommand < Trepan::Command
   unless defined?(HELP)
@@ -87,104 +87,6 @@ disabled.
     SHORT_HELP    = 'List source code'
   end
 
-  include Trepan::CmdParser
-  
-  # If last is less than first, assume last is a count rather than an
-  # end line number.
-  def adjust_last(first, last)
-    last < first ? first + last - 1 : last
-  end
-
-  def frame_filename
-    frame = @proc.frame
-    
-    container = @proc.frame_container(frame, false)
-    
-    # FIXME: put into a helper routine
-    # See also duplicate code in print_location
-    if container[0] != 'file'
-      try_container = container
-      while try_container[0] != 'file' && frame.prev do
-        frame            = frame.prev
-        try_container = @proc.frame_container(frame, false)
-      end
-      container = try_container if try_container[0] == 'file'
-    end
-    
-    return container[1]
-  end
-
-
-  # What a f*cking mess. Necessitated I suppose because we want to 
-  # allow somewhat flexible parsing with either module names, files or none
-  # and optional line counts or end-line numbers.
-  
-  # Parses arguments for the "list" command and returns the tuple:
-  # filename, start, last
-  # or sets these to nil if there was some problem.
-  def parse_list_cmd(arg_str, listsize, center_correction)
-
-    iseq = nil
-    if arg_str.empty?
-      filename = frame_filename
-      first = [1, @proc.frame_line - center_correction].max
-    else
-      list_cmd_parse = parse_list(arg_str, 
-                                  :file_exists_proc => @proc.file_exists_proc)
-      last = list_cmd_parse.num
-      position  = list_cmd_parse.position
-
-      if position.is_a?(String)
-        if position == '-'
-          return no_frame_msg unless @proc.line_no
-          first = [1, @proc.line_no - 2*listsize - 1].max
-        elsif position == '.'
-          return no_frame_msg unless @proc.line_no
-          if (second = list_cmd_parse.num)
-            first = @proc.frame_line 
-            last = adjust_last(first, second)
-          else
-            first = [1, @proc.frame_line - center_correction].max
-            last = first + listsize - 1
-          end
-        end
-        filename = frame_filename
-      else
-        meth, filename, offset, offset_type = @proc.parse_position(position)
-        iseq = meth.iseq if meth
-        return unless filename
-        if offset_type == :line
-          first = offset
-        elsif meth
-          iseq, first, vm_offset = 
-            @proc.position_to_line_and_offset(meth.iseq, filename,
-                                              position,  offset_type)
-          return [nil] * 3 unless first
-        elsif !offset 
-          # Have just a filename. Go with line 1
-          first = 1
-        else
-          errmsg "Dunno what to do here"
-          return [nil] * 3
-        end
-      end
-    end
-
-    if last
-      last = adjust_last(first, last)
-    else
-      first = [1, first - center_correction].max 
-      last = first + listsize - 1 unless last
-    end
-    LineCache::cache(filename) unless LineCache::cached?(filename)
-    return iseq, filename, first, last
-  end
-
-  def no_frame_msg
-    errmsg("No Ruby program loaded.")
-    return nil, nil, nil
-  end
-    
   def run(args)
     if args.empty? and not frame
       errmsg("No Ruby program loaded.")
@@ -199,7 +101,7 @@ disabled.
       end
 
     iseq, filename, first, last = 
-      parse_list_cmd(@proc.cmd_argstr, listsize, center_correction)
+      @proc.parse_list_cmd(@proc.cmd_argstr, listsize, center_correction)
     return unless filename
     container = iseq ? iseq.source_container : ['file', filename]
     breaklist = @proc.brkpts.line_breaks(container)
@@ -258,8 +160,6 @@ end
 
 if __FILE__ == $0
   if !(ARGV.size == 1 && ARGV[0] == 'noload')
-    ISEQS__        = {}
-    SCRIPT_ISEQS__ = {}
     ARGV[0..-1]    = ['noload']
     load(__FILE__)
   else    
@@ -339,6 +239,6 @@ if __FILE__ == $0
     run_cmd2(cmd, [cmd.name, line.to_s])
     run_cmd2(cmd, %W(#{cmd.name} run_cmd2))
     run_cmd2(cmd, %W(#{cmd.name} run_cmd2))
-    run_cmd2(cmd, %W(#{cmd.name} @713))
+    run_cmd2(cmd, %W(#{cmd.name} @0))
   end
 end
