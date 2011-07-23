@@ -140,5 +140,6 @@ if __FILE__ == $0
     p cmdproc.parse_list_cmd("#{__FILE__} #{__LINE__}", 10)
     p cmdproc.parse_list_cmd("cmdproc.errmsg", 10)
     p cmdproc.parse_list_cmd("cmdproc.errmsg:@0", 10)
+    p cmdproc.parse_list_cmd("cmdproc.errmsg:@0", -10)
   end
 end

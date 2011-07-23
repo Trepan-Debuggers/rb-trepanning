@@ -33,8 +33,8 @@ class TestProcList < Test::Unit::TestCase
     @proc.frame_setup(RubyVM::ThreadFrame.current)
 
     def foo; 5 end
-    def check(cmdp, arg)
-      r =  cmdp.parse_list_cmd('.', 10)
+    def check(cmdp, arg, last=10)
+      r =  cmdp.parse_list_cmd('.', last)
       assert r[1]
       assert r[2]
       assert r[3]
@@ -46,6 +46,7 @@ class TestProcList < Test::Unit::TestCase
     check(@proc, "#{__FILE__}   @0")
     check(@proc, "#{__FILE__}:#{__LINE__}")
     check(@proc, "#{__FILE__} #{__LINE__}")
+    check(@proc, "#{__FILE__} #{__LINE__}", -10)
     check(@proc, "@proc.errmsg")
     check(@proc, "@proc.errmsg:@0")
   end
