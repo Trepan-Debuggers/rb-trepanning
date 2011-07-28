@@ -6,8 +6,8 @@ require_relative '../list'
 
 class Trepan::Command::ListCommand < Trepan::Command
   unless defined?(HELP)
-    NAME    = File.basename(__FILE__, '.rb')
-    HELP     = <<-HELP
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
 #{NAME}[>] [MODULE] [FIRST [NUM]]
 #{NAME}[>] LOCATION [NUM]
 
