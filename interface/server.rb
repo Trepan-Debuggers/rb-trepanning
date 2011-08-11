@@ -2,7 +2,7 @@
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Our local modules
-require_relative 'base_intf'
+require_relative '../interface'
 require_relative 'comcodes'
 require_relative '../io/input'
 require_relative '../io/tcpserver'

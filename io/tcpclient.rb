@@ -3,7 +3,7 @@
 # Debugger Socket Input/Output Interface.
 
 require 'socket'
-require_relative 'base_io'
+require_relative '../io'
 require_relative 'tcpfns'
 
 class Trepan 

@@ -5,7 +5,7 @@
 # input or GNU Readline.
 # 
 
-require_relative 'base_io'
+require_relative '../io'
 
 class Trepan
 
@@ -132,5 +132,3 @@ if __FILE__ == $0
     end
   end
 end
-
-

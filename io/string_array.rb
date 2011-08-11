@@ -3,7 +3,7 @@
 
 # Simulate I/O using lists of strings.
 
-require_relative 'base_io'
+require_relative '../io'
 
 # Simulate I/O using an array of strings. Sort of like StringIO, but
 # even simplier.

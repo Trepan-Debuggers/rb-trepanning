@@ -4,7 +4,7 @@
 
 require 'socket'
 require_relative '../app/default' # For host and port
-require_relative 'base_io'
+require_relative '../io'
 require_relative 'tcpfns'
 
 class Trepan 

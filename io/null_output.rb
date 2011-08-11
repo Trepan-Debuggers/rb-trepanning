@@ -5,7 +5,7 @@
 # to see output.
 # 
 
-require_relative 'base_io'
+require_relative '../io'
 
 class Trepan
   class OutputNull < Trepan::OutputBase

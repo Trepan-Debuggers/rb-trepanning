@@ -4,7 +4,7 @@
 # Module for reading debugger scripts
 
 # Our local modules
-require_relative 'base_intf'
+require_relative '../interface'
 require_relative '../io/input'
 require_relative '../io/string_array'
 
