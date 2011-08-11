@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'thread_frame'
-require_relative 'base/cmd'
+require_relative '../command'
 
 class Trepan::Command::DebugCommand < Trepan::Command
   unless defined?(HELP)

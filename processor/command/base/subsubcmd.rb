@@ -9,7 +9,7 @@
 # Base Class for Trepan subcommands. We pull in some helper
 # functions for command from module cmdfns.
 
-require_relative 'cmd'
+require_relative '../../command'
 require_relative 'subcmd'
 
 class Trepan

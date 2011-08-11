@@ -1,5 +1,5 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
-require_relative 'base/cmd'
+require_relative '../command'
 class Trepan::Command::ExitCommand < Trepan::Command
 
   unless defined?(HELP)

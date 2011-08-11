@@ -1,7 +1,7 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # -*- coding: utf-8 -*-
 require 'linecache'
-require_relative 'base/cmd'
+require_relative '../command'
 require_relative '../list'
 
 class Trepan::Command::ListCommand < Trepan::Command

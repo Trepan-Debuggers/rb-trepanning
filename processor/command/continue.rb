@@ -1,5 +1,5 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
-require_relative 'base/cmd'
+require_relative '../command'
 require_relative '../running'
 require_relative '../../app/breakpoint' # FIXME: possibly temporary
 

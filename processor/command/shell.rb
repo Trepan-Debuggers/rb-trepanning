@@ -1,6 +1,6 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'irb'
-require_relative 'base/cmd'
+require_relative '../command'
 require_relative '../../app/irb'
 
 class Trepan::Command::IRBCommand < Trepan::Command

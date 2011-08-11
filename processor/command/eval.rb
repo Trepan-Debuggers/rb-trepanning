@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
-require_relative './base/cmd'
+require_relative './../command'
 require_relative '../../app/util'
 
 class Trepan::Command::EvalCommand < Trepan::Command

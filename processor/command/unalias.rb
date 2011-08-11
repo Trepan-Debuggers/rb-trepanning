@@ -1,5 +1,5 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-require_relative 'base/cmd'
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+require_relative '../command'
 
 class Trepan::Command::UnaliasCommand < Trepan::Command
 

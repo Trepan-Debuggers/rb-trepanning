@@ -2,7 +2,7 @@
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'
 require 'pp'
-require_relative 'base/cmd'
+require_relative '../command'
 class Trepan::Command::PPCommand < Trepan::Command
 
   unless defined?(HELP)

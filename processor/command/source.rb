@@ -3,7 +3,7 @@
 require 'optparse'
 
 # Our local modules
-require_relative 'base/cmd'
+require_relative '../command'
 require_relative '../../interface/script'
 require_relative '../../io/null_output'
 require_relative '../../app/default'

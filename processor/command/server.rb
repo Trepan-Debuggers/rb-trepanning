@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'optparse'
-require_relative 'base/cmd'
+require_relative '../command'
 require_relative '../../app/default'
 require_relative '../../interface/server'   # server interface (remote debugging)
 class Trepan::Command::ServerCommand < Trepan::Command

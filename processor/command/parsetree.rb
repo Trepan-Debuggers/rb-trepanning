@@ -3,7 +3,7 @@
 begin
   require 'rubygems'
   require 'parse_tree'
-  require_relative 'base/cmd'
+  require_relative '../command'
   require_relative '../../app/cmd_parse'
   class Trepan::Command::ParseTreeCommand < Trepan::Command
     
