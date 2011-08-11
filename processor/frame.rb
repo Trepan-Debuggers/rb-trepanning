@@ -217,8 +217,8 @@ if __FILE__ == $0
   # Demo it.
   require 'thread_frame'
   require_relative '../app/mock'
-  require_relative 'main'   # Have to include before defining CmdProcessor!
-                            # FIXME
+
+
   class Trepan::CmdProcessor
     def errmsg(msg)
       puts msg

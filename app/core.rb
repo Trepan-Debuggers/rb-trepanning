@@ -3,7 +3,7 @@
 require 'thread_frame'
 require 'trace'
 # require_relative '../../rb-trace/app/trace'
-require_relative '../processor/main'
+require_relative '../processor'
 class Trepan
   # This class contains the Trepan core routines, such as an event
   # processor which is responsible of handling what to do when an event is

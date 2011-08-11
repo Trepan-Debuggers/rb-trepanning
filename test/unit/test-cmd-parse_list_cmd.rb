@@ -24,7 +24,7 @@ class TestCommandParseListCmd < Test::Unit::TestCase
      ['Columnize.columnize 30 3', ['columnize.rb', 30, 32]],
      ['Columnize.columnize 40 50', ['columnize.rb', 40, 50]],
     ].each do |arg_str, expect|
-      got = @cmd.parse_list_cmd(arg_str, listsize, listsize/2)[1..-1]
+      got = @cmdproc.parse_list_cmd(arg_str, listsize, listsize/2)[1..-1]
       got[0] = File.basename(got[0])
       assert_equal expect, got
     end

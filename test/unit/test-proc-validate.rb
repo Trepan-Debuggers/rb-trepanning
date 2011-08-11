@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative '../../processor/main' # Have to include before validate!
-                                        # FIXME
+require_relative '../../processor'
 require_relative '../../processor/validate'
 require_relative '../../app/mock'
 require 'thread_frame'

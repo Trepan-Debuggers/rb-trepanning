@@ -117,8 +117,9 @@ if __FILE__ == $0
     require_relative '../app/mock'
     require_relative './default'
     require_relative 'frame'
-    require_relative 'main' # Have to include before defining CmdProcessor!
-                            # FIXME
+
+    # FIXME: Have to include before defining CmdProcessor!
+    require_relative '../processor' 
 
     cmdproc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
     cmdproc.frame_initialize

@@ -7,9 +7,9 @@ require 'set'
 %w(default breakpoint display eventbuf eval load_cmds location frame hook msg 
    running validate).each do
   |mod_str|
-  require_relative mod_str
+  require_relative "processor/#{mod_str}"
 end
-require_relative '../app/brkptmgr'
+require_relative 'app/brkptmgr'
 
 class Trepan
   class CmdProcessor < VirtualCmdProcessor
@@ -377,7 +377,7 @@ end
 
 if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
-  require_relative '../lib/trepanning'
+  require_relative 'lib/trepanning'
   dbg =  Trepan.new(:nx => true)
   dbg.core.processor.msg('I am main')
   cmdproc = dbg.core.processor

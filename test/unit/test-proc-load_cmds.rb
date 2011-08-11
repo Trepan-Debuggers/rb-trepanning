@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative '../../processor/main'
+require_relative '../../processor'
 require_relative '../../app/mock'
 
 class TestCmdProcessorLoadCmds < Test::Unit::TestCase
