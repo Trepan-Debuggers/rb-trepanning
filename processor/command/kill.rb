@@ -25,7 +25,7 @@ Examples:
   #{NAME} kill # same as above
   #{NAME} -9   # same as above
   #{NAME}  9   # same as above
-  #{NAME}! 9   # same as above
+  #{NAME}! 9   # above, but unconditional
     HELP
 
     ALIASES      = %w(kill!)
