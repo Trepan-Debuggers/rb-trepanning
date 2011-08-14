@@ -59,10 +59,10 @@ Examples:
       end
     end
     begin
-      @proc.intf.finalize  if 'KILL' == sig || Signal['KILL'] == sig
+      @proc.intf.finalize if 'KILL' == sig || Signal.list['KILL'] == sig
       Process.kill(sig, Process.pid)
-    rescue Errno::ESRCH
-      errmsg "Unable to send kill #{sig} to process #{Process.pid}"
+    rescue Errno::ESRCH, Errno::EINVAL, Errno::EPERM, RangeError
+      errmsg "Unable to send kill #{sig} to process #{Process.pid}: #{$!}"
     end
   end
 end
@@ -70,7 +70,7 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  %w(fooo 1 -1 HUP -9).each do |arg| 
+  %w(fooo 100 1 -1 HUP -9).each do |arg| 
     puts "#{cmd.name} #{arg}"
     cmd.run([cmd.name, arg])
     puts '=' * 40
