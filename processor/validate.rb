@@ -27,8 +27,8 @@ class Trepan
     include Trepan::ThreadHelper
     include Trepan::Condition
 
-    # Like cmdfns.get_an_int(), but if there's a stack frame use that
-    # in evaluation.
+    # Check that arg is an Integer between opts[:min_value] and
+    # opts[:max_value]
     def get_an_int(arg, opts={})
       ret_value = get_int_noerr(arg)
       if !ret_value
