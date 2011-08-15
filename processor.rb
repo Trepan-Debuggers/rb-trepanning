@@ -195,11 +195,7 @@ class Trepan
               @cmd_queue.shift
             end
           if @current_command.empty? 
-            if @last_command && intf.interactive?
-              @current_command = @last_command 
-            else
-              next
-            end
+            next unless @last_command && intf.interactive?;
           end
           next if @current_command[0..0] == '#' # Skip comment lines
           break

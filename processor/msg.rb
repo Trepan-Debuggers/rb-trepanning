@@ -6,6 +6,10 @@ require_relative 'virtual'
 class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   attr_accessor :ruby_highlighter
 
+  def confirm(msg, default)
+    @settings[:confirm] ? @dbgr.intf[-1].confirm(msg, default) : true
+  end
+
   def errmsg(message, opts={})
     if message.kind_of?(Array)
       message.each do |mess|
