@@ -8,6 +8,32 @@ require_relative 'virtual'
 class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   include Trepan::Frame
 
+  unless defined?(EVENT2ICON)
+    # Event icons used in printing locations.
+    EVENT2ICON = {
+      'brkpt'          => 'xx',
+      'tbrkpt'         => 'x1',
+      'c-call'         => 'C>',
+      'c-return'       => '<C',
+      'call'           => '->',
+      'send'           => '=>',
+      'leave'          => '<=',
+      'class'          => '::',
+      'coverage'       => '[]',
+      'debugger-call'  => ':o',
+      'end'            => '-|',
+      'line'           => '--',
+      'raise'          => '!!',
+      'return'         => '<-',
+      'switch'         => 'sw',
+      'trace-var'      => '$V',
+      'unknown'        => '?!',
+      'vm'             => 'VM',
+      'vm-insn'        => '..',
+      'yield'          => '<>',
+    } 
+  end
+
   def canonic_container(container)
     [container[0], canonic_file(container[1])]
   end
