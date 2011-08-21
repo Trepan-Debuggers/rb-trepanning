@@ -16,7 +16,7 @@ to the OS. If no exit code is given, 0 is used.
 
 Examples: 
   #{NAME}                 # quit prompting if we are interactive
-  #{NAME} conditionally   # quit without prompting
+  #{NAME} unconditionally # quit without prompting
   #{NAME}!                # same as above
   #{NAME} 0               # same as "quit"
   #{NAME}! 1              # unconditional quit setting exit code 1
@@ -36,7 +36,7 @@ See also the commands "exit" and "kill".
   # This method runs the command
   def run(args)
     unconditional = 
-      if args.size > 1 && args[1] == 'unconditionally'
+      if args.size > 1 && args[-1] == 'unconditionally'
         args.shift
         true
       elsif args[0][-1] == '!'
@@ -48,8 +48,17 @@ See also the commands "exit" and "kill".
       msg('Quit not confirmed.')
       return
     end
-
-    exitrc = (args.size > 1) ? exitrc = Integer(args[1]) rescue 0 : 0
+    
+    if (args.size > 1)
+      if  args[1] =~ /\d+/
+        exitrc = args[1].to_i;
+      else
+        errmsg "Bad an Integer return type \"#{args[1]}\"";
+        return;
+      end
+    else
+      exitrc = 0
+    end
     # No graceful way to stop threads...
     @proc.finalize
     @proc.dbgr.intf[-1].finalize
@@ -60,6 +69,8 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  fork { cmd.run([cmd.name]) }
+  Process.fork { cmd.run([cmd.name]) } if 
+    Process.respond_to?(:fork) 
+  cmd.run([cmd.name, 'foo'])
   cmd.run([cmd.name, '5'])
 end

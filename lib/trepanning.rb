@@ -66,7 +66,7 @@ class Trepan
         opts[:host] = @settings[:host] if @settings[:host]
         opts[:complete] = @completion_proc
         opts[:readline] ||= @settings[:readline]
-        [Trepan::ClientInterface.new(nil, nil, nil, nil, opts)]
+        [Trepan::ClientInterface.new(nil, nil, nil, {}, opts)]
       else
         opts = {:complete => @completion_proc,
                 :readline => @settings[:readline]}
