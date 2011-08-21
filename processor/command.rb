@@ -55,11 +55,12 @@ class Trepan
       obj.class.const_get(name) 
     end
 
+    # Convenience short-hand for @proc.msg
     def msg(message, opts={})
       @proc.msg(message, opts)
     end
 
-    # Convenience short-hand for @dbgr.intf[-1].msg_nocr
+    # Convenience short-hand for @proc.msg_nocr
     def msg_nocr(msg, opts={})
       @proc.msg_nocr(msg, opts)
     end
