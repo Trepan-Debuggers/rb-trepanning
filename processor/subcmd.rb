@@ -69,16 +69,6 @@ class Trepan
       @cmdlist << subcmd_name
     end
 
-    # Run subcmd_name with args using obj for the environent
-    def run( subcmd_name, arg)
-      entry=lookup(subcmd_name)
-      if entry
-        entry['callback'].send(arg)
-      else
-        @proc.undefined_cmd(entry.__class__.name, subcmd_name)
-      end
-    end
-
     # help for subcommands
     # Note: format of help is compatible with ddd.
     def help(*args)
