@@ -1,4 +1,4 @@
- # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # gdb-like subcommand processing.
 
 ### FIXME: move into command/base/submgr.rb
