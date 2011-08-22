@@ -49,7 +49,7 @@ class Trepan
     # like "show", "info" or "set". Generally this means list
     # all of the subcommands.
     def summary_list(name, subcmds)
-      msg "List of #{name} commands (with minimum abbreviation in parenthesis):"
+      section "List of #{name} commands (with minimum abbreviation in parenthesis):"
       subcmds.list.each do |subcmd_name|
         # Some commands have lots of output.
         # they are excluded here because 'in_list' is false.
