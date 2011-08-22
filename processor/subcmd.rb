@@ -1,6 +1,7 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+ # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # gdb-like subcommand processing.
 
+### FIXME: move into command/base/submgr.rb
 class Trepan
   class Subcmd
 
@@ -81,24 +82,7 @@ class Trepan
     # help for subcommands
     # Note: format of help is compatible with ddd.
     def help(*args)
-
-      msg args
-      subcmd_prefix = args[0]
-      if not subcmd_prefix or subcmd_prefix.size == 0
-        @proc.msg(self.doc)
-        @proc.msg("\nList of %s subcommands:\n" % [@name])
-        @list.each do |subcmd_name|
-          subcmd_helper(subcmd_name, obj, true, true)
-        end
-
-        entry = lookup(subcmd_prefix)
-        if entry and entry.respond_to? :help
-          entry.help(args)
-        else
-          @proc.errmsg("Unknown 'help %s' subcommand %s" %
-                       [@name, subcmd_prefix])
-        end
-      end
+      # Not used but tested for.
     end
 
     def list
@@ -111,7 +95,7 @@ end
 if __FILE__ == $0
 
   require_relative 'mock'
-  require_relative 'command/base/cmd'
+  require_relative 'command'
 
   class Trepan::TestCommand < Trepan::Command
     
