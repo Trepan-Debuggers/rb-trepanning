@@ -3,7 +3,7 @@
 require_relative '../command'
 
 class Trepan::Command::DisplayCommand < Trepan::Command
-
+  
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
@@ -24,38 +24,43 @@ auto-display expressions.  Use "undisplay" to cancel display
 requests previously made.
     HELP
     
-    CATEGORY      = 'data'
-    NEED_STACK    = false
-    SHORT_HELP    = 'Display expressions when entering debugger'
-  end
+  CATEGORY      = 'data'
+  NEED_STACK    = false
+  SHORT_HELP    = 'Display expressions when entering debugger'
+end
+
+def save_command
+  val     = settings[subcmd_setting_key] ? 'on' : 'off'
+  ["#{subcmd_prefix_string} #{val}"]
+end
+
+def run(args)
   
-  def run(args)
-
-    if args.size == 1
-      # Display anything active
-      @proc.run_eval_display
-    else
-      if %w(/c /x /o /f /s).member?(args[1])
-        if 2 == args.size
-          errmsg("Expecting an expression after the format")
-          return
-        end
-        format = args[1]
-        expr   = args[2..-1].join(' ')
-      else
-        format = nil
-        expr = args[1..-1].join(' ')
-      end
-
-      dp = @proc.displays.add(@proc.frame, expr, format)
-      unless dp
-        errmsg('Error evaluating "%s" in the current frame' % expr)
+  if args.size == 1
+    # Display anything active
+    @proc.run_eval_display
+  else
+    if %w(/c /x /o /f /s).member?(args[1])
+      if 2 == args.size
+        errmsg("Expecting an expression after the format")
         return
       end
-      msg(dp.to_s(@proc.frame))
-      @proc.cmdloop_prehooks.insert_if_new(5, *@proc.display_hook)
+      format = args[1]
+      expr   = args[2..-1].join(' ')
+    else
+      format = nil
+      expr = args[1..-1].join(' ')
     end
+    
+    dp = @proc.displays.add(@proc.frame, expr, format)
+    unless dp
+      errmsg('Error evaluating "%s" in the current frame' % expr)
+      return
+    end
+    msg(dp.to_s(@proc.frame))
+    @proc.cmdloop_prehooks.insert_if_new(5, *@proc.display_hook)
   end
+end
 end
 
 if __FILE__ == $0

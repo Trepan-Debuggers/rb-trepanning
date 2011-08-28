@@ -2,8 +2,6 @@
 # The main "driver" class for a command processor. Other parts of the 
 # command class and debugger command objects are pulled in from here.
 
-require 'set'
-
 %w(default breakpoint display eventbuf eval load_cmds location frame hook msg 
    running validate).each do
   |mod_str|
