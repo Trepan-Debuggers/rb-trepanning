@@ -4,13 +4,13 @@ require_relative '../command'
 class Trepan::Command::UnaliasCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"unalias COMMAND
+    HELP = <<-HELP
+unalias ALIAS
 
-Remove alias for COMMAND
+Remove alias ALIAS
 
 See also 'alias'.
-"
+HELP
 
     CATEGORY      = 'support'
     MIN_ARGS      = 1
