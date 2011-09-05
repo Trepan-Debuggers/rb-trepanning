@@ -60,7 +60,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  dbgr, cmd = MockDebugger::setup('info')
   cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoFrame, false)
   cmd.run(cmd.prefix)
 end

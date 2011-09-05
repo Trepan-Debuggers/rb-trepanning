@@ -74,10 +74,10 @@ Type "help" followed by a class name for a list of help items in that class.
 Type "help aliases" for a list of current aliases.
 Type "help macros" for a list of current macros.
 Type "help *" for the list of all commands, macros and aliases.
-Type "help all" for the list of all commands.
+Type "help all" for a brief description of all commands.
 Type "help REGEXP" for the list of commands matching /^#{REGEXP}/.
 Type "help CLASS *" for the list of all commands in class CLASS.
-Type "help" followed by command name for full documentation.
+Type "help" followed by a command name for full documentation.
 '
     msg(final_msg)  
   end
@@ -100,6 +100,7 @@ Type "help" followed by command name for full documentation.
       elsif cmd_name =~ /^all$/i
         CATEGORIES.sort.each do |category|
           show_category(category[0], [])
+          msg('')
         end
       elsif CATEGORIES.member?(cmd_name)
         show_category(args[1], args[2..-1])
@@ -157,9 +158,7 @@ Type "help" followed by command name for full documentation.
       return 
     end
     
-    msg('')
     section "Command class: %s" % category
-    msg('')
     @proc.commands.keys.sort.each do |name|
       next if category != @proc.commands[name].category
       msg("%-13s -- %s" % [name, @proc.commands[name].short_help])

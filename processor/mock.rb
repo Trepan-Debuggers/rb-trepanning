@@ -92,7 +92,7 @@ module MockDebugger
     dbgr, cmd = setup(sub_name[0], false)
     cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
     cmd.proc.event = 'debugger-call'
-    sub_cmd = sub_class.new(cmd.proc, cmd)
+    sub_cmd = sub_class.new(cmd)
     sub_cmd.summary_help(sub_cmd)
     puts
     sub_cmd.run([cmd.name]) if run

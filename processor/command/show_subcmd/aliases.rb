@@ -2,7 +2,7 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
-class Trepan::Subcommand::ShowAlias < Trepan::Subcommand
+class Trepan::Subcommand::ShowAliases < Trepan::Subcommand
   Trepanning::Subcommand.set_name_prefix(__FILE__, self)
   unless defined?(HELP)
     HELP         = <<-EOH
@@ -31,7 +31,7 @@ all alias names
     elsif @proc.aliases.empty?
       msg "No aliases defined."
     else
-      section "List of aliases names currently defined:"
+      section "List of alias names currently defined:"
       msg columnize_commands(@proc.aliases.keys.sort)
     end
   end
