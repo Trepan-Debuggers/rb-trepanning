@@ -152,4 +152,3 @@ if __FILE__ == $0
   inp.close
   puts "Input is closed? #{inp.closed?}"
 end
-

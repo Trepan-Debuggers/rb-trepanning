@@ -90,7 +90,6 @@ class Trepan
       when '<'
         opts[:stop_events] = Set.new(%w(c-return return))
       when '>'
-        opts[:stop_events] = Set.new(%w(c-call call))
         if step_cmd.size > 1 && step_cmd[-2..-2] == '<'
           opts[:stop_events] = Set.new(%w(c-call c-return call return))
         else
