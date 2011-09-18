@@ -8,7 +8,7 @@ class Trepan::Subcommand::SetDifferent < Trepan::SetBoolSubcommand
     HELP = "
 set different [on|off|nostack]
 
-Set to make sure 'next/step' move to a new position.
+Set to make sure 'next' or 'step' moves to a new position.
 
 Due to the interpretive, expression-oriented nature of the Ruby
 Language and implementation, each line often may contain many possible
