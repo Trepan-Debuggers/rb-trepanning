@@ -118,7 +118,7 @@ class Trepan
 
       return true if 
         !frame || (@next_level < @frame.stack_size &&
-                   Thread.current == @next_thread)
+                   Thread.current == @next_thread && @event != 'raise')
 
       new_pos = [@frame.source_container, frame_line,
                  @stack_size, @current_thread, @event, @frame.pc_offset]

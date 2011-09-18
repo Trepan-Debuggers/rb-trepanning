@@ -51,8 +51,9 @@ module Trepanning
   # Do a shell-like path lookup for prog_script and return the results.
   # If we can't find anything return prog_script.
   def whence_file(prog_script)
-    if prog_script.index(File::SEPARATOR)
-      # Don't search since this name has path separator components
+    if prog_script.start_with?(File::SEPARATOR) || prog_script.start_with?('.')
+      # Don't search since this name has path is explicitly absolute or
+      # relative.
       return prog_script
     end
     for dirname in ENV['PATH'].split(File::PATH_SEPARATOR) do
