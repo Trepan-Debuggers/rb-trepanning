@@ -1,5 +1,6 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
+require_relative '../../app/complete'
 
 class Trepan::Command::UnaliasCommand < Trepan::Command
 
@@ -20,6 +21,10 @@ HELP
     SHORT_HELP    = 'Remove an alias'
   end
   
+  def complete(prefix)
+    Trepan::Complete.complete_token(@proc.aliases.keys, prefix)
+  end
+
   # Run command. 
   def run(args)
     args[1..-1].each do |arg|
