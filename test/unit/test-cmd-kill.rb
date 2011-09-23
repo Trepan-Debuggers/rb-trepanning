@@ -23,10 +23,17 @@ class TestCommandKill < Test::Unit::TestCase
   end
   
   def test_kill_command
-      @cmd.run([@name, 'foo'])
-      assert_equal(false,  @cmd.proc.leave_cmd_loop)
-      assert_equal(1, @cmd.instance_variable_get('@errmsgs').size)
-      
+    assert_equal(['unconditionally'], @cmd.complete('uncon'))
+
+    if Signal.list.member?('HUP')
+      assert_equal(['hup'], @cmd.complete('hu'))
+      assert_equal(['HUP'], @cmd.complete('HU'))
+    end
+
+    @cmd.run([@name, 'foo'])
+    assert_equal(false,  @cmd.proc.leave_cmd_loop)
+    assert_equal(1, @cmd.instance_variable_get('@errmsgs').size)
+    
     if false
       save_trap = Signal.trap(10) {
         @success = true

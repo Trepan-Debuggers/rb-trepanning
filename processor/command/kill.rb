@@ -35,9 +35,10 @@ Examples:
   end
   
   def complete(prefix)
-    completions = Signal.list.keys + 
+    completions = Signal.list.keys + Signal.list.keys.map{|k| k.downcase} +
       Signal.list.values.map{|i| i.to_s} + 
-      Signal.list.values.map{|i| (-i).to_s} 
+      Signal.list.values.map{|i| (-i).to_s} + 
+      ['unconditionally']
     Trepan::Complete.complete_token(completions, prefix)
   end
     
