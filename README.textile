@@ -1,6 +1,6 @@
 A modular, testable debugger for Ruby 1.9.2. A total rewrite of _ruby-debug_.
 
-__In order to use this debugger, you'll need a patched Ruby 1.9.2 and some additional packages. See the "installation instructions.":http://wiki.github.com/rocky/rb-trepanning/how-to-install-rbdbgr__
+__In order to use this debugger, you'll need a patched Ruby 1.9.2 and some additional packages. See the "installation instructions.":https://github.com/rocky/rb-trepanning/wiki/How-to-Install-rb-trepanning__
 
 Right now this debugger is beta code.
 
