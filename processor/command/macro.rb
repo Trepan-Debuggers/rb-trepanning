@@ -10,24 +10,42 @@ class Trepan::Command::MacroCommand < Trepan::Command
 #{NAME} MACRO-NAME PROC-OBJECT
 
 Define MACRO-NAME as a debugger macro. Debugger macros get a list of
-arguments. 
+arguments. Debugger macros get a list of arguments which you supply
+without parenthesis or commas. See below for an example.
 
-The macro should return either a String or an Array of Strings which
-is substituted for the command.  If the return is a String, that gets
-tokenized by a simple String#split .  Note that macro processing is
-done right after splitting on ;; so if the macro returns a string
-containing ;; this will not be handled on the string returned.
+The macro (really a Ruby Proc) should return either a String or an
+Array of Strings. The string in both cases are strings of debugger
+commands.  If the return is a String, that gets tokenized by a simple
+String#split .  Note that macro processing is done right after
+splitting on ;; so if the macro returns a string containing ;; this
+will not be handled on the string returned.
 
 If instead, Array of Strings is returned, then the first string is
-unshifted from the array and executed. The remaning strings are pushed
+shifted from the array and executed. The remaining strings are pushed
 onto the command queue. In contrast to the first string, subsequent
 strings can contain other macros, and ;; in those strings will be
 split into separate commands.
 
-Here is an example. The below creates a macro called finish+ which
+Here is an example. The below creates a macro called fin+ which
 issues two commands 'finish' followed by 'step':
 
   macro fin+ Proc.new{|*args| %w(finish step)}
+
+If you wanted to parameterize the argument of the 'finish' command
+you could do that this way:
+
+  macro fin+ Proc.new{|*args| ['finish \#{args[0]}' 'step']}
+
+Invoking with 
+  fin+ 3
+
+would expand to ["finish 3", "step"]
+
+If you were to add another parameter for 'step', the note that the 
+invocation might be 
+  fin+ 3 2
+
+rather than 'fin+(3,2)' or 'fin+ 3, 2'.
 
 Here is another example using arguments. I use the following to debug
 a debugger command:
