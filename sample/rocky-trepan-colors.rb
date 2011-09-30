@@ -14,7 +14,6 @@
 
 require 'rubygems'
 require 'coderay'
-require 'coderay/encoders/term'
 TERM_TOKEN_COLORS = {
   :comment => '3;37',        # sienna #8b4726
   :constant => '1;34',       # Bold Midnight Blue #191970

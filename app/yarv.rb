@@ -8,8 +8,6 @@ module CodeRay
     
     class YARV < Scanner
       
-      include Streamable
-      
       register_for :yarv
       file_extension 'yarv'
 
