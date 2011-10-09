@@ -98,6 +98,8 @@ class Trepan
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
+      unconditional_prehooks.insert_if_new(-1, *trace_hook) if 
+        @settings[:traceprint]
 
       # FIXME: run start file and start commands.
     end
@@ -195,6 +197,10 @@ class Trepan
       @event = @core.event
 
       @unconditional_prehooks.run
+      if @settings[:traceprint]
+        step
+        return
+      end
       
       if 'trace-var' == @event 
         variable_name, value = @core.hook_arg
@@ -225,7 +231,7 @@ class Trepan
 
       @leave_cmd_loop = false
 
-      print_location unless @settings[:traceprint]
+      print_location
       @eventbuf.add_mark if @settings[:tracebuffer]
  
       @cmdloop_prehooks.run
