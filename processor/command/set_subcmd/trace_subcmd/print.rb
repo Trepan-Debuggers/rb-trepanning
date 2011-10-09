@@ -6,13 +6,14 @@ class Trepan::SubSubcommand::SetTracePrint < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
     Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
-#{CMD} [on|off|1|0]
+#{CMD} [on|off]
 
-Set printing trace events.
+Set printing trace events. This is similar to "set -x" tracing in 
+POSIX shells.
     EOH
 
     MIN_ABBREV   = 'p'.size  
-    SHORT_HELP   = 'Set print trace events'
+    SHORT_HELP   = 'Set print trace events, like "set -x" of POSIX shell'
   end
 
   def run(args)

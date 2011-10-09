@@ -6,14 +6,15 @@ require_relative '../base/subsubmgr'
 class Trepan::SubSubcommand::SetTrace < Trepan::SubSubcommandMgr 
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP = "Set tracing of various sorts.
+    HELP = <<-EOH
+Set tracing of various sorts.
 
 The types of tracing include events from the trace buffer, or printing
 those events.
 
-See 'help #{PREFIX.join(' ')} *' for a list of subcommands or 'help set trace
-<name>' for help on a particular trace subcommand."
-
+See "help #{PREFIX.join(' ')} *" for a list of subcommands or "#{PREFIX.join(' ')} <name>" 
+for help on a particular trace subcommand.
+    EOH
     IN_LIST    = true
     MIN_ABBREV = 'tr'.size
     SHORT_HELP = 'Set tracing of various sorts.'
