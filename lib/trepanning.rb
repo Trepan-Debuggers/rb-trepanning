@@ -78,6 +78,7 @@ class Trepan
     # FIXME: The below option settings is a big crock.
     @settings[:core_opts][:cmdproc_opts] ||= {}
     @settings[:core_opts][:cmdproc_opts][:highlight] ||= settings[:highlight]
+    @settings[:core_opts][:cmdproc_opts][:traceprint] = settings[:traceprint]
 
     @core = Core.new(self, @settings[:core_opts])
     

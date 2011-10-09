@@ -3,7 +3,6 @@
 # GCD. We assume positive numbers
 def gcd(a, b)
   # Make: a <= b
-  debugger
   if a > b
     a, b = [b, a]
   end

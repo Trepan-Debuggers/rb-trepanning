@@ -36,6 +36,10 @@ def run_debugger(testname, ruby_file, opts={})
     if opts[:standalone]
       "%s %s %s >%s 2>&1" %
         [RbConfig.ruby, programfile, opts[:args], outfile]
+    elsif opts[:nocommand]
+      "%s %s --nx %s '%s' %s >%s 2>&1" %
+        [RbConfig.ruby, dbgr_path, opts[:dbgr], 
+         programfile, opts[:args], outfile]
     else
       "%s %s --nx --command %s %s '%s' %s >%s 2>&1" %
         [RbConfig.ruby, dbgr_path, cmdfile, opts[:dbgr], 
