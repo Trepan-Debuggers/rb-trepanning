@@ -4,11 +4,11 @@ require_relative '../../base/subsubcmd'
 
 class Trepan::SubSubcommand::ShowTracePrint < Trepan::ShowBoolSubSubcommand
   unless defined?(HELP)
-    HELP = "Show tracing print status"
+    HELP         = "Show tracing print (set -x) status"
     MIN_ABBREV   = 'p'.size
     NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(show trace buffer)
-    SHORT_HELP   = "Show tracing print status"
+    PREFIX       = %w(show trace print)
+    SHORT_HELP   = "Show tracing print (set -x) status"
   end
 
 end

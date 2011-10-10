@@ -12,7 +12,7 @@ Set tracing of various sorts.
 The types of tracing include events from the trace buffer, or printing
 those events.
 
-See "help #{PREFIX.join(' ')} *" for a list of subcommands or "#{PREFIX.join(' ')} <name>" 
+See "help #{PREFIX.join(' ')} *" for a list of subcommands or "help #{PREFIX.join(' ')} <name>" 
 for help on a particular trace subcommand.
     EOH
     IN_LIST    = true

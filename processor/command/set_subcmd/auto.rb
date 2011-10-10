@@ -12,7 +12,7 @@ Set controls for things with some sort of "automatic" default behavior.
 See "#{PREFIX.join(' ')} *" for a list of subcommands or "#{PREFIX.join(' ')} <name>" 
 for help on a particular trace subcommand.
     EOH
-    SHORT_HELP = 'Set controls for some "automatic" default behaviors';
+    SHORT_HELP = 'Set controls for some "automatic" default behaviors'
   end
 end
 
