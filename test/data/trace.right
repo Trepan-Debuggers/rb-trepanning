@@ -4,6 +4,8 @@ def gcd(a, b)
 a, b = ARGV[0..1].map {|arg| arg.to_i}
 -- (gcd.rb:18 @2)
 a, b = ARGV[0..1].map {|arg| arg.to_i}
+<= (gcd.rb:18 @11)
+a, b = ARGV[0..1].map {|arg| arg.to_i}
 -- (gcd.rb:19 @45)
 puts "The GCD of %d and %d is %d" % [a, b, gcd(a, b)]
 -- (gcd.rb:6 @4)
@@ -29,6 +31,8 @@ R=> 1
 end
 <- (gcd.rb:16 @88)
 R=> 1
+end
+<= (gcd.rb:16 @88)
 end
 The GCD of 3 and 5 is 1
 <= (gcd.rb:19 @73)

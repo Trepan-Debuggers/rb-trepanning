@@ -24,7 +24,11 @@ class Trepan
       @next_level      = 32000 # I'm guessing the stack size can't
                                # ever reach this
       @next_thread     = nil
-      @core.step_count = -1    # No more event stepping
+      if @settings[:traceprint]
+        @core.step_count = 1    # traceprint will avoid stopping
+      else
+        @core.step_count = -1    # No more event stepping
+      end
       @leave_cmd_loop  = true  # Break out of the processor command loop.
     end
 

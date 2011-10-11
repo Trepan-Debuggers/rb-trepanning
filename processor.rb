@@ -197,10 +197,6 @@ class Trepan
       @event = @core.event
 
       @unconditional_prehooks.run
-      if @settings[:traceprint]
-        step
-        return
-      end
       
       if 'trace-var' == @event 
         variable_name, value = @core.hook_arg
@@ -225,13 +221,16 @@ class Trepan
                      @frame.pc_offset]
       else
         return if stepping_skip? || @stack_size <= @hide_level
+        if @settings[:traceprint]
+          step
+          return
+        end
       end
-
       @prompt = compute_prompt
 
       @leave_cmd_loop = false
 
-      print_location
+      print_location unless @settings[:traceprint]
       @eventbuf.add_mark if @settings[:tracebuffer]
  
       @cmdloop_prehooks.run

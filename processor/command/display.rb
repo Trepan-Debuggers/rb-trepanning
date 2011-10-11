@@ -29,10 +29,10 @@ requests previously made.
   SHORT_HELP    = 'Display expressions when entering debugger'
 end
 
-def save_command
-  val     = settings[subcmd_setting_key] ? 'on' : 'off'
-  ["#{subcmd_prefix_string} #{val}"]
-end
+#def save_command
+#  val     = settings[subcmd_setting_key] ? 'on' : 'off'
+#  ["#{subcmd_prefix_string} #{val}"]
+#end
 
 def run(args)
   
