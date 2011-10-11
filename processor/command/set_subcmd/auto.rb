@@ -6,7 +6,13 @@ require_relative '../base/subsubmgr'
 class Trepan::SubSubcommand::SetAuto < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP   = 'Set controls for things with some sort of "automatic" default behavior'
+    HELP   = <<-EOH
+Set controls for things with some sort of "automatic" default behavior.
+
+See "#{PREFIX.join(' ')} *" for a list of subcommands or "#{PREFIX.join(' ')} <name>" 
+for help on a particular trace subcommand.
+    EOH
+    SHORT_HELP = 'Set controls for some "automatic" default behaviors'
   end
 end
 

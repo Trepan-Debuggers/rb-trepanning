@@ -5,8 +5,8 @@ require_relative '../base/subcmd'
 class Trepan::Subcommand::SetDifferent < Trepan::SetBoolSubcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP = "
-set different [on|off|nostack]
+    HELP = <<-EOH
+#{PREFIX.join(' ')} [on|off|nostack]
 
 Set to make sure 'next' or 'step' moves to a new position.
 
@@ -29,7 +29,8 @@ a given line. Also you can use 'next', but that also stepping into
 functions on different lines to also be skipped.
 
 See also 'step', 'next' which have suffixes '+' and '-' which
-override this setting."
+override this setting.
+    EOH
 
     IN_LIST      = true
     MIN_ABBREV   = 'dif'.size
