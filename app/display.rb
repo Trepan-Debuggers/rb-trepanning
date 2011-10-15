@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Classes to support gdb-like display/undisplay.
 
 require_relative 'frame'
@@ -92,6 +92,10 @@ Num Enb Expression"
 
   def max
     @list.map{|disp| disp.number}.max
+  end
+
+  def nums
+    @list.map{|disp| disp.number}
   end
 
   def size

@@ -33,9 +33,12 @@ number.
     end
     first = args.shift
     args.each do |num_str|
-      i = @proc.get_an_int(num_str)
-      success = @proc.delete_breakpoint_by_number(num_str.to_i, false) if i
-      msg('Deleted breakpoint %d.' % i) if success
+      opts = {:msg_on_error => '%s must be a number' % num_str}
+      i = @proc.get_an_int(num_str, opts)
+      if i 
+        success = @proc.delete_breakpoint_by_number(num_str.to_i, false) if i
+        msg('Deleted breakpoint %d.' % i) if success
+      end
     end
   end
 end
@@ -47,8 +50,8 @@ if __FILE__ == $0
   cmd.run([cmd.name, '1'])
   cmdproc = dbgr.core.processor
   cmds = dbgr.core.processor.commands
-  break_cmd = cmds['break']
-  break_cmd.run(['break', cmdproc.frame.source_location[0].to_s])
+  break_cmd = cmds['delete']
+  break_cmd.run(['delete', cmdproc.frame.source_location[0].to_s])
   # require_relative '../../lib/trepanning'
   # Trepan.debug
   cmd.run([cmd.name, '1'])
