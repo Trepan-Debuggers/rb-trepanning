@@ -18,6 +18,13 @@ class DisplayMgr
     @list = []
   end
   
+  def [](index)
+    raise TypeError, 
+    "index #{index} should be a Fixnum, is #{index.class}" unless
+      index.is_a?(Fixnum)
+    @list.detect {|disp| disp.number == index }
+  end
+
   def add(frame, arg, fmt=nil)
     return nil unless frame
     begin
@@ -82,6 +89,14 @@ Num Enb Expression"
     end
     false
   end
+
+  def max
+    @list.map{|disp| disp.number}.max
+  end
+
+  def size
+    @list.size
+  end
 end
 
 class Display
@@ -95,6 +110,22 @@ class Display
     @arg       = arg
     @enabled   = true
     @number    = number
+  end
+
+  def disable
+    @enabled = false
+  end
+
+  def disabled?
+    !@enabled
+  end
+
+  def enable
+    @enabled = true
+  end
+
+  def enabled?
+    @enabled
   end
 
   def to_s(frame)
@@ -118,6 +149,7 @@ class Display
     what += @arg if @arg
     '%3d: %s' % [@number, what]
   end
+
 end
 
 if __FILE__ == $0
@@ -134,6 +166,8 @@ if __FILE__ == $0
 
   x = 1
   mgr.add(frame, 'x > 1')
+  puts "Number of displays %s" % mgr.size
+  puts "Max Number  %d" % mgr.max
   print_display(mgr)
 
   mgr.enable_disable(1, false)

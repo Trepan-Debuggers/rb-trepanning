@@ -24,7 +24,7 @@ See also "enable" and "info break".
   HELP
     
     CATEGORY      = 'breakpoints'
-    SHORT_HELP    = 'Disable some breakpoints'
+    SHORT_HELP    = 'Disable some breakpoints or displays'
   }
 
   def initialize(proc)
@@ -34,12 +34,18 @@ See also "enable" and "info break".
   
   def run(args)
     if args.size == 1
-      errmsg('No breakpoint number given.')
+      errmsg('No breakpoint or display number given.')
       return
     end
-#   if args[1] == 'display'
-#     display_enable(args[2:], 0)
-#   end
+  if args[1] == 'display'
+    args.shift
+    first = args.shift
+    args.each do |num_str|
+      i = @proc.get_an_int(num_str)
+      success = @proc.en_disable_display_by_number(i, @enable_parm) if i
+      msg("Display %s #{@name}d." % i) if success
+    end
+  end
     first = args.shift
     args.each do |num_str|
       i = @proc.get_an_int(num_str)
