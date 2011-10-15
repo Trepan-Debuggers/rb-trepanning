@@ -12,7 +12,7 @@ class Trepan::Command::EnableCommand < Trepan::Command::DisableCommand
     HELP        = <<-HELP
 #{NAME} [display] NUM1 [NUM2 ...]
     
-Enables breakpoints or display NUM1. Breakpoints numbers are given as a space-
+Enables breakpoints or display NUM1... Breakpoints numbers are given as a space-
 separated list numbers. 
 
 See also "disable" and "info break".
