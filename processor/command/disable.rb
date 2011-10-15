@@ -15,10 +15,12 @@ class Trepan::Command::DisableCommand < Trepan::Command
   Trepan::Util.suppress_warnings {
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [display] bpnumber [bpnumber ...]
-    
-Disables the breakpoints given as a space separated list of breakpoint
-numbers. See also "info break" to get a list.
+#{NAME} [display] NUM1 [NUM2 ...]
+
+Disables the breakpoints or display given as a space separated list of
+numbers. 
+
+See also "enable" and "info break".
   HELP
     
     CATEGORY      = 'breakpoints'

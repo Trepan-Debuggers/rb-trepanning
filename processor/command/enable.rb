@@ -10,12 +10,12 @@ class Trepan::Command::EnableCommand < Trepan::Command::DisableCommand
   Trepan::Util.suppress_warnings {
     NAME        = File.basename(__FILE__, '.rb')
     HELP        = <<-HELP
-#{NAME} [display] BPNUM1 [BPNUM2 ...]
+#{NAME} [display] NUM1 [NUM2 ...]
     
-Enables breakpoints BPNUM1. Breakpoints numbers are given as a space-
+Enables breakpoints or display NUM1. Breakpoints numbers are given as a space-
 separated list numbers. 
 
-See also "info break" to get a list of breakpoints.
+See also "disable" and "info break".
   HELP
 
     ALIASES       = %w(en)

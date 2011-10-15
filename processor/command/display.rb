@@ -22,6 +22,8 @@ case or not.
 With no argument, evaluate and display all currently requested
 auto-display expressions.  Use "undisplay" to cancel display
 requests previously made.
+
+See also "undisplay", "enable", and "disable".
     HELP
     
   CATEGORY      = 'data'
