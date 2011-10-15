@@ -50,8 +50,8 @@ if __FILE__ == $0
   cmd.run([cmd.name, '1'])
   cmdproc = dbgr.core.processor
   cmds = dbgr.core.processor.commands
-  break_cmd = cmds['delete']
-  break_cmd.run(['delete', cmdproc.frame.source_location[0].to_s])
+  break_cmd = cmds[cmd.name]
+  break_cmd.run([cmd.name, cmdproc.frame.source_location[0].to_s])
   # require_relative '../../lib/trepanning'
   # Trepan.debug
   cmd.run([cmd.name, '1'])
