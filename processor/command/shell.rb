@@ -39,7 +39,7 @@ Here then is a loop to query VM stack values:
     ALIASES    = %w(irb)
     CATEGORY   = 'support'
     MAX_ARGS   = 1  # Need at most this many
-    SHORT_HELP = "Run #{NAME} as a command subshell"
+    SHORT_HELP = "Run irb as a command shell"
   end
 
   # This method runs the command
