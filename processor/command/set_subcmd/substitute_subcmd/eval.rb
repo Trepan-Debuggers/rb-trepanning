@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../frame'
 require_relative '../../base/subsubcmd'
 require_relative '../substitute'
@@ -10,7 +10,7 @@ class Trepan::SubSubcommand::SetSubstituteEval < Trepan::SubSubcommand
 'set substitute eval [FRAME-NUM]
 
 Causes lines in an EVAL frame to show up as we stop/step through them. 
-The text fror the eval string comes from the current frame. 
+The text for the eval string comes from the current frame. 
 
 FRAME-NUM is a relative frame number unless prefaced with an "=" which
 indicates how many frames prior to move. The default is "0"
