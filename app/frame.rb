@@ -220,6 +220,7 @@ class Trepan
       else
         print_stack_trace_from_to(0, n-1, frame, opts)
       end
+      msg "(More stack frames follow...)" if n < frame.stack_size
     end
 
     def set_return_value(frame, event, value)
