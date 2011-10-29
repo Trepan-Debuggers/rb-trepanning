@@ -71,6 +71,7 @@ module Trepanning
     end
     return nil
   end
+  module_function :ruby_syntax_errors
 end
 
 if __FILE__ == $0

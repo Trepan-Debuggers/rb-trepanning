@@ -156,13 +156,20 @@ class Trepan
       return s
     end
 
+    # Return true if frame1 and frame2 are at the same place.
+    # We use this for example in detecting tail recursion.
+    def location_equal(frame1, frame2)
+      frame1 && frame2 && frame1.source_location == frame2.source_location &&
+        frame1.pc_offset == frame2.pc_offset && 
+        frame1.source_container == frame2.source_container
+    end
+
     def offset_for_return(event)
       raise RuntimeError unless %w(return c-return).member?(event)
       # FIXME: C calls have a RubyVM::Env added to the stack.
       # Where? Why?
       'return' == event ? 1 : 4
     end
-    module_function :offset_for_return
 
     def param_names(iseq, start, stop, prefix='')
       start.upto(stop).map do |i| 
@@ -180,10 +187,22 @@ class Trepan
     end
 
     def print_stack_trace_from_to(from, to, frame, opts)
+      last_frame = nil
+      # TODO: handle indirect recursion.
+      direct_recursion_count = 0
       from.upto(to) do |i|
-        prefix = (i == opts[:current_pos]) ? '-->' : '   '
-        prefix += ' #%d ' % [i]
-        print_stack_entry(frame, i, prefix, opts)
+        if location_equal(last_frame, frame)
+          direct_recursion_count += 1
+        else
+          if direct_recursion_count > 0
+            msg("... above line repeated #{direct_recursion_count} times")
+            direct_recursion_count = 0
+          end
+          prefix = (i == opts[:current_pos]) ? '-->' : '   '
+          prefix += ' #%d ' % [i]
+          print_stack_entry(frame, i, prefix, opts)
+        end
+        last_frame = frame
         frame = frame.prev
       end
     end
@@ -191,7 +210,7 @@ class Trepan
     # Print `count' frame entries
     def print_stack_trace(frame, opts={})
       opts    = DEFAULT_STACK_TRACE_SETTINGS.merge(opts)
-      halfstack = opts[:maxstack] / 2
+      halfstack = (opts[:maxstack]+1) / 2
       n       = frame.stack_size
       n       = [n, opts[:count]].min if opts[:count]
       if n > (halfstack * 2)
@@ -212,7 +231,6 @@ class Trepan
     def value_returned(frame, event)
       frame.sp(offset_for_return(event))
     end
-    module_function :value_returned
   end
 end
 

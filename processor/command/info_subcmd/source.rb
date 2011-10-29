@@ -49,7 +49,7 @@ EOH
     max_line = LineCache::size(canonic_name)
     msg 'File has %d lines.' % max_line if max_line
     msg('SHA1 is %s.' % LineCache::sha1(canonic_name))
-    syntax_errors = Trepan::ruby_syntax_errors(canonic_name)
+    syntax_errors = Trepanning::ruby_syntax_errors(canonic_name)
     if syntax_errors
       msg('Not a syntactically-correct Ruby program.')
     else
