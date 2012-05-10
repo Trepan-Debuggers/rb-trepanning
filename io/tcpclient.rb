@@ -12,8 +12,6 @@ class Trepan
 
     include Trepanning::TCPPacking
 
-    DEFAULT_INIT_OPTS = {:open => true}
-
     CLIENT_SOCKET_OPTS = {
       :host    => 'localhost', # Symbolic name
       :port    => 1027,  # Arbitrary non-privileged port
