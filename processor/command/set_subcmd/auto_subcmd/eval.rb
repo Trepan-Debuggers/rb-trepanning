@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
 class Trepan::SubSubcommand::SetAutoEval < Trepan::SetBoolSubSubcommand
@@ -53,5 +53,5 @@ if __FILE__ == $0
   eval_cmd = Trepan::SubSubcommand::SetAutoEval.new(cmd, auto_cmd, 'eval');
   %w(off on 0 1).each { |arg| eval_cmd.run([eval_cmd.name, arg]) }
   puts '-' * 10
-  puts eval_cmd.save_command.join("\n")
+  puts eval_cmd.save_command
 end

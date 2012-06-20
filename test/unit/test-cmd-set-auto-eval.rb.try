@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+require 'test/unit'
+require_relative '../../processor/command/set_subcmd/auto'
+require_relative '../../processor/mock'
+
+class TestCommandStep < Test::Unit::TestCase
+
+  include MockDebugger
+  def test_set_autoeval_save
+    dbgr, cmd = Trepan::MockDebugger::setup('set', false)
+    cmds = dbgr.core.processor.commands
+    set_cmd = cmds['set']
+    auto_cmd = Trepan::SubSubcommand::SetAuto.new(dbgr.core.processor, 
+                                               set_cmd)
+    eval_cmd = Trepan::SubSubcommand::SetAutoEval.new(cmd, auto_cmd, 'eval');
+    eval_cmd.run([eval_cmd.name, 'on'])
+    assert_equal(["set auto eval on"], eval_cmd.save_command)
+  end
+end

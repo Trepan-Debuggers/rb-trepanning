@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
 # A base class for debugger subcommands.
 #
 # Note: don't end classname with Command (capital C) since main
@@ -164,6 +164,9 @@ class Trepan
       run_set_bool(args)
     end
 
+    # Returns an Array of commands needed to save this setting. 
+    # Here it is simply:
+    # set xx ... {on|off}
     def save_command
       val     = settings[subcmd_setting_key] ? 'on' : 'off'
       ["#{subcmd_prefix_string} #{val}"]
