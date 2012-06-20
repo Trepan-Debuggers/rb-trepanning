@@ -4,7 +4,7 @@ require_relative '../../base/subsubcmd'
 
 class Trepan::SubSubcommand::SetAutoEval < Trepan::SetBoolSubSubcommand
   unless defined?(HELP)
-    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
+    Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
     HELP = "Evaluate unrecognized debugger commands.
 
 Often inside the debugger, one would like to be able to run arbitrary
@@ -45,9 +45,13 @@ if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
   require_relative '../auto'
-  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::SetAuto,
-                                   Trepan::SubSubcommand::SetAutoEval)
-  %w(off on 0 1).each { |arg| cmd.run([cmd.name, arg]) }
+  dbgr, cmd = MockDebugger::setup('set')
+  cmds = dbgr.core.processor.commands
+  set_cmd = cmds['set']
+  auto_cmd = Trepan::SubSubcommand::SetAuto.new(dbgr.core.processor, 
+                                               set_cmd)
+  eval_cmd = Trepan::SubSubcommand::SetAutoEval.new(cmd, auto_cmd, 'eval');
+  %w(off on 0 1).each { |arg| eval_cmd.run([eval_cmd.name, arg]) }
   puts '-' * 10
-  puts cmd.save_command.join("\n")
+  puts eval_cmd.save_command.join("\n")
 end
