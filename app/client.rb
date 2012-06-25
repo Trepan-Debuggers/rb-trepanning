@@ -28,6 +28,7 @@ module Trepanning
         puts "Remote debugged process closed connection"
         break
       end
+      # p [control_code, line]
       case control_code
       when PRINT
 
