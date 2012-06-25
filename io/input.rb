@@ -41,7 +41,6 @@ class Trepan
           # Prompt should be empty and should have been 
           # handled by caller.
           unless prompt.empty?
-            require 'trepanning'; debugger
             raise RuntimeError, 
             "Internal error: prompt '#{prompt}' should have been handled by caller" unless prompt.empty?
           end
