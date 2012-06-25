@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2012 Rocky Bernstein <rockyb@rubyforge.net>
 # Debugger Server Input/Output interface.
 
 require 'socket'
@@ -84,7 +84,8 @@ class Trepan
     def write(msg)
       wait_for_connect() unless connected?
       # FIXME: do we have to check the size of msg and split output? 
-      @session.print(pack_msg(msg))
+      pack_msg = pack_msg(msg)
+      @session.print(pack_msg)
     end
 
     def writeline(msg)

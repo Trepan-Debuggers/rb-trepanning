@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2012 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Interface for client (i.e. user to communication-device) interaction.
 # The debugged program is at the other end of the communcation.

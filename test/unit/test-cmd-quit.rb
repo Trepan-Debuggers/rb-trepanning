@@ -10,6 +10,7 @@ class TestCommandQuit < Test::Unit::TestCase
   end
 
   def test_basic
+    skip('need a working fork') unless Process.respond_to?(:fork) 
     pid = fork { @cmd.run([@name, '10']) }
     Process.wait
     assert_equal(10, $?.exitstatus)

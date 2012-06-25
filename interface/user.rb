@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Interface when communicating with the user.
 
@@ -118,7 +118,7 @@ class Trepan::UserInterface < Trepan::Interface
 
   def readline(prompt='')
     @output.flush
-    if @input.line_edit && @opts[:readline]
+    if @input.line_edit && @input.use_readline
       @input.readline(prompt)
     else
       @output.write(prompt) if prompt and prompt.size > 0

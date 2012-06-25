@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
 require 'trace'                          # Trace filtering
 require 'thread_frame'                   # Stack frame introspection and more.
 require_relative '../app/complete'       # command completion
@@ -65,8 +65,8 @@ class Trepan
         opts[:port] = @settings[:port] if @settings[:port]
         opts[:host] = @settings[:host] if @settings[:host]
         opts[:complete] = @completion_proc
-        opts[:readline] ||= @settings[:readline]
-        [Trepan::ClientInterface.new(nil, nil, nil, {}, opts)]
+        user_opts = @settings[:user_opts] || {}
+        [Trepan::ClientInterface.new(nil, nil, nil, user_opts, opts)]
       else
         opts = {:complete => @completion_proc,
                 :readline => @settings[:readline]}

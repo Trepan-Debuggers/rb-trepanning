@@ -52,7 +52,7 @@ class TestAppOptions < Test::Unit::TestCase
   end
 
   def test_help_and_version_opts
-    omit unless Process.respond_to?(:fork) 
+    skip('need a working fork') unless Process.respond_to?(:fork) 
     Process.fork {
       %w(help version).each do |name|
         setup
