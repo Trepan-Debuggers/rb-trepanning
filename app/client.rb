@@ -12,7 +12,6 @@ module Trepanning
     %w(readline).each do |opt|
       user_opts[opt.to_sym] = options[opt.to_sym]
     end
-    puts user_opts.inspect
     dbgr = Trepan.new(:client      => true,
                       :cmdfiles    => [],
                       :initial_dir => options[:chdir],

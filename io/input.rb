@@ -74,7 +74,7 @@ class Trepan
       end
 
       def finalize
-       if defined?(RbReadline) && !@@readline_finalized
+        if defined?(RbReadline) && !@@readline_finalized
           begin 
             RbReadline.rl_cleanup_after_signal()
           rescue
@@ -84,7 +84,7 @@ class Trepan
           rescue
           end
           @@readline_finalized = true
-       end
+        end
       end
     end
   end
