@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rbconfig'
 module Trepanning
 
@@ -46,6 +46,15 @@ module Trepanning
     # above.
     $0 = old_dollar_0
     untrace_var(:$0, dollar_0_tracker)
+  rescue
+    if dbgr.settings[:post_mortem]
+      frame = RubyVM::ThreadFrame.current.prev(0)
+      dbgr.core.step_count = 0  # Make event processor stop
+      dbgr.core.processor.settings[:debugstack] = 0  # Make event processor stop
+      dbgr.core.event_processor('post-mortem', frame, $!)
+    else
+      raise
+    end
   end
 
   # Do a shell-like path lookup for prog_script and return the results.

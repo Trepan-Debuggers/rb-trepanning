@@ -146,7 +146,7 @@ class Trepan
         
         return_exception = @exception
         @frame = @event = @arg = @exception = nil
-
+        
       end
       return return_exception 
     end

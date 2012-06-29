@@ -169,7 +169,7 @@ class Trepan
         @different_pos = @settings[:different]
         @stop_events   = nil
       end
-
+      
       return skip_val
     end
 

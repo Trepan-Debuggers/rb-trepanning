@@ -193,8 +193,8 @@ class Trepan
     # This is the main entry point.
     def process_commands(frame)
 
-      frame_setup(frame)
       @event = @core.event
+      frame_setup(frame)
 
       @unconditional_prehooks.run
       
@@ -219,7 +219,7 @@ class Trepan
         @last_pos = [@frame.source_container, frame_line,
                      @stack_size, @current_thread, @event, 
                      @frame.pc_offset]
-      else
+      elsif @event != 'post-mortem'
         return if stepping_skip? || @stack_size <= @hide_level
         if @settings[:traceprint]
           step

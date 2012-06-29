@@ -89,6 +89,9 @@ EOB
         |num| 
         options[:port] = num
       end
+      # opts.on('-m', '--post-mortem', 'Activate post-mortem mode') do 
+      #   options[:post_mortem] = true
+      # end
       opts.on('--[no-]readline',
               'Try [not] GNU Readline') do |v|
         options[:readline] = v

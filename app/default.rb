@@ -16,6 +16,7 @@ class Trepan
     # Default values used only when 'server' or 'client'
     # (out-of-process debugging)
     :port            => 1955,
+    :post_mortem     => false,
     :host            => 'localhost', 
 
     :restart_argv    => RubyVM::OS_ARGV,

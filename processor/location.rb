@@ -23,6 +23,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       'debugger-call'  => ':o',
       'end'            => '-|',
       'line'           => '--',
+      'post-mortem'    => ':/',
       'raise'          => '!!',
       'return'         => '<-',
       'switch'         => 'sw',

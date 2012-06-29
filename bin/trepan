@@ -54,7 +54,8 @@ if File.basename(__FILE__) == File.basename($0)
     Trepan::PROG_SCRIPT = program_to_debug
 
     opts = {}
-    %w(cmdfiles highlight initial_dir host nx port readline server traceprint
+    %w(cmdfiles highlight initial_dir host nx port post_mortem
+       readline server traceprint
       ).each do |opt|
       opts[opt.to_sym] = options[opt.to_sym]
     end
