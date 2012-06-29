@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2012 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Our local modules
 require_relative '../interface'
@@ -37,6 +37,11 @@ class Trepan::ServerInterface < Trepan::Interface
         Trepan::TCPDbgServer.new(@connection_opts)
         # end
       end
+
+    # In case we need to resync
+    @last_action = :nop
+    @last_args = []
+
     # For Compatability 
     @output = @inout
     @input  = @inout
@@ -74,6 +79,8 @@ class Trepan::ServerInterface < Trepan::Interface
         msg "Please answer 'yes' or 'no'. Try again."
       end
     end
+    @last_action = :confirm
+    @last_args   = [prompt, default]
     return default
   end
   
@@ -95,16 +102,22 @@ class Trepan::ServerInterface < Trepan::Interface
   # used to write to a debugger that is connected to this
   # server; `str' written will have a newline added to it
   def msg(msg)
+    @last_args   = [msg]
+    @last_action = :msg
     @inout.writeline(PRINT + msg)
   end
 
   # used to write to a debugger that is connected to this
   # server; `str' written will not have a newline added to it
   def msg_nocr(msg)
+    @last_args   = [msg]
+    @last_action = :msg_nocr
     @inout.write(PRINT +  msg)
   end
   
   def read_command(prompt)
+    @last_args   = [prompt]
+    @last_action = :read_command
     readline(prompt)
   end
   
@@ -112,12 +125,23 @@ class Trepan::ServerInterface < Trepan::Interface
     @inout.read_dat
   end
   
+  def nop; end
+
+  def resync
+    # puts "resync", @last_action, @last_args
+    method(@last_action).call(*@last_args)
+  end
+  
   def readline(prompt, add_to_history=true)
     if prompt
       write_prompt(prompt)
     end
+    
     coded_line = @inout.read_msg()
-    @read_ctrl = coded_line[0..0]
+    while (SYNC == @read_ctrl = coded_line[0..0])
+      resync
+      coded_line = @inout.read_msg()
+    end
     coded_line[1..-1]
   end
   
@@ -128,6 +152,8 @@ class Trepan::ServerInterface < Trepan::Interface
   
   def write_prompt(prompt)
     @inout.write(PROMPT + prompt)
+    @last_args   = [prompt]
+    @last_action = :write_prompt
   end
   
   def write_confirm(prompt, default)
@@ -137,10 +163,20 @@ class Trepan::ServerInterface < Trepan::Interface
       code = CONFIRM_FALSE
     end
     @inout.write(code + prompt)
+    @last_args   = [prompt, default]
+    @last_action = :write_confirm
   end
 end
     
 # Demo
 if __FILE__ == $0
   intf = Trepan::ServerInterface.new(nil, nil, :open => false)
+  intf.resync
+  def intf.msg(msg)
+    @last_args   = [msg]
+    @last_action = :msg
+    puts msg
+  end
+  intf.msg('Hi!')
+  intf.resync
 end

@@ -20,6 +20,8 @@ module Trepanning
                       :port        => options[:port],
                       :user_opts   => user_opts
                       )
+    intf = dbgr.intf[-1]
+    intf.write_remote(SYNC, 'FIXME: add useful info')
     while true
       begin
         control_code, line = intf.read_remote

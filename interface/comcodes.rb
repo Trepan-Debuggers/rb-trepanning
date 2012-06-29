@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2012 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Communication status codes
 module Trepanning
@@ -7,14 +7,15 @@ module Trepanning
   # client interface. COMMAND goes the other way.
   module RemoteCommunication
     unless defined?(PRINT)
-      PRINT         = '.'
-      COMMAND       = 'C'
-      CONFIRM_TRUE  = 'Y'
-      CONFIRM_FALSE = 'N'
+      PRINT         = '.'   # Server wants to print
+      COMMAND       = 'C'   # read a command
+      CONFIRM_TRUE  = 'Y'   # Confirm read, default true
+      CONFIRM_FALSE = 'N'   # Confirm read, default false
       CONFIRM_REPLY = '?'
-      QUIT          = 'q'
-      PROMPT        = 'p'
-      RESTART       = 'r'
+      QUIT          = 'q'   # End debug session
+      PROMPT        = 'p'   # Write prompt
+      SYNC          = 's'   # Resynchronize communication
+      RESTART       = 'r'   # Restart
     end
   end
 end
