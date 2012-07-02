@@ -53,7 +53,7 @@ if __FILE__ == $0
   require 'thread_frame'
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+  cmd.proc.frame_setup(RubyVM::Frame::current)
   
   cmd.run([cmd.name, '1'])
   cmdproc = dbgr.core.processor

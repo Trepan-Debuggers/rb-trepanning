@@ -134,7 +134,7 @@ class Trepan
 end
 
 if __FILE__ == $0
-  tf = RubyVM::ThreadFrame.current
+  tf = RubyVM::Frame.current
   iseq = tf.iseq
   b1 = Trepan::Breakpoint.new(iseq, 0)
   p b1

@@ -37,7 +37,7 @@ module FnTestHelper
 
   # Return the caller's line number
   def get_lineno
-    RubyVM::ThreadFrame.current.prev.source_location[0]
+    RubyVM::Frame.current.prev.source_location[0]
   end
 
   def compare_output(right, d, debugger_cmds)

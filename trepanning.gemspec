@@ -18,7 +18,7 @@ This version works only with a patched version of Ruby 1.9.2 and rb-threadframe.
 
 See also rbx-trepanning for a version that works with Rubinius.
 EOF
-  spec.add_dependency('rb-threadframe', '>= 0.38')
+  spec.add_dependency('rb-threadframe', '~> 0.39')
   spec.add_dependency('rb-trace', '>= 0.5')
   spec.add_dependency('linecache-tf', '>= 1.0')
   spec.add_dependency('columnize')

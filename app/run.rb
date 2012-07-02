@@ -35,7 +35,7 @@ module Trepanning
 
     dbgr.debugger(:hide_stack=>true) do
       dbgr.core.processor.hidelevels[Thread.current] = 
-        RubyVM::ThreadFrame.current.stack_size + 1
+        RubyVM::Frame.current.stack_size + 1
       begin
         Kernel::load program_to_debug
       rescue Interrupt
@@ -48,7 +48,7 @@ module Trepanning
     untrace_var(:$0, dollar_0_tracker)
   rescue
     if dbgr.settings[:post_mortem]
-      frame = RubyVM::ThreadFrame.current.prev(0)
+      frame = RubyVM::Frame.current.prev(0)
       dbgr.core.step_count = 0  # Make event processor stop
       dbgr.core.processor.settings[:debugstack] = 0  # Make event processor stop
       dbgr.core.event_processor('post-mortem', frame, $!)

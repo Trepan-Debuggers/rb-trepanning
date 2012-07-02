@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'thread_frame'
-tf = RubyVM::ThreadFrame.current
+tf = RubyVM::Frame.current
 iseq = tf.iseq
 p iseq.child_iseqs
 puts iseq.disassemble

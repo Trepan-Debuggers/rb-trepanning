@@ -125,7 +125,7 @@ if __FILE__ == $0
     cmdproc.frame_initialize
     cmdproc.instance_variable_set('@settings', 
                                Trepan::CmdProcessor::DEFAULT_SETTINGS)
-    cmdproc.frame_setup(RubyVM::ThreadFrame.current)
+    cmdproc.frame_setup(RubyVM::Frame.current)
     def foo; 5 end
     def cmdproc.errmsg(msg)
       puts msg

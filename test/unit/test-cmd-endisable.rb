@@ -34,7 +34,7 @@ class TestCommandEnableDisable < Test::Unit::TestCase
       reset_cmdproc_vars
     end
 
-    tf = RubyVM::ThreadFrame.current
+    tf = RubyVM::Frame.current
     @cmdproc.frame_setup(tf)
     pc_offset = tf.pc_offset
     @break_cmd.run(['break'])

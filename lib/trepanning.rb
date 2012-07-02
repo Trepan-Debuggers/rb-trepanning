@@ -179,7 +179,7 @@ class Trepan
     # FIXME: one option we may want to pass is the initial trace filter.
     if opts[:hide_stack]
       @core.processor.hidelevels[Thread.current] = 
-        RubyVM::ThreadFrame.current.stack_size
+        RubyVM::Frame.current.stack_size
     end
     # unless defined?(PROG_UNRESOLVED_SCRIPT)
     #  # We may later do more sophisticated things...
@@ -194,12 +194,12 @@ class Trepan
     elsif opts[:immediate]
       # Stop immediately after this method returns. But if opts[:debugme]
       # is set, we can stop in this method.
-      RubyVM::ThreadFrame::current.trace_off = true unless opts[:debugme]
+      RubyVM::Frame::current.trace_off = true unless opts[:debugme]
       @trace_filter.set_trace_func(@core.event_proc) 
       Trace.event_masks[0] |= @core.step_events
       @core.debugger(1) 
     else
-      RubyVM::ThreadFrame::current.trace_off = true unless opts[:debugme]
+      RubyVM::Frame::current.trace_off = true unless opts[:debugme]
 
       @trace_filter.set_trace_func(@core.event_proc)
       Trace.event_masks[0] |= @core.step_events

@@ -94,7 +94,7 @@ if __FILE__ == $0
 
   x = 10
   require 'thread_frame'
-  cmdp.instance_variable_set('@frame', RubyVM::ThreadFrame.current)
+  cmdp.instance_variable_set('@frame', RubyVM::Frame.current)
   cmdp.instance_variable_set('@settings', {:stack_trace_on_error => true})
   def cmdp.msg(mess) ; puts mess end
   puts cmdp.debug_eval('x = "#{x}"')

@@ -86,7 +86,7 @@ if __FILE__ == $0
   run_cmd(cmd, [cmd.name])
   run_cmd(cmd, [cmd.name, __LINE__.to_s])
   require 'thread_frame'
-  tf = RubyVM::ThreadFrame.current
+  tf = RubyVM::Frame.current
   pc_offset = tf.pc_offset
   run_cmd(cmd, [cmd.name, "@#{pc_offset}"])
   def foo

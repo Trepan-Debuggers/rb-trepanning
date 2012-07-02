@@ -44,7 +44,7 @@ if __FILE__ == $0
     sep 
   end
   def foo(cmd, name)
-    cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+    cmd.proc.frame_setup(RubyVM::Frame::current)
     puts "#{name}"
     cmd.run([name])
     sep

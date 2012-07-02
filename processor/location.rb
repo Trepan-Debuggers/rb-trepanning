@@ -214,7 +214,7 @@ if __FILE__ == $0 && caller.size == 0
   proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
   proc.instance_variable_set('@settings', {})
   proc.frame_initialize
-  proc.frame_setup(RubyVM::ThreadFrame.current)
+  proc.frame_setup(RubyVM::Frame.current)
   proc.frame_initialize
 
   puts proc.canonic_file(__FILE__)
@@ -223,7 +223,7 @@ if __FILE__ == $0 && caller.size == 0
   puts proc.current_source_text
   xx = eval <<-END
      proc.frame_initialize
-     proc.frame_setup(RubyVM::ThreadFrame.current)
+     proc.frame_setup(RubyVM::Frame.current)
      puts proc.current_source_text
   END
 end

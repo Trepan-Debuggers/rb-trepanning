@@ -166,7 +166,7 @@ if __FILE__ == $0
   end
     
   require 'thread_frame'
-  frame = RubyVM::ThreadFrame::current
+  frame = RubyVM::Frame::current
 
   x = 1
   mgr.add(frame, 'x > 1')

@@ -229,7 +229,7 @@ if __FILE__ == $0
   end
 
   proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
-  proc.frame_setup(RubyVM::ThreadFrame.current)
+  proc.frame_setup(RubyVM::Frame.current)
   proc.frame_initialize
   puts "stack size: #{proc.top_frame.stack_size}"
   0.upto(proc.top_frame.stack_size) { |i| proc.adjust_frame(i, true) }

@@ -6,7 +6,7 @@ require 'thread_frame'
 class TestAppBrkpt < Test::Unit::TestCase
 
   def test_basic
-    tf = RubyVM::ThreadFrame.current
+    tf = RubyVM::Frame.current
     iseq = tf.iseq
     b1 = Trepan::Breakpoint.new(iseq, 0)
     assert_equal(false, b1.temp?)

@@ -6,7 +6,7 @@ require 'thread_frame'
 class TestLibAppBrkptMgr < Test::Unit::TestCase
 
   def test_basic
-    tf = RubyVM::ThreadFrame.current
+    tf = RubyVM::Frame.current
     mgr = DisplayMgr.new
     x = 1
     assert_equal(0, mgr.size)

@@ -51,7 +51,7 @@ module MockDebugger
   # Common Mock debugger setup 
   def setup(name=nil, show_constants=true)
     unless name
-      tf = RubyVM::ThreadFrame.current.prev
+      tf = RubyVM::Frame.current.prev
       name = File.basename(tf.source_container[1], '.rb')
     end
     if ARGV.size > 0 && ARGV[0] == 'debug'
@@ -64,7 +64,7 @@ module MockDebugger
 
     cmds = dbgr.core.processor.commands
     cmd  = cmds[name]
-    cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
+    cmd.proc.frame_setup(RubyVM::Frame::current.prev)
     show_special_class_constants(cmd) if show_constants
 
     def cmd.confirm(prompt, default)
@@ -90,7 +90,7 @@ module MockDebugger
   def sub_setup(sub_class, run=true)
     sub_name = sub_class.const_get('PREFIX')
     dbgr, cmd = setup(sub_name[0], false)
-    cmd.proc.frame_setup(RubyVM::ThreadFrame::current.prev)
+    cmd.proc.frame_setup(RubyVM::Frame::current.prev)
     cmd.proc.event = 'debugger-call'
     sub_cmd = sub_class.new(cmd)
     sub_cmd.summary_help(sub_cmd)

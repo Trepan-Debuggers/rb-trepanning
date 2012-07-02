@@ -129,7 +129,7 @@ if __FILE__ == $0
     puts "--- #{i} ---"
   end
 
-  frame = RubyVM::ThreadFrame.current 
+  frame = RubyVM::Frame.current 
   iseq = frame.iseq
   brkpts = Trepan::BreakpointMgr.new
   brkpts.add(iseq, 0)

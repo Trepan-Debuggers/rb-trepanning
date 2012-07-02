@@ -8,19 +8,19 @@ class TestAppFrame < Test::Unit::TestCase
   include Trepan::Frame
 
   def test_app_frame
-    frame = RubyVM::ThreadFrame.current
+    frame = RubyVM::Frame.current
     base_count = frame.stack_size
     s = format_stack_entry(frame)
     pat = /^METHOD .*#test_app_frame\(\) in file .*test-app-frame.rb at line \d+/
     assert(s =~ pat, "got #{s}, expected pat #{pat}")
     1.times do 
-      assert_equal(base_count+2, RubyVM::ThreadFrame.current.stack_size)
+      assert_equal(base_count+2, RubyVM::Frame.current.stack_size)
       s = format_stack_entry(frame)
       assert(s =~ pat, "got #{s}, expected pat #{pat}")
     end
 
     def inner_test(count)
-      frame = RubyVM::ThreadFrame.current
+      frame = RubyVM::Frame.current
       assert_equal(count, frame.stack_size)
 
       s = format_stack_entry(frame)

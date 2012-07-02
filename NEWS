@@ -1,3 +1,7 @@
+(0.1.5)
+- Fix bug in remote debugging not showing prompt.
+- Internal RubyVM::ThreadFrame -> RubyVM::Frame
+
 Oct 27,  2011  (0.1.4)
 - Add debugger commands: 
   * info iv         (is in ruby-debug)

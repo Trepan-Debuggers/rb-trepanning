@@ -22,7 +22,7 @@ class TestCmdProcessorLocation < Test::Unit::TestCase
     assert_equal File.basename(__FILE__), @cmdproc.canonic_file(__FILE__)
     eval <<-EOE
       @cmdproc.frame_initialize
-      @cmdproc.frame_setup(RubyVM::ThreadFrame.current)
+      @cmdproc.frame_setup(RubyVM::Frame.current)
       assert @cmdproc.current_source_text
     EOE
   end

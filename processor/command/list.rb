@@ -208,7 +208,7 @@ if __FILE__ == $0
       |x,y| x + y
     end
     require 'thread_frame'
-    tf = RubyVM::ThreadFrame.current
+    tf = RubyVM::Frame.current
     cmd.proc.frame_setup(tf)
     run_cmd2(cmd, %w(list p))
 

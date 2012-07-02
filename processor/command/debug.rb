@@ -27,7 +27,7 @@ Enter the debugger recursively on RUBY-CODE.
     arg_str    = args[1..-1].join(' ')
     hidelevels = @proc.hidelevels[th]
 
-    stack_diff = RubyVM::ThreadFrame.current.stack_size - frame.stack_size 
+    stack_diff = RubyVM::Frame.current.stack_size - frame.stack_size 
 
     # Ignore tracing in support routines:
     tf = @proc.dbgr.trace_filter 
@@ -57,7 +57,7 @@ Enter the debugger recursively on RUBY-CODE.
     @proc.core.step_count  = 0
     @proc.next_level       = 32000
 
-    RubyVM::ThreadFrame.current.trace_off = false
+    RubyVM::Frame.current.trace_off = false
     retval = @proc.debug_eval(arg_str)
 
     # Restore munged values
@@ -79,6 +79,6 @@ if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   cmd.proc.hidelevels[Thread.current] = 0
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+  cmd.proc.frame_setup(RubyVM::Frame::current)
   cmd.run([cmd.name, 'x = 1; y = 2'])
 end

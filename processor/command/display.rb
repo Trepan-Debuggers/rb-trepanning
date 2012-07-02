@@ -76,7 +76,7 @@ if __FILE__ == $0
     puts '==' * 10
   end
 
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+  cmd.proc.frame_setup(RubyVM::Frame::current)
 
   run_cmd(cmd, [cmd.name])
   run_cmd(cmd, [cmd.name, '/x', '10'])

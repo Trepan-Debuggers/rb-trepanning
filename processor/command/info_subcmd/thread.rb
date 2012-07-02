@@ -91,11 +91,11 @@ if __FILE__ == $0
 
   cmd.proc.instance_variable_set('@last_args', cmd_args)
   cmd_args = ['info', name]
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+  cmd.proc.frame_setup(RubyVM::Frame::current)
   cmd.run(cmd_args)
   puts '-' * 20
   Thread.new do 
-    cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+    cmd.proc.frame_setup(RubyVM::Frame::current)
     cmd.run(cmd_args)
     puts '-' * 10
     cmd.run(cmd_args + [0])

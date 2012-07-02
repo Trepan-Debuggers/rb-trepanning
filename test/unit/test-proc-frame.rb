@@ -34,7 +34,7 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
 
   # See that we have can load up commands
   def test_basic
-    @proc.frame_setup(RubyVM::ThreadFrame.current)
+    @proc.frame_setup(RubyVM::Frame.current)
 
     # Test absolute positioning. Should all be okay
     0.upto(@proc.top_frame.stack_size-1) do |i| 
@@ -53,7 +53,7 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
     assert_equal(frame_index, @proc.frame_index)
 
     setup
-    @proc.top_frame  = @proc.frame = RubyVM::ThreadFrame.current
+    @proc.top_frame  = @proc.frame = RubyVM::Frame.current
     @proc.adjust_frame(0, true)
 
     @proc.top_frame.stack_size-1.times do 

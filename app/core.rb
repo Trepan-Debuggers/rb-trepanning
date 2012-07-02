@@ -153,7 +153,7 @@ class Trepan
 
     # A Ruby 1.8-style event processor. We don't use file, line, id, bind. 
     def old_event_processor(event, file, line, id, bind, klass)
-      event_processor(event, RubyVM::ThreadFrame.current.prev)
+      event_processor(event, RubyVM::Frame.current.prev)
     end
 
     # Call this from inside the program you want to get a synchronous
@@ -163,14 +163,14 @@ class Trepan
       while @frame && @frame.type == 'IFUNC'
         @frame = @frame.prev
       end
-      frame = RubyVM::ThreadFrame.current.prev(prev_count+1)
+      frame = RubyVM::Frame.current.prev(prev_count+1)
       @step_count = 0  # Make event processor stop
       event_processor('debugger-call', frame)
     end
     
     # A trace-hook processor for 'trace var'
     def trace_var_processor(var_name, value)
-      frame = RubyVM::ThreadFrame.current.prev(2)
+      frame = RubyVM::Frame.current.prev(2)
       if 'CFUNC' == frame.type
         # Don't need the C call that got us here.
         prev = frame.prev

@@ -15,7 +15,7 @@ class TestProcEval < Test::Unit::TestCase
                  cmdp.fake_eval_filename('x = 1; y = 2', 7))
     x = 1
     require 'thread_frame'
-    cmdp.instance_variable_set('@frame', RubyVM::ThreadFrame.current)
+    cmdp.instance_variable_set('@frame', RubyVM::Frame.current)
     cmdp.instance_variable_set('@settings', {:stack_trace_on_error => true})
     assert_equal('1', cmdp.debug_eval('x = "#{x}"'))
     x = 2

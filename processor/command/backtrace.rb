@@ -90,7 +90,7 @@ if __FILE__ == $0
   %w(1 100).each {|count| run_cmd(cmd, [cmd.name, count])}
   cmd.settings[:basename] = true
   def foo(cmd, name)
-    cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+    cmd.proc.frame_setup(RubyVM::Frame::current)
     run_cmd(cmd, [cmd.name])
   end
   foo(cmd, cmd.name)

@@ -91,7 +91,7 @@ if __FILE__ == $0
   # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new
   # dbgr.debugger
-  eval('set_cmd.proc.frame_setup(RubyVM::ThreadFrame::current); setx_cmd.run([])')
+  eval('set_cmd.proc.frame_setup(RubyVM::Frame::current); setx_cmd.run([])')
 
   # name = File.basename(__FILE__, '.rb')
   # subcommand.summary_help(name)

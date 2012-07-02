@@ -9,7 +9,7 @@ class TestCommandParseListCmd < Test::Unit::TestCase
     @cmd = @cmds['list']
   end
   def test_parse_list_cmd
-    tf = RubyVM::ThreadFrame.current
+    tf = RubyVM::Frame.current
     @cmdproc.frame_setup(tf)
     short_file = File.basename(__FILE__)
     listsize = 10

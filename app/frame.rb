@@ -242,61 +242,61 @@ if __FILE__ == $0
   def msg(msg)
     puts msg
   end
-  print_stack_trace(RubyVM::ThreadFrame.current, :basename => true)
+  print_stack_trace(RubyVM::Frame.current, :basename => true)
   def foo
     puts '=' * 10
-    print_stack_trace(RubyVM::ThreadFrame.current, :show_pc => true)
+    print_stack_trace(RubyVM::Frame.current, :show_pc => true)
   end
   foo
 
   def bar(a, b, c)
     puts '=' * 10
-    print_stack_trace(RubyVM::ThreadFrame.current,
+    print_stack_trace(RubyVM::Frame.current,
                       )
   end
   bar(1, 2, 3)
 
   def baz(a, b, c=5)
     puts '=' * 10
-    print_stack_trace(RubyVM::ThreadFrame.current)
+    print_stack_trace(RubyVM::Frame.current)
   end
   baz(1, 2)
 
   def bat(a, b, &block)
     puts '=' * 10
-    print_stack_trace(RubyVM::ThreadFrame.current)
+    print_stack_trace(RubyVM::Frame.current)
   end
   bat(1, 2)
 
   def babe(a, b, *rest)
     puts '=' * 10
-    print_stack_trace(RubyVM::ThreadFrame.current)
+    print_stack_trace(RubyVM::Frame.current)
   end
   babe(1, 2)
 
   puts '=' * 10
-  x  = lambda { |a,b|  print_stack_trace(RubyVM::ThreadFrame::current) }
+  x  = lambda { |a,b|  print_stack_trace(RubyVM::Frame::current) }
   x.call(1,2)
   puts '=' * 10
   x  = Proc.new do |a| 
-    print_stack_trace(RubyVM::ThreadFrame::current)
+    print_stack_trace(RubyVM::Frame::current)
   end
   x.call(1,2)
   class C # :nodoc
     def initialize(a)
-      print_stack_trace(RubyVM::ThreadFrame::current)
+      print_stack_trace(RubyVM::Frame::current)
     end
   end
   puts '=' * 30
   C.new('Hi')
   puts '=' * 30
-  eval("print_stack_trace(RubyVM::ThreadFrame.current)")
+  eval("print_stack_trace(RubyVM::Frame.current)")
   puts '=' * 30
-  eval("eval('print_stack_trace(RubyVM::ThreadFrame.current)')")
+  eval("eval('print_stack_trace(RubyVM::Frame.current)')")
   puts '=' * 30
-  eval("eval('print_stack_trace(RubyVM::ThreadFrame.current, :maxstack => 2)')")
+  eval("eval('print_stack_trace(RubyVM::Frame.current, :maxstack => 2)')")
   puts '=' * 30
   1.times do |a; b|
-    print_stack_trace(RubyVM::ThreadFrame::current)
+    print_stack_trace(RubyVM::Frame::current)
   end
 end

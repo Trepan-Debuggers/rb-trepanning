@@ -149,7 +149,7 @@ if __FILE__ == $0
   puts '-' * 20
 
   require 'thread_frame'
-  tf = RubyVM::ThreadFrame.current
+  tf = RubyVM::Frame.current
   pc_offset = tf.pc_offset
   def foo
     5 

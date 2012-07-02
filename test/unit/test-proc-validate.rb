@@ -44,7 +44,7 @@ class TestValidate < Test::Unit::TestCase
   end
 
   def test_parse_position
-    tf = RubyVM::ThreadFrame.current
+    tf = RubyVM::Frame.current
     @cmdproc.frame_setup(tf)
     file = File.basename(__FILE__)
     [[__FILE__, [true, file, nil, nil]],
@@ -71,7 +71,7 @@ class TestValidate < Test::Unit::TestCase
   end
 
   # def test_breakpoint_position
-  #   tf = RubyVM::ThreadFrame.current
+  #   tf = RubyVM::Frame.current
   #   @cmdproc.frame_setup(tf)
 
   #   def munge(args)
@@ -97,7 +97,7 @@ class TestValidate < Test::Unit::TestCase
   def test_method?
     def foo; 5 end
     require 'irb'
-    tf = RubyVM::ThreadFrame.current
+    tf = RubyVM::Frame.current
     @cmdproc.frame_setup(tf)
     @cmdproc.method?('@cmdproc.errmsg')
     %w(Array.map @cmdproc.errmsg foo Trepan::CmdProcessor.new IRB.start 

@@ -18,7 +18,7 @@ class TestCommandBreak < Test::Unit::TestCase
 
   # require_relative '../../lib/trepanning'
   def test_basic
-    tf = RubyVM::ThreadFrame.current
+    tf = RubyVM::Frame.current
     @cmdproc.frame_setup(tf)
     [
      [@name,  __LINE__.to_s],
@@ -66,7 +66,7 @@ class TestCommandBreak < Test::Unit::TestCase
     # require_relative '../../lib/trepanning'
     line = __LINE__  # This is the line we set the breakpoint for.
     1.times do
-      tf = RubyVM::ThreadFrame.current  
+      tf = RubyVM::Frame.current  
       @cmdproc.frame_setup(tf)
       run_cmd(@my_cmd, [@name, line.to_s])
       assert_equal(true, @cmdproc.errmsgs.empty?, @cmdproc.errmsgs)

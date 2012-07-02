@@ -366,7 +366,7 @@ if __FILE__ == $0
     cmdproc.frame_initialize
     cmdproc.instance_variable_set('@settings', 
                                Trepan::CmdProcessor::DEFAULT_SETTINGS)
-    cmdproc.frame_setup(RubyVM::ThreadFrame.current)
+    cmdproc.frame_setup(RubyVM::Frame.current)
     onoff = %w(1 0 on off)
     onoff.each { |val| puts "onoff(#{val}) = #{cmdproc.get_onoff(val)}" }
     %w(1 1E bad 1+1 -5).each do |val| 

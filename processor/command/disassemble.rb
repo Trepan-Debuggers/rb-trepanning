@@ -92,14 +92,14 @@ if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   def small_fn(cmd, name)
-    cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+    cmd.proc.frame_setup(RubyVM::Frame::current)
     cmd.run [name]
   end
   small_fn(cmd, cmd.name)
   p = Proc.new do 
     |x,y| x + y
   end
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+  cmd.proc.frame_setup(RubyVM::Frame::current)
   cmd.run([cmd.name, 'p'])
   puts cmd.complete('f')
   require 'irb'

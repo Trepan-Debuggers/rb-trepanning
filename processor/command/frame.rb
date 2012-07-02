@@ -112,7 +112,7 @@ if __FILE__ == $0
   def sep ; puts '=' * 40 end
   %w(0 1 -2).each {|count| cmd.run([cmd.name, count]); sep }
   def foo(cmd, name)
-    cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+    cmd.proc.frame_setup(RubyVM::Frame::current)
     %w(0 -1).each {|count| cmd.run([name, count]); sep }
   end
   foo(cmd, cmd.name)

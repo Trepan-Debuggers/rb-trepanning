@@ -58,7 +58,7 @@ if __FILE__ == $0
     puts '==' * 10
   end
 
-  cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
+  cmd.proc.frame_setup(RubyVM::Frame::current)
 
   run_cmd(cmd, %W(#{cmd.name} z))
   run_cmd(cmd, %W(#{cmd.name} 1 10))

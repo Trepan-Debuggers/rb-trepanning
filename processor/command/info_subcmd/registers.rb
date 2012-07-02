@@ -72,6 +72,6 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   cmd_args = ['info', name]
   info_cmd.instance_variable_set('@last_args', cmd_args)
-  command.proc.frame_setup(RubyVM::ThreadFrame::current)
+  command.proc.frame_setup(RubyVM::Frame::current)
   command.run(cmd_args)
 end
