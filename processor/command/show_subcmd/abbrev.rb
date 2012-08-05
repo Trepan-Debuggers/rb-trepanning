@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011, 2012 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::ShowAbbrev < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP       = "Show whether we allow abbreviate debugger command names"
+    HELP       = "Show whether we allow abbreviated debugger command names"
     MIN_ABBREV = 'ab'.size
   end
 
