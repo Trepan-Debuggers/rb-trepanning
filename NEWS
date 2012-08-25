@@ -1,3 +1,6 @@
+- Incompatible change: Remove aliases 'd' and 'u' for down and up
+  respectively. gdb uses 'u' and 'd' to mean something different.
+
 (0.1.5)
 - Fix bug in remote debugging not showing prompt.
 - Internal RubyVM::ThreadFrame -> RubyVM::Frame

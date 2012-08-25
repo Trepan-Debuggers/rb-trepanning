@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../breakpoint'
 require_relative '../../app/breakpoint'
@@ -22,6 +22,7 @@ number.
 
     CATEGORY      = 'breakpoints'
     SHORT_HELP    = 'Delete some breakpoints'
+    ALIASES       = %w(d)
   end
   
   def run(args)
