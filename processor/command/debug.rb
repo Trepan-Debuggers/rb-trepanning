@@ -42,7 +42,7 @@ Enter the debugger recursively on RUBY-CODE.
 
     # Values we need to save before munging them
     old_tracing            = th.tracing
-    old_exec_event_tracing = th.exec_event_tracing
+    old_exec_event_tracing = th.exec_event_tracing?
     old_mutex              = @proc.core.mutex 
     old_next_level         = @proc.next_level
     old_step_count         = @proc.core.step_count

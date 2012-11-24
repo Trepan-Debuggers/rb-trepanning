@@ -14,12 +14,12 @@ A modular, testable, Ruby debugger using some of the best ideas from ruby-debug,
 
 Some of the core debugger concepts have been rethought. As a result, some of this may be experimental.
 
-This version works only with a patched version of Ruby 1.9.2 and rb-threadframe.
+This version works only with a patched version of Ruby 1.9.2 or Ruby 1.9.3 and rb-threadframe.
 
 See also rbx-trepanning for a version that works with Rubinius.
 EOF
-  spec.add_dependency('rb-threadframe', '~> 0.40')
-  spec.add_dependency('rb-trace', '>= 0.5')
+  spec.add_dependency('rb-threadframe', '>= 0.39.9')
+  spec.add_dependency('rb-trace', '>= 0.5.9')
   spec.add_dependency('linecache-tf', '>= 1.0')
   spec.add_dependency('columnize')
   spec.add_development_dependency('diff-lcs') # For testing only
@@ -34,8 +34,8 @@ EOF
   spec.license      = 'MIT'
   spec.platform     = Gem::Platform::RUBY
   spec.require_path = 'lib'
-  spec.required_ruby_version = '~> 1.9.2frame'
-  spec.summary      = 'Modular Ruby 1.9.2 Debugger'
+  # spec.required_ruby_version = '~> 1.9.2frame'
+  spec.summary      = 'Modular Ruby 1.9.2 or 1.9.3 Debugger'
   spec.version      = Trepan::VERSION
 
   # Make the readme file the start page for the generated html

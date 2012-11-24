@@ -88,7 +88,7 @@ class TestRecursiveBt < Test::Unit::TestCase
        "    #1 METHOD TestRecursiveBt#factorial(n) in file test-recursive-bt.rb at line 37",
        "... above line repeated 3 times",
        "    #5 METHOD TestRecursiveBt#test_recursive_backtrace() in file test-recursive-bt.rb at line 42",
-       "    #6 METHOD TestRecursiveBt#run(runner) in file unit.rb at line 695",
+       "    #6 METHOD TestRecursiveBt#run(runner) in file unit.rb at line xxx",
        "(More stack frames follow...)",
        "-- ",
        "if n > 0",
@@ -96,6 +96,7 @@ class TestRecursiveBt < Test::Unit::TestCase
        "return 1",
        "-- ",
        "d.stop"]
+    d.intf[-1].output.output[-8].sub!(/at line \d+$/, 'at line xxx')
     compare_output(out, d, cmds)
 
   end

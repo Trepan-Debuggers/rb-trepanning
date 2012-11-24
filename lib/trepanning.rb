@@ -42,7 +42,7 @@ class Trepan
     # FIXME: Tracing through intialization code is slow. Need to figure
     # out better ways to do this. 
     th = Thread.current
-    th.exec_event_tracing  = true
+    th.exec_event_tracing = true
 
     @settings = Trepan::DEFAULT_SETTINGS.merge(settings)
     @input  = @settings[:input] || STDIN
@@ -111,7 +111,7 @@ class Trepan
       clear_trace_func
       @intf[-1].close 
     end
-    th.exec_event_tracing  = false
+    th.exec_event_tracing = false
   end
 
   # The method is called when we want to do debugger command completion
