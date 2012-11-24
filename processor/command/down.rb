@@ -18,7 +18,6 @@ is the most recent frame. If no count is given, move down 1.
 See also 'up' and 'frame'.
   HELP
 
-    ALIASES       = %w(d)
     NAME          = File.basename(__FILE__, '.rb')
     SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
   }

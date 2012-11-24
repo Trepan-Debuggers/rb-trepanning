@@ -18,7 +18,6 @@ the most recent frame. If no count is given, move up 1.
 See also 'down' and 'frame'.
   HELP
 
-    ALIASES       = %w(u)
     CATEGORY      = 'stack'
     MAX_ARGS      = 1  # Need at most this many
     NEED_STACK    = true
