@@ -1,20 +1,24 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'
 require_relative 'virtual'
 class Trepan
   class CmdProcessor < VirtualCmdProcessor
 
-    def debug_eval(str, max_fake_filename=15)
+    def debug_eval(str, max_fake_filename=15, 
+                   ruby_193_hack=false) #FIXME: remove ruby_193_hack
       begin
-        debug_eval_with_exception(str, max_fake_filename)
+        debug_eval_with_exception(str, max_fake_filename, ruby_193_hack)
       rescue SyntaxError, StandardError, ScriptError => e
         exception_dump(e, @settings[:stack_trace_on_error], $!.backtrace)
         nil
       end
     end
 
-    def debug_eval_with_exception(str, max_fake_filename=15)
+    def debug_eval_with_exception(str, max_fake_filename=15, 
+                                  ruby_193_hack=false) # FIXME: remove ruby_193_hack
+      RubyVM::Frame.current.trace_off = true if ruby_193_hack
       filename, b = get_binding_and_filename(str, max_fake_filename)
+      RubyVM::Frame.current.trace_off = false if ruby_193_hack
       eval(str, b, filename)
     end
 

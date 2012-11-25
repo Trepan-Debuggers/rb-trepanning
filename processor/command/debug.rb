@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2012 Rocky Bernstein <rockyb@rubyforge.net>
 require 'thread_frame'
 require_relative '../command'
 
@@ -30,12 +30,15 @@ Enter the debugger recursively on RUBY-CODE.
     stack_diff = RubyVM::Frame.current.stack_size - frame.stack_size 
 
     # Ignore tracing in support routines:
-    tf = @proc.dbgr.trace_filter 
-    [self.method(:run), @proc.method(:debug_eval),
-     @proc.method(:debug_eval_with_exception),
-     @proc.method(:get_binding_and_filename),
-     @proc.method(:fake_eval_filename)].each do |m|
-      tf << m unless tf.member?(m)
+    # FIXME remvoe 1.9.3 hack
+    if '1.9.3' != RUBY_VERSION
+      tf = @proc.dbgr.trace_filter 
+      [self.method(:run), @proc.method(:debug_eval),
+       @proc.method(:debug_eval_with_exception),
+       @proc.method(:get_binding_and_filename),
+       @proc.method(:fake_eval_filename)].each do |m|
+        tf << m unless tf.member?(m)
+      end
     end
 
     @proc.hidelevels[th] += stack_diff + EXTRA_DEBUG_SETUP_CALLS
@@ -47,18 +50,19 @@ Enter the debugger recursively on RUBY-CODE.
     old_next_level         = @proc.next_level
     old_step_count         = @proc.core.step_count
 
-    msg 'ENTERING NESTED DEBUGGER'
+    section 'ENTERING NESTED DEBUGGER'
 
     # Things we need to do to allow entering the debugger again
     @proc.debug_nest      += 1
     @proc.core.mutex       = Mutex.new
     th.tracing             = false
     th.exec_event_tracing  = false
-    @proc.core.step_count  = 0
     @proc.next_level       = 32000
 
     RubyVM::Frame.current.trace_off = false
-    retval = @proc.debug_eval(arg_str)
+    @proc.core.step_count  = 0
+    retval = @proc.debug_eval(arg_str, 15, 
+                              RUBY_VERSION == '1.9.3') # FIXME
 
     # Restore munged values
     th.exec_event_tracing  = old_exec_event_tracing
@@ -70,7 +74,7 @@ Enter the debugger recursively on RUBY-CODE.
     @proc.next_level       = old_next_level
     @proc.print_location
     @proc.debug_nest      -= 1
-    msg 'LEAVING NESTED DEBUGGER'
+    section 'LEAVING NESTED DEBUGGER'
     msg "R=> #{retval.inspect}"
   end
 end
