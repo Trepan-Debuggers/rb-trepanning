@@ -1,6 +1,6 @@
 A modular, testable debugger for MRI Ruby 1.9.3 or 1.9.2. A total rewrite of *ruby-debug*.
 
-__In order to use this debugger, you'll need a patched MRI Ruby 1.9.3 or 1.9.2 and some additional packages.__ See the [installation instructions](https://github.com/rocky/rb-trepanning/wiki/How-to-Install-rb-trepanning).
+_In order to use this debugger, you'll need a patched MRI Ruby 1.9.3 or 1.9.2 and some additional packages._ See the [installation instructions](https://github.com/rocky/rb-trepanning/wiki/How-to-Install-rb-trepanning).
 
 There is a ["google group mailing list](http://groups.google.com/group/ruby-debugger for Ruby debuggers.)
 
