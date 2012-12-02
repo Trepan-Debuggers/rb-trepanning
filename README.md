@@ -48,7 +48,7 @@ The above is really shorthand for something like:
   $trepan.debugger
 ```
 
-The global variable *$trepan* set holds debugger settings, such as `autolist" or `autoeval` settings and breakpoint information.
+The global variable *$trepan* set holds debugger settings, such as `autolist` or `autoeval` settings and breakpoint information.
 
 Due to the line-event orientation in ruby-debug, it occasionally was convenient to add a synchronous stop in your program. I don't think that will be necessary here, but if you do call to the debugger at the point of the call rather than the subsequent stopping point, set opts[:immediate] to true. Example:
 
