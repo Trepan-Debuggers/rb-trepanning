@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2012 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetPc < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = 'Set VM program counter (PC)'
+    HELP         = 'set PC INTEGER-EXPRESSION
+
+Set VM program-counter register (PC) to INTEGER-EXPRESSION.
+
+Warning: this is potentially dangerous.
+'
+    SHORT_HELP   = 'Set VM program counter (PC)'
     IN_LIST      = true
     MIN_ABBREV   = 'pc'.size
   end

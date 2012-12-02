@@ -1,8 +1,8 @@
-A modular, testable debugger for MRI Ruby 1.9.3 or 1.9.2. A total rewrite of *ruby-debug*.
+The trepanning debugger gdb-like debugger. As such, it is both a high-level and low-level debugger. It is a also a rewrite of *ruby-debug*. But to provide all of the functionality that it has, it requires a patched version of MRI Ruby 1.9.3 or 1.9.2 found the [rb-threadframe project](https://rocky/rb-threadframe). The additional run-time support in the MRI is what gives this some debugger power that you won't find in other MRI 1.9 debuggers.
 
-_In order to use this debugger, you'll need a patched MRI Ruby 1.9.3 or 1.9.2 and some additional packages._ See the [installation instructions](https://github.com/rocky/rb-trepanning/wiki/How-to-Install-rb-trepanning).
+See the [installation instructions](https://github.com/rocky/rb-trepanning/wiki/How-to-Install-rb-trepanning).
 
-There is a ["google group mailing list](http://groups.google.com/group/ruby-debugger for Ruby debuggers.)
+There is a [google group mailing list](http://groups.google.com/group/ruby-debugger for Ruby debuggers.)
 
 If *trepanning* is installed, here is how to run:
 
@@ -50,7 +50,7 @@ The above is really shorthand for something like:
 
 The global variable *$trepan* set holds debugger settings, such as `autolist" or `autoeval` settings and breakpoint information.
 
-Due to the line-event orientation in ruby-debug, it occasionally was convenient to add a synchronous stop in your program. I don't think that will be necessary here, but if you do call to the debugger at the point of the call rather than the subsequent stopping point, set `opts[:immediate]` to *true*. Example:
+Due to the line-event orientation in ruby-debug, it occasionally was convenient to add a synchronous stop in your program. I don't think that will be necessary here, but if you do call to the debugger at the point of the call rather than the subsequent stopping point, set opts[:immediate] to true. Example:
 
 ```ruby
 
