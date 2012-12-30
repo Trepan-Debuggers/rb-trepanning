@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2012 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative './../command'
 require_relative '../../app/util'
 
@@ -19,7 +19,7 @@ next to the inspect output of the value.
 
 If no string is given, we run the string from the current source code
 about to be run. If the command ends ? (via an alias) and no string is
-given we will the following translations occur:
+given, the following translations occur:
 
    {if|elsif|unless} expr [then]  => expr
    {until|while} expr [do]        => expr
