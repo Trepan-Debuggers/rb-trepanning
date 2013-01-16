@@ -120,6 +120,8 @@ class Trepan
 
     def finalize
       breakpoint_finalize
+      msg "%sThat's all, folks..." % 
+        (defined?(Trepan::PROGRAM) ? "#{Trepan::PROGRAM}: " : '')
     end
 
     # Check that we meed the criteria that cmd specifies it needs

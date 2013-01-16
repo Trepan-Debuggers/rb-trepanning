@@ -35,7 +35,7 @@ EOF
   spec.platform     = Gem::Platform::RUBY
   spec.require_path = 'lib'
   # spec.required_ruby_version = '~> 1.9.2frame'
-  spec.summary      = 'Modular Ruby 1.9.2 or 1.9.3 Debugger'
+  spec.summary      = 'Modular Ruby 1.9.3 or 1.9.2 Debugger'
   spec.version      = Trepan::VERSION
 
   # Make the readme file the start page for the generated html
