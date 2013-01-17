@@ -30,7 +30,13 @@ class TestAppOptions < Test::Unit::TestCase
     assert_equal(orig_cd, @options[:chdir])
     assert_not_equal('', @stderr.string)
     assert_equal('', @stdout.string)
-    File.unlink tf.path
+    # Looks like on various MinGW systems Tempfile and tf.path and unlike don't
+    # work together
+    begin 
+      File.unlink tf.path
+    rescue  
+    end
+    
     # FIXME: add test where directory isn't executable.
   end
 
