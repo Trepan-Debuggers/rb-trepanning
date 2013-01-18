@@ -19,6 +19,8 @@ class TestCommandEdit < Test::Unit::TestCase
   end
 
   def test_basic
+    editor = ENV['EDITOR'] || '/bin/ex'
+    skip "Can't find editor to use" unless File.executable?(editor)
     old_editor = ENV['EDITOR']
     ENV['EDITOR'] = '#'
     base_file = File.basename(__FILE__)
