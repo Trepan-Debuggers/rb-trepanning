@@ -1,10 +1,10 @@
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Trepan command list validation routines.  A String type is
 # usually passed in as the argument to validation routines.
 
 require 'rubygems'
-
+require 'rbconfig'
 require_relative './validate'
 
 class Trepan
@@ -44,6 +44,14 @@ class Trepan
         filename = frame_filename
         first = [1, frame_line - center_correction].max
       else
+        ## FIXME: push into parse
+        if RbConfig::CONFIG['target_os'].start_with?('mingw') and
+            position_str =~ /^[A-Za-z]:/
+          drive_letter = position_str[0..1]
+          position_str = position_str[2..-1]
+        else
+          drive_leter = nil
+        end
         list_cmd_parse = parse_list(position_str,
                                     :file_exists_proc => file_exists_proc)
         return [nil] * 4 unless list_cmd_parse
