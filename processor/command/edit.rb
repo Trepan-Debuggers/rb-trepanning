@@ -51,6 +51,10 @@ Examples:
       errmsg "edit needs at most 2 args." 
     end
     editor = ENV['EDITOR'] || '/bin/ex'
+    unless File.executable?(editor)
+      errmsg "Editor #{editor} is not executable. Trying anyway..." 
+    end
+
     if File.readable?(file)
       file = File.basename(file) if settings[:basename]
       edit_cmd = "#{editor} +#{line} \"#{file}\""

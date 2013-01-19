@@ -1,8 +1,9 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Trepan command input validation routines.  A String type is
 # usually passed in as the argument to validation routines.
 
+require 'rbconfig'
 require 'rubygems'
 require 'linecache'
 
@@ -290,6 +291,14 @@ class Trepan
     # Parse arg as [filename:]lineno | function | module
     # Make sure it works for C:\foo\bar.py:12
     def parse_position(info)
+      ## FIXME: push into parse
+      if RbConfig::CONFIG['target_os'].start_with?('mingw') and
+          info =~ /^[A-Za-z]:/
+        drive_letter = info[0..1]
+        info = info[2..-1]
+      else
+        drive_leter = nil
+      end
       info = parse_location(info) if info.kind_of?(String)
       case info.container_type
       when :fn

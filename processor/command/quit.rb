@@ -1,4 +1,5 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+require 'rbconfig'
 require_relative '../command'
 class Trepan::Command::QuitCommand < Trepan::Command
 
@@ -35,6 +36,9 @@ See also the commands "exit" and "kill".
 
   # This method runs the command
   def run(args)
+    if RbConfig::CONFIG['target_os'].start_with?('mingw')
+        return @proc.commands['exit'].run(['exit', args])
+    end
     unconditional = 
       if args.size > 1 && args[-1] == 'unconditionally'
         args.shift

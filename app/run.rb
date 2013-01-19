@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2013 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rbconfig'
 module Trepanning
 
@@ -60,6 +60,14 @@ module Trepanning
   # Do a shell-like path lookup for prog_script and return the results.
   # If we can't find anything return prog_script.
   def whence_file(prog_script)
+    if RbConfig::CONFIG['target_os'].start_with?('mingw')
+      if (prog_script =~ /^[a-zA-Z][:]/)
+        start = prog_script[2..2]
+        if [File::ALT_SEPARATOR, File::SEPARATOR].member?(start)
+          return prog_script
+        end
+      end
+    end
     if prog_script.start_with?(File::SEPARATOR) || prog_script.start_with?('.')
       # Don't search since this name has path is explicitly absolute or
       # relative.

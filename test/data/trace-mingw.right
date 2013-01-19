@@ -1,0 +1,28 @@
+-- (gcd.rb:4 @2)
+def gcd(a, b)
+-- (gcd.rb:18 @2)
+a, b = ARGV[0..1].map {|arg| arg.to_i}
+-- (gcd.rb:19 @45)
+puts "The GCD of %d and %d is %d" % [a, b, gcd(a, b)]
+-- (gcd.rb:6 @4)
+if a > b
+-- (gcd.rb:12 @40)
+if a == 1 or b-a == 0
+METHOD Object#gcd(a, b)
+-> (gcd.rb:4 @2)
+def gcd(a, b)
+-- (gcd.rb:10 @24)
+return nil if a <= 0
+-- (gcd.rb:15 @71)
+return gcd(b-a, a)
+-- (gcd.rb:6 @4)
+if a > b
+-- (gcd.rb:12 @40)
+if a == 1 or b-a == 0
+<- (gcd.rb:13 @68)
+R=> 1
+return a
+<- (gcd.rb:16 @88)
+R=> 1
+end
+The GCD of 3 and 5 is 1
