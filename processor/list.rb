@@ -24,9 +24,14 @@ class Trepan
       # See also duplicate code in print_location
       if container[0] != 'file'
         try_container = container
-        while try_container[0] != 'file' && frame.prev do
-          frame            = frame.prev
-          try_container = frame_container(frame, false)
+        begin
+          while try_container[0] != 'file' && frame.prev do
+            frame            = frame.prev
+            last unless frame
+            try_container = frame_container(frame, false)
+          end
+        rescue
+          return nil
         end
         container = try_container if try_container[0] == 'file'
       end
@@ -103,7 +108,11 @@ class Trepan
         first = [1, first - center_correction].max 
         last = first + listsize - 1 unless last
       end
-      LineCache::cache(filename) unless LineCache::cached?(filename)
+      if filename
+        LineCache::cache(filename) unless LineCache::cached?(filename)
+      else
+        errmsg("Don't have a filename here")
+      end
       return [iseq, filename, first, last]
     end
     
