@@ -1,7 +1,10 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../app/default'
 require_relative 'virtual'
 class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
+
+  computed_displaywidth = (ENV['COLUMNS'] || '80').to_i
+  computed_displaywidth = 80 unless computed_displaywidth >= 10
 
   DEFAULT_SETTINGS = {
     :abbrev        => true,      # Allow abbreviations of debugger commands?
@@ -32,7 +35,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     :maxstring     => 150,       # Strings which are larger than this
                                  # will be truncated to this length when
                                  # printed
-    :maxwidth       => (ENV['COLUMNS'] || '80').to_i,
+    :maxwidth       => computed_displaywidth,
     :prompt         => 'trepan', # core part of prompt. Additional info like
                                  # debug nesting and 
     :reload         => false,    # Reread source file if we determine
