@@ -14,7 +14,7 @@ class Trepan::Subcommand::InfoMacro < Trepan::Subcommand
 In the first form a list of the existing macro names are shown
 in column format.
 
-In the second form, all macro names and their definitions are show.
+In the second form, all macro names and their definitions are shown.
 
 In the last form the only definitions of the given macro names is shown.
     HELP

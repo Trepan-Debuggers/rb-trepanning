@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 
 class Trepan::Command::AliasCommand < Trepan::Command
@@ -19,7 +19,7 @@ Example:
 
 alias cat list   # "cat rubyfile.rb" is the same as "list rubyfile.rb"
 alias s   step   # "s" is now an alias for "step".
-                 # The above examples done by default.
+                 # The above example is done by default.
 
 See also 'unalias' and 'show #{NAME}'.
     HELP
