@@ -12,12 +12,12 @@ class Trepan::UserInterface < Trepan::Interface
 
   DEFAULT_USER_OPTS = {
     :readline   => true,                # Try to use GNU Readline?
-    
+
     # The below are only used if we want and have readline support.
     # See method Trepan::GNU_readline? below.
     :histsize => 256,                   # Use gdb's default setting
     :file_history   => '.trepan_hist',  # where history file lives
-                                        # Note a directory will 
+                                        # Note a directory will
                                         # be appended
     :history_save   => true             # do we save the history?
   } unless defined?(DEFAULT_USER_OPTS)
@@ -49,14 +49,14 @@ class Trepan::UserInterface < Trepan::Interface
   def confirm(prompt, default)
     default_str = default ? 'Y/n' : 'N/y'
     while true do
-      begin 
+      begin
         response = readline('%s (%s) ' % [prompt, default_str])
       rescue EOFError
         return default
       end
       response = response.strip.downcase
 
-      # We don't catch "Yes, I'm sure" or "NO!", but I leave that 
+      # We don't catch "Yes, I'm sure" or "NO!", but I leave that
       # as an exercise for the reader.
       break if YES_OR_NO.member?(response)
       msg "Please answer 'yes' or 'no'. Try again."
@@ -67,7 +67,7 @@ class Trepan::UserInterface < Trepan::Interface
   # Read a saved Readline history file into Readline. The history
   # file will be created if it doesn't already exist.
   # Much of this code follows what's done in ruby-debug.
-  def read_history 
+  def read_history
     unless @histfile
       dirname = ENV['HOME'] || ENV['HOMEPATH'] || File.expand_path('~')
       @histfile = File.join(dirname, @opts[:file_history])
@@ -75,8 +75,8 @@ class Trepan::UserInterface < Trepan::Interface
     @histsize ||= (ENV['HISTSIZE'] ? ENV['HISTSIZE'].to_i : @opts[:histsize])
     Readline.completion_proc = @opts[:complete]
     if File.exists?(@histfile)
-      lines = IO::readlines(@histfile).last(@histsize).collect do  
-        |line| line.chomp 
+      lines = IO::readlines(@histfile).last(@histsize).collect do
+        |line| line.chomp
       end
       Readline::HISTORY.push(*lines)
       @history_io = File.new(@histfile, "a")
@@ -87,7 +87,7 @@ class Trepan::UserInterface < Trepan::Interface
     @history_save = @opts[:history_save]
   end
 
-  def save_history 
+  def save_history
     if @histfile
       lines = Readline::HISTORY.to_a
       lines = lines[-@histsize, @histsize] if lines.size > @histsize
@@ -95,7 +95,7 @@ class Trepan::UserInterface < Trepan::Interface
         open(@histfile, 'w') do |file|
           Readline::HISTORY.to_a.last(@histsize).each do |line|
             file.puts line
-          end 
+          end
         end if defined?(@history_save) and @history_save
       rescue
       end
@@ -105,7 +105,7 @@ class Trepan::UserInterface < Trepan::Interface
   def finalize(last_wishes=nil)
     # ?? print gdb-style exit annotation if annotate = 2?
     if Trepan::GNU_readline? && @history_save
-      save_history 
+      save_history
     end
     super
   end
@@ -113,7 +113,7 @@ class Trepan::UserInterface < Trepan::Interface
   def interactive? ; @input.interactive? end
 
   def read_command(prompt='')
-    readline(prompt) 
+    readline(prompt)
   end
 
   def readline(prompt='')

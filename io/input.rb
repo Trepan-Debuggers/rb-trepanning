@@ -3,7 +3,7 @@
 
 # Debugger user/command-oriented input possibly attached to IO-style
 # input or GNU Readline.
-# 
+#
 
 require_relative '../io'
 
@@ -28,20 +28,20 @@ class Trepan
     def closed?; @input.closed? end
     def eof?; @eof end
 
-    def interactive? 
+    def interactive?
       @input.respond_to?(:isatty) && @input.isatty
     end
-    # Read a line of input. EOFError will be raised on EOF.  
+    # Read a line of input. EOFError will be raised on EOF.
     def readline(prompt='')
       raise EOFError if eof?
-      begin 
+      begin
         if @line_edit && @use_readline
           line = Readline.readline(prompt, true)
         else
-          # Prompt should be empty and should have been 
+          # Prompt should be empty and should have been
           # handled by caller.
           unless prompt.empty?
-            raise RuntimeError, 
+            raise RuntimeError,
             "Internal error: prompt '#{prompt}' should have been handled by caller" unless prompt.empty?
           end
           line = @input.gets
@@ -58,28 +58,28 @@ class Trepan
       raise EOFError if eof?
       return line
     end
-    
+
     class << self
-      # Use this to set where to read from. 
+      # Use this to set where to read from.
       #
       # Set opts[:line_edit] if you want this input to interact with
       # GNU-like readline library. By default, we will assume to try
-      # using readline. 
+      # using readline.
       def open(inp=nil, opts={})
         inp ||= STDIN
         inp = File.new(inp, 'r') if inp.is_a?(String)
-        opts[:line_edit] = @line_edit = 
+        opts[:line_edit] = @line_edit =
           inp.respond_to?(:isatty) && inp.isatty && Trepan::GNU_readline?
         self.new(inp, opts)
       end
 
       def finalize
         if defined?(RbReadline) && !@@readline_finalized
-          begin 
+          begin
             RbReadline.rl_cleanup_after_signal()
           rescue
           end
-          begin 
+          begin
             RbReadline.rl_deprep_terminal()
           rescue
           end
@@ -101,7 +101,7 @@ def Trepan::GNU_readline?
     return false
   end
 end
-    
+
 # Demo
 if __FILE__ == $0
   puts 'Have GNU is: %s'  % Trepan::GNU_readline?
