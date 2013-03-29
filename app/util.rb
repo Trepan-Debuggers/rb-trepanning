@@ -3,7 +3,7 @@
 class Trepan
   module Util
 
-    module_function 
+    module_function
     def safe_repr(str, max, elipsis='... ')
       if str.is_a?(String) && max > 0 && str.size > max && !str.index("\n")
         "%s%s%s" % [ str[0...max/2], elipsis,  str[str.size-max/2..str.size]]
@@ -16,20 +16,20 @@ class Trepan
     # If name is a unique leading prefix of one of the entries of list,
     # then return that. Otherwise return name.
     def uniq_abbrev(list, name)
-      candidates = list.select do |try_name| 
+      candidates = list.select do |try_name|
         try_name.start_with?(name)
       end
       candidates.size == 1 ? candidates.first : name
     end
 
     # extract the "expression" part of a line of source code.
-    # 
+    #
     def extract_expression(text)
       if text =~ /^\s*(?:if|elsif|unless)\s+/
-        text.gsub!(/^\s*(?:if|elsif|unless)\s+/,'') 
+        text.gsub!(/^\s*(?:if|elsif|unless)\s+/,'')
         text.gsub!(/\s+then\s*$/, '')
       elsif text =~ /^\s*(?:until|while)\s+/
-        text.gsub!(/^\s*(?:until|while)\s+/,'') 
+        text.gsub!(/^\s*(?:until|while)\s+/,'')
         text.gsub!(/\s+do\s*$/, '')
       elsif text =~ /^\s*return\s+/
         # EXPRESION in: return EXPRESSION
@@ -54,7 +54,7 @@ class Trepan
       result = yield
       $VERBOSE = original_verbosity
       return result
-    end  
+    end
   end
 end
 
@@ -68,7 +68,7 @@ if __FILE__ == $0
   puts safe_repr(string.inspect, 17, '')
   # ------------------------------------
   # extract_expression
-  ['if condition("if")', 
+  ['if condition("if")',
    'until until_termination',
    'return return_value',
     'nothing_to_be.done'

@@ -22,8 +22,8 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       message = safe_rep(message) unless opts[:unlimited]
     end
     if @settings[:highlight] && defined?(Term::ANSIColor)
-      message = 
-        Term::ANSIColor.italic + message + Term::ANSIColor.reset 
+      message =a
+        Term::ANSIColor.italic + message + Term::ANSIColor.reset
     end
     @dbgr.intf[-1].errmsg(message)
   end
@@ -64,8 +64,8 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   def section(message, opts={})
     message = safe_rep(message) unless opts[:unlimited]
     if @settings[:highlight] && defined?(Term::ANSIColor)
-      message = 
-        Term::ANSIColor.bold + message + Term::ANSIColor.reset 
+      message =
+        Term::ANSIColor.bold + message + Term::ANSIColor.reset
     end
     @dbgr.intf[-1].msg(message)
   end

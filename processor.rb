@@ -1,9 +1,9 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
-# The main "driver" class for a command processor. Other parts of the 
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# The main "driver" class for a command processor. Other parts of the
 # command class and debugger command objects are pulled in from here.
 
-%w(default breakpoint display eventbuf eval load_cmds location frame hook msg 
-   running validate).each do
+%w(default breakpoint complete display eventbuf eval load_cmds location
+    frame hook msg running validate).each do
   |mod_str|
   require_relative "processor/#{mod_str}"
 end
@@ -25,7 +25,7 @@ class Trepan
                                    # Trepan::Core instance)
     attr_accessor :debug_nest      # Number of nested debugs. Used in showing
                                    # prompt.
-    attr_accessor :different_pos   # Same type as settings[:different] 
+    attr_accessor :different_pos   # Same type as settings[:different]
                                    # this is the temporary value for the
                                    # next stop while settings is the default
                                    # value to use.
@@ -34,8 +34,8 @@ class Trepan
                                    # Trepan::Core instance)
     attr_reader   :interfaces      # Array of all interfaces
     attr_accessor :leave_cmd_loop  # Commands set this to signal to leave
-                                   # the command loop (which often continues to 
-                                   # run the debugged program). 
+                                   # the command loop (which often continues to
+                                   # run the debugged program).
     attr_accessor :line_no         # Last line shown in "list" command
     attr_accessor :next_level      # Fixnum. frame.stack_size has to
                                    # be <= than this.  If next'ing,
@@ -43,17 +43,17 @@ class Trepan
     attr_accessor :next_thread     # Thread. If non-nil then in
                                    # stepping the thread has to be
                                    # this thread.
-    attr_accessor :pass_exception  # Pass an exception back 
+    attr_accessor :pass_exception  # Pass an exception back
     attr_accessor :prompt          # String print before requesting input
     attr_reader   :settings        # Hash[:symbol] of command
                                    # processor settings
-    
+
     attr_accessor :traced_vars     # list of traced global variables
 
     # The following are used in to force stopping at a different line
     # number. FIXME: could generalize to a position object.
     attr_accessor :last_pos       # Last position. 6-Tuple: of
-                                  # [location, container, stack_size, 
+                                  # [location, container, stack_size,
                                   #  current_thread, pc_offset]
 
 
@@ -78,18 +78,18 @@ class Trepan
 
       # FIXME: Rework using a general "set substitute file" command and
       # a global default profile which gets read.
-      file = File.expand_path(File.join(File.dirname(__FILE__), 
+      file = File.expand_path(File.join(File.dirname(__FILE__),
                                         %w(data prelude.rb)))
       LineCache::cache(file)
       LineCache::remap_file('<internal:prelude>', file)
-      file = File.expand_path(File.join(File.dirname(__FILE__), 
+      file = File.expand_path(File.join(File.dirname(__FILE__),
                                         %w(data custom_require.rb)))
       LineCache::cache(file)
-      LineCache::remap_file('<internal:lib/rubygems/custom_require>', 
+      LineCache::remap_file('<internal:lib/rubygems/custom_require>',
                             file)
 
       # Start with empty thread and frame info.
-      frame_teardown 
+      frame_teardown
 
       # Run initialization routines for each of the "submodule"s.
       # load_cmds has to come first.
@@ -98,14 +98,14 @@ class Trepan
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
-      unconditional_prehooks.insert_if_new(-1, *trace_hook) if 
+      unconditional_prehooks.insert_if_new(-1, *trace_hook) if
         @settings[:traceprint]
 
       # FIXME: run start file and start commands.
     end
 
     def compute_prompt
-      thread_str = 
+      thread_str =
         if 1 == Thread.list.size
           ''
         elsif Thread.current == Thread.main
@@ -113,14 +113,14 @@ class Trepan
         else
           "@#{Thread.current.object_id}"
         end
-      "%s#{settings[:prompt]}%s%s: " % 
+      "%s#{settings[:prompt]}%s%s: " %
         ['(' * @debug_nest, thread_str, ')' * @debug_nest]
-      
+
     end
 
     def finalize
       breakpoint_finalize
-      msg "%sThat's all, folks..." % 
+      msg "%sThat's all, folks..." %
         (defined?(Trepan::PROGRAM) ? "#{Trepan::PROGRAM}: " : '')
     end
 
@@ -130,13 +130,13 @@ class Trepan
       # Check we have frame is not null
       min_args = cmd.class.const_get(:MIN_ARGS)
       if nargs < min_args
-        errmsg(("Command '%s' needs at least %d argument(s); " + 
+        errmsg(("Command '%s' needs at least %d argument(s); " +
                 "got %d.") % [name, min_args, nargs])
         return false
       end
       max_args = cmd.class.const_get(:MAX_ARGS)
       if max_args and nargs > max_args
-        errmsg(("Command '%s' needs at most %d argument(s); " + 
+        errmsg(("Command '%s' needs at most %d argument(s); " +
                 "got %d.") % [name, max_args, nargs])
         return false
       end
@@ -160,14 +160,14 @@ class Trepan
       return true if @intf.input_eof? && intf_size == 1
       while intf_size > 1 || !@intf.input_eof?
         begin
-          @current_command = 
+          @current_command =
             if @cmd_queue.empty?
               # Leave trailing blanks on for the "complete" command
-              read_command.chomp 
+              read_command.chomp
             else
               @cmd_queue.shift
             end
-          if @current_command.empty? 
+          if @current_command.empty?
             next unless @last_command && intf.interactive?;
           end
           next if @current_command[0..0] == '#' # Skip comment lines
@@ -199,8 +199,8 @@ class Trepan
       frame_setup(frame)
 
       @unconditional_prehooks.run
-      
-      if 'trace-var' == @event 
+
+      if 'trace-var' == @event
         variable_name, value = @core.hook_arg
         action = @traced_vars[variable_name]
         msg "trace: #{variable_name} = #{value}"
@@ -219,7 +219,7 @@ class Trepan
 
       if breakpoint?
         @last_pos = [@frame.source_container, frame_line,
-                     @stack_size, @current_thread, @event, 
+                     @stack_size, @current_thread, @event,
                      @frame.pc_offset]
       elsif @event != 'post-mortem'
         return if stepping_skip? || @stack_size <= @hide_level
@@ -234,7 +234,7 @@ class Trepan
 
       print_location unless @settings[:traceprint]
       @eventbuf.add_mark if @settings[:tracebuffer]
- 
+
       @cmdloop_prehooks.run
       while not @leave_cmd_loop do
         begin
@@ -258,7 +258,7 @@ class Trepan
     # Run current_command, a String. @last_command is set after the
     # command is run if it is a command.
     def run_command(current_command)
-      eval_command = 
+      eval_command =
         if current_command[0..0] == '!'
           current_command[0] = ''
         else
@@ -279,7 +279,7 @@ class Trepan
           break unless @macros.member?(macro_cmd_name)
           current_command = @macros[macro_cmd_name][0].call(*args[1..-1])
           msg current_command.inspect if settings[:debugmacro]
-          if current_command.is_a?(Array) && 
+          if current_command.is_a?(Array) &&
               current_command.all? {|val| val.is_a?(String)}
             args = (first=current_command.shift).split
             @cmd_queue += current_command
@@ -294,21 +294,21 @@ class Trepan
         end
 
         @cmd_name = args[0]
-        run_cmd_name = 
+        run_cmd_name =
           if @aliases.member?(@cmd_name)
-            @aliases[@cmd_name] 
+            @aliases[@cmd_name]
           else
             @cmd_name
           end
-        
+
         run_cmd_name = uniq_abbrev(@commands.keys, run_cmd_name) if
           !@commands.member?(run_cmd_name) && @settings[:abbrev]
-          
+
         if @commands.member?(run_cmd_name)
           cmd = @commands[run_cmd_name]
           if ok_for_running(cmd, run_cmd_name, args.size-1)
             @cmd_argstr = current_command[@cmd_name.size..-1].lstrip
-            cmd.run(args) 
+            cmd.run(args)
             @last_command = current_command
           end
           return false
@@ -331,7 +331,7 @@ class Trepan
 
     # Error message when a command doesn't exist
     def undefined_command(cmd_name)
-      begin 
+      begin
         errmsg('Undefined command: "%s". Try "help".' % cmd_name)
       rescue
         $stderr.puts 'Undefined command: "%s". Try "help".' % cmd_name
@@ -383,7 +383,7 @@ if __FILE__ == $0
     end
     $input = ['1+2']
     dbg.core.processor.process_command_and_quit?
-    $input = ['!s = 5']  # ! means eval line 
+    $input = ['!s = 5']  # ! means eval line
     dbg.core.processor.process_command_and_quit?
   end
 end
