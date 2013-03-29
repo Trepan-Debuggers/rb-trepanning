@@ -18,9 +18,9 @@ require_relative '../interface/server'   # server interface (remote debugging)
 # "filename" parameter when the instruction sequence was
 # generated. Each value is an array of instruction sequences that
 # share that name.
-SCRIPT_ISEQS__ = {} unless 
+SCRIPT_ISEQS__ = {} unless
   defined?(SCRIPT_ISEQS__) && SCRIPT_ISEQS__.is_a?(Hash)
-ISEQS__        = {} unless 
+ISEQS__        = {} unless
   defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
 class Trepan
@@ -40,7 +40,7 @@ class Trepan
   def initialize(settings={})
 
     # FIXME: Tracing through intialization code is slow. Need to figure
-    # out better ways to do this. 
+    # out better ways to do this.
     th = Thread.current
     th.exec_event_tracing = true
 
@@ -50,7 +50,7 @@ class Trepan
 
     @completion_proc = method(:completion_method)
 
-    @intf = 
+    @intf =
       if @settings[:server]
         @completion_proc = nil
         opts = Trepan::ServerInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
@@ -81,7 +81,7 @@ class Trepan
     @settings[:core_opts][:cmdproc_opts][:traceprint] = settings[:traceprint]
 
     @core = Core.new(self, @settings[:core_opts])
-    
+
     if @settings[:initial_dir]
       Dir.chdir(@settings[:initial_dir])
     else
@@ -92,11 +92,11 @@ class Trepan
 
     unless @settings[:client]
       @trace_filter = Trace::Filter.new
-      %w(debugger start stop).each do |m| 
+      %w(debugger start stop).each do |m|
         @trace_filter << self.method(m.to_sym)
       end
-      %w(debugger event_processor trace_var_processor).each do 
-        |m| 
+      %w(debugger event_processor trace_var_processor).each do
+        |m|
         @trace_filter << @core.method(m)
       end
       @trace_filter << @trace_filter.method(:add_trace_func)
@@ -107,9 +107,9 @@ class Trepan
     # Run user debugger command startup files.
     add_startup_files unless @settings[:nx]
 
-    at_exit do 
+    at_exit do
       clear_trace_func
-      @intf[-1].close 
+      @intf[-1].close
     end
     th.exec_event_tracing = false
   end
@@ -118,10 +118,10 @@ class Trepan
   # such as called from GNU Readline with <TAB>.
   def completion_method(last_token, leading=Readline.line_buffer)
     completion = @core.processor.complete(leading, last_token)
-    if 1 == completion.size 
+    if 1 == completion.size
       completion_token = completion[0]
       if last_token.end_with?(' ')
-        if last_token.rstrip == completion_token 
+        if last_token.rstrip == completion_token
           # There is nothing more to complete
           []
         else
@@ -137,7 +137,7 @@ class Trepan
     end
   end
 
-  # To call from inside a Ruby program, there is one-time setup that 
+  # To call from inside a Ruby program, there is one-time setup that
   # needs to be done first:
   #    require 'trepanning'
   #    mydbg = Trepan.new()
@@ -151,9 +151,9 @@ class Trepan
   #    mydbg.debugger(:immediate=>true)   # enter debugger here
   #    ... work, work, work
   #
-  # However to enter the debugger on the next event after the 
+  # However to enter the debugger on the next event after the
   # debugger() call:
-  #  
+  #
   #    ... work, work, work
   #    mydbg.debugger  # Don't stop here...
   #    work            # but stop here.
@@ -170,7 +170,7 @@ class Trepan
   #
   #   :hide_stack - boolean. If true, omit stack frames before the
   #                          debugger call
-  # 
+  #
   #   :debugme    - boolean. Allow tracing into this routine. You
   #                          generally won't want this. It slows things
   #                          down horribly.
@@ -178,7 +178,7 @@ class Trepan
   def debugger(opts={}, &block)
     # FIXME: one option we may want to pass is the initial trace filter.
     if opts[:hide_stack]
-      @core.processor.hidelevels[Thread.current] = 
+      @core.processor.hidelevels[Thread.current] =
         RubyVM::Frame.current.stack_size
     end
     # unless defined?(PROG_UNRESOLVED_SCRIPT)
@@ -195,9 +195,9 @@ class Trepan
       # Stop immediately after this method returns. But if opts[:debugme]
       # is set, we can stop in this method.
       RubyVM::Frame::current.trace_off = true unless opts[:debugme]
-      @trace_filter.set_trace_func(@core.event_proc) 
+      @trace_filter.set_trace_func(@core.event_proc)
       Trace.event_masks[0] |= @core.step_events
-      @core.debugger(1) 
+      @core.debugger(1)
     else
       RubyVM::Frame::current.trace_off = true unless opts[:debugme]
 
@@ -213,7 +213,7 @@ class Trepan
   def start
     @trace_filter.add_trace_func(@core.event_proc)
   end
-  
+
   # Remove all of our trace events
   def stop(opts={})
     # FIXME: should do something in the middle when
@@ -249,7 +249,7 @@ class Trepan
 
   def process_cmdfile_setting(settings)
     settings[:cmdfiles].each do |item|
-      cmdfile, opts = 
+      cmdfile, opts =
         if item.kind_of?(Array)
           item
         else
@@ -262,10 +262,10 @@ class Trepan
   # As a simplification for creating a debugger object, and then
   # calling using the object to invoke the debugger, we allow this
   # two-step process in one step. That is, instead of
-  #  
+  #
   #  require 'trepanning'
   #  mydbg = Trepan.new()
-  #  ... 
+  #  ...
   #  mydbg.debugger
 
   # You can run:
@@ -275,7 +275,7 @@ class Trepan
   #
   # See debugger for options that can be passed. By default :hide_stack is
   # set.
-  # 
+  #
   # Likewise for mydbg.debugger{ ... }
 
   def self.debug(opts={}, &block)
@@ -289,16 +289,16 @@ class Trepan
   end
 
   def self.debug_str(string, opts = DEFAULT_DEBUG_STR_SETTINGS)
-    $trepanning = Trepan.new(opts) unless 
+    $trepanning = Trepan.new(opts) unless
       $trepanning && $trepanning.is_a?(Trepan)
     $trepanning.core.processor.settings[:different] = false
-    # Perhaps we should do a remap file to string right here? 
+    # Perhaps we should do a remap file to string right here?
     $trepanning.debugger(opts) { eval(string) }
   end
 end
 
 module Kernel
-  # Same as Trepan.debug. 
+  # Same as Trepan.debug.
   # FIXME figure out a way to remove duplication.
   def debugger(opts={}, &block)
     opts = {:hide_stack => false}.merge(opts)

@@ -2,7 +2,7 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Base class of all commands. Code common to all commands is here.
 # Note: don't end classname with Command (capital C) since main
-# will think this a command name like QuitCommand 
+# will think this a command name like QuitCommand
 require 'columnize'
 require_relative '../app/complete'
 
@@ -30,7 +30,7 @@ class Trepan
     # List commands arranged in an aligned columns
     def columnize_commands(commands)
       width = settings[:maxwidth]
-      Columnize::columnize(commands, width, ' ' * 4, 
+      Columnize::columnize(commands, width, ' ' * 4,
                            true, true, ' ' * 2).chomp
     end
 
@@ -52,7 +52,7 @@ class Trepan
     end
 
     def obj_const(obj, name)
-      obj.class.const_get(name) 
+      obj.class.const_get(name)
     end
 
     # Convenience short-hand for @proc.msg
@@ -97,18 +97,18 @@ class Trepan
     end
 
     def short_help
-      help_constant_sym = if self.class.constants.member?(:SHORT_HELP) 
-                            :SHORT_HELP 
+      help_constant_sym = if self.class.constants.member?(:SHORT_HELP)
+                            :SHORT_HELP
                           else :HELP
                           end
       my_const(help_constant_sym)
     end
 
     # Define a method called 'complete' on the singleton class.
-    def self.completion(ary) 
-      self.send(:define_method, 
-                :complete, 
-                Proc.new {|prefix| 
+    def self.completion(ary)
+      self.send(:define_method,
+                :complete,
+                Proc.new {|prefix|
                   Trepan::Complete.complete_token(ary, prefix) })
     end
   end
