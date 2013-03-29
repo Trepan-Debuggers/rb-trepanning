@@ -8,7 +8,7 @@ class Trepan
   # This class contains the Trepan core routines, such as an event
   # processor which is responsible of handling what to do when an event is
   # triggered.
-  # 
+  #
   # See also 'rdbgr' the top-level Trepan class and command-line routine
   # which ultimately will call this.
 
@@ -28,24 +28,24 @@ class Trepan
     attr_accessor :processor    # Trepan::CmdProc instance
     attr_reader   :settings     # Hash of things you can configure
     attr_accessor :step_count   # Fixnum. Negative means no tracing,
-                                # 0 means stop on next event, 1 means 
+                                # 0 means stop on next event, 1 means
                                 # ignore one event. Step events gives the
                                 # kind of things to count as a step.
-    attr_accessor :step_events  # bitmask of events - used only when 
+    attr_accessor :step_events  # bitmask of events - used only when
                                 # we are stepping
-    attr_accessor :unmaskable_events 
+    attr_accessor :unmaskable_events
 
     include Trace
 
     unless defined?(CORE_DEFAULT_SETTINGS)
       # Synchronous events
-      STEPPING_EVENT_MASK = 
+      STEPPING_EVENT_MASK =
         LINE_EVENT_MASK     | CLASS_EVENT_MASK    | CALL_EVENT_MASK     |
         RETURN_EVENT_MASK   | C_CALL_EVENT_MASK   | C_RETURN_EVENT_MASK |
         INSN_EVENT_MASK     | BRKPT_EVENT_MASK    | YIELD_EVENT_MASK    |
         LEAVE_EVENT_MASK    | SEND_EVENT_MASK
 
-      ASYNC_EVENT_MASK = 
+      ASYNC_EVENT_MASK =
         RAISE_EVENT_MASK    | VM_EVENT_MASK       | SWITCH_EVENT_MASK
 
       CORE_DEFAULT_SETTINGS = {
@@ -57,11 +57,11 @@ class Trepan
 
         # Not sure what the "right" set really is. The below is just
         # a guess. Use "set events" or customize in ~/.trepanrc
-        :step_events       =>  
+        :step_events       =>
 #	(DEFAULT_EVENT_MASK | INSN_EVENT_MASK) &
 	(DEFAULT_EVENT_MASK ) &
 	~(C_CALL_EVENT_MASK | C_RETURN_EVENT_MASK | SEND_EVENT_MASK)
-      } 
+      }
 
     end
 
@@ -80,6 +80,7 @@ class Trepan
       @event_proc   = self.method(hook_name).to_proc
       @processor    = CmdProcessor.new(self, @settings[:cmdproc_opts])
       @unmaskable_events = %w(brkpt raise switch vm)
+      @current_thread = nil
     end
 
     def step_events_list
@@ -94,15 +95,18 @@ class Trepan
     def event_processor(event, frame, arg=nil)
 
       return_exception = nil
-      # FIXME: check for breakpoints or other unmaskable events. 
+      # FIXME: check for breakpoints or other unmaskable events.
       # For now there are none.
 
+      return if @mutex.locked? and Thread.current == @current_thread
+
       @mutex.synchronize do
+        @current_thread = Thread.current
         @frame = frame
         while @frame.type == 'IFUNC'
           @frame = @frame.prev
         end
-        
+
         if @step_count > 0
           @step_count -= 1
           break
@@ -112,52 +116,52 @@ class Trepan
 
         @event    = event
         @hook_arg = arg
-        
+
         ### debug:
         ### puts "#{frame.file[1]}:#{frame.source_location[0]}:in `#{frame.method}' #{event}" # if %w(line).member?(event)
         @processor.process_commands(@frame)
-                
+
         # FIXME: There should be a Trace.event_mask which should return the first
         # mask that matches the given trace hook.
         if @step_count < 0
           # If we are continuing, no need to stop at stepping events.
-          Trace.event_masks[0] &= ~STEPPING_EVENT_MASK 
+          Trace.event_masks[0] &= ~STEPPING_EVENT_MASK
         else
-          # Set to trace only those events we are interested in.  
-          
+          # Set to trace only those events we are interested in.
+
           # Don't step/trace into Ruby routines called from here in the code
           # below (e.g. "trace_hooks").
           step_count_save = step_count
-          @step_count     = -1 
-          
+          @step_count     = -1
+
           unless @event_proc == dbgr.trace_filter.hook_proc
-            dbgr.trace_filter.add_trace_func(@event_proc) 
+            dbgr.trace_filter.add_trace_func(@event_proc)
             ## debug: p '+++1', @event_proc, dbgr.trace_filter.hook_proc
           end
-          
-          # FIXME: this doesn't work. Bug in rb-trace? 
+
+          # FIXME: this doesn't work. Bug in rb-trace?
           # Trace.event_masks[0] = @step_events | @async_events
-          RubyVM::TraceHook::trace_hooks[0].event_mask = 
+          RubyVM::TraceHook::trace_hooks[0].event_mask =
             @step_events | @async_events
           @step_count = step_count_save
         end
-        
+
         # Nil out variables just in case...
-        
+
         return_exception = @exception
         @frame = @event = @arg = @exception = nil
-        
+
       end
-      return return_exception 
+      return return_exception
     end
 
-    # A Ruby 1.8-style event processor. We don't use file, line, id, bind. 
+    # A Ruby 1.8-style event processor. We don't use file, line, id, bind.
     def old_event_processor(event, file, line, id, bind, klass)
       event_processor(event, RubyVM::Frame.current.prev)
     end
 
     # Call this from inside the program you want to get a synchronous
-    # call to the debugger. set prev_count to the number of levels 
+    # call to the debugger. set prev_count to the number of levels
     # *before* the caller you want to skip.
     def debugger(prev_count=0)
       while @frame && @frame.type == 'IFUNC'
@@ -167,7 +171,7 @@ class Trepan
       @step_count = 0  # Make event processor stop
       event_processor('debugger-call', frame)
     end
-    
+
     # A trace-hook processor for 'trace var'
     def trace_var_processor(var_name, value)
       frame = RubyVM::Frame.current.prev(2)
@@ -178,8 +182,8 @@ class Trepan
       end
 
       # Stop future tracing into the debugger
-      Thread.current.tracing = true  
-      
+      Thread.current.tracing = true
+
       @step_count = 0  # Make event processor stop
       event_processor('trace-var', frame, [var_name, value])
     end

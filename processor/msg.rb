@@ -22,7 +22,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       message = safe_rep(message) unless opts[:unlimited]
     end
     if @settings[:highlight] && defined?(Term::ANSIColor)
-      message =a
+      message =
         Term::ANSIColor.italic + message + Term::ANSIColor.reset
     end
     @dbgr.intf[-1].errmsg(message)

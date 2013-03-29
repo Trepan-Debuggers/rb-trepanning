@@ -63,7 +63,7 @@ class Trepan
     # error.  If there's a stack frame use that for bindings in
     # evaluation.
     def get_int(arg, opts={})
-      
+
       return default unless arg
       opts = DEFAULT_GET_INT_OPTS.merge(opts)
       val = arg ? get_int_noerr(arg) : opts[:default]
@@ -76,7 +76,7 @@ class Trepan
         end
         return nil
       end
-      
+
       if val < opts[:min_value]
         if opts[:cmdname]
           errmsg(("Command '%s' expects an integer at least" +
@@ -105,7 +105,7 @@ class Trepan
     def get_int_list(args, opts={})
       args.map{|arg| get_an_int(arg, opts)}.compact
     end
-    
+
     # Eval arg and it is an integer return the value. Otherwise
     # return nil
     def get_int_noerr(arg)
@@ -113,7 +113,7 @@ class Trepan
       val = Integer(eval(arg, b))
     rescue SyntaxError
       nil
-    rescue 
+    rescue
       nil
     end
 
@@ -158,13 +158,13 @@ class Trepan
           vm_offset = ary.size > 1 ? ary[1] : ary[0]
           line_no   = position
         elsif found_iseq = find_iseqs_with_lineno(filename, position)
-          return position_to_line_and_offset(found_iseq, filename, position, 
+          return position_to_line_and_offset(found_iseq, filename, position,
                                              offset_type)
         elsif found_iseq = find_iseq_with_line_from_iseq(iseq, position)
-          return position_to_line_and_offset(found_iseq, filename, position, 
+          return position_to_line_and_offset(found_iseq, filename, position,
                                              offset_type)
         else
-          errmsg("Unable to find offset for line #{position}\n\t" + 
+          errmsg("Unable to find offset for line #{position}\n\t" +
                  "in #{iseq.name} of file #{filename}")
           return [nil, nil]
         end
@@ -201,11 +201,11 @@ class Trepan
                         end
       return [nil] * 5 unless break_cmd_parse
       tail = [break_cmd_parse.condition, break_cmd_parse.negate]
-      meth_or_frame, file, position, offset_type = 
+      meth_or_frame, file, position, offset_type =
         parse_position(break_cmd_parse.position)
       if meth_or_frame
         if iseq = meth_or_frame.iseq
-          iseq, line_no, vm_offset = 
+          iseq, line_no, vm_offset =
             position_to_line_and_offset(iseq, file, position, offset_type)
           if vm_offset && line_no
             return [iseq, line_no, vm_offset] + tail
@@ -217,18 +217,18 @@ class Trepan
         if :line == offset_type
           iseq = find_iseqs_with_lineno(file, position)
           if iseq
-            junk, line_no, vm_offset = 
+            junk, line_no, vm_offset =
               position_to_line_and_offset(iseq, file, position, offset_type)
             return [@frame.iseq, line_no, vm_offset] + tail
           else
-            errmsg("Unable to find instruction sequence for" + 
+            errmsg("Unable to find instruction sequence for" +
                    " position #{position} in #{file}")
           end
         else
           errmsg "Come back later..."
         end
-      elsif @frame.file == file 
-        line_no, vm_offset = position_to_line_and_offset(@frame.iseq, position, 
+      elsif @frame.respond_to?(:file) and @frame.file == file
+        line_no, vm_offset = position_to_line_and_offset(@frame.iseq, position,
                                                          offset_type)
         return [@frame.iseq, line_no, vm_offset] + tail
       else
@@ -261,7 +261,7 @@ class Trepan
     include CmdParser
 
     def get_method(meth)
-      start_binding = 
+      start_binding =
         begin
           @frame.binding
         rescue
@@ -279,8 +279,8 @@ class Trepan
       end
     end
 
-    # FIXME: this is a ? method but we return 
-    # the method value. 
+    # FIXME: this is a ? method but we return
+    # the method value.
     def method?(meth)
       get_method(meth)
     end
@@ -303,18 +303,18 @@ class Trepan
       case info.container_type
       when :fn
         if (meth = method?(info.container)) && meth.iseq
-          return [meth, meth.iseq.source_container[1], info.position, 
+          return [meth, meth.iseq.source_container[1], info.position,
                   info.position_type]
         else
           return [nil] * 4
         end
       when :file
         filename = canonic_file(info.container)
-        # ?? Try to look up method here? 
+        # ?? Try to look up method here?
         container = frame_container(@frame, false)
         try_filename  = container[1]
         frame = (canonic_file(try_filename) == filename) ? @frame : nil
-        # else 
+        # else
         #   LineCache.compiled_method(filename)
         # end
         return frame, filename,  info.position, info.position_type
@@ -345,7 +345,7 @@ class Trepan
           true
         else
           matches = find_scripts(filename)
-          if matches.size == 1 
+          if matches.size == 1
             LineCache.remap_file(filename, matches[0])
             true
           else
@@ -362,24 +362,24 @@ if __FILE__ == $0
   if !(ARGV.size == 1 && ARGV[0] == 'noload')
     ARGV[0..-1]    = ['noload']
     load(__FILE__)
-  else    
+  else
     require 'thread_frame'
     require_relative '../app/mock'
     require_relative './default'
     require_relative 'frame'
 
     # FIXME: Have to include before defining CmdProcessor!
-    require_relative '../processor'  
+    require_relative '../processor'
 
     cmdproc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
     cmdproc.frame_initialize
-    cmdproc.instance_variable_set('@settings', 
+    cmdproc.instance_variable_set('@settings',
                                Trepan::CmdProcessor::DEFAULT_SETTINGS)
     cmdproc.frame_setup(RubyVM::Frame.current)
     onoff = %w(1 0 on off)
     onoff.each { |val| puts "onoff(#{val}) = #{cmdproc.get_onoff(val)}" }
-    %w(1 1E bad 1+1 -5).each do |val| 
-      puts "get_int_noerr(#{val}) = #{cmdproc.get_int_noerr(val).inspect}" 
+    %w(1 1E bad 1+1 -5).each do |val|
+      puts "get_int_noerr(#{val}) = #{cmdproc.get_int_noerr(val).inspect}"
     end
     def foo; 5 end
     def cmdproc.errmsg(msg)
@@ -390,7 +390,7 @@ if __FILE__ == $0
 
     # puts cmdproc.object_iseq('foo@validate.rb').inspect
     # puts cmdproc.object_iseq('cmdproc.object_iseq').inspect
-    
+
     puts cmdproc.parse_position(__FILE__).inspect
     puts cmdproc.parse_position('@8').inspect
     puts cmdproc.parse_position('8').inspect
