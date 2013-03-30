@@ -27,6 +27,12 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       complete_token_filtered_with_next(@aliases, token, match_hash,
                                         @commands)
     match_pairs += alias_pairs
+
+    macro_pairs = Trepan::Complete.
+      complete_token_filtered_with_next(@macros, token, match_hash,
+                                        @commands)
+    match_pairs += macro_pairs
+
     if str[next_blank_pos..-1].empty?
       return match_pairs.map{|pair| pair[0]}.sort
     else

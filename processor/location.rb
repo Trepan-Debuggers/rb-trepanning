@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'
 require 'linecache'
 require 'pathname'  # For cleanpath
@@ -32,15 +32,15 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       'vm'             => 'VM',
       'vm-insn'        => '..',
       'yield'          => '<>',
-    } 
+    }
   end
 
   def canonic_container(container)
     [container[0], canonic_file(container[1])]
   end
-  
+
   def canonic_file(filename, resolve=true)
-    # For now we want resolved filenames 
+    # For now we want resolved filenames
     if @settings[:basename]
       File.basename(filename)
     elsif resolve
@@ -56,15 +56,15 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   # way around.
   def current_source_text
     opts = {:reload_on_change => @reload}
-    junk1, junk2, text, found_line = 
-      loc_and_text('', frame, frame.source_location[0], 
+    junk1, junk2, text, found_line =
+      loc_and_text('', frame, frame.source_location[0],
                    frame.source_container, opts)
     text
   end
-  
+
   def resolve_file_with_dir(path_suffix)
     @settings[:directory].split(/:/).each do |dir|
-      dir = 
+      dir =
         if '$cwd' == dir
           Dir.pwd
         elsif '$cdir' == dir
@@ -78,7 +78,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     end
     nil
   end
-  
+
   # Get line +line_number+ from file named +filename+. Return ''
   # if there was a problem. Leading blanks are stripped off.
   def line_at(filename, line_number,
@@ -87,12 +87,12 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
                 :output => @settings[:highlight]
               })
     line = LineCache::getline(filename, line_number, opts)
-    
+
     unless line
       # Try using search directories (set with command "directory")
       if filename[0..0] != File::SEPARATOR
-        try_filename = resolve_file_with_dir(filename) 
-        if try_filename && 
+        try_filename = resolve_file_with_dir(filename)
+        if try_filename &&
             line = LineCache::getline(try_filename, line_number, opts)
           LineCache::remap_file(filename, try_filename)
         end
@@ -131,45 +131,45 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       if [container, line_no] != [map_file, map_line]
         loc += " remapped #{canonic_file(map_file)}:#{map_line}"
       end
-      
+
       text  = line_at(container, line_no, opts)
     end
     [loc, line_no, text, found_line]
   end
-  
+
   def print_location
     if %w(c-call call).member?(@event)
-      # FIXME: Fix Ruby so we don't need this workaround? 
+      # FIXME: Fix Ruby so we don't need this workaround?
       # See also where.rb
       opts = {}
-      opts[:class] = @core.hook_arg if 
-        'CFUNC' == @frame.type && @core.hook_arg && 0 == @frame_index 
-      msg format_stack_call(@frame, opts) 
+      opts[:class] = @core.hook_arg if
+        'CFUNC' == @frame.type && @core.hook_arg && 0 == @frame_index
+      msg format_stack_call(@frame, opts)
     elsif 'raise' == @event
       msg @core.hook_arg.inspect if @core.hook_arg # Exception object
     end
-    
+
     text      = nil
     source_container = frame_container(@frame, false)
     ev        = if @event.nil? || 0 != @frame_index
-                  '  ' 
+                  '  '
                 else
                   (EVENT2ICON[@event] || @event)
                 end
     @line_no  = frame_line
-    
+
     loc = source_location_info(source_container, @line_no, @frame)
-    loc, @line_no, text, found_line = 
+    loc, @line_no, text, found_line =
       loc_and_text(loc, @frame, @line_no, source_container)
-    
+
     ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
     msg "#{ev} (#{loc}#{ip_str})"
-    
+
     if %w(return c-return).member?(@event)
       retval = Trepan::Frame.value_returned(@frame, @event)
-      msg 'R=> %s' % retval.inspect 
+      msg 'R=> %s' % retval.inspect
     end
-    
+
     if text && !text.strip.empty?
       msg text
       @line_no -= 1
@@ -180,12 +180,12 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       run_command('disassemble')
     end
   end
-  
+
   def source_location_info(source_container, line_no, frame)
     filename  = source_container[1]
     ## FIXME: condition is too long.
-    canonic_filename = 
-      if 'string' == source_container[0] && frame.iseq && 
+    canonic_filename =
+      if 'string' == source_container[0] && frame.iseq &&
           frame.iseq.eval_source
         eval_str = frame.iseq.eval_source
         'eval "' + safe_repr(eval_str.gsub(/\n/,';'), 15) + '"'
