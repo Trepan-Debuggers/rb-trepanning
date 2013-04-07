@@ -31,7 +31,9 @@ class TestAppUtil < Test::Unit::TestCase
      [13, [19, 'time']],
      [19, [19, '']],
     ].each do |pos, expect|
-      assert_equal expect, next_token(x, pos)
+      assert_equal(expect, next_token(x, pos),
+                   "Trouble with next_token(#{x}, #{pos})")
+
     end
   end
 

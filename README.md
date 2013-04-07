@@ -2,7 +2,7 @@ The trepanning debugger gdb-like debugger. As such, it is both a high-level and 
 
 See the [installation instructions](https://github.com/rocky/rb-trepanning/wiki/How-to-Install-rb-trepanning).
 
-There is a [google group mailing list](http://groups.google.com/group/ruby-debugger for Ruby debuggers.)
+There is a [google group mailing list](http://groups.google.com/group/ruby-debugger) for Ruby debuggers.
 
 If *trepanning* is installed, here is how to run:
 
@@ -27,7 +27,7 @@ If you want to run from the source tree you can do that too:
 Running from inside *irb*:
 
 ```ruby
- require 'trepanning' 
+ require 'trepanning'
  Trepan.debug { your code }
 ```
 
@@ -36,7 +36,7 @@ The return value from Trepan is the return value of the block, i.e. the final va
 You can run the same thing inside your Ruby program, but probably you don't want to give a block. Instead, you may want to have debugging start on the next statement in the code:
 
 ```ruby
- require 'trepan' 
+ require 'trepan'
  Trepan.debug # Don't stop here...
  work # but stop here.
 ```
@@ -54,8 +54,8 @@ Due to the line-event orientation in ruby-debug, it occasionally was convenient 
 
 ```ruby
 
- # ... work, work, work 
- mydbg.debugger(:immediate=>true) # enter debugger here 
+ # ... work, work, work
+ mydbg.debugger(:immediate=>true) # enter debugger here
  # ... work, work, work
 ```
 
