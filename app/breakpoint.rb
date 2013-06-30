@@ -7,7 +7,7 @@ class Trepan
   class Breakpoint
     attr_accessor :condition # If non-nil, this is a String to be eval'd
                              # which must be true to enter the debugger
-    attr_accessor :hits      # Fixnum. The number of timea a breakpoint
+    attr_accessor :hits      # Fixnum. The number of times a breakpoint
                              # has been hit (with a true condition). Do
                              # we want to (also) record hits independent
                              # of the condition?
@@ -19,7 +19,7 @@ class Trepan
     attr_reader   :offset    # Fixnum. Offset into an instruction
                              # sequence for the location of the
                              # breakpoint
-    attr_reader   :negate    # Boolean. Negate sense of condition. Used in 
+    attr_reader   :negate    # Boolean. Negate sense of condition. Used in
                              # break if .. and break unless ..
                              # breakpoint
     attr_reader   :type      # String. 'line' if breakpoint requested
@@ -35,20 +35,20 @@ class Trepan
       :negate    =>  false,
       :type      => 'line',
     } unless defined?(BRKPT_DEFAULT_SETTINGS)
-    
+
     def initialize(iseq, offset, opts = {})
-      raise TypeError, 
-      "#{iseq} is not an instruction sequence" unless 
+      raise TypeError,
+      "#{iseq} is not an instruction sequence" unless
         iseq.is_a?(RubyVM::InstructionSequence)
       @iseq = iseq
 
-      raise TypeError, 
-      "offset #{offset.inspect} not found in instruction sequence" unless 
+      raise TypeError,
+      "offset #{offset.inspect} not found in instruction sequence" unless
         iseq.offset2lines(offset)
       @offset = iseq
 
-      raise TypeError, 
-      "type mismatch: #{offset.class} given, Fixnum expected" unless 
+      raise TypeError,
+      "type mismatch: #{offset.class} given, Fixnum expected" unless
         offset.is_a?(Fixnum)
       @offset = offset
 
@@ -60,7 +60,7 @@ class Trepan
       @hits = 0
 
       unless @id
-        @id = @@next_id 
+        @id = @@next_id
         @@next_id += 1
       end
       raise RuntimeError,
