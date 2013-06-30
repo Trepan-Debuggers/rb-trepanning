@@ -1,4 +1,4 @@
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 
 class Trepan
 
