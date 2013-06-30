@@ -43,7 +43,7 @@ class Trepan
           result << [cmd, commands[aliases[cmd]]]
         end
       end
-      result
+      result.sort
     end
 
     # Find the next token in str string from start_pos, we return
