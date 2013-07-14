@@ -33,11 +33,11 @@ class TestCompletion < Test::Unit::TestCase
     ].each do |line, token, expect_completion|
       # require_relative '../../lib/trepanning'
       # debugger if line == 'help syntax co'
-      assert_equal(expect_completion, 
+      assert_equal(expect_completion,
                    dbgr.completion_method(token, line),
                    "Bad completion on #{line.inspect} with #{token.inspect}")
     end
-    assert(dbgr.completion_method('', '').size > 30, 
+    assert(dbgr.completion_method('', '').size > 30,
            'Initial completion should return more than 30 commands')
   end
 end

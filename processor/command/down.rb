@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'up'
 
-# Debugger "down" command. Is the same as the "up" command with the 
+# Debugger "down" command. Is the same as the "up" command with the
 # direction (set by DIRECTION) reversed.
 class Trepan::Command::DownCommand < Trepan::Command::UpCommand
 
   Trepan::Util.suppress_warnings {
-    old_verbose = $VERBOSE  
+    old_verbose = $VERBOSE
     $VERBOSE    = nil
     HELP = <<-HELP
 #{NAME} [count]
 
 Move the current frame down in the stack trace (to a newer frame). 0
-is the most recent frame. If no count is given, move down 1.
+is the most-recent frame. If no count is given, move down 1.
 
 See also 'up' and 'frame'.
   HELP
@@ -37,10 +37,10 @@ if __FILE__ == $0
 
   def sep ; puts '=' * 40 end
   cmd.run [cmd.name]
-  %w(-1 0 1 -2).each do |count| 
+  %w(-1 0 1 -2).each do |count|
     puts "#{cmd.name} #{count}"
     cmd.run([cmd.name, count])
-    sep 
+    sep
   end
   def foo(cmd, name)
     cmd.proc.frame_setup(RubyVM::Frame::current)

@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/complete'
 class Trepan::Command::HelpCommand < Trepan::Command
@@ -10,7 +10,7 @@ class Trepan::Command::HelpCommand < Trepan::Command
 Without argument, print the list of available debugger commands.
 
 When an argument is given, it is first checked to see if it is command
-name. 'help where' gives help on the 'where' debugger command.
+name. For example, 'help up' gives help on the 'up' debugger command.
 
 If the environment variable $PAGER is defined, the file is
 piped through that command.  You'll notice this only for long help
@@ -27,7 +27,7 @@ info line command.
     'breakpoints' => 'Making the program stop at certain points',
     'data'        => 'Examining data',
     'files'       => 'Specifying and examining files',
-    'running'     => 'Running the program', 
+    'running'     => 'Running the program',
     'status'      => 'Status inquiries',
     'support'     => 'Support facilities',
     'stack'       => 'Examining the call stack',
@@ -43,17 +43,17 @@ info line command.
   end
 
   def complete(prefix)
-    matches = Trepan::Complete.complete_token(CATEGORIES.keys + %w(* all) + 
+    matches = Trepan::Complete.complete_token(CATEGORIES.keys + %w(* all) +
                                               @proc.commands.keys, prefix)
-    aliases = Trepan::Complete.complete_token_filtered(@proc.aliases, prefix, 
+    aliases = Trepan::Complete.complete_token_filtered(@proc.aliases, prefix,
                                                        matches)
     (matches + aliases).sort
-  end    
+  end
 
   def complete_token_with_next(prefix)
-    complete(prefix).map do |cmd| 
+    complete(prefix).map do |cmd|
       [cmd, @proc.commands.member?(cmd) ? @proc.commands[cmd] : nil]
-      # complete_method = 
+      # complete_method =
       #   if 'syntax' == cmd
       #     Syntax.new(syntax_files)
       #   else
@@ -79,7 +79,7 @@ Type "help REGEXP" for the list of commands matching /^#{REGEXP}/.
 Type "help CLASS *" for the list of all commands in class CLASS.
 Type "help" followed by a command name for full documentation.
 '
-    msg(final_msg)  
+    msg(final_msg)
   end
 
   # This method runs the command
@@ -105,18 +105,18 @@ Type "help" followed by a command name for full documentation.
       elsif CATEGORIES.member?(cmd_name)
         show_category(args[1], args[2..-1])
       elsif @proc.commands.member?(cmd_name) or @proc.aliases.member?(cmd_name)
-        real_name = 
-          if @proc.commands.member?(cmd_name) 
+        real_name =
+          if @proc.commands.member?(cmd_name)
             cmd_name
           else
             @proc.aliases[cmd_name]
           end
         cmd_obj = @proc.commands[real_name]
-        help_text = 
-          cmd_obj.respond_to?(:help) ? cmd_obj.help(args) : 
+        help_text =
+          cmd_obj.respond_to?(:help) ? cmd_obj.help(args) :
           cmd_obj.class.const_get(:HELP)
         if help_text
-          msg(help_text) 
+          msg(help_text)
           if cmd_obj.class.constants.member?(:ALIASES) and
               args.size == 2
             msg "Aliases: #{cmd_obj.class.const_get(:ALIASES).join(', ')}"
@@ -125,7 +125,7 @@ Type "help" followed by a command name for full documentation.
       elsif @proc.macros.member?(cmd_name)
         msg "#{cmd_name} is a macro which expands to:"
         msg "  #{@proc.macros[cmd_name]}", {:unlimited => true}
-      else 
+      else
         matches = @proc.commands.keys.grep(/^#{cmd_name}/).sort rescue []
         if matches.empty?
           errmsg("No commands found matching /^#{cmd_name}/. Try \"help\".")
@@ -146,37 +146,37 @@ Type "help" followed by a command name for full documentation.
 
   # Show short help for all commands in `category'.
   def show_category(category, args)
-    
+
     if args.size == 1 && args[0] == '*'
       section "Commands in class %s:" % category
-      
+
       cmds = @proc.commands.keys.select do |cmd_name|
         category == @proc.commands[cmd_name].category
       end.sort
       width = settings[:maxwidth]
       msg columnize_commands(cmds)
-      return 
+      return
     end
-    
+
     section "Command class: %s" % category
     @proc.commands.keys.sort.each do |name|
       next if category != @proc.commands[name].category
       msg("%-13s -- %s" % [name, @proc.commands[name].short_help])
     end
   end
-  
+
   def syntax_files
-    @syntax_files ||= Dir.glob(File.join(HELP_DIR, '*.txt')).map do |txt| 
+    @syntax_files ||= Dir.glob(File.join(HELP_DIR, '*.txt')).map do |txt|
       basename = File.basename(txt, '.txt')
     end
   end
-  
+
   def show_command_syntax(args)
     if args.size == 2
       @syntax_summary_help ||= {}
       section "List of syntax help"
       syntax_files.each do |name|
-        @syntax_summary_help[name] ||= 
+        @syntax_summary_help[name] ||=
           File.open(File.join(HELP_DIR, "#{name}.txt")).readline.chomp
         msg "  %-8s -- %s" % [name, @syntax_summary_help[name]]
       end
@@ -184,7 +184,7 @@ Type "help" followed by a command name for full documentation.
       args[2..-1].each do |name|
         if syntax_files.member?(name)
           @syntax_help ||= {}
-          @syntax_help[name] = 
+          @syntax_help[name] =
             File.open(File.join(HELP_DIR, "#{name}.txt")).readlines[2..-1].join
           section "Debugger syntax for a #{name}:"
           msg @syntax_help[name]

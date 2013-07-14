@@ -1,10 +1,10 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/util'
 
 # up command. Like 'down' but the direction (set by DIRECTION) is different.
 #
-# NOTE: The down command  subclasses this, so beware when changing! 
+# NOTE: The down command  subclasses this, so beware when changing!
 class Trepan::Command::UpCommand < Trepan::Command
 
   Trepan::Util.suppress_warnings {
@@ -13,7 +13,7 @@ class Trepan::Command::UpCommand < Trepan::Command
 #{NAME} [count]
 
 Move the current frame up in the stack trace (to an older frame). 0 is
-the most recent frame. If no count is given, move up 1.
+the most-recent frame. If no count is given, move up 1.
 
 See also 'down' and 'frame'.
   HELP
@@ -23,20 +23,20 @@ See also 'down' and 'frame'.
     NEED_STACK    = true
     SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
   }
-  
+
   require_relative '../../app/frame'
   include Trepan::Frame
 
   def complete(prefix)
     @proc.frame_complete(prefix, @direction)
   end
-  
+
   def initialize(proc)
     super
     @direction = +1 # -1 for down.
   end
 
-  # Run 'up' command. 
+  # Run 'up' command.
   def run(args)
 
     # FIXME: move into @proc and test based on NEED_STACK.
@@ -53,7 +53,7 @@ See also 'down' and 'frame'.
       count_str = args[1]
       name_or_id = args[1]
       opts = {
-        :msg_on_error => 
+        :msg_on_error =>
         "The '#{NAME}' command argument requires a frame number. Got: %s" % count_str,
         :min_value => low, :max_value => high
       }
@@ -72,20 +72,20 @@ if __FILE__ == $0
 
   def sep ; puts '=' * 40 end
   cmd.run [cmd.name]
-  %w(-1 0 1 -2).each do |count| 
+  %w(-1 0 1 -2).each do |count|
     puts "#{cmd.name} #{count}"
     cmd.run([cmd.name, count])
-    sep 
+    sep
   end
   def foo(cmd, name)
     cmd.proc.frame_setup(RubyVM::Frame::current)
     puts "#{name}"
     cmd.run([name])
     sep
-    %w(-2 -1).each do |count| 
+    %w(-2 -1).each do |count|
       puts "#{name} #{count}"
       cmd.run([name, count])
-      sep 
+      sep
     end
   end
   foo(cmd, cmd.name)
