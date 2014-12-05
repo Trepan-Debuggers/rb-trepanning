@@ -35,6 +35,7 @@ class Trepan
                               # restart_argv[0] is $0.
   attr_reader   :settings     # Hash[:symbol] of things you can configure
   attr_accessor :trace_filter # Procs/Methods we ignore.
+  attr_accessor :trace_point  # Trace point object
 
   def initialize(settings={})
 
@@ -89,22 +90,23 @@ class Trepan
     @initial_dir  = @settings[:initial_dir]
     @restart_argv = @settings[:restart_argv]
 
-    unless @settings[:client]
-      @trace_filter = Trace::Filter.new
-      %w(debugger start stop).each do |m|
-        @trace_filter << self.method(m.to_sym)
-      end
-      %w(debugger event_processor trace_var_processor).each do
-        |m|
-        @trace_filter << @core.method(m)
-      end
-      @trace_filter << @trace_filter.method(:add_trace_func)
-      @trace_filter << @trace_filter.method(:remove_trace_func)
-      @trace_filter << Kernel.method(:set_trace_func)
-    end
+    # unless @settings[:client]
+    #   @trace_filter = Trace::Filter.new
+    #   %w(debugger start stop).each do |m|
+    #     @trace_filter << self.method(m.to_sym)
+    #   end
+    #   %w(debugger event_processor trace_var_processor).each do
+    #     |m|
+    #     @trace_filter << @core.method(m)
+    #   end
+    #   @trace_filter << @trace_filter.method(:add_trace_func)
+    #   @trace_filter << @trace_filter.method(:remove_trace_func)
+    #   @trace_filter << Kernel.method(:set_trace_func)
+    # end
 
     # Run user debugger command startup files.
     add_startup_files unless @settings[:nx]
+
 
     at_exit do
       set_trace_func(nil)
@@ -190,36 +192,26 @@ class Trepan
       ret = block.call
       stop
       return ret
-    elsif opts[:immediate]
-      # Stop immediately after this method returns. But if opts[:debugme]
-      # is set, we can stop in this method.
-      RubyVM::Frame::current.trace_off = true unless opts[:debugme]
-      @trace_filter.set_trace_func(@core.event_proc)
-      Trace.event_masks[0] |= @core.step_events
-      @core.debugger(1)
     else
-      RubyVM::Frame::current.trace_off = true unless opts[:debugme]
-
-      @trace_filter.set_trace_func(@core.event_proc)
-      Trace.event_masks[0] |= @core.step_events
-
-      # Set to stop on the next event after this returns.
+      @trace = TracePoint.new() do |tp|
+          @core.event_proc(tp.event, RubyVM::Frame.get)
+      end
       @core.step_count = opts[:step_count] || 0
+      @trace.enable
     end
   end
 
   # Set core's trace-event processor to run
   def start
-    @trace_filter.set_trace_func(@core.event_proc)
+      @trace = TracePoint.new() do |tp|
+          @core.event_processor(tp.event, RubyVM::Frame.get)
+      end
+      @trace.enable
   end
 
   # Remove all of our trace events
   def stop(opts={})
-    # FIXME: should do something in the middle when
-    # we have the ability to remove *our* specific hook
-    # @trace_filter.set_trace_func(nil)
-    # @trace_filter.remove_trace_func
-    clear_trace_func
+      @trace.disable
   end
 
   def add_command_file(cmdfile, stderr=$stderr)
@@ -282,8 +274,6 @@ class Trepan
     unless defined?($trepanning) && $trepanning.is_a?(Trepan)
       $trepanning = Trepan.new(opts)
     end
-    tf = $trepanning.trace_filter
-    tf << self.method(:debugger) unless tf.member? self.method(:debugger)
     $trepanning.debugger(opts, &block)
   end
 

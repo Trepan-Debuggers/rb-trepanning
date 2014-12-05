@@ -124,24 +124,6 @@ class Trepan
         if @step_count < 0
           # If we are continuing, no need to stop at stepping events.
           Trace.event_masks[0] &= ~STEPPING_EVENT_MASK
-        else
-          # Set to trace only those events we are interested in.
-
-          # Don't step/trace into Ruby routines called from here in the code
-          # below (e.g. "trace_hooks").
-          step_count_save = step_count
-          @step_count     = -1
-
-          unless @event_proc == dbgr.trace_filter.hook_proc
-            dbgr.trace_filter.add_trace_func(@event_proc)
-            ## debug: p '+++1', @event_proc, dbgr.trace_filter.hook_proc
-          end
-
-          # FIXME: this doesn't work. Bug in rb-trace?
-          # Trace.event_masks[0] = @step_events | @async_events
-          # RubyVM::TraceHook::trace_hooks[0].event_mask =
-          #   @step_events | @async_events
-          @step_count = step_count_save
         end
 
         # Nil out variables just in case...

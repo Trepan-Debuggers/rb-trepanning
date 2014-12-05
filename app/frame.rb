@@ -2,7 +2,7 @@
 require_relative 'util'
 
 class Trepan
-  
+
   # Call-Stack frame methods
   module Frame
 
@@ -22,21 +22,21 @@ class Trepan
       return '' unless iseq
       params = param_names(iseq, 0, iseq.argc-1, '')
       if iseq.arg_opts > 0
-        opt_params = param_names(iseq, iseq.argc, 
+        opt_params = param_names(iseq, iseq.argc,
                                  iseq.argc + iseq.arg_opts-2, '')
         opt_params[0] = "optional: #{opt_params[0]}" if delineate
         params += opt_params
       end
-      params += param_names(iseq, iseq.arg_rest, iseq.arg_rest, '*') if 
+      params += param_names(iseq, iseq.arg_rest, iseq.arg_rest, '*') if
         iseq.arg_rest != -1
       if iseq.arg_post_len > 0
         # Manditory arguments after optional ones - new in Ruby 1.9
-        post_params = param_names(iseq, iseq.arg_post_start, 
+        post_params = param_names(iseq, iseq.arg_post_start,
                                   iseq.post_start + iseq.arg_post_len, '')
         post_params[0] = "post: #{post_params[0]}" if delineate
         params += post_params
       end
-      params += param_names(iseq, iseq.arg_block, iseq.arg_block, '&') if 
+      params += param_names(iseq, iseq.arg_block, iseq.arg_block, '&') if
         iseq.arg_block != -1
 
       return params
@@ -46,12 +46,12 @@ class Trepan
       argc = frame.argc
       # FIXME should figure out why exception is raised.
       begin
-        args = 
+        args =
           if 0 == argc
             ''
-          elsif frame 
-            1.upto(argc).map do 
-            |i| 
+          elsif frame
+            1.upto(argc).map do
+            |i|
             safe_repr(frame.sp(argc-i+3).inspect, 10)
           end.join(', ')
           else
@@ -63,7 +63,7 @@ class Trepan
       end
     end
 
-    # Return the eval string. We get this as the 
+    # Return the eval string. We get this as the
     # parameter to the eval C call. A bit of checking is done
     # to make sure everything is okay:
     #  - we have to be in an EVAL type frame which has an iseq
@@ -73,7 +73,7 @@ class Trepan
       return nil unless 'EVAL' == frame.type && frame.iseq
       prev = frame.prev
       return nil unless prev && 'CFUNC' == prev.type && 'eval' == prev.method
-      retval = prev.sp 3 
+      retval = prev.sp 3
       retval = $1 if retval =~ /^\(eval "(.+)"\)/
       retval
     end
@@ -83,18 +83,18 @@ class Trepan
     end
 
     def format_stack_call(frame, opts)
-      # FIXME: prettify 
+      # FIXME: prettify
       s = "#{frame.type}"
       s += if opts[:class]
              " #{opts[:class]}#"
            else
-             begin 
+             begin
                obj = eval('self', frame.binding)
              rescue
                ''
              else
                if obj
-                 " #{obj.class}#" 
+                 " #{obj.class}#"
                else
                  ''
                end
@@ -114,7 +114,7 @@ class Trepan
         elsif %w(BLOCK LAMBDA TOP EVAL).member?(frame.type)
           s += " |#{args}|" unless args.nil? || args.empty?
         else
-          s += "(#{all_param_names(iseq)})" 
+          s += "(#{all_param_names(iseq)})"
         end
       end
       s
@@ -123,10 +123,10 @@ class Trepan
     end
 
     def format_stack_entry(frame, opts={})
-      return 'invalid frame' if frame.invalid?
+      return 'invalid frame' unless frame.valid?
       s  = format_stack_call(frame, opts)
       s += " in #{frame.source_container[0]} "
-      s += 
+      s +=
         if (eval_str = eval_string(frame))
           safe_repr(eval_str.inspect, 15)
         else
@@ -138,20 +138,20 @@ class Trepan
           end
         end
       if frame.source_location
-        s += 
+        s +=
           if opts[:maxwidth] && s.size > opts[:maxwidth]
             "\n\t"
           else
             ' '
           end
         if frame.source_location.size == 1
-          s += "at line #{frame.source_location[0]}" if 
+          s += "at line #{frame.source_location[0]}" if
             frame.source_location[0] != 0
         else
           s += " at lines #{frame.source_location}"
         end
       end
-      s += ", pc: #{frame.pc_offset}" if 
+      s += ", pc: #{frame.pc_offset}" if
         frame.pc_offset > 0 && opts[:show_pc]
       return s
     end
@@ -160,7 +160,7 @@ class Trepan
     # We use this for example in detecting tail recursion.
     def location_equal(frame1, frame2)
       frame1 && frame2 && frame1.source_location == frame2.source_location &&
-        frame1.pc_offset == frame2.pc_offset && 
+        frame1.pc_offset == frame2.pc_offset &&
         frame1.source_container == frame2.source_container
     end
 
@@ -172,7 +172,7 @@ class Trepan
     end
 
     def param_names(iseq, start, stop, prefix='')
-      start.upto(stop).map do |i| 
+      start.upto(stop).map do |i|
         begin
           prefix + iseq.local_name(i)
         rescue
@@ -278,7 +278,7 @@ if __FILE__ == $0
   x  = lambda { |a,b|  print_stack_trace(RubyVM::Frame::current) }
   x.call(1,2)
   puts '=' * 10
-  x  = Proc.new do |a| 
+  x  = Proc.new do |a|
     print_stack_trace(RubyVM::Frame::current)
   end
   x.call(1,2)
