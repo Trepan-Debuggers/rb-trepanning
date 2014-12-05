@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
 require 'trace'                          # Trace filtering
-require 'thread_frame'                   # Stack frame introspection and more.
 require_relative '../app/complete'       # command completion
 require_relative '../app/core'           # core event-handling mechanism
 require_relative '../app/default'        # default debugger settings
@@ -42,7 +41,7 @@ class Trepan
     # FIXME: Tracing through intialization code is slow. Need to figure
     # out better ways to do this.
     th = Thread.current
-    th.exec_event_tracing = true
+    # th.exec_event_tracing = true
 
     @settings = Trepan::DEFAULT_SETTINGS.merge(settings)
     @input  = @settings[:input] || STDIN
@@ -101,17 +100,17 @@ class Trepan
       end
       @trace_filter << @trace_filter.method(:add_trace_func)
       @trace_filter << @trace_filter.method(:remove_trace_func)
-      @trace_filter << Kernel.method(:add_trace_func)
+      @trace_filter << Kernel.method(:set_trace_func)
     end
 
     # Run user debugger command startup files.
     add_startup_files unless @settings[:nx]
 
     at_exit do
-      clear_trace_func
+      set_trace_func(nil)
       @intf[-1].close
     end
-    th.exec_event_tracing = false
+    # th.exec_event_tracing = false
   end
 
   # The method is called when we want to do debugger command completion
@@ -179,7 +178,7 @@ class Trepan
     # FIXME: one option we may want to pass is the initial trace filter.
     if opts[:hide_stack]
       @core.processor.hidelevels[Thread.current] =
-        RubyVM::Frame.current.stack_size
+        RubyVM::Frame.get.stack_size
     end
     # unless defined?(PROG_UNRESOLVED_SCRIPT)
     #  # We may later do more sophisticated things...
@@ -211,7 +210,7 @@ class Trepan
 
   # Set core's trace-event processor to run
   def start
-    @trace_filter.add_trace_func(@core.event_proc)
+    @trace_filter.set_trace_func(@core.event_proc)
   end
 
   # Remove all of our trace events

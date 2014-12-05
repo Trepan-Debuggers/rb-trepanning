@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2012 Rocky Bernstein <rockyb@rubyforge.net>
-require 'thread_frame'
 require_relative '../command'
 
 class Trepan::Command::DebugCommand < Trepan::Command
@@ -27,12 +26,12 @@ Enter the debugger recursively on RUBY-CODE.
     arg_str    = args[1..-1].join(' ')
     hidelevels = @proc.hidelevels[th]
 
-    stack_diff = RubyVM::Frame.current.stack_size - frame.stack_size 
+    stack_diff = RubyVM::Frame.current.stack_size - frame.stack_size
 
     # Ignore tracing in support routines:
     # FIXME remvoe 1.9.3 hack
     if '1.9.3' != RUBY_VERSION
-      tf = @proc.dbgr.trace_filter 
+      tf = @proc.dbgr.trace_filter
       [self.method(:run), @proc.method(:debug_eval),
        @proc.method(:debug_eval_with_exception),
        @proc.method(:get_binding_and_filename),
@@ -46,7 +45,7 @@ Enter the debugger recursively on RUBY-CODE.
     # Values we need to save before munging them
     old_tracing            = th.tracing
     old_exec_event_tracing = th.exec_event_tracing?
-    old_mutex              = @proc.core.mutex 
+    old_mutex              = @proc.core.mutex
     old_next_level         = @proc.next_level
     old_step_count         = @proc.core.step_count
 
@@ -61,7 +60,7 @@ Enter the debugger recursively on RUBY-CODE.
 
     RubyVM::Frame.current.trace_off = false
     @proc.core.step_count  = 0
-    retval = @proc.debug_eval(arg_str, 15, 
+    retval = @proc.debug_eval(arg_str, 15,
                               RUBY_VERSION == '1.9.3') # FIXME
 
     # Restore munged values

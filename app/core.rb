@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-require 'thread_frame'
 require 'trace'
 # require_relative '../../rb-trace/app/trace'
 require_relative '../processor'
@@ -42,11 +41,10 @@ class Trepan
       STEPPING_EVENT_MASK =
         LINE_EVENT_MASK     | CLASS_EVENT_MASK    | CALL_EVENT_MASK     |
         RETURN_EVENT_MASK   | C_CALL_EVENT_MASK   | C_RETURN_EVENT_MASK |
-        INSN_EVENT_MASK     | BRKPT_EVENT_MASK    | YIELD_EVENT_MASK    |
-        LEAVE_EVENT_MASK    | SEND_EVENT_MASK
+        BRKPT_EVENT_MASK    |
 
       ASYNC_EVENT_MASK =
-        RAISE_EVENT_MASK    | VM_EVENT_MASK       | SWITCH_EVENT_MASK
+        RAISE_EVENT_MASK
 
       CORE_DEFAULT_SETTINGS = {
         :cmdproc_opts      => {},
@@ -60,7 +58,7 @@ class Trepan
         :step_events       =>
 #	(DEFAULT_EVENT_MASK | INSN_EVENT_MASK) &
 	(DEFAULT_EVENT_MASK ) &
-	~(C_CALL_EVENT_MASK | C_RETURN_EVENT_MASK | SEND_EVENT_MASK)
+	~(C_CALL_EVENT_MASK | C_RETURN_EVENT_MASK)
       }
 
     end
@@ -141,8 +139,8 @@ class Trepan
 
           # FIXME: this doesn't work. Bug in rb-trace?
           # Trace.event_masks[0] = @step_events | @async_events
-          RubyVM::TraceHook::trace_hooks[0].event_mask =
-            @step_events | @async_events
+          # RubyVM::TraceHook::trace_hooks[0].event_mask =
+          #   @step_events | @async_events
           @step_count = step_count_save
         end
 

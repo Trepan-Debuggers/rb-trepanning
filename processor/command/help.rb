@@ -37,8 +37,7 @@ info line command.
     NEED_STACK    = false
     SHORT_HELP    = 'Print commands or give help for command(s)'
 
-    require 'thread_frame'
-    ROOT_DIR = File.dirname(RubyVM::Frame.current.source_container[1])
+    ROOT_DIR = File.dirname(RubyVM::Frame.get.source_container[1])
     HELP_DIR      = File.join(ROOT_DIR, 'help')
   end
 

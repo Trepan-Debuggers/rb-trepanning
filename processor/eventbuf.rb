@@ -15,7 +15,7 @@ class Trepan
       @eventbuf = Trace::EventBuffer.new(size)
       # @event_tracefilter = Trace::Filter.new
     end
-    
+
     # def event_processor(event, frame, arg=nil)
     #   @eventbuf.append(event, frame, arg)
     # end
@@ -27,7 +27,7 @@ class Trepan
     def eventbuf_print(from=nil, to=nil, width=80)
       sep = '-' * ((width - 7) / 2)
       last_container, last_location = nil, nil
-      if from == nil || !@eventbuf.marks[-1] 
+      if from == nil || !@eventbuf.marks[-1]
         mark_index = 0
       else
         mark_index = @eventbuf.marks.size-1
@@ -45,8 +45,8 @@ class Trepan
       end
 
       nextmark = @eventbuf.marks[mark_index]
-      @eventbuf.each_with_index(from, to) do |e, i| 
-        if nextmark 
+      @eventbuf.each_with_index(from, to) do |e, i|
+        if nextmark
           if nextmark == i
             msg "#{sep} %5d #{sep}" % (mark_index - @eventbuf.marks.size)
             mark_index += 1 if mark_index < @eventbuf.marks.size - 1
@@ -56,7 +56,7 @@ class Trepan
             nextmark = @eventbuf.marks[mark_index]
           end
         end
-        last_container, last_location, mess = 
+        last_container, last_location, mess =
           format_eventbuf_entry(e, last_container, last_location) if e
         msg mess
       end
@@ -65,15 +65,15 @@ class Trepan
     # Show event buffer entry. If the location is the same as the previous
     # location we don't show the duplicated location information.
     def format_eventbuf_entry(item, last_container, last_location)
-      container = 
+      container =
         if item.source_container[0] == 'file'
           item.source_container[1]
         else
           item.source_container
         end
-    
-      location = 
-        if 1 == item.source_location.size 
+
+      location =
+        if 1 == item.source_location.size
           item.source_location[0]
         else
           item.source_location
@@ -95,14 +95,14 @@ class Trepan
         mess += "\n\tVM offset #{item.pc_offset}"
       end
       unless same_loc
-        text = LineCache::getline(container, location, 
+        text = LineCache::getline(container, location,
                                   :reload_on_change => @reload_on_change)
         mess += ":\n  #{text.chomp}" if text
       end
       return container, location, mess
     end
-      
-    # FIXME: multiple hook mechanism needs work. 
+
+    # FIXME: multiple hook mechanism needs work.
     # def start_capture
     #   @event_tracefilter.add_trace_func(method(:event_processor).to_proc,
     #                                     Trace::DEFAULT_EVENT_MASK)
