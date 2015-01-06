@@ -38,6 +38,7 @@ class TestCommandEnableDisable < Test::Unit::TestCase
     @cmdproc.frame_setup(tf)
     pc_offset = tf.pc_offset
     @break_cmd.run(['break'])
+    p @cmdproc.errmsgs
     assert_equal(true, @cmdproc.errmsgs.empty?)
     assert_equal(1, @cmdproc.msgs.size)
     reset_cmdproc_vars

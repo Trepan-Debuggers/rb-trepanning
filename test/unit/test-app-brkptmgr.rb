@@ -10,7 +10,7 @@ class TestLibAppBrkptMgr < Test::Unit::TestCase
   end
 
   def test_basic
-    tf = RubyVM::Frame.current
+    tf = RubyVM::Frame.get
     iseq = tf.iseq
     offsets = iseq.offsetlines.keys
     offset  = offsets[0]
@@ -31,7 +31,7 @@ class TestLibAppBrkptMgr < Test::Unit::TestCase
   end
 
   def test_multiple_brkpt_per_offset
-    tf = RubyVM::Frame.current
+    tf = RubyVM::Frame.get
     iseq = tf.iseq
     offsets = iseq.offsetlines.keys
     offset  = offsets[0]

@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../breakpoint'
 require_relative '../../app/breakpoint'
@@ -7,7 +7,7 @@ class Trepan::Command::BreakCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} 
+#{NAME}
 #{NAME} LOCATION [ {if|unless} CONDITION ]
 
 Set a breakpoint. In the second form where CONDITIOn is given, the
@@ -39,10 +39,10 @@ See also condition, continue and "help location".
     if args.size == 1
       # usage is "break"  which means break right here
       # FIXME: should handle condition
-      bp = @proc.breakpoint_offset(@proc.frame.pc_offset, 
-                                   @proc.frame.iseq, 'true', false) 
+      bp = @proc.breakpoint_offset(@proc.frame.pc_offset,
+                                   @proc.frame.iseq, 'true', false)
     else
-      iseq, line_number, vm_offset, condition, negate = 
+      iseq, line_number, vm_offset, condition, negate =
         @proc.breakpoint_position(@proc.cmd_argstr, true)
       return false unless iseq && vm_offset
       bp = @proc.breakpoint_offset(vm_offset, iseq, condition, negate, temp)
@@ -56,13 +56,13 @@ See also condition, continue and "help location".
         mess = "Breakpoint %d set at " % bp.id
       end
 
-      line_loc = "line %s in %s" % 
+      line_loc = "line %s in %s" %
         [bp.source_location.join(', '),
          @proc.canonic_container(bp.iseq.source_container).join(' ')]
 
-      vm_loc = "VM offset %d of instruction sequence \"%s\"" % 
-        [bp.offset, bp.iseq.name]
-      
+      vm_loc = "VM offset %d of instruction sequence \"%s\"" %
+        [bp.offset, bp.iseq.label]
+
       loc, other_loc =
         if 'line' == bp.type
           [line_loc, vm_loc]
@@ -78,7 +78,7 @@ if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   # require_relative '../../lib/trepanning'
-  def run_cmd(cmd, args) 
+  def run_cmd(cmd, args)
     cmd.proc.instance_variable_set('@cmd_argstr', args[1..-1].join(' '))
     cmd.run(args)
   end
@@ -86,11 +86,11 @@ if __FILE__ == $0
   run_cmd(cmd, [cmd.name])
   run_cmd(cmd, [cmd.name, __LINE__.to_s])
   require 'thread_frame'
-  tf = RubyVM::Frame.current
+  tf = RubyVM::Frame.get
   pc_offset = tf.pc_offset
   run_cmd(cmd, [cmd.name, "@#{pc_offset}"])
   def foo
-    5 
+    5
   end
   run_cmd(cmd, [cmd.name, 'foo', (__LINE__-2).to_s])
   run_cmd(cmd, [cmd.name, 'foo'])

@@ -5,7 +5,7 @@ require_relative '../../app/display'
 class TestLibAppBrkptMgr < Test::Unit::TestCase
 
   def test_basic
-    tf = RubyVM::Frame.current
+    tf = RubyVM::Frame.get
     mgr = DisplayMgr.new
     x = 1
     assert_equal(0, mgr.size)

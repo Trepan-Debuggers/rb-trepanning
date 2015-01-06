@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require_relative '../../processor'
-require_relative '../../app/core'
+require_relative '../../lib/trepanning.rb'
 
 # Test Trepan::CmdProcessor
 class TestSubCmdHelp < Test::Unit::TestCase

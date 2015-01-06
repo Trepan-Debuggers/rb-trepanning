@@ -14,7 +14,6 @@ class TestAppBrkpt < Test::Unit::TestCase
         assert_equal(true, b1.condition?(tf.binding))
         assert_equal(1, b1.hits)
 
-        p b1.source_container
         assert_equal(b1.source_container, tf.source_container)
         b1.enabled = false
         assert_equal('b', b1.icon_char)

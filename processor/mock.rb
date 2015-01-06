@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 # Mock setup for commands.
 require_relative '../processor'
 
@@ -51,7 +51,7 @@ module MockDebugger
   # Common Mock debugger setup
   def setup(name=nil, show_constants=true)
     unless name
-      tf = RubyVM::Frame.current.prev
+      tf = RubyVM::Frame.get(1)
       name = File.basename(tf.source_container[1], '.rb')
     end
     if ARGV.size > 0 && ARGV[0] == 'debug'
@@ -127,8 +127,8 @@ module MockDebugger
 end
 
 if __FILE__ == $0
-  dbgr = MockDebugger::MockDebugger.new
-  p dbgr.settings
-  puts '=' * 10
-  p dbgr.core.processor.settings
+    dbgr = MockDebugger::MockDebugger.new
+    p dbgr.settings
+    puts '=' * 10
+    p dbgr.core.processor.settings
 end
