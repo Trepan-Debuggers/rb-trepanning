@@ -3,7 +3,6 @@ require 'test/unit'
 require_relative '../../processor'
 require_relative '../../processor/validate'
 require_relative '../../app/mock'
-require 'thread_frame'
 
 $errors = []
 $msgs   = []
@@ -29,14 +28,14 @@ class TestValidate < Test::Unit::TestCase
   end
 
   def test_get_int
-    [['1', 1],  ['1E', nil], ['bad', nil], ['1+1', 2], ['-5', -5]].each do 
-      |arg, expected|
-      assert_equal(expected, @cmdproc.get_int_noerr(arg))
-    end
+      [['1', 1],  ['1X', nil], ['bad', nil], ['1+1', 2], ['-5', -5]].each do
+          |arg, expected|
+          assert_equal(expected, @cmdproc.get_int_noerr(arg))
+      end
   end
 
   def test_get_on_off
-    onoff = 
+    onoff =
     [['1', true],  ['on', true],
      ['0', false], ['off', false]].each do |arg, expected|
       assert_equal(expected, @cmdproc.get_onoff(arg))
@@ -44,7 +43,7 @@ class TestValidate < Test::Unit::TestCase
   end
 
   def test_parse_position
-    tf = RubyVM::Frame.current
+    tf = RubyVM::Frame.get
     @cmdproc.frame_setup(tf)
     file = File.basename(__FILE__)
     [[__FILE__, [true, file, nil, nil]],
@@ -71,7 +70,7 @@ class TestValidate < Test::Unit::TestCase
   end
 
   # def test_breakpoint_position
-  #   tf = RubyVM::Frame.current
+  #   tf = RubyVM::Frame.get
   #   @cmdproc.frame_setup(tf)
 
   #   def munge(args)
@@ -81,7 +80,7 @@ class TestValidate < Test::Unit::TestCase
 
   #   assert_equal([0, 'bogus', true, 'true', nil],
   #                munge(@cmdproc.breakpoint_position(%w(@0))))
-  #   assert_equal([1, 'bogus', false, 'true', nil], 
+  #   assert_equal([1, 'bogus', false, 'true', nil],
   #                munge(@cmdproc.breakpoint_position(%w(1))))
   #   assert_equal([2, 'bogus', false, 'a > b', nil],
   #                munge(@cmdproc.breakpoint_position(%w(2 if a > b))))
@@ -97,10 +96,10 @@ class TestValidate < Test::Unit::TestCase
   def test_method?
     def foo; 5 end
     require 'irb'
-    tf = RubyVM::Frame.current
+    tf = RubyVM::Frame.get
     @cmdproc.frame_setup(tf)
     @cmdproc.method?('@cmdproc.errmsg')
-    %w(Array.map @cmdproc.errmsg foo Trepan::CmdProcessor.new IRB.start 
+    %w(Array.map @cmdproc.errmsg foo Trepan::CmdProcessor.new IRB.start
       ).each do |str|
       assert @cmdproc.method?(str), "#{str} should be known as a method"
     end

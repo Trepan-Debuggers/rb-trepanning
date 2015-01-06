@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'thread_frame'
 require_relative '../../processor'
 require_relative '../../processor/frame'
 require_relative '../../app/mock'
@@ -34,11 +33,11 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
 
   # See that we have can load up commands
   def test_basic
-    @proc.frame_setup(RubyVM::Frame.current)
+    @proc.frame_setup(RubyVM::Frame.get)
 
     # Test absolute positioning. Should all be okay
-    0.upto(@proc.top_frame.stack_size-1) do |i| 
-      @proc.adjust_frame(i, true) 
+    0.upto(@proc.top_frame.stack_size-1) do |i|
+      @proc.adjust_frame(i, true)
       assert_equal(0, $errors.size)
       assert_equal(true, $msgs.size >= i+1)
     end
@@ -53,19 +52,19 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
     assert_equal(frame_index, @proc.frame_index)
 
     setup
-    @proc.top_frame  = @proc.frame = RubyVM::Frame.current
+    @proc.top_frame  = @proc.frame = RubyVM::Frame.get
     @proc.adjust_frame(0, true)
 
-    @proc.top_frame.stack_size-1.times do 
+    @proc.top_frame.stack_size-1.times do
       frame_index = @proc.frame_index
-      @proc.adjust_frame(1, false) 
+      @proc.adjust_frame(1, false)
       assert_equal(0, $errors.size)
       assert_not_equal(frame_index, @proc.frame_index,
                        '@proc.frame_index should have moved')
     end
-    # FIXME: bug in threadframe top_frame.stack_size? 
+    # FIXME: bug in threadframe top_frame.stack_size?
     # # Adjust relative beyond the end
-    # @proc.adjust_frame(1, false) 
+    # @proc.adjust_frame(1, false)
     # assert_equal(1, $errors.size)
 
     # Should have stayed at the end

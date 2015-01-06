@@ -17,13 +17,13 @@ class TestCommandEnableDisable < Test::Unit::TestCase
 
     # Some simple errors in running enable/disable commands
     [[@enable_cmd, ['enable', '1'], 0, 1],
-     [@disable_cmd, ['disable', '1'], 0, 1]].each do 
+     [@disable_cmd, ['disable', '1'], 0, 1]].each do
       |cmd, args, nmsgs, nerrs|
       # No breakpoint number given
       cmd.run(args[0..0])
-      assert_equal(nmsgs, @cmdproc.msgs.size, 
+      assert_equal(nmsgs, @cmdproc.msgs.size,
                    "#{args} - msgs: #{@cmdproc.msgs.inspect}")
-      assert_equal(nerrs, @cmdproc.errmsgs.size, 
+      assert_equal(nerrs, @cmdproc.errmsgs.size,
                    "#{args} - errmsgs: #{@cmdproc.errmsgs.inspect}")
       reset_cmdproc_vars
 
@@ -34,7 +34,7 @@ class TestCommandEnableDisable < Test::Unit::TestCase
       reset_cmdproc_vars
     end
 
-    tf = RubyVM::Frame.current
+    tf = RubyVM::Frame.get
     @cmdproc.frame_setup(tf)
     pc_offset = tf.pc_offset
     @break_cmd.run(['break'])
@@ -43,13 +43,13 @@ class TestCommandEnableDisable < Test::Unit::TestCase
     reset_cmdproc_vars
 
     @disable_cmd.run(['disable', '1'])
-    assert_equal(0, 
+    assert_equal(0,
                  @cmdproc.msgs[0] =~ /^Breakpoint 1 disabled./,
                  @cmdproc.msgs)
     reset_cmdproc_vars
 
     @enable_cmd.run(['enable', '1'])
-    assert_equal(0, 
+    assert_equal(0,
                  @cmdproc.msgs[0] =~ /^Breakpoint 1 enabled./,
                  @cmdproc.msgs)
   end

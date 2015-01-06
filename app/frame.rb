@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'util'
 
 class Trepan
@@ -83,43 +83,41 @@ class Trepan
     end
 
     def format_stack_call(frame, opts)
-      # FIXME: prettify
-      s = "#{frame.type}"
-      s += if opts[:class]
-             " #{opts[:class]}#"
-           else
-             begin
-               obj = eval('self', frame.binding)
-             rescue
-               ''
+        # FIXME: prettify
+        s = "#{frame.type}"
+        s += if opts[:class]
+                 " #{opts[:class]}#"
              else
-               if obj
-                 " #{obj.class}#"
-               else
-                 ''
-               end
+                 begin
+                     obj = eval('self', frame.binding)
+                 rescue
+                     ''
+                 else
+                     if obj
+                         " #{obj.class}#"
+                     else
+                         ''
+                     end
+                 end
              end
-           end
-      meth = frame.method
-      if meth and frame.type != 'IFUNC'
-        iseq = frame.iseq
-        args = if 'CFUNC' == frame.type
-                 c_params(frame)
-               elsif iseq
-                 all_param_names(iseq).join(', ')
-               end
-        s += meth
-        if %w(CFUNC METHOD).member?(frame.type)
-          s += "(#{args})"
-        elsif %w(BLOCK LAMBDA TOP EVAL).member?(frame.type)
-          s += " |#{args}|" unless args.nil? || args.empty?
-        else
-          s += "(#{all_param_names(iseq)})"
+        meth = frame.method
+        if meth and frame.type != 'IFUNC'
+            iseq = frame.iseq
+            args = if 'CFUNC' == frame.type
+                       c_params(frame)
+                   elsif iseq
+                       all_param_names(iseq).join(', ')
+                   end
+            s += meth
+            if %w(CFUNC METHOD).member?(frame.type)
+                s += "(#{args})"
+            elsif %w(BLOCK LAMBDA TOP EVAL).member?(frame.type)
+                s += " |#{args}|" unless args.nil? || args.empty?
+            else
+                s += "(#{all_param_names(iseq)})"
+            end
         end
-      end
-      s
-    rescue ThreadFrameError
-      'invalid frame'
+        s
     end
 
     def format_stack_entry(frame, opts={})

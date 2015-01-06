@@ -1,5 +1,4 @@
 require 'test/unit'
-require 'thread_frame'
 require_relative '../../app/core'
 require_relative '../../app/mock'
 require_relative '../../processor/frame'
@@ -30,7 +29,7 @@ module UnitHelper
     reset_cmdproc_vars
   end
   module_function :common_setup
-  
+
   def reset_cmdproc_vars
     @cmdproc.instance_variable_set('@msgs', [])
     @cmdproc.instance_variable_set('@errmsgs', [])

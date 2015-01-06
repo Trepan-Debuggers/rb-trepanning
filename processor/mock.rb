@@ -7,9 +7,9 @@ require_relative '../app/default'
 require_relative '../app/frame'
 require_relative '../interface/user'  # user interface (includes I/O)
 
-SCRIPT_ISEQS__ = {} unless 
+SCRIPT_ISEQS__ = {} unless
   defined?(SCRIPT_ISEQS__) && SCRIPT_ISEQS__.is_a?(Hash)
-ISEQS__        = {} unless 
+ISEQS__        = {} unless
   defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
 module MockDebugger
@@ -21,14 +21,14 @@ module MockDebugger
     attr_accessor :intf         # The way the outside world interfaces with us.
     attr_reader   :initial_dir  # String. Current directory when program
                                 # started. Used in restart program.
-    attr_accessor :restart_argv # How to restart us, empty or nil. 
+    attr_accessor :restart_argv # How to restart us, empty or nil.
                                 # Note restart[0] is typically $0.
     attr_reader   :settings     # Hash[:symbol] of things you can configure
     attr_accessor :processor
 
     # FIXME: move more stuff of here and into Trepan::CmdProcessor
     # These below should go into Trepan::CmdProcessor.
-    attr_reader :cmd_argstr, :cmd_name, :vm_locations, :current_frame, 
+    attr_reader :cmd_argstr, :cmd_name, :vm_locations, :current_frame,
                 :debugee_thread
 
     def initialize(settings={})
@@ -39,7 +39,7 @@ module MockDebugger
       @trace_filter         = []
 
       # Don't allow user commands in mocks.
-      @core.processor.settings[:user_cmd_dir] = nil 
+      @core.processor.settings[:user_cmd_dir] = nil
 
     end
 
@@ -48,7 +48,7 @@ module MockDebugger
     end
   end
 
-  # Common Mock debugger setup 
+  # Common Mock debugger setup
   def setup(name=nil, show_constants=true)
     unless name
       tf = RubyVM::Frame.current.prev
@@ -64,7 +64,7 @@ module MockDebugger
 
     cmds = dbgr.core.processor.commands
     cmd  = cmds[name]
-    cmd.proc.frame_setup(RubyVM::Frame::current.prev)
+    cmd.proc.frame_setup(RubyVM::Frame::get(1))
     show_special_class_constants(cmd) if show_constants
 
     def cmd.confirm(prompt, default)
@@ -114,7 +114,7 @@ module MockDebugger
   def show_special_class_constants(cmd)
     puts 'ALIASES: %s' % [cmd.class.const_get('ALIASES').inspect] if
       cmd.class.constants.member?(:ALIASES)
-    %w(CATEGORY MIN_ARGS MAX_ARGS 
+    %w(CATEGORY MIN_ARGS MAX_ARGS
        NAME NEED_STACK SHORT_HELP).each do |name|
       puts '%s: %s' % [name, cmd.class.const_get(name).inspect]
     end

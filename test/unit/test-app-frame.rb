@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require_relative '../../app/frame'
-require 'thread_frame'
 
 class TestAppFrame < Test::Unit::TestCase
 
@@ -13,7 +12,7 @@ class TestAppFrame < Test::Unit::TestCase
     s = format_stack_entry(frame)
     pat = /^METHOD .*#test_app_frame\(\) in file .*test-app-frame.rb at line \d+/
     assert(s =~ pat, "got #{s}, expected pat #{pat}")
-    1.times do 
+    1.times do
       assert_equal(base_count+2, RubyVM::Frame.current.stack_size)
       s = format_stack_entry(frame)
       assert(s =~ pat, "got #{s}, expected pat #{pat}")

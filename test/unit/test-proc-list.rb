@@ -29,7 +29,7 @@ class TestProcList < Test::Unit::TestCase
   end
 
   def test_basic
-    @proc.frame_setup(RubyVM::Frame.current)
+    @proc.frame_setup(RubyVM::Frame.get)
 
     def foo; 5 end
     def check(cmdp, arg, last=10)

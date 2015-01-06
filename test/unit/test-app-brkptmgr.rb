@@ -2,7 +2,6 @@
 require 'test/unit'
 require_relative '../../app/brkptmgr'
 require_relative '../../app/breakpoint'
-require 'thread_frame'
 
 class TestLibAppBrkptMgr < Test::Unit::TestCase
 
@@ -39,17 +38,17 @@ class TestLibAppBrkptMgr < Test::Unit::TestCase
     b1 = @brkpts.add(iseq, offset)
     b2 = @brkpts.add(iseq, offset)
     assert_equal(2, @brkpts.size)
-    assert_equal(1, @brkpts.set.size, 
+    assert_equal(1, @brkpts.set.size,
                  'Two breakpoints but only one iseq/offset')
     @brkpts.delete_by_brkpt(b1)
-    assert_equal(1, @brkpts.size, 
+    assert_equal(1, @brkpts.size,
                  'One breakpoint after 2nd breakpoint deleted')
-    assert_equal(1, @brkpts.set.size, 
+    assert_equal(1, @brkpts.set.size,
                  'Two breakpoints, but only one iseq/offset')
     @brkpts.delete_by_brkpt(b2)
-    assert_equal(0, @brkpts.size, 
+    assert_equal(0, @brkpts.size,
                  'Both breakpoints deleted')
-    assert_equal(0, @brkpts.set.size, 
+    assert_equal(0, @brkpts.set.size,
                  'Second breakpoint delete should delete iseq/offset')
   end
 

@@ -194,7 +194,7 @@ class Trepan
       return ret
     else
       @trace = TracePoint.new() do |tp|
-          @core.event_proc(tp.event, RubyVM::Frame.get)
+          @core.event_processor(tp.event, RubyVM::Frame.get(2))
       end
       @core.step_count = opts[:step_count] || 0
       @trace.enable
@@ -204,7 +204,7 @@ class Trepan
   # Set core's trace-event processor to run
   def start
       @trace = TracePoint.new() do |tp|
-          @core.event_processor(tp.event, RubyVM::Frame.get)
+          @core.event_processor(tp.event, RubyVM::Frame.get(2))
       end
       @trace.enable
   end
