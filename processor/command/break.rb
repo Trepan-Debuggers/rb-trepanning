@@ -27,51 +27,53 @@ Examples:
 See also condition, continue and "help location".
     HELP
 
-    ALIASES      = %w(b)
-    CATEGORY     = 'breakpoints'
-    SHORT_HELP  = 'Set a breakpoint'
+      ALIASES      = %w(b)
+      CATEGORY     = 'breakpoints'
+      SHORT_HELP  = 'Set a breakpoint'
   end
 
-  # This method runs the command
-  def run(args, temp=false)
-    # FIXME: handle more conditions
-    # a line number
-    if args.size == 1
-      # usage is "break"  which means break right here
-      # FIXME: should handle condition
-      bp = @proc.breakpoint_offset(@proc.frame.pc_offset,
-                                   @proc.frame.iseq, 'true', false)
-    else
-      iseq, line_number, vm_offset, condition, negate =
-        @proc.breakpoint_position(@proc.cmd_argstr, true)
-      return false unless iseq && vm_offset
-      bp = @proc.breakpoint_offset(vm_offset, iseq, condition, negate, temp)
-    end
-    if bp
-      bp.condition = condition
-
-      if temp
-        mess = "Temporary breakpoint %d set at " % bp.id
-      else
-        mess = "Breakpoint %d set at " % bp.id
-      end
-
-      line_loc = "line %s in %s" %
-        [bp.source_location.join(', '),
-         @proc.canonic_container(bp.iseq.source_container).join(' ')]
-
-      vm_loc = "VM offset %d of instruction sequence \"%s\"" %
-        [bp.offset, bp.iseq.label]
-
-      loc, other_loc =
-        if 'line' == bp.type
-          [line_loc, vm_loc]
-        else # 'offset' == bp.type
-          [vm_loc, line_loc]
+    # This method runs the command
+    def run(args, temp=false)
+        # FIXME: handle more conditions
+        # a line number
+        if args.size == 1
+            # usage is "break"  which means break right here
+            # FIXME: should handle condition
+            frame = @proc.frame
+            iseq = frame.iseq
+            start_insn = iseq.start_insn(frame.pc_offset)
+            bp = @proc.breakpoint_offset(start_insn, iseq, 'true', false)
+        else
+            iseq, line_number, vm_offset, condition, negate =
+                @proc.breakpoint_position(@proc.cmd_argstr, true)
+            return false unless iseq && vm_offset
+            bp = @proc.breakpoint_offset(vm_offset, iseq, condition, negate, temp)
         end
-      msg(mess + loc + ",\n\t" + other_loc + ".")
+        if bp
+            bp.condition = condition
+
+            if temp
+                mess = "Temporary breakpoint %d set at " % bp.id
+            else
+                mess = "Breakpoint %d set at " % bp.id
+            end
+
+            line_loc = "line %s in %s" %
+                [bp.source_location.join(', '),
+                 @proc.canonic_container(bp.iseq.source_container).join(' ')]
+
+            vm_loc = "VM offset %d of instruction sequence \"%s\"" %
+                [bp.offset, bp.iseq.label]
+
+            loc, other_loc =
+                if 'line' == bp.type
+                    [line_loc, vm_loc]
+                else # 'offset' == bp.type
+                    [vm_loc, line_loc]
+                end
+            msg(mess + loc + ",\n\t" + other_loc + ".")
+        end
     end
-  end
 end
 
 if __FILE__ == $0

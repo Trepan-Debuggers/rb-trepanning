@@ -170,9 +170,10 @@ class Trepan
         end
       when :offset
         position = position.position unless position.kind_of?(Fixnum)
-        if ary=iseq.offset2lines(position)
+        start_insn = iseq.start_insn(position)
+        if ary=iseq.offset2lines(start_insn)
           line_no   = ary.first
-          vm_offset = position
+          vm_offset = start_insn
         else
           errmsg "Unable to find line for offset #{position} in #{iseq}"
           return [nil, nil]
