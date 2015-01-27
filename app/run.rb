@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rbconfig'
 module Trepanning
 
@@ -11,50 +11,52 @@ module Trepanning
   # see.  FIXME: Should we make ARGV an explicit parameter?
   def debug_program(dbgr, program_to_debug)
 
-    # Make sure Ruby script syntax checks okay.
-    # Otherwise we get a load message that looks like trepanning has 
-    # a problem. 
-    output = ruby_syntax_errors(program_to_debug)
-    if output
-      puts output
-      exit $?.exitstatus 
-    end
+      # Make sure Ruby script syntax checks okay.
+      # Otherwise we get a load message that looks like trepanning has
+      # a problem.
+      output = ruby_syntax_errors(program_to_debug)
+      if output
+          puts output
+          exit $?.exitstatus
+      end
 
-    dbgr.trace_filter << self.method(:debug_program)
-    dbgr.trace_filter << Kernel.method(:load)
+      # dbgr.trace_filter << self.method(:debug_program)
+      # dbgr.trace_filter << Kernel.method(:load)
+      dbgr.trace_filter << 'debug_program'
+      dbgr.trace_filter << 'load'
 
-    old_dollar_0 = $0
+      old_dollar_0 = $0
 
-    # Without the dance below to set $0, setting it to a signifcantly
-    # longer value will truncate it in some OS's. See
-    # http://www.ruby-forum.com/topic/187083
-    $progname = program_to_debug
-    alias $0 $progname
-    dollar_0_tracker = lambda {|val| $program_name = val} 
-    trace_var(:$0, dollar_0_tracker)
+      # Without the dance below to set $0, setting it to a signifcantly
+      # longer value will truncate it in some OS's. See
+      # http://www.ruby-forum.com/topic/187083
+      $progname = program_to_debug
+      alias $0 $progname
+      dollar_0_tracker = lambda {|val| $program_name = val}
+      trace_var(:$0, dollar_0_tracker)
 
-    dbgr.debugger(:hide_stack=>true) do
-      dbgr.core.processor.hidelevels[Thread.current] = 
-        RubyVM::Frame.current.stack_size + 1
+      dbgr.start
       begin
-        Kernel::load program_to_debug
+          dbgr.core.processor.hidelevels[Thread.current] =
+              RubyVM::Frame.stack_size
+          dbgr.trace_point.enable
+          Kernel::load program_to_debug
       rescue Interrupt
       end
-    end
 
-    # The dance we have to undo to restore $0 and undo the mess created
-    # above.
-    $0 = old_dollar_0
-    untrace_var(:$0, dollar_0_tracker)
+      # The dance we have to undo to restore $0 and undo the mess created
+      # above.
+      $0 = old_dollar_0
+      untrace_var(:$0, dollar_0_tracker)
   rescue
-    if dbgr.settings[:post_mortem]
-      frame = RubyVM::Frame.current.prev(0)
-      dbgr.core.step_count = 0  # Make event processor stop
-      dbgr.core.processor.settings[:debugstack] = 0  # Make event processor stop
-      dbgr.core.event_processor('post-mortem', frame, $!)
-    else
+      if dbgr.settings[:post_mortem]
+          frame = RubyVM::Frame.get
+          dbgr.core.step_count = 0  # Make event processor stop
+          dbgr.core.processor.settings[:debugstack] = 0  # Make event processor stop
+          dbgr.core.event_processor('post-mortem', frame, $!)
+      else
       raise
-    end
+      end
   end
 
   # Do a shell-like path lookup for prog_script and return the results.
@@ -97,7 +99,7 @@ if __FILE__ == $0
   puts whence_file('irb')
   puts whence_file('probably-does-not-exist')
   puts RbConfig.ruby
-  puts "#{__FILE__} is syntactically correct" unless 
+  puts "#{__FILE__} is syntactically correct" unless
     ruby_syntax_errors(__FILE__)
   readme = File.join(File.dirname(__FILE__), '..', 'README.textile')
   puts "#{readme} is not syntactically correct" if

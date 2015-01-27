@@ -105,20 +105,21 @@ class Trepan
 
     # Initializes the thread and frame variables: @frame, @top_frame,
     # @frame_index, @current_thread, and @threads2frames
-    def frame_setup(frame_thread)
-      @frame_index        = 0
-      @frame = @top_frame = frame_thread
-      @current_thread     = @frame.thread
-      @stack_size         = @frame.stack_size
+    def frame_setup(frame_thread, top_skip=0)
+        @frame_index        = 0
 
-      @threads2frames   ||= {}
-      @threads2frames[@current_thread] = @top_frame
-      @hide_level         =
-        if @settings[:debugstack]
-          0
-        else
-          @hidelevels[@current_thread]
-        end
+        @frame = @top_frame = frame_thread.prev(top_skip)
+        @current_thread     = @frame.thread
+        @stack_size         = @frame.stack_size
+
+        @threads2frames   ||= {}
+        @threads2frames[@current_thread] = @top_frame
+        @hide_level         =
+            if @settings[:debugstack]
+                0
+            else
+                @hidelevels[@current_thread]
+            end
 
     end
 

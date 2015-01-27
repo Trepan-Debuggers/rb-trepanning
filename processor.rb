@@ -193,10 +193,10 @@ class Trepan
     end
 
     # This is the main entry point.
-    def process_commands(frame)
+    def process_commands(frame, top_skip=0)
 
       @event = @core.event
-      frame_setup(frame)
+      frame_setup(frame, top_skip)
 
       @unconditional_prehooks.run
 

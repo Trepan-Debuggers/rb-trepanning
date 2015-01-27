@@ -165,7 +165,7 @@ class Trepan
                                              offset_type)
         else
           errmsg("Unable to find offset for line #{position}\n\t" +
-                 "in #{iseq.name} of file #{filename}")
+                 "in #{iseq.label} of file #{filename}")
           return [nil, nil]
         end
       when :offset

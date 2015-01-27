@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2014 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2014-2015 Rocky Bernstein <rockyb@rubyforge.net>
 
 require 'set'
 require_relative '../processor'
@@ -31,6 +31,7 @@ class Trepan
                                     # 0 means stop on next event, 1 means
                                     # ignore one event. Step events gives the
                                     # kind of things to count as a step.
+        attr_accessor :top_skip     # Number of top frames to ignore
         attr_accessor :step_events  # bitmask of events - used only when
                                     # we are stepping
         attr_accessor :unmaskable_events
@@ -72,20 +73,21 @@ class Trepan
             @processor    = CmdProcessor.new(self, @settings[:cmdproc_opts])
             @unmaskable_events = %w(brkpt raise switch vm)
             @current_thread = nil
+            @top_skip    = 0
         end
 
         def step_events_list
             puts "To be completed..."
         end
 
-        # An old-stype set_trace_func event processor. We don't use
-        # file, line, id, bind.
-        def old_event_processor(event, file, line, id, bind, klass)
-            event_processor(event, RubyVM::Frame.get)
+        # A trace-hook processor for tracepoints
+        def event_processor_tp(tp)
+            ## FIXME: tracepoint has an arg param. Figure out how to use it.
+            event_processor(tp.frame, tp.event)
         end
 
         # A trace-hook processor with the interface a trace hook should have.
-        def event_processor(event, frame, arg=nil)
+        def event_processor(frame, event, hook_arg=nil)
 
             return_exception = nil
             # FIXME: check for breakpoints or other unmaskable events.
@@ -96,8 +98,11 @@ class Trepan
             @mutex.synchronize do
                 @current_thread = Thread.current
                 @frame = frame
-                while @frame.type == 'IFUNC'
-                    @frame = @frame.prev
+
+                if dbgr.trace_filter.member?(@frame.method)
+                    puts "Not tracing #{@frame.method}"
+                else
+                    puts "++++ #{@frame.method} #{@step_count}" if @frame.method
                 end
 
                 if @step_count > 0
@@ -108,45 +113,28 @@ class Trepan
                 end
 
                 @event    = event
-                @hook_arg = arg
+                @hook_arg = hook_arg
 
                 ### debug:
-                ### puts "#{frame.file[1]}:#{frame.source_location[0]}:in `#{frame.method}' #{event}" # if %w(line).member?(event)
-                @processor.process_commands(@frame)
+                ### puts "#{frame.file[1]}:#{frame.source_location[0]}:in `#{frame.method}' #{event}"
+                # if %w(line).member?(event)
+                @processor.process_commands(@frame, top_skip)
 
                 # Nil out variables just in case...
 
                 return_exception = @exception
                 @frame = @event = @arg = @exception = nil
-
+                @top_skip = 0
             end
             return return_exception
         end
 
-        # Call this from inside the program you want to get a synchronous
-        # call to the debugger. set prev_count to the number of levels
-        # *before* the caller you want to skip.
-        def debugger(prev_count=0)
-            while @frame && @frame.type == 'IFUNC'
-                @frame = @frame.prev
-            end
-            frame = RubyVM::Frame.get(prev_count)
-            @step_count = 0  # Make event processor stop
-            event_processor('debugger-call', frame)
-            set_trace_func(old_event_processor)
-        end
-
         # A trace-hook processor for 'trace var'
         def trace_var_processor(var_name, value)
-            frame = RubyVM::Frame.get(2)
-            if 'CFUNC' == frame.type
-                # Don't need the C call that got us here.
-                prev = frame.prev
-                frame = frame.prev if prev
-            end
+            frame = RubyVM::Frame.get
 
             @step_count = 0  # Make event processor stop
-            event_processor('trace-var', frame, [var_name, value])
+            event_processor(frame,  'trace-var', [var_name, value])
         end
 
     end
@@ -161,5 +149,6 @@ if __FILE__ == $0
         end
         foo(dbg)
         x = 5
+        puts "yeah"
     end
 end
