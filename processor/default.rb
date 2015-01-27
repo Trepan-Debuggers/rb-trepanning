@@ -15,7 +15,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
 
         :basename      => false,     # Show basename of filenames only
         :confirm       => true,      # Confirm potentially dangerous operations?
-        :different     => 'nostack', # stop *only* when  different position?
+        :different     => 'on',      # stop *only* when  different position?
 
         :debugdbgr     => false,     # Debugging the debugger
         :debugexcept   => true,      # Internal debugging of command exceptions

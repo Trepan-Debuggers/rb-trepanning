@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012, 2015 Rocky Bernstein <rockyb@rubyforge.net>
-require 'trace'                          # Trace filtering
+require 'set'
 require_relative '../app/complete'       # command completion
 require_relative '../app/core'           # core event-handling mechanism
 require_relative '../app/default'        # default debugger settings
@@ -39,7 +39,7 @@ class Trepan
 
     def initialize(settings={})
         @trace_point = nil
-        @trace_filter = []
+        @trace_filter = Set.new()
         @settings = Trepan::DEFAULT_SETTINGS.merge(settings)
         @input  = @settings[:input] || STDIN
         @output = @settings[:output] || STDOUT
@@ -184,14 +184,13 @@ class Trepan
         if block
             start
             @core.top_skip = 4
-            @core.step_count = 3
+            @core.step_count = 1
             @trace_point.enable
             ret = block.call
             @trace_point.disable
             return ret
         else
             @trace_point = TracePoint.new() do |tp|
-                p tp.event
                 @core.event_processor_tp(tp)
             end
         end

@@ -43,8 +43,6 @@ class Trepan
     end
 
     def c_params(frame, maxstring=20)
-        return '??'
-        # FIXME: fix up patches for Ruby
         argc = frame.argc
         # FIXME should figure out why exception is raised.
         begin
@@ -55,7 +53,7 @@ class Trepan
                     1.upto(argc).map do
                     |i|
                     safe_repr(frame.sp(argc-i+3).inspect, 10)
-                end.join(', ')
+                    end.join(', ')
                 else
                     '??'
                 end
@@ -296,7 +294,7 @@ if __FILE__ == $0
     puts '=' * 30
     eval("eval('print_stack_trace(RubyVM::Frame.get, :maxstack => 2)')")
     puts '=' * 30
-    1.times do |a; b|
+    1.upto(1) do |a; b|
         print_stack_trace(RubyVM::Frame::get)
     end
 end

@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'
 require 'linecache'
 require 'pathname'  # For cleanpath
@@ -138,47 +138,41 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   end
 
   def print_location
-    if %w(c-call call).member?(@event)
-      # FIXME: Fix Ruby so we don't need this workaround?
-      # See also where.rb
-      opts = {}
-      opts[:class] = @core.hook_arg if
-        'CFUNC' == @frame.type && @core.hook_arg && 0 == @frame_index
-      msg format_stack_call(@frame, opts)
-    elsif 'raise' == @event
-      msg @core.hook_arg.inspect if @core.hook_arg # Exception object
-    end
+      if 'raise' == @event
+          msg @core.hook_arg.inspect if @core.hook_arg # Exception object
+      end
 
-    text      = nil
-    source_container = frame_container(@frame, false)
-    ev        = if @event.nil? || 0 != @frame_index
-                  '  '
-                else
-                  (EVENT2ICON[@event] || @event)
-                end
-    @line_no  = frame_line
+      text      = nil
+      source_container = frame_container(@frame, false)
+      ev        = if @event.nil? || 0 != @frame_index
+                      '  '
+                  else
+                      (EVENT2ICON[@event] || @event)
+                  end
+      @line_no  = frame_line
 
-    loc = source_location_info(source_container, @line_no, @frame)
-    loc, @line_no, text, found_line =
-      loc_and_text(loc, @frame, @line_no, source_container)
+      loc = source_location_info(source_container, @line_no, @frame)
+      loc, @line_no, text, found_line =
+          loc_and_text(loc, @frame, @line_no, source_container)
 
-    ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
-    msg "#{ev} (#{loc}#{ip_str})"
+      ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
+      msg "#{ev} (#{loc}#{ip_str})"
 
-    if %w(return c-return).member?(@event)
-      retval = Trepan::Frame.value_returned(@frame, @event)
-      msg 'R=> %s' % retval.inspect
-    end
+      if %w(return c_return).member?(@event.to_s) and
+              @core.trace_point
+          retval = @core.trace_point.return_value
+          msg 'R=> %s' % retval.inspect
+      end
 
-    if text && !text.strip.empty?
-      msg text
-      @line_no -= 1
-    end
-    unless found_line
-      # Can't find source line, so give assembly as consolation.
-      # This great idea comes from the Rubinius reference debugger.
-      run_command('disassemble')
-    end
+      if text && !text.strip.empty?
+          msg text
+          @line_no -= 1
+      end
+      unless found_line
+          # Can't find source line, so give assembly as consolation.
+          # This great idea comes from the Rubinius reference debugger.
+          run_command('disassemble')
+      end
   end
 
   def source_location_info(source_container, line_no, frame)

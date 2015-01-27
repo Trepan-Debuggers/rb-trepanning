@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::InfoReturn < Trepan::Subcommand
@@ -11,14 +11,19 @@ class Trepan::Subcommand::InfoReturn < Trepan::Subcommand
   end
 
   def run(args)
-    event = @proc.event
-    if %w(return c-return).member?(event)
-      ret_val = Trepan::Frame.value_returned(@proc.frame, event)
-      msg('Return value: %s' % ret_val.inspect)
-    else
-      errmsg('You need to be in a return event to do this. Event is %s' % 
-             event)
-    end
+      event = @proc.event
+      if %w(return c_return).member?(event.to_s)
+          if @proc.core.trace_point
+              ret_val = @proc.core.trace_point.return_value
+              msg('Return class: %s' % ret_val.class)
+              msg('Return value: %s' % ret_val.inspect)
+          else
+              msg('We need a trace-point to get this information')
+          end
+      else
+          errmsg('You need to be in a return event to do this. Event is %s' %
+                 event)
+      end
   end
 
 end

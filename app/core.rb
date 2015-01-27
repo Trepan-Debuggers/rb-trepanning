@@ -35,6 +35,7 @@ class Trepan
         attr_accessor :step_events  # bitmask of events - used only when
                                     # we are stepping
         attr_accessor :unmaskable_events
+        attr_reader :trace_point
 
         unless defined?(CORE_DEFAULT_SETTINGS)
             # Synchronous events
@@ -74,6 +75,7 @@ class Trepan
             @unmaskable_events = %w(brkpt raise switch vm)
             @current_thread = nil
             @top_skip    = 0
+            @trace_point = nil
         end
 
         def step_events_list
@@ -83,7 +85,10 @@ class Trepan
         # A trace-hook processor for tracepoints
         def event_processor_tp(tp)
             ## FIXME: tracepoint has an arg param. Figure out how to use it.
-            event_processor(tp.frame, tp.event)
+            @trace_point = tp
+            retval = event_processor(tp.frame, tp.event)
+            @trace_point = nil
+            return retval
         end
 
         # A trace-hook processor with the interface a trace hook should have.
@@ -100,10 +105,9 @@ class Trepan
                 @frame = frame
 
                 if dbgr.trace_filter.member?(@frame.method)
-                    puts "Not tracing #{@frame.method}"
-                else
-                    puts "++++ #{@frame.method} #{@step_count}" if @frame.method
-                end
+                    # puts "Not tracing #{@frame.method}"
+                    return
+                 end
 
                 if @step_count > 0
                     @step_count -= 1
@@ -149,6 +153,7 @@ if __FILE__ == $0
         end
         foo(dbg)
         x = 5
+        y = File.basename("foo.rb", ".rb")
         puts "yeah"
     end
 end
