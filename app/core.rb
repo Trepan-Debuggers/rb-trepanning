@@ -112,7 +112,7 @@ class Trepan
                 if @step_count > 0
                     @step_count -= 1
                     break
-                elsif @step_count < 0 && ! @unmaskable_events.member?(event)
+                elsif @step_count < 0 && ! @unmaskable_events.member?(event.to_s)
                     break
                 end
 

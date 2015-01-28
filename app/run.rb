@@ -38,7 +38,7 @@ module Trepanning
       dbgr.start
       begin
           dbgr.core.processor.hidelevels[Thread.current] =
-              RubyVM::Frame.stack_size
+              RubyVM::Frame.stack_size + 1
           dbgr.trace_point.enable
           Kernel::load program_to_debug
       rescue Interrupt

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
@@ -23,7 +23,7 @@ EOH
     MIN_ABBREV   = 'br'.size
     SHORT_HELP   = 'Status of user-settable breakpoints'
   end
-  
+
   def bpprint(bp, verbose=false)
     disp  = bp.temp?    ? 'del  ' : 'keep '
     disp += bp.enabled? ? 'y  '   : 'n  '
@@ -31,11 +31,11 @@ EOH
     iseq = bp.iseq
     mess = '%-4dbreakpoint    %s at ' % [bp.id, disp]
 
-    line_loc = '%s:%d' % 
+    line_loc = '%s:%d' %
       [iseq.source_container.join(' '),
        iseq.offset2lines(bp.offset).join(', ')]
     vm_loc = "VM offset %d of instruction sequence \"%s\"" %
-      [bp.offset, iseq.name]
+      [bp.offset, iseq.label]
 
     loc, other_loc =
       if 'line' == bp.type
@@ -66,7 +66,7 @@ EOH
       iseq = bp.iseq
       next unless 'file' == iseq.source_container[0]
       loc = iseq.source_container[1] + ':'
-      loc += 
+      loc +=
         # if 'line' == bp.type
           iseq.offset2lines(bp.offset)[0].to_s
         # else
@@ -86,10 +86,10 @@ EOH
     end
 
 
-    show_all = 
+    show_all =
       if args.size > 2
         opts = {
-        :msg_on_error => 
+        :msg_on_error =>
         "An '#{CMD}' argument must eval to a breakpoint between 1..#{@proc.brkpts.max}.",
         :min_value => 1,
         :max_value => @proc.brkpts.max
@@ -99,9 +99,9 @@ EOH
       else
         true
       end
-    
+
     bpmgr = @proc.brkpts
-    if bpmgr.empty?  
+    if bpmgr.empty?
       msg('No breakpoints.')
     else
       # There's at least one
@@ -121,7 +121,7 @@ EOH
           end
         end
         errmsg "No breakpoint number(s) #{not_found.join(' ')}." unless
-          notfound.empty? 
+          notfound.empty?
       end
     end
     if @proc.traced_vars.empty?
@@ -152,9 +152,9 @@ if __FILE__ == $0
   tf = RubyVM::Frame.current
   pc_offset = tf.pc_offset
   def foo
-    5 
+    5
   end
-  
+
   brk_cmd = dbgr.core.processor.commands['break']
   brk_cmd.run(['break', "O#{pc_offset}"])
   cmd.run(%w(info break))

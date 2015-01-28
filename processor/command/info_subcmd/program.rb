@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
@@ -15,16 +15,16 @@ class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
   def run(args)
     frame = @proc.frame
     m = 'Program stop event: %s' % @proc.event
-    m += 
+    m +=
       if frame.iseq
-        '; PC offset %d of instruction sequence: %s' % 
-          [frame.pc_offset, frame.iseq.name]
+        '; PC offset %d of instruction sequence: %s' %
+          [frame.pc_offset, frame.iseq.label]
       else
         '.'
       end
     msg m
-    if 'return' == @proc.event 
-      msg 'R=> %s' % @proc.frame.sp(1).inspect 
+    if 'return' == @proc.event
+      msg 'R=> %s' % @proc.frame.sp(1).inspect
     elsif 'raise' == @proc.event
       msg @proc.core.hook_arg.inspect if @proc.core.hook_arg
     end

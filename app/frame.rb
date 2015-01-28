@@ -185,40 +185,41 @@ class Trepan
     end
 
     def print_stack_trace_from_to(from, to, frame, opts)
-      last_frame = nil
-      # TODO: handle indirect recursion.
-      direct_recursion_count = 0
-      from.upto(to) do |i|
-        if location_equal(last_frame, frame)
-          direct_recursion_count += 1
-        else
-          if direct_recursion_count > 0
-            msg("... above line repeated #{direct_recursion_count} times")
-            direct_recursion_count = 0
-          end
-          prefix = (i == opts[:current_pos]) ? '-->' : '   '
-          prefix += ' #%d ' % [i]
-          print_stack_entry(frame, i, prefix, opts)
+        last_frame = nil
+        # TODO: handle indirect recursion.
+        direct_recursion_count = 0
+        from.upto(to) do |i|
+            if location_equal(last_frame, frame)
+                direct_recursion_count += 1
+            else
+                if direct_recursion_count > 0
+                    msg("... above line repeated #{direct_recursion_count} times")
+                    direct_recursion_count = 0
+                end
+                prefix = (i == opts[:current_pos]) ? '-->' : '   '
+                prefix += ' #%d ' % [i]
+                print_stack_entry(frame, i, prefix, opts)
+            end
+            last_frame = frame
+            frame = frame.prev
         end
-        last_frame = frame
-        frame = frame.prev
-      end
+        return frame
     end
 
     # Print `count' frame entries
     def print_stack_trace(frame, opts={})
-      opts    = DEFAULT_STACK_TRACE_SETTINGS.merge(opts)
-      halfstack = (opts[:maxstack]+1) / 2
-      n       = frame.stack_size
-      n       = [n, opts[:count]].min if opts[:count]
-      if n > (halfstack * 2)
-        print_stack_trace_from_to(0, halfstack-1, frame, opts)
-        msg "... %d levels ..." % (n - halfstack*2)
-        print_stack_trace_from_to(n - halfstack, n-1, frame, opts)
-      else
-        print_stack_trace_from_to(0, n-1, frame, opts)
-      end
-      msg "(More stack frames follow...)" if n < frame.stack_size
+        opts    = DEFAULT_STACK_TRACE_SETTINGS.merge(opts)
+        halfstack = (opts[:maxstack]+1) / 2
+        n       = frame.stack_size
+        n       = [n, opts[:count]].min if opts[:count]
+        if n > (halfstack * 2)
+            print_stack_trace_from_to(0, halfstack-1, frame, opts)
+            msg "... %d levels ..." % (n - halfstack*2)
+            last_frame = print_stack_trace_from_to(n - halfstack, n-1, frame, opts)
+        else
+            last_frame = print_stack_trace_from_to(0, n-1, frame, opts)
+        end
+        msg "(More stack frames follow...)" if last_frame.type != 'TOP'
     end
 
     def set_return_value(frame, event, value)
