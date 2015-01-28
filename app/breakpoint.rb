@@ -12,7 +12,8 @@ class Trepan
                              # we want to (also) record hits independent
                              # of the condition?
     attr_reader   :id        # Fixnum. Name of breakpoint
-    attr_reader   :ignore    # Fixnum. Number of times encountered to ignore
+    attr_reader   :ignore    # Fixnum. Number of times to ignore
+                             # before triggering
     attr_reader   :iseq      # Instruction sequence associated with this
                              # breakpoint. From this we can derive
                              # information such as source location.
