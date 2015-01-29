@@ -13,8 +13,8 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     EVENT2ICON = {
       'brkpt'          => 'xx',
       'tbrkpt'         => 'x1',
-      'c-call'         => 'C>',
-      'c-return'       => '<C',
+      'c_call'         => 'C>',
+      'c_return'       => '<C',
       'call'           => '->',
       'send'           => '=>',
       'leave'          => '<=',

@@ -40,7 +40,6 @@ class Trepan::Subcommand::SetReturn < Trepan::Subcommand
       @proc.core.trace_point.return_value = new_val
       msg('New value is: %s' % new_val.inspect)
   end
-
 end
 
 if __FILE__ == $0
