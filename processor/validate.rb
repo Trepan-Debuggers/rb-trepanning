@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Trepan command input validation routines.  A String type is
 # usually passed in as the argument to validation routines.
@@ -152,10 +152,9 @@ class Trepan
       case offset_type
       when :line
         if ary = iseq.lineoffsets[position]
-          # Normally the first offset is a trace instruction and doesn't
-          # register as the given line, so we need to take the next instruction
-          # after the first one, when available.
-          vm_offset = ary.size > 1 ? ary[1] : ary[0]
+          # Also, there may be multiple offsets for a given line.
+          # we pick the *first* one for the line.
+          vm_offset = ary[0]
           line_no   = position
         elsif found_iseq = find_iseqs_with_lineno(filename, position)
           return position_to_line_and_offset(found_iseq, filename, position,

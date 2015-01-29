@@ -35,12 +35,14 @@ module Trepanning
       dollar_0_tracker = lambda {|val| $program_name = val}
       trace_var(:$0, dollar_0_tracker)
 
-      dbgr.start
       begin
+          dbgr.start
+          dbgr.core.step_count = 4
           dbgr.core.processor.hidelevels[Thread.current] =
-              RubyVM::Frame.stack_size + 1
+              RubyVM::Frame.stack_size
           dbgr.trace_point.enable
           Kernel::load program_to_debug
+          dbgr.stop
       rescue Interrupt
       end
 

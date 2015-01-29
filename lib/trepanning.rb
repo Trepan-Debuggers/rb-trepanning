@@ -103,7 +103,7 @@ class Trepan
 
 
         at_exit do
-            @trace_point.disable if @trace_point
+            stop
             @intf[-1].close
         end
     end
@@ -182,37 +182,32 @@ class Trepan
         # end
         th = Thread.current
         if block
-            start
-            @core.top_skip = 4
-            @core.step_count = 1
+            @trace_point = TracePoint.new() do |tp|
+                @core.event_processor_tp(tp)
+            end
             @trace_point.enable
-            ret = block.call
+            yield block
             @trace_point.disable
-            return ret
+            @trace_point = nil
         else
             @trace_point = TracePoint.new() do |tp|
                 @core.event_processor_tp(tp)
             end
-        end
-        if @trace_point
-            unless opts[:leave_disabled]
-                @core.top_skip = 1
-                @core.step_count = 2
-                @trace_point.enable
-            end
+            @trace_point.enable
         end
     end
 
     # Set core's trace-event processor to run
-    def start
+    def start(enable = false)
         @trace_point = TracePoint.new() do |tp|
             @core.event_processor_tp(tp)
         end
+        @trace_point.enable if enable
     end
 
-    # Disable tracing
-    def stop(opts={})
-        @trace_point.disable
+    def stop
+        @trace_point.disable if @trace_point and
+            @trace_point.respond_to?(:disable)
     end
 
     def add_command_file(cmdfile, stderr=$stderr)
@@ -314,8 +309,8 @@ if __FILE__ == $0
         p "square of #{a} is #{b}"
     }
 
-    puts 'immediate debugging...'
-    $trepanning.debugger(:immediate => true)
+    puts 'immediate debugging (not)...'
+    $trepanning.debugger # (:immediate => true) # no immediate for now
     puts 'line after immediate'
     a = 3
     square(a)

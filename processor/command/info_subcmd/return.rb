@@ -12,14 +12,10 @@ class Trepan::Subcommand::InfoReturn < Trepan::Subcommand
 
   def run(args)
       event = @proc.event
-      if %w(return c_return).member?(event.to_s)
-          if @proc.core.trace_point
-              ret_val = @proc.core.trace_point.return_value
-              msg('Return class: %s' % ret_val.class)
-              msg('Return value: %s' % ret_val.inspect)
-          else
-              msg('We need a trace-point to get this information')
-          end
+      if %w(return c_return b_return).member?(event.to_s)
+          ret_val = @proc.frame.sp(1)
+          msg('Return class: %s' % ret_val.class)
+          msg('Return value: %s' % ret_val.inspect)
       else
           errmsg('You need to be in a return event to do this. Event is %s' %
                  event)

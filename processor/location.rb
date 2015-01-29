@@ -158,7 +158,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
       msg "#{ev} (#{loc}#{ip_str})"
 
-      if %w(return c_return).member?(@event.to_s) and
+      if %w(return c_return b_return).member?(@event.to_s) and
               @core.trace_point
           retval = @core.trace_point.return_value
           msg 'R=> %s' % retval.inspect

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require 'columnize'
 require_relative '../../base/subsubcmd'
 require_relative '../../../../app/frame'
@@ -19,7 +19,7 @@ EOH
     SHORT_HELP   = 'Show local variables of the current stack frame'
     MIN_ARGS     = 0
     MAX_ARGS     = 1
-    MIN_ABBREV   = 'lo'.size 
+    MIN_ABBREV   = 'lo'.size
     NEED_STACK   = true
   }
 
@@ -27,7 +27,7 @@ EOH
     ['name']
   end
 
-  def get_names
+  def names
     iseq = @proc.frame.iseq
     0.upto(iseq.local_size-2).map do
       |i|
@@ -47,7 +47,7 @@ EOH
           else
             section "#{type.capitalize} variable names#{suffix}:"
             width = settings[:maxwidth]
-            mess = Columnize::columnize(names, 
+            mess = Columnize::columnize(names,
                                         @proc.settings[:maxwidth], '  ',
                                         false, true, ' ' * 2).chomp
             msg mess
@@ -59,8 +59,8 @@ EOH
     elsif args.size == 1
       if 'CFUNC' == @proc.frame.type
         argc = @proc.frame.argc
-        if argc > 0 
-          1.upto(argc).each do |i| 
+        if argc > 0
+          1.upto(argc).each do |i|
             msg "#{i}: #{@proc.frame.sp(argc-i+3).inspect}"
           end
         else
@@ -71,8 +71,8 @@ EOH
           msg "No #{type} variables defined#{suffix}."
         else
           section "#{type.capitalize} variables#{suffix}:"
-          names.each do |var_name| 
-            var_value = 
+          names.each do |var_name|
+            var_value =
               @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
             msg("#{var_name} = #{var_value}", :code => true)
           end
