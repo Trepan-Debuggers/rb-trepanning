@@ -79,7 +79,11 @@ class Trepan
         end
 
         def step_events_list
-            puts "To be completed..."
+            if @trace_point
+                @trace_point.event_mask
+            else
+                nil
+            end
         end
 
         # A trace-hook processor for tracepoints

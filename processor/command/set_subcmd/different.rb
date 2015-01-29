@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetDifferent < Trepan::SetBoolSubcommand
@@ -21,7 +21,7 @@ stop at a different position.
 
 Note though that the notion of different does take into account stack
 nesting. So in ARGV.map {|arg| arg.to_i} you get a stop before ARGV as
-well as one in the block. 
+well as one in the block.
 
 If you to ignore stopping at added nesting levels, there are two
 possibilities. 'set step nostack' will ignore stack nestings levels on
@@ -39,31 +39,31 @@ override this setting.
 
   completion %w(on off nostack)
 
-  def run(args)
-    if args.size == 3 && 'nostack' == args[2]
-      @proc.settings[:different] = 'nostack'
-      msg("different is nostack.")
-    else
-      super
+    def run(args)
+        if args.size == 3 && 'nostack' == args[2]
+            @proc.settings[:different] = 'nostack'
+            msg("different is nostack.")
+        else
+            super
+        end
+        @proc.different_pos = @proc.settings[:different]
     end
-    @proc.different_pos = @proc.settings[:different]
-  end
 
 end
 
 if __FILE__ == $0
-  # Demo it.
-  require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
+    # Demo it.
+    require_relative '../../mock'
+    name = File.basename(__FILE__, '.rb')
 
-  # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Trepan::Subcommand::SetDifferent.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
+    # FIXME: DRY the below code
+    dbgr, cmd = MockDebugger::setup('set')
+    subcommand = Trepan::Subcommand::SetDifferent.new(cmd)
+    testcmdMgr = Trepan::Subcmd.new(subcommand)
 
-  subcommand.run_show_bool
-  subcommand.summary_help(name)
-  puts
-  puts '-' * 20
-  puts subcommand.save_command
+    subcommand.run_show_bool
+    # subcommand.summary_help(name)
+    puts
+    puts '-' * 20
+    puts subcommand.save_command
 end
