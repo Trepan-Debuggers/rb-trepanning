@@ -1,5 +1,5 @@
 Overall Debugger Command Syntax
--------------------------------
+===============================
 
 If the first non-blank character of a line starts with `#`,
 the command is ignored.
@@ -24,7 +24,7 @@ omitted depending on early success or some debugger settings:
 
 1. The leading token is first looked up in the macro table. If it is in
 the table, the expansion is replaces the current command and possibly
-other commands pushed onto a command queue. See the "help macros" for
+other commands pushed onto a command queue. See `help macros` for
 help on how to define macros, and `info macro` for current macro
 definitions.
 
@@ -54,6 +54,8 @@ If you want irb-like command-processing, it's possible to go into an
 irb shell with the "irb" command. It is also possible to arrange going
 into an irb shell every time you enter the debugger.
 
-**See also:**
+See also:
+---------
 
-"help syntax examples", "help syntax suffix"
+* `help syntax examples`
+* `help syntax suffixes`
