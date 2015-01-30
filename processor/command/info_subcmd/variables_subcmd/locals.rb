@@ -10,7 +10,7 @@ class Trepan::Subcommand::InfoVariablesLocals < Trepan::SubSubcommand
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
 #{CMD}
-#{CMD} [ names | local-number ]
+#{CMD} [ --names | local-number ]
 
 Show local variables including parameters of the current stack frame.
 Normally for each which show both the name and value. If you just
@@ -22,7 +22,7 @@ Examples:
 
     info variables local
     info variables local 0
-    info variables local names
+    info variables local --names
 
 See Also:
     info variables, info globals, info variables constant, info variables class
@@ -44,7 +44,7 @@ EOH
                     iseq.local_size - 2
                 end
             ary = (0..argc).map{|i| i.to_s}
-            ['names'] + ary
+            ['--names'] + ary
         else
             []
         end
@@ -55,11 +55,11 @@ EOH
         0.upto(iseq.local_size-2).map { |i| iseq.local_name(i) }
     end
 
-    def run_for_type(args, type, klass=nil)
+    def run_for_locals(args, klass=nil)
         suffix = klass ? " for #{klass.to_s}" : '' rescue ''
         c_frame = 'CFUNC' == @proc.frame.type
         if args.size == 2
-            last_arg = args[-1].downcase
+            last_arg = args[-1]
             argc =
                 if c_frame
                     @proc.frame.argc
@@ -67,15 +67,15 @@ EOH
                     iseq = @proc.frame.iseq
                     iseq.local_size - 2
                 end
-            if 0 == 'names'.index(last_arg)
+            if 0 == '--names'.index(last_arg)
                 if c_frame
-                    msg("Can't show parameter names for a call")
+                    msg("Can't show parameter names in a C call")
                     return
                 end
                 if names.empty?
-                    msg "No #{type} variables defined."
+                    msg "No local variables defined."
                 else
-                    section "#{type.capitalize} variable names#{suffix}:"
+                    section "Local variable names#{suffix}:"
                     width = settings[:maxwidth]
                     mess = Columnize::columnize(names,
                                                 @proc.settings[:maxwidth], '  ',
@@ -83,20 +83,25 @@ EOH
                     msg mess
                 end
             else
-                val = @proc.get_an_int(last_arg,
-                                       :max_value => argc,
-                                       :min_value => 0,
-                                       )
-
-                if val
-                    if c_frame
-                        msg "#{val}: #{@proc.frame.sp(argc-val+3).inspect}"
-                    else
-                        var_name = @proc.frame.iseq.local_name(val)
-                        var_value =
-                            @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
-                        msg("#{var_name} = #{var_value}", :code => true)
-                    end
+                if c_frame
+                    val = @proc.get_an_int(last_arg,
+                                           :max_value => argc,
+                                           :min_value => 0,
+                                           )
+                    msg "#{val}: #{@proc.frame.sp(argc-val+3).inspect}"
+                elsif names.member?(last_arg)
+                    var_value =
+                        @proc.safe_rep(@proc.debug_eval_no_errmsg(last_arg).inspect)
+                    msg("#{last_arg} = #{var_value}", :code => true)
+                else
+                    val = @proc.get_an_int(last_arg,
+                                           :max_value => argc,
+                                           :min_value => 0,
+                                           )
+                    var_name = @proc.frame.iseq.local_name(val)
+                    var_value =
+                        @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
+                    msg("#{var_name} = #{var_value}", :code => true)
                 end
             end
         elsif args.size == 1
@@ -111,9 +116,9 @@ EOH
                 end
             else
                 if names.empty?
-                    msg "No #{type} variables defined#{suffix}."
+                    msg "No local variables defined#{suffix}."
                 else
-                    section "#{type.capitalize} variables#{suffix}:"
+                    section "Local variables#{suffix}:"
                     names.each do |var_name|
                         var_value =
                             @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
@@ -125,8 +130,9 @@ EOH
             errmsg("Wrong number of arguments #{args.size}")
         end
     end
+
     def run(args)
-        run_for_type(args, 'local', @proc.debug_eval('self'))
+        run_for_locals(args, @proc.debug_eval('self'))
     end
 end
 

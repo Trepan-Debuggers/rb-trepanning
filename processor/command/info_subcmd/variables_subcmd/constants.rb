@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
-require_relative 'locals'
+require_relative '../../base/subsubcmd'
+require_relative '../../../../app/util'
 
-class Trepan::Subcommand::InfoVariablesConstants <
-    Trepan::Subcommand::InfoVariablesLocals
+class Trepan::Subcommand::InfoVariablesConstants < Trepan::SubSubcommand
   Trepan::Util.suppress_warnings {
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
 #{CMD}
-#{CMD} [names]
+#{CMD}
 
 Show class constants of the current stack frame.
 Normally for each which show both the name and value. If you just
@@ -21,15 +21,48 @@ EOH
     NEED_STACK   = true
   }
 
-  def get_names
-      @proc.debug_eval_no_errmsg('self.class.constants.sort') || []
-  end
+    def names
+        # FIXME: do less guess work. Decide based on other properties.
+        values = @proc.debug_eval_no_errmsg('self.class.constants')
+        if values.empty?
+            values = @proc.debug_eval_no_errmsg('self.constants')
+        end
+        return values ? values.sort.map{|c| c.to_s} || [] : []
+    end
 
-  def run(args)
-      msg "Not implemented yet"
-      return
-      run_for_type(args, 'constant', @proc.debug_eval('self'))
-  end
+    def run_for_constant(args, klass=nil)
+        suffix = klass ? " for #{klass.to_s}" : '' rescue ''
+        if args.size == 2
+            last_arg = args[-1]
+            if names.member?(last_arg)
+                var_class =
+                    @proc.safe_rep(@proc.debug_eval_no_errmsg(last_arg+'.class').inspect)
+                var_value =
+                    @proc.safe_rep(@proc.debug_eval_no_errmsg(last_arg).inspect)
+                msg("#{last_arg} class: %s" % var_class)
+                msg("#{last_arg} value: %s" % var_value)
+            else
+                errmsg "No constant variable #{last_arg} defined#{suffix}."
+            end
+        elsif args.size == 1
+            if names.empty?
+                msg "No constant variables defined#{suffix}."
+            else
+                section "Constant variable names#{suffix}:"
+                width = settings[:maxwidth]
+                mess = Columnize::columnize(names,
+                                            @proc.settings[:maxwidth], '  ',
+                                            false, true, ' ' * 2).chomp
+                msg mess
+            end
+        else
+            errmsg("Wrong number of arguments #{args.size}")
+        end
+    end
+
+    def run(args)
+        run_for_constant(args, @proc.debug_eval('self'))
+    end
 end
 
 # Demo it.

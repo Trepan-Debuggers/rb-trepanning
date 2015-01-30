@@ -2,7 +2,7 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'locals'
 
-class Trepan::Subcommand::InfoVariablesClass < 
+class Trepan::Subcommand::InfoVariablesClass <
     Trepan::Subcommand::InfoVariablesLocals
   Trepan::Util.suppress_warnings {
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
@@ -32,9 +32,9 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  cmd = 
+  cmd =
     MockDebugger::subsub_setup(Trepan::Subcommand::InfoVariables,
                                Trepan::Subcommand::InfoVariablesClass)
   cmd.run(cmd.prefix)
-  cmd.run(cmd.prefix + ['name'])
+  cmd.run(cmd.prefix + ['--name'])
 end

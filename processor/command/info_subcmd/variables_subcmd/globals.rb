@@ -8,7 +8,7 @@ class Trepan::Subcommand::InfoVariablesGlobals <
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
 #{CMD}
-#{CMD} [names]
+#{CMD} [--names]
 
 Show global variables.
 Normally for each which show both the name and value. If you just
@@ -20,7 +20,7 @@ EOH
     NEED_STACK   = true
   }
 
-  def get_names
+  def names
     global_variables
   end
 
@@ -33,7 +33,7 @@ EOH
         else
           section "Global variable names:"
           width = settings[:maxwidth]
-          mess = Columnize::columnize(global_variables.sort, 
+          mess = Columnize::columnize(global_variables.sort,
                                       @proc.settings[:maxwidth], '  ',
                                       false, true, ' ' * 2).chomp
           msg mess
@@ -42,12 +42,12 @@ EOH
         errmsg("unrecognized argument: #{args[-1]}")
       end
     elsif args.size == 1
-      names = get_names
+      names = names
       if names.empty?
         msg "No global variables defined."
       else
         section "Global variables:"
-        names.sort.each do |var_name| 
+        names.sort.each do |var_name|
           s = @proc.debug_eval(var_name.to_s)
           msg("#{var_name} = #{s.inspect}", :code=>true)
         end
@@ -61,8 +61,8 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  cmd = MockDebugger::subsub_setup(Trepan::Subcommand::InfoVariablesGlobals, 
+  cmd = MockDebugger::subsub_setup(Trepan::Subcommand::InfoVariablesGlobals,
                                    false)
   cmd.run(cmd.prefix)
-  cmd.run(cmd.prefix + ['name'])
+  cmd.run(cmd.prefix + ['--name'])
 end
