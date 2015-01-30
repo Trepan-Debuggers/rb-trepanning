@@ -2,7 +2,7 @@
 require 'test/unit'
 require_relative '../../app/display'
 
-class TestLibAppBrkptMgr < Test::Unit::TestCase
+class TestLibAppDisplay < Test::Unit::TestCase
 
   def test_basic
     tf = RubyVM::Frame.get

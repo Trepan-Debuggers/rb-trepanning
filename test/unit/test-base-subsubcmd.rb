@@ -3,10 +3,10 @@ require 'test/unit'
 require_relative '../../processor/command/base/subsubcmd'
 
 $errors = []
-class TestBaseSubCommand < Test::Unit::TestCase
+class TestBaseSubSubCommand < Test::Unit::TestCase
 
   def test_prefix_set
-    Trepanning::SubSubcommand.set_name_prefix('/tmp/show_subcmd/auto_subcmd/food.rb', 
+    Trepanning::SubSubcommand.set_name_prefix('/tmp/show_subcmd/auto_subcmd/food.rb',
                                            self.class)
     assert_equal('food', NAME, "should have set NAME")
     assert_equal('show auto food', CMD)
