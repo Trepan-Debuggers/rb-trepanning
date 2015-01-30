@@ -36,8 +36,7 @@ class TestValidate < Test::Unit::TestCase
 
   def test_get_on_off
     onoff =
-    [['1', true],  ['on', true],
-     ['0', false], ['off', false]].each do |arg, expected|
+    [['on', true], ['off', false]].each do |arg, expected|
       assert_equal(expected, @cmdproc.get_onoff(arg))
     end
   end

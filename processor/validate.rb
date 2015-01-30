@@ -243,7 +243,7 @@ class Trepan
       unless arg
         if !default
           if print_error
-            errmsg("Expecting 'on', 1, 'off', or 0. Got nothing.")
+            errmsg("Expecting 'on', or 'off'. Got nothing.")
           end
           raise TypeError
         end
@@ -253,7 +253,7 @@ class Trepan
       return true  if arg == '1' || darg == 'on'
       return false if arg == '0' || darg =='off'
 
-      errmsg("Expecting 'on', 1, 'off', or 0. Got: %s." % arg.to_s) if
+      errmsg("Expecting 'on', or 'off'. Got: %s." % arg.to_s) if
         print_error
       raise TypeError
     end
@@ -375,7 +375,7 @@ if __FILE__ == $0
     cmdproc.frame_initialize
     cmdproc.instance_variable_set('@settings',
                                Trepan::CmdProcessor::DEFAULT_SETTINGS)
-    cmdproc.frame_setup(RubyVM::Frame.current)
+    cmdproc.frame_setup(RubyVM::Frame.get)
     onoff = %w(1 0 on off)
     onoff.each { |val| puts "onoff(#{val}) = #{cmdproc.get_onoff(val)}" }
     %w(1 1E bad 1+1 -5).each do |val|
