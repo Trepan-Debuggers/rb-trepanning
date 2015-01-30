@@ -26,7 +26,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     end
 
     def markdown(message, opts={})
-        message = render(message, @settings[:maxwidth])
+        message = render(message, @settings[:maxwidth], @settings[:highlight])
         @dbgr.intf[-1].msg(message)
     end
 

@@ -19,13 +19,37 @@ module Redcarpet
                 text
             end
 
+            # reflow text so lines are not
+            # longer than @width. prefix
+            # is used only after the first line
+            # as this is what we want in lists.
+            def reflow(text, prefix='')
+                lines = []
+                line_len = 0
+                line = ''
+                width = @width - prefix.size
+                text.split.each do |word|
+                    word_size = strip_term_sequence(word).size
+                    if (line_len + word_size) >= width
+                        lines << line
+                        line = prefix + word + ' '
+                        line_len = prefix.size + word_size + 1
+                    else
+                        line += word + ' '
+                        line_len += word_size + 1
+                    end
+                end
+                lines << line
+                lines.join("\n") + "\n"
+            end
+
             def ansi?
                 defined?(Term::ANSIColor) and try_ansi
             end
 
             def header(title, level)
                 if ansi?
-                    Term::ANSIColor.bold + title + Term::ANSIColor.reset + "\n"
+                    Term::ANSIColor.bold + title + Term::ANSIColor.reset + "\n\n"
                 else
                     sep = (level == 1) ? '=' : '-'
                     title + "\n" + (sep * title.size) + "\n"
@@ -45,6 +69,10 @@ module Redcarpet
                 else
                     '***' + text + '***'
                 end
+            end
+
+            def block_code(code, lang)
+                code + "\n"
             end
 
             def double_emphasis(text)
@@ -84,22 +112,7 @@ module Redcarpet
             end
 
             def paragraph(text)
-                lines = []
-                line_len = 0
-                line = ''
-                text.split.each do |word|
-                    word_size = strip_term_sequence(word).size
-                    if line_len +  word_size > @width
-                        lines << line
-                        line = word + ' '
-                        line_len = word_size
-                    else
-                        line += word + ' '
-                        line_len += word_size + 1
-                    end
-                end
-                lines << line
-                lines.join("\n") + "\n\n"
+                reflow(text) + "\n"
             end
 
             def list(content, list_type)
@@ -113,14 +126,18 @@ module Redcarpet
             end
 
             def list_item(content, list_type)
+                prefix = ''
                 case list_type
                 when :ordered
                     @list_count ||= 0
                     @list_count += 1
-                    "#{@list_count}. #{content}"
+                    prefix = "#{@list_count}. "
                 when :unordered
-                    "* #{content}"
+                    prefix = "* "
                 end
+                text = reflow(content, ' ' * prefix.size)
+                text += "\n" if text =~ /\n./
+                prefix + text
             end
         end
     end
