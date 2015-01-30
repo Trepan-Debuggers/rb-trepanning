@@ -1,12 +1,15 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 # I/O related command processor methods
 require_relative '../app/util'
+require_relative '../app/markdown'
 require_relative 'virtual'
 
 begin require 'term/ansicolor'; rescue LoadError; end
 
 class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
-  attr_accessor :ruby_highlighter
+    include Trepan::Markdown
+
+    attr_accessor :ruby_highlighter
 
   def confirm(msg, default)
     @settings[:confirm] ? @dbgr.intf[-1].confirm(msg, default) : true
@@ -21,9 +24,16 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     else
       message = safe_rep(message) unless opts[:unlimited]
     end
-    if @settings[:highlight] && defined?(Term::ANSIColor)
-      message =
-        Term::ANSIColor.italic + message + Term::ANSIColor.reset
+
+    def markdown(message, opts={})
+        message = render(message, @settings[:maxwidth])
+        @dbgr.intf[-1].msg(message)
+    end
+
+    def msg(message, opts={})
+        message = safe_rep(message) unless opts[:unlimited]
+        message = ruby_format(message) if opts[:code]
+        @dbgr.intf[-1].msg(message)
     end
     @dbgr.intf[-1].errmsg(message)
   end

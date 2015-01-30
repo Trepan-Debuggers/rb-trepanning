@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2015 Rocky Bernstein <rockyb@rubyforge.net>
+
 begin require 'term/ansicolor'; rescue LoadError; end
 require 'redcarpet'
 require 'redcarpet/render_strip'
@@ -29,6 +32,13 @@ module Redcarpet
                 end
             end
 
+            def codespan(text)
+                if ansi?
+                    Term::ANSIColor.underline + text + Term::ANSIColor.reset + "\n"
+                else
+                    "'" + text + "'"
+                end
+            end
             def triple_emphasis(text)
                 if ansi?
                     Term::ANSIColor.bold + text + Term::ANSIColor.reset
@@ -81,7 +91,7 @@ module Redcarpet
                     word_size = strip_term_sequence(word).size
                     if line_len +  word_size > @width
                         lines << line
-                        line = word
+                        line = word + ' '
                         line_len = word_size
                     else
                         line += word + ' '
@@ -96,6 +106,7 @@ module Redcarpet
                 case list_type
                 when :ordered
                     @list_count = 0
+                    "#{content}\n"
                 when :unordered
                     "\n#{content}\n"
                 end
@@ -104,10 +115,11 @@ module Redcarpet
             def list_item(content, list_type)
                 case list_type
                 when :ordered
+                    @list_count ||= 0
                     @list_count += 1
-                    "#{@list_count} "
+                    "#{@list_count}. #{content}"
                 when :unordered
-                    "* "
+                    "* #{content}"
                 end
             end
         end
@@ -142,4 +154,21 @@ EOF
         puts render(string, width, try_ansi)
         puts '-' * 60
     end
+puts
+string = <<EOF
+If the first non-blank character of a line starts with `#`,
+the command is ignored.
+
+* first
+* second
+* third
+
+1. first
+1. second
+1. third
+
+## See also
+foo
+EOF
+puts render(string, 50, false)
 end
