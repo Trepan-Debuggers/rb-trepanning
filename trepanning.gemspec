@@ -12,11 +12,9 @@ Gem::Specification.new do |spec|
   spec.description = <<-EOF
 A modular, testable, Ruby debugger using some of the best ideas from ruby-debug, other debuggers, and Ruby Rails.
 
-Some of the core debugger concepts have been rethought. As a result, some of this may be experimental.
+Some of the core debugger concepts have been rethought.
 
-This version works only with a patched version of Ruby 1.9.2 or Ruby 1.9.3 and rb-threadframe.
-
-See also rbx-trepanning for a version that works with Rubinius.
+This version works only with a patched version of Ruby 2.1.
 EOF
   spec.add_dependency('rb-threadframe', '~> 0.39', '>= 0.39.9')
   spec.add_dependency('rb-trace', '~> 0.5')
