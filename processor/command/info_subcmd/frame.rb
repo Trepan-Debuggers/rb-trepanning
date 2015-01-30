@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
+require_relative '../../../app/frame'
 
 class Trepan::Subcommand::InfoFrame < Trepan::Subcommand
-  unless defined?(HELP)
-    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP = <<-EOH
+    include Trepan::Frame
+    unless defined?(HELP)
+        Trepanning::Subcommand.set_name_prefix(__FILE__, self)
+        HELP = <<-EOH
 #{CMD}
 
 Show information about the selected frame. The fields we list are:
@@ -32,31 +34,65 @@ Frame basename
 
 
 See also: backtrace
-    EOH
-    MIN_ABBREV   = 'fr'.size # Note we have "info file"
-    MIN_ARGS     = 0
-    MAX_ARGS     = 0
-    NEED_STACK   = true
-    SHORT_HELP   = 'Show information about the selected frame'
-  end
+EOH
+        MIN_ABBREV   = 'fr'.size # Note we have "info file"
+        MIN_ARGS     = 0
+        MAX_ARGS     = 0
+        NEED_STACK   = true
+        SHORT_HELP   = 'Show information about the selected frame'
+    end
 
-  def run(args)
-      frame = @proc.frame
-      section "Frame %2d: #{frame.method}" % @proc.frame_index
-      msg "  %-6s: %s" % frame.source_container
-      msg "  line  : %s" % @proc.frame_line
-      msg "  argc  : %d" % frame.argc
-      msg "  arity : %d" % frame.arity
-      msg "  type  : %s" % frame.type
-      msg "  offset: %d" % frame.pc_offset if frame.iseq
-      msg "  label:  %s" % frame.label if frame.label unless frame.method
 
-      if %w(return c-return).member?(@proc.event)
-      ret_val = Trepan::Frame.value_returned(@proc.frame, @proc.event)
-          msg "  Return: %s" % ret_val
-      end
-  end
+    def print_frame_c_params(frame)
+        argc = frame.argc
+        # FIXME should figure out why exception is raised.
+        begin
+            if 0 == argc
+                return
+            elsif frame
+                1.upto(argc).map do
+                    |i|
+                    msg "  \t#{frame.sp(argc-i+3).inspect}"
+                end
+            else
+                msg "  \t??"
+            end
+        rescue NotImplementedError
+            msg "  \t??"
+        end
+    end
 
+    def run(args)
+        frame = @proc.frame
+        meth = frame.method rescue nil
+
+        section "Frame %2d: #{meth}" % @proc.frame_index
+        msg "  %-6s: %s" % frame.source_container
+        msg "  line  : %s" % @proc.frame_line
+        msg "  argc  : %d" % frame.argc
+        msg "  arity : %d" % frame.arity
+        msg "  type  : %s" % frame.type
+        msg "  offset: %d" % frame.pc_offset if frame.iseq
+        msg "  label:  %s" % frame.label if frame.label unless meth
+        if frame.argc > 0
+            msg "  parameters:"
+            if meth and frame.type != 'IFUNC'
+                iseq = frame.iseq
+                if 'CFUNC' == frame.type
+                    print_frame_c_params(frame)
+                elsif iseq
+                    all_param_names(iseq).each do |param|
+                        msg "  \t#{param}"
+                    end
+                end
+            end
+        end
+
+        if %w(return c-return).member?(@proc.event)
+            ret_val = Trepan::Frame.value_returned(@proc.frame, @proc.event)
+            msg "  Return: %s" % ret_val
+        end
+    end
 end
 
 if __FILE__ == $0

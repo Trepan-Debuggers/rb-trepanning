@@ -40,6 +40,7 @@ module MockDebugger
 
       # Don't allow user commands in mocks.
       @core.processor.settings[:user_cmd_dir] = nil
+      @core.processor.hidelevels = {}
 
     end
 
@@ -90,7 +91,7 @@ module MockDebugger
   def sub_setup(sub_class, run=true)
     sub_name = sub_class.const_get('PREFIX')
     dbgr, cmd = setup(sub_name[0], false)
-    cmd.proc.frame_setup(RubyVM::Frame::current.prev)
+    cmd.proc.frame_setup(RubyVM::Frame::get)
     cmd.proc.event = 'debugger-call'
     sub_cmd = sub_class.new(cmd)
     sub_cmd.summary_help(sub_cmd)

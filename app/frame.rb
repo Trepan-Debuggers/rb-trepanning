@@ -203,7 +203,7 @@ class Trepan
             last_frame = frame
             frame = frame.prev
         end
-        return frame
+        return last_frame
     end
 
     # Print `count' frame entries
