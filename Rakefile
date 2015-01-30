@@ -96,7 +96,7 @@ task :test do
       e
     end
   end.compact
-  
+
   exceptions.each {|e| puts e;puts e.backtrace }
   raise 'Test failures' unless exceptions.empty?
 end
@@ -153,12 +153,12 @@ end
 desc 'Generate command parser.'
 task :'cmd_parse' do
   require 'tmpdir'
-  temp_file = 
-    File.join(Dir.tmpdir, 
+  temp_file =
+    File.join(Dir.tmpdir,
               Dir::Tmpname.make_tmpname(['cmd_parser_', '.rb'], nil))
 
-  sh("kpeg --name CmdParse --verbose --stand-alone  " + 
-     "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))} " + 
+  sh("kpeg --name CmdParse --verbose --stand-alone  " +
+     "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))} " +
      "--output #{temp_file}")
 end
 
@@ -188,7 +188,7 @@ Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
   rdoc.title    = "Trepanning #{Trepan::VERSION} Documentation"
 
-  rdoc.rdoc_files.include(%w(lib/*.rb 
+  rdoc.rdoc_files.include(%w(lib/*.rb
                           app/*.rb intf/*.rb io/*.rb
                           bin/trepan
                          ))
@@ -216,5 +216,5 @@ task :rm_tilde_backups do
 end
 
 desc 'Remove built files'
-task :clean => [:clobber_package, :clobber_rdoc, :rm_patch_residue, 
+task :clean => [:clobber_package, :clobber_rdoc, :rm_patch_residue,
                 :rm_tilde_backups]

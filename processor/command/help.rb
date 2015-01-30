@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/complete'
 class Trepan::Command::HelpCommand < Trepan::Command
@@ -184,9 +184,9 @@ Type "help" followed by a command name for full documentation.
         if syntax_files.member?(name)
           @syntax_help ||= {}
           @syntax_help[name] =
-            File.open(File.join(HELP_DIR, "#{name}.txt")).readlines[2..-1].join
+            File.open(File.join(HELP_DIR, "#{name}.txt")).readlines[2..-1].join(' ')
           section "Debugger syntax for a #{name}:"
-          msg @syntax_help[name]
+          markdown @syntax_help[name]
         else
           errmsg "No syntax help for #{name}"
         end
