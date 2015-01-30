@@ -37,7 +37,7 @@ module Trepanning
 
       begin
           dbgr.start
-          dbgr.core.step_count = 4
+          dbgr.core.step_count = 5
           dbgr.core.processor.hidelevels[Thread.current] =
               RubyVM::Frame.stack_size
           dbgr.trace_point.enable

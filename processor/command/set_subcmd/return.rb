@@ -14,8 +14,8 @@ class Trepan::Subcommand::SetReturn < Trepan::Subcommand
   include Trepan::Frame
 
   def run(args)
-      event = @proc.event
-      unless %w(return c_return b_return).member?(event.to_s)
+      event = @proc.event.to_s
+      unless %w(return c_return b_return).member?(event)
           errmsg('You need to be in a return event to do this. Event is %s' %
                  event)
           return
@@ -28,17 +28,12 @@ class Trepan::Subcommand::SetReturn < Trepan::Subcommand
           errmsg "Too few arguments - the 'return' command requires a return value"
           return
       end
-      new_val_str = args[2..-1].join(' ')
-      begin
-          new_val = @proc.debug_eval(new_val_str)
-      rescue StandardError, ScriptError => e
-          p $!
-          return
+      if %w(return b_return).member?(event)
+          index = 1
+      else
+          index = 3
       end
-      ret_val = @proc.core.trace_point.return_value
-      msg('Return value was: %s' % ret_val.inspect)
-      @proc.core.trace_point.return_value = new_val
-      msg('New value is: %s' % new_val.inspect)
+      @proc.commands['set'].run(["set", "sp", index.to_s, *args[2..-1]])
   end
 end
 

@@ -24,7 +24,7 @@ Warning: this is potentially dangerous.
       return
     end
     msg_on_error = "set SP requires an integer index"
-    index = @proc.get_an_int(args[2], 
+    index = @proc.get_an_int(args[2],
                              :msg_on_error => msg_on_error
                              )
     return unless index
