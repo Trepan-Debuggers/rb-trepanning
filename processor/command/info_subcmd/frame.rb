@@ -88,9 +88,8 @@ EOH
             end
         end
 
-        if %w(return c-return).member?(@proc.event)
-            ret_val = Trepan::Frame.value_returned(@proc.frame, @proc.event)
-            msg "  Return: %s" % ret_val
+        if %w(return c_return b_return).member?(@proc.event.to_s)
+            @proc.commands['info'].run(%W(info return))
         end
     end
 end
