@@ -1,6 +1,7 @@
 # Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/complete'
+
 class Trepan::Command::HelpCommand < Trepan::Command
     unless defined?(HELP)
         NAME = File.basename(__FILE__, '.rb')
@@ -116,7 +117,14 @@ Type "help" followed by a command name for full documentation.
                     cmd_obj.respond_to?(:help) ? cmd_obj.help(args) :
                     cmd_obj.class.const_get(:HELP)
                 if help_text
-                    msg(help_text)
+                    # FIXME: until we get the entire help cut over to markdown,
+                    # we'll determine whether to use it or not based on whether the first
+                    # character is '*'.
+                    if help_text[0..0] == '*'
+                        markdown help_text
+                    else
+                        msg(help_text)
+                    end
                     if cmd_obj.class.constants.member?(:ALIASES) and
                             args.size == 2
                         msg "Aliases: #{cmd_obj.class.const_get(:ALIASES).join(', ')}"

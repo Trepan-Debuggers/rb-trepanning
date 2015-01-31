@@ -14,6 +14,9 @@ module UnitHelper
     def @cmdproc.msg(message, opts={})
       @msgs << message
     end
+    def @cmdproc.markdown(message, opts={})
+      @msgs << message
+    end
     def @cmdproc.msgs
       @msgs
     end

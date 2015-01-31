@@ -3,7 +3,7 @@ require_relative '../app/default'
 require_relative 'virtual'
 class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
 
-    computed_displaywidth = (ENV['COLUMNS'] || '80').to_i
+    computed_displaywidth = (ENV['COLUMNS'] || `tput cols &2>/dev/null`).to_i rescue 80
     computed_displaywidth = 80 unless computed_displaywidth >= 10
 
 
