@@ -30,7 +30,7 @@ EOF
   spec.has_rdoc     = true
   spec.homepage     = 'http://wiki.github.com/rocky/rb-trepanning'
   spec.name         = 'trepanning'
-  spec.license      = 'GPL'
+  spec.license      = 'MIT'
   spec.platform     = Gem::Platform::RUBY
   spec.require_path = 'lib'
   spec.summary      = 'Modular Ruby 2.1 Debugger'
