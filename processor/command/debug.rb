@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2012 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2012, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 
 class Trepan::Command::DebugCommand < Trepan::Command
   unless defined?(HELP)
     NAME          = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} RUBY-CODE
+**#{NAME}** *ruby-code*
 
-Enter the debugger recursively on RUBY-CODE.
+Enter the debugger recursively on *ruby-code*.
     HELP
 
     CATEGORY      = 'data'
@@ -26,7 +26,7 @@ Enter the debugger recursively on RUBY-CODE.
     arg_str    = args[1..-1].join(' ')
     hidelevels = @proc.hidelevels[th]
 
-    stack_diff = RubyVM::Frame.current.stack_size - frame.stack_size
+    stack_diff = RubyVM::Frame.stack_size - frame.stack_size
 
     # Ignore tracing in support routines:
     # FIXME remvoe 1.9.3 hack
@@ -82,6 +82,6 @@ if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   cmd.proc.hidelevels[Thread.current] = 0
-  cmd.proc.frame_setup(RubyVM::Frame::current)
+  cmd.proc.frame_setup(RubyVM::Frame.get)
   cmd.run([cmd.name, 'x = 1; y = 2'])
 end

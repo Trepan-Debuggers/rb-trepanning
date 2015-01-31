@@ -37,7 +37,7 @@ See also: backtrace
 EOH
         MIN_ABBREV   = 'fr'.size # Note we have "info file"
         MIN_ARGS     = 0
-        MAX_ARGS     = 0
+        MAX_ARGS     = 1
         NEED_STACK   = true
         SHORT_HELP   = 'Show information about the selected frame'
     end
@@ -63,10 +63,24 @@ EOH
     end
 
     def run(args)
-        frame = @proc.frame
+        if args.size == 2
+            frame = @proc.frame
+            frame_num = @proc.frame_index
+        else
+            frame_arg = args[2]
+            low, high = @proc.frame_low_high(nil)
+            opts={
+                :msg_on_error =>
+                "The '#{NAME}' command requires a frame number. Got: #{frame_arg}",
+                :min_value => low, :max_value => high
+            }
+            frame_num = @proc.get_an_int(frame_arg, opts)
+            frame, frame_num = @proc.get_frame(frame_num, true)
+        end
         meth = frame.method rescue nil
+        call_info = meth ? format_stack_call(frame, {}) : ''
 
-        section "Frame %2d: #{meth}" % @proc.frame_index
+        section "Frame %2d: %s" % [frame_num, call_info]
         msg "  %-6s: %s" % frame.source_container
         msg "  line  : %s" % @proc.frame_line
         msg "  argc  : %d" % frame.argc

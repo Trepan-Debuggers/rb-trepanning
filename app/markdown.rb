@@ -14,11 +14,6 @@ module Redcarpet
             attr_accessor :width
             attr_accessor :try_ansi
 
-            def strip_term_sequence(text)
-                # to be completed...
-                text
-            end
-
             # reflow text so lines are not
             # longer than @width. prefix
             # is used only after the first line
@@ -29,7 +24,7 @@ module Redcarpet
                 line = ''
                 width = @width - prefix.size
                 text.split.each do |word|
-                    word_size = strip_term_sequence(word).size
+                    word_size = Term::ANSIColor::uncolor(word).size
                     if (line_len + word_size) >= width
                         lines << line
                         line = prefix + word + ' '

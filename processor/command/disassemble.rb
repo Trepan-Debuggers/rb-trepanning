@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/disassemble'
 require_relative '../../app/file'
@@ -13,7 +13,7 @@ class Trepan::Command::DisassembleCommand < Trepan::Command
     ALIASES       = %w(disasm) # Note we have disable
     CATEGORY      = 'data'
     HELP          = <<-HELP
-#{NAME} [thing] [full]
+**#{NAME}** [*thing*] [**full**]
 
 With no argument, disassemble the current frame.  With a method,
 disassemble that method. '.' can be used to indicate the instruction
@@ -25,10 +25,17 @@ instruction sequence might have. If 'full' is given, all instruction
 sequences are include.
 
 Examples:
-  #{NAME} 
-  #{NAME} .       # Same as above
-  #{NAME} . full  # At least the instruction sequence above but maybe more
-  #{NAME} require_relative # disassemble method 'require_relative'
+---------
+
+    #{NAME}
+    #{NAME} .       # Same as above
+    #{NAME} . full  # At least the instruction sequence above but maybe more
+    #{NAME} require_relative # disassemble method 'require_relative'
+
+See also:
+---------
+
+`list`
     HELP
 
     NEED_STACK    = true
@@ -37,25 +44,25 @@ Examples:
 
   completion %w(. full)
 
-  # FIXME: put in processor/data.rb? 
+  # FIXME: put in processor/data.rb?
 
   def marked_disassemble(iseq_param, include_children)
     iseqs = include_children ? iseq_param.child_iseqs : [iseq_param]
     iseqs.each do |iseq|
-      ary = mark_disassembly(iseq.disasm_nochildren, 
+      ary = mark_disassembly(iseq.disasm_nochildren,
                              @proc.frame.iseq.equal?(iseq),
                              @proc.frame.pc_offset,
-                             iseq.brkpts, settings[:maxwidth], 
+                             iseq.brkpts, settings[:maxwidth],
                              settings[:highlight])
       msg ary
     end
   end
 
-  # Run command. 
+  # Run command.
   def run(args)
 
     obj = nil
-    include_children = 
+    include_children =
       if args.size > 1 && args[-1] == 'full'
         args.pop
         true
@@ -71,11 +78,11 @@ Examples:
         marked_disassemble(@proc.frame.iseq, include_children)
         return
       end
-    else 
+    else
       if !(matches = find_iseqs(ISEQS__, args[1])).empty?
         # FIXME: do something if there is more than one
         iseq = matches[0]
-      else        
+      else
         iseq = @proc.object_iseq(args[1])
       end
       marked_disassemble(iseq, include_children) if iseq
@@ -96,7 +103,7 @@ if __FILE__ == $0
     cmd.run [name]
   end
   small_fn(cmd, cmd.name)
-  p = Proc.new do 
+  p = Proc.new do
     |x,y| x + y
   end
   cmd.proc.frame_setup(RubyVM::Frame::current)
