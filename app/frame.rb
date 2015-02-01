@@ -85,20 +85,12 @@ class Trepan
     def format_stack_call(frame, opts)
         # FIXME: prettify
         s = "#{frame.type}"
+        # FIXME: Figure why frame.class can throw a NoMethodError
+        # on to_s.
         s += if opts[:class]
                  " #{opts[:class]}#"
              else
-                 begin
-                     obj = eval('self', frame.binding)
-                 rescue
-                     ''
-                 else
-                     if obj
-                         " #{obj.class}#"
-                     else
-                         ''
-                     end
-                 end
+                 " #{frame.klass}#" rescue ''
              end
         meth = frame.method
         if meth and frame.type != 'IFUNC'

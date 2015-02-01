@@ -98,10 +98,14 @@ EOH
                                            :max_value => argc,
                                            :min_value => 0,
                                            )
+                    return unless val
                     var_name = @proc.frame.iseq.local_name(val)
+                    var_class =
+                        @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).class)
                     var_value =
                         @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
-                    msg("#{var_name} = #{var_value}", :code => true)
+                    msg("#{var_name} = #{var_value} (#{var_class})",
+                        :code => true)
                 end
             end
         elsif args.size == 1

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 require_relative 'helper'
 
@@ -7,11 +7,11 @@ class Trepan::Subcommand::InfoRegistersSp < Trepan::SubSubcommand
   unless defined?(HELP)
     Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
     HELP = <<EOH
-#{CMD} [NUMBER NUMBER ...|size]
+**#{CMD}** [*number* *number*...| **size**]
 
-With no arguments, all SP values for the current frame of the debugged
+With no arguments, all *sp* values for the current frame of the debugged
 program are shown.  If a number is given, then the entry at that
-location is shown. If "size" is given, then we show the number items
+location is shown. If `size` is given, then we show the number items
 in the stack of the current frame.
 
 The VM uses a stack to store temporary values in computations. For
@@ -20,7 +20,10 @@ a stack pointed to by SP. Just before the addition is perofrmed, sp(1)
 will have the value "a" contians and sp(2) will contain the value of
 "b"
 
-See also "info register LFP"
+See also:
+---------
+
+`info register ep`, `info register pc`
 EOH
 
     MIN_ABBREV   = 'sp'.size
@@ -28,20 +31,22 @@ EOH
     SHORT_HELP   = "Show value(s) of the VM stack pointer (SP)."
   end
 
-  include Registers
-  def run(args)
-    if args.size == 0
-      1.upto(@proc.frame.sp_size-1) do |i|
-        msg "%s%d: %s" % [' ' * 2, i, @proc.frame.sp(i).inspect]
-      end if @proc.frame.sp_size
-    elsif args.size == 1 and 'size' == args[0] 
-      msg "Number of stack items in frame is #{@proc.frame.sp_size}."
-    else
-      args.each do |arg|
-        register_array_index(PREFIX[-1], arg, @proc.frame.sp_size)
-      end
+    include Registers
+    def run(args)
+        if args.size == 0
+            1.upto(@proc.frame.sp_size-1) do |i|
+                val = @proc.frame.sp(i).inspect
+                klass = @proc.frame.sp(i).class
+                msg "%s%d: %s (%s)" % [' ' * 2, i, val, klass]
+            end if @proc.frame.sp_size
+        elsif args.size == 1 and 'size' == args[0]
+            msg "Number of stack items in frame is #{@proc.frame.sp_size}."
+        else
+            args.each do |arg|
+                register_array_index(PREFIX[-1], arg, @proc.frame.sp_size)
+            end
+        end
     end
-  end
 end
 
 if __FILE__ == $0

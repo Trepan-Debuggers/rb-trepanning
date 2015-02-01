@@ -41,7 +41,17 @@ module Trepanning
           dbgr.core.processor.hidelevels[Thread.current] =
               RubyVM::Frame.stack_size
           dbgr.trace_point.enable
-          dbgr.core.step_count = 4
+
+          # FIXME: the magic skip count 4 below is to skip over
+          # the following calls triggered by Kernel::load
+          #   c_call   - IO#set_encoding(1)
+          #   c_return - IO#set_encoding -> *debugged program*
+          #   call     - IO#set_encoding(1)
+          #   c_return - IO#set_encoding -> *debugged program*
+          # This is  not very robust. Figure out how to
+          # address this.
+          dbgr.core.step_count = 0
+
           Kernel::load program_to_debug
           dbgr.stop
       rescue Interrupt
