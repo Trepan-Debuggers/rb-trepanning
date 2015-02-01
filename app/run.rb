@@ -50,7 +50,7 @@ module Trepanning
           #   c_return - IO#set_encoding -> *debugged program*
           # This is  not very robust. Figure out how to
           # address this.
-          dbgr.core.step_count = 0
+          dbgr.core.step_count = 4
 
           Kernel::load program_to_debug
           dbgr.stop

@@ -9,23 +9,27 @@ class Trepan::Subcommand::InfoVariablesLocals < Trepan::SubSubcommand
   Trepan::Util.suppress_warnings {
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
-#{CMD}
-#{CMD} [ --names | local-number ]
+**#{CMD}** [ **--names** | *local-number* ]
 
 Show local variables including parameters of the current stack frame.
 Normally for each which show both the name and value. If you just
-want a list of names add parameter 'names'.
+want a list of names add parameter `--names`.
 
 If you just want the name and value for a particular number give that number.
 
 Examples:
+---------
 
     info variables local
     info variables local 0
     info variables local --names
 
 See Also:
-    info variables, info globals, info variables constant, info variables class
+---------
+
+`info variables`, `info globals`, `info variables constants`,
+and `info variables class`
+
 EOH
     SHORT_HELP   = 'Show local variables of the current stack frame'
     MIN_ARGS     = 0
