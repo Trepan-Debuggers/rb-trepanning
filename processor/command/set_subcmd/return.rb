@@ -33,6 +33,8 @@ class Trepan::Subcommand::SetReturn < Trepan::Subcommand
       else
           index = 3
       end
+      msg("Not implemented yet")
+      return
       @proc.commands['set'].run(["set", "sp", index.to_s, *args[2..-1]])
   end
 end

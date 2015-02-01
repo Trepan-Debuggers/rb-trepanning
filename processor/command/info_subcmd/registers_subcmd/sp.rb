@@ -14,11 +14,13 @@ program are shown.  If a number is given, then the entry at that
 location is shown. If `size` is given, then we show the number items
 in the stack of the current frame.
 
-The VM uses a stack to store temporary values in computations. For
-example to compute "a + b", the values of "a" and "b" are pushed onto
-a stack pointed to by SP. Just before the addition is perofrmed, sp(1)
-will have the value "a" contians and sp(2) will contain the value of
-"b"
+The VM uses a stack to store both local variables and temporary values
+in computations. The stack grows downward (toward lower numbers).
+As a result, local values and parameters in the stack in the reverse
+order as they appear in a call and are as they are defined.
+
+The entry before the end of the stack contains the return value and
+the top entry is a fake RubyVM::Env value.
 
 See also:
 ---------
@@ -34,7 +36,7 @@ EOH
     include Registers
     def run(args)
         if args.size == 0
-            1.upto(@proc.frame.sp_size-1) do |i|
+            1.upto(@proc.frame.sp_size) do |i|
                 val = @proc.frame.sp(i).inspect
                 klass = @proc.frame.sp(i).class
                 msg "%s%d: %s (%s)" % [' ' * 2, i, val, klass]

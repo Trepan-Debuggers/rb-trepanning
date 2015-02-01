@@ -19,15 +19,10 @@ module Registers
             if 'ep' == name
                 max_value + 1 - position
             elsif 'sp' == name && 'CFUNC' == @proc.frame.type
-                # && @proc.frame.next.type == 'IFUNC" # ?
-
-                # FIXME: In C frames there seems to be some vm_push_frame's
-                # via perhaps vm_yield_with_cfunc along with sp adjustments.
-                # I am not sure if this is under what conditions this
-                # *doesn't* happen so until I can figure out the better thing
-                # to do, possibly in the Ruby 1.9 interpeter, we'll handle
-                # this here.  It is also conceivable to handle this in
-                # thread_frame's sp handling.
+                # In C frames, the "local_size" parameter is always 1.
+                # I guess this is for the return parameter.
+                # There is a magic number 2 that we also always have
+                # to add.
                 position + 3
             else
                 position

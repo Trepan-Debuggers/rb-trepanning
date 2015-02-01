@@ -92,11 +92,15 @@ EOH
                                            :max_value => argc,
                                            :min_value => 0,
                                            )
+                    return unless val
                     msg "#{val}: #{@proc.frame.sp(argc-val+3).inspect}"
                 elsif names.member?(last_arg)
                     var_value =
                         @proc.safe_rep(@proc.debug_eval_no_errmsg(last_arg).inspect)
-                    msg("#{last_arg} = #{var_value}", :code => true)
+                    var_class =
+                        @proc.safe_rep(@proc.debug_eval_no_errmsg(last_arg).class)
+                    msg("%s = %s (%s)" %
+                        [last_arg, var_value, var_class], :code => true)
                 else
                     val = @proc.get_an_int(last_arg,
                                            :max_value => argc,
