@@ -4,22 +4,21 @@ require_relative 'virtual'
 class Trepan
   class CmdProcessor < VirtualCmdProcessor
 
-    def debug_eval(str, max_fake_filename=15, 
-                   ruby_193_hack=false) #FIXME: remove ruby_193_hack
+    def debug_eval(str, max_fake_filename=15)
       begin
-        debug_eval_with_exception(str, max_fake_filename, ruby_193_hack)
+        debug_eval_with_exception(str, max_fake_filename)
       rescue SyntaxError, StandardError, ScriptError => e
         exception_dump(e, @settings[:stack_trace_on_error], $!.backtrace)
         nil
       end
     end
 
-    def debug_eval_with_exception(str, max_fake_filename=15, 
-                                  ruby_193_hack=false) # FIXME: remove ruby_193_hack
-      RubyVM::Frame.current.trace_off = true if ruby_193_hack
-      filename, b = get_binding_and_filename(str, max_fake_filename)
-      RubyVM::Frame.current.trace_off = false if ruby_193_hack
-      eval(str, b, filename)
+    def debug_eval_with_exception(str, max_fake_filename=15)
+        # FIXME: Do we need to set trace_off?
+        RubyVM::Frame.get.trace_off = true
+        filename, b = get_binding_and_filename(str, max_fake_filename)
+        RubyVM::Frame.get.trace_off = false
+        eval(str, b, filename)
     end
 
     def debug_eval_no_errmsg(str, max_fake_filename=15)
@@ -32,10 +31,10 @@ class Trepan
 
     def eval_code(str, max_fake_filename)
       obj = debug_eval(str, max_fake_filename)
-      
+
       # idx = @user_variables
       # @user_variables += 1
-      
+
       # str = "$d#{idx}"
       # Rubinius::Globals[str.to_sym] = obj
       # msg "#{str} = #{obj.inspect}"
@@ -53,7 +52,7 @@ class Trepan
     end
 
     def fake_eval_filename(str, maxlen = 15)
-      fake_filename = 
+      fake_filename =
         if maxlen < str.size
           # FIXME: Guard against \" in positions 13..15?
           str.inspect[0..maxlen-1] + '"...'
@@ -62,9 +61,9 @@ class Trepan
         end
       "(eval #{fake_filename})"
     end
-    
+
     def get_binding_and_filename(str, maxlen)
-      b = 
+      b =
         begin
           @frame.binding
         rescue
@@ -89,7 +88,7 @@ if __FILE__ == $0
   def cmdp.msg(msg)
     puts "** #{msg}"
   end
-  begin 
+  begin
     1/0
   rescue Exception => exc
     cmdp.exception_dump(exc, true, $!.backtrace)

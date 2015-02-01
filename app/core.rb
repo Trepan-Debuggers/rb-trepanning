@@ -154,7 +154,7 @@ if __FILE__ == $0
     if ARGV.size > 0
         def foo(dbg)
             p 'foo here'
-            dbg.debugger(:immediate=>true)
+            dbg.debugger
         end
         foo(dbg)
         x = 5

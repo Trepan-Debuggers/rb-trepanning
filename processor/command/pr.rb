@@ -9,7 +9,7 @@ class Trepan::Command::PrCommand < Trepan::Command
       "#{NAME} EXPRESSION
 
 Print the value of the EXPRESSION. Variables accessible are those of the
-environment of the selected stack frame, plus globals. 
+environment of the selected stack frame, plus globals.
 
 If the length output string large, the first part of the value is
 shown and ... indicates it has been truncated.
@@ -21,12 +21,12 @@ See 'set max string' to change the string truncation limit.
     CATEGORY      = 'data'
     SHORT_HELP    = 'print expression truncating long output'
   end
-  
+
   def run(args)
     @proc.eval_code(@proc.cmd_argstr, @proc.settings[:maxstring])
   end
 end
-        
+
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup

@@ -87,7 +87,7 @@ class Trepan
         @restart_argv = @settings[:restart_argv]
 
         unless @settings[:client]
-            %w(debugger start stop).each do |m|
+            %w(debugger stop).each do |m|
                 @trace_filter << self.method(m.to_sym)
             end
             %w(debugger event_processor trace_var_processor).each do
@@ -103,6 +103,7 @@ class Trepan
 
 
         at_exit do
+            RubyVM::Frame::get.trace_off = true
             stop
             @intf[-1].close
         end
@@ -185,14 +186,17 @@ class Trepan
             @trace_point = TracePoint.new() do |tp|
                 @core.event_processor_tp(tp)
             end
+            RubyVM::Frame::get.trace_off1 = true
             @trace_point.enable
             yield block
+            RubyVM::Frame::get.trace_off = true
             @trace_point.disable
             @trace_point = nil
         else
             @trace_point = TracePoint.new() do |tp|
                 @core.event_processor_tp(tp)
             end
+            RubyVM::Frame::get.trace_off1 = true
             @trace_point.enable
         end
     end
@@ -202,10 +206,12 @@ class Trepan
         @trace_point = TracePoint.new() do |tp|
             @core.event_processor_tp(tp)
         end
+        RubyVM::Frame::get.trace_off1 = true
         @trace_point.enable if enable
     end
 
     def stop
+        RubyVM::Frame::get.trace_off = true
         @trace_point.disable if @trace_point and
             @trace_point.respond_to?(:disable)
     end
