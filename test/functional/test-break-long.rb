@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
+require_relative '../../app/core'
 require_relative 'fn_helper'
 require_relative '../../app/breakpoint'
 
@@ -18,19 +19,19 @@ class TestBreakLong < Test::Unit::TestCase
             'break ' + (__LINE__ + 7).to_s,
             'continue']
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ########### b1 ###############
     x = 5
     y = 6
     z = 7
     ##############################
     d.stop
-    out = ['-- ',
+    out = ['line ',
            'x = 5',
            'basename is on.',
  "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_break_same_level\",
 \tline 55 in file foo.rb",
-           'xx ',
+           'brkpt ',
            'z = 7']
     compare_output(out, d, cmds)
 
@@ -41,14 +42,14 @@ class TestBreakLong < Test::Unit::TestCase
             'disable 1',
             'continue']
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ########### b2 ###############
     x = 7
     y = 8
     z = 8+1
     ##############################
     d.stop
-    out = ['-- ',
+    out = ['line ',
            'x = 7',
            "basename is on.",
            "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_break_same_level\",
@@ -56,7 +57,7 @@ class TestBreakLong < Test::Unit::TestCase
            "Breakpoint 2 set at VM offset 55 of instruction sequence \"test_break_same_level\",
 \tline 55 in file foo.rb",
            "Breakpoint 1 disabled.",
-           'xx ',
+           'brkpt ',
            'z = 8+1']
     compare_output(out, d, cmds)
 
@@ -65,7 +66,7 @@ class TestBreakLong < Test::Unit::TestCase
             'continue ' + (__LINE__ + 8).to_s,
             'continue']
     dbg = strarray_setup(cmds)
-    dbg.start
+    dbg.start(true)
     ########### b3 ###############
     a = 1
     b = 2
@@ -74,10 +75,10 @@ class TestBreakLong < Test::Unit::TestCase
     e = 5
     ##############################
     dbg.stop
-    out = ['-- ',
+    out = ['line ',
            'a = 1',
            'basename is on.',
-           'xx ',
+           'brkpt ',
            'd = 4' ]
     compare_output(out, dbg, cmds)
   end

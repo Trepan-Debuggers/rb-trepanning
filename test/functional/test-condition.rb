@@ -16,14 +16,14 @@ class TestBreak < Test::Unit::TestCase
             'condition 1 x < 5',
             'continue']
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ########### b1 ###############
     x = 6
     y = 7
     z = 8
     ##############################
     d.stop
-    out = ['-- ',
+    out = ['line ',
            'x = 6',
            'basename is on.',
            "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_condition\",
@@ -36,19 +36,19 @@ class TestBreak < Test::Unit::TestCase
             'condition 1 x > 5',
             'continue']
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ########### b2 ###############
     x = 6
     y = 7
     z = 8
     ##############################
     d.stop
-    out = ["-- ",
+    out = ["line ",
            "x = 6",
            "basename is on.",
            "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_condition\",
 \tline 55 in file foo.rb",
-           "xx ",
+           "brkpt ",
            "y = 7"]
     compare_output(out, d, cmds)
   end

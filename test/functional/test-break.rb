@@ -15,12 +15,12 @@ class TestBreak < Test::Unit::TestCase
     cmds = (cmds_pat % [line, line+11, line+14]).split(/\n/)
     d = strarray_setup(cmds)
     ##############################
-    def foo      # line +  4  
+    def foo      # line +  4
       a = 5      # line +  5
       b = 6      # line +  6
     end          # line +  7
-    1.times do   # line +  8 
-      d.start    # line +  9
+    1.times do   # line +  8
+      d.start(true)# line +  9
       1.times do # line + 10
         x = 11   # line + 11
         foo      # line + 12
@@ -29,7 +29,7 @@ class TestBreak < Test::Unit::TestCase
     end
     ##############################
     d.stop # ({:remove => true})
-    out = ["-- ",
+    out = ["line ",
            "1.times do # line + 10",
            "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_line_only_break\",
 \tline 55 in file foo.rb",
@@ -37,13 +37,11 @@ class TestBreak < Test::Unit::TestCase
 \tline 55 in file foo.rb",
            "Breakpoint 3 set at VM offset 55 of instruction sequence \"block in test_line_only_break\",
 \tline 55 in file foo.rb",
-           "xx ",
+           "brkpt ",
            "x = 11   # line + 11",
-           "xx ",
+           "brkpt ",
            "c = 14     # line + 14"]
     compare_output(out, d, cmds)
   end
 
 end
-
-

@@ -5,13 +5,10 @@ require_relative 'fn_helper'
 class TestStep < Test::Unit::TestCase
 
   include FnTestHelper
-  include Trace
-
   def test_step_same_level
 
-    puts "FIXME test_step_same_level"
-    assert true
-    return
+    skip "FIXME test_step_same_level"
+
     # See that we can step with parameter which is the same as 'step 1'
     cmds = ['next', 'next', 'continue', 'continue']
     d = strarray_setup(cmds)
@@ -26,8 +23,8 @@ class TestStep < Test::Unit::TestCase
     ##############################
     d.stop
     out = [':o ', 'd.debugger(:immediate => true)',
-           '-- ', 'y = 2',
-           '-- ', 'x = 1',
+           'line ', 'y = 2',
+           'line ', 'x = 1',
            ':o ', 'd.debugger(:immediate => true)']
     compare_output(out, d, cmds)
   end

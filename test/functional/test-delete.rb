@@ -16,7 +16,7 @@ class TestDelete < Test::Unit::TestCase
             'continue',
            ]
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ########### b1 ###############
     va = 1
     vb = 2
@@ -25,7 +25,7 @@ class TestDelete < Test::Unit::TestCase
     ve = 5
     ##############################
     d.stop
-    out = ['-- ',
+    out = ['line ',
            'va = 1',
            'basename is on.',
            "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_delete\",
@@ -44,7 +44,7 @@ class TestDelete < Test::Unit::TestCase
             'continue',
            ]
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ########### b1 ###############
     va = 1
     vb = 2
@@ -53,7 +53,7 @@ class TestDelete < Test::Unit::TestCase
     ve = 5
     ##############################
     d.stop
-    out = ["-- ",
+    out = ["line ",
            "va = 1",
            "basename is on.",
            "Evaluation of unrecognized debugger commands is on.",
@@ -62,7 +62,7 @@ class TestDelete < Test::Unit::TestCase
            "Breakpoint 2 set at VM offset 55 of instruction sequence \"test_delete\",
 \tline 55 in file foo.rb",
            "Deleted breakpoint 1.",
-           "xx ",
+           "brkpt ",
            "vd = 4",
            "D=> 3"]
     compare_output(out, d, cmds)

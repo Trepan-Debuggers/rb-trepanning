@@ -6,7 +6,6 @@ require_relative 'fn_helper'
 class TestWatchG < Test::Unit::TestCase
 
   include FnTestHelper
-  include Trace
 
   def test_basic
 
@@ -17,9 +16,8 @@ class TestWatchG < Test::Unit::TestCase
             'watchg $my_var off',
             'continue']
     d = strarray_setup(cmds)
-    d.core.step_events = TEST_STEP_EVENT_MASK
 
-    d.start
+    d.start(true)
     ########### t1 ###############
     x = 1
     $my_var = 5
@@ -28,7 +26,7 @@ class TestWatchG < Test::Unit::TestCase
     z = 3
     ##############################
     d.stop
-    out = ['-- ',
+    out = ['line ',
            'x = 1',
            'Tracing for variable $my_var set to: stop.',
            '** global variable $my_var is already traced with stop.',

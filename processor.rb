@@ -232,7 +232,6 @@ class Trepan
       @leave_cmd_loop = false
 
       print_location unless @settings[:traceprint]
-      @eventbuf.add_mark if @settings[:tracebuffer]
 
       @cmdloop_prehooks.run
       while not @leave_cmd_loop do

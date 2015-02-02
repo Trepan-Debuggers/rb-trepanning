@@ -20,7 +20,7 @@ class TestRaise < Test::Unit::TestCase
             'pr foo_retval',
             ]
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ##############################
     x = 1
     def foo(arg)
@@ -30,7 +30,7 @@ class TestRaise < Test::Unit::TestCase
     z = 3
     ##############################
     d.stop
-    out = ['-- ',
+    out = ['line ',
            'x = 1',
            'Trace events we may stop on:',
            "\tbrkpt, call, return",
@@ -46,10 +46,10 @@ class TestRaise < Test::Unit::TestCase
            'New value is: 10',
            'Trace events we may stop on:',
            "\tbrkpt, line",
-           '-- ',
+           'line ',
            'z = 3',
            '10',
-           '-- ',
+           'line ',
            'd.stop']
     compare_output(out, d, cmds)
 
@@ -67,13 +67,13 @@ class TestRaise < Test::Unit::TestCase
             'pr result',
             ]
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ##############################
     a = 1
     result = File.basename('/a/b.c')
     ##############################
     d.stop # ({:remove => true})
-    out = ["-- ",
+    out = ["line ",
            "a = 1",
            'different is off.',
            "Trace events we may stop on:",
@@ -90,7 +90,7 @@ class TestRaise < Test::Unit::TestCase
            "New value is: \"abc\"",
            "Trace events we may stop on:",
            "\tbrkpt, line",
-           "-- ",
+           "line ",
            "d.stop # ({:remove => true})",
            '"abc"']
     compare_output(out, d, cmds)

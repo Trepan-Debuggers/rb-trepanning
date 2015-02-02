@@ -18,7 +18,7 @@ class TestRaise < Test::Unit::TestCase
             'pr "hi"',
             ]
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ##############################
     begin
       x = 1
@@ -32,10 +32,10 @@ class TestRaise < Test::Unit::TestCase
       assert false, 'Should have got RuntimeError'
     end
     ##############################
-    out = ['-- ', 'begin',
-           '-- ', 'x = 1',
-           '-- ', 'y = 2',
-           '-- ', 'd.stop',
+    out = ['line ', 'begin',
+           'line ', 'x = 1',
+           'line ', 'y = 2',
+           'line ', 'd.stop',
            '"hi"']
     compare_output(out, d, cmds)
 
@@ -63,12 +63,12 @@ class TestRaise < Test::Unit::TestCase
     end
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- ', 'begin',
-           '-- ', 'x = 1',
+    out = ['line ', 'begin',
+           'line ', 'x = 1',
            '** "[5]" does not inherit Exception.',
            '** "NotanError" does not inherit Exception.',
-           '-- ', 'y = 2',
-           '-- ', 'd.stop']
+           'line ', 'y = 2',
+           'line ', 'd.stop']
     compare_output(out, d, cmds)
   end
 

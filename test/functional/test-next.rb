@@ -11,24 +11,24 @@ class TestNext < Test::Unit::TestCase
     # See that we can next with parameter which is the same as 'next 1'
     cmds = %w(next continue)
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     x = 5
     y = 6
     d.stop
-    out = ['-- ', 'x = 5', '-- ', 'y = 6']
+    out = ['line ', 'x = 5', 'line ', 'y = 6']
     compare_output(out, d, cmds)
 
     # See that we can next with a computed count value
     cmds = ['next 5-3', 'continue']
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ########### t1 ###############
     x = 5
     y = 6
     z = 7
     ##############################
     d.stop # ({'remove': true})
-    out = ['-- ', 'x = 5', '-- ', 'z = 7']
+    out = ['line ', 'x = 5', 'line ', 'z = 7']
     compare_output(out, d, cmds)
   end
 
@@ -37,7 +37,7 @@ class TestNext < Test::Unit::TestCase
     # Next over functions
     cmds = ['next 2', 'continue']
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ########### t2 ###############
     def fact(x)
       return 1 if x <= 1
@@ -47,14 +47,14 @@ class TestNext < Test::Unit::TestCase
     y = 5
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- ', 'def fact(x)', '-- ', 'y = 5']
+    out = ['line ', 'def fact(x)', 'line ', 'y = 5']
     compare_output(out, d, cmds)
   end
 
   def test_next_in_exception
     cmds = %w(next! continue)
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ########### t2 ###############
     begin
       got_boom = false
@@ -64,7 +64,7 @@ class TestNext < Test::Unit::TestCase
     end
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- ', 'begin', "#<ZeroDivisionError: divided by 0>", "!! ", "x = 4/0"]
+    out = ['line ', 'begin', "#<ZeroDivisionError: divided by 0>", "!! ", "x = 4/0"]
     compare_output(out, d, cmds)
   end
 end
