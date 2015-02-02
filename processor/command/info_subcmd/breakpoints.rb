@@ -6,19 +6,19 @@ class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
-#{CMD} [num1 ...] [verbose]
+**#{CMD}** [*num1* ...] [**--verbose**]
 
 Show status of user-settable breakpoints. If no breakpoint numbers are
 given, the show all breakpoints. Otherwise only those breakpoints
-listed are shown and the order given. If VERBOSE is given, more
+listed are shown and the order given. If ``--verbose` is given, more
 information provided about each breakpoint.
 
-The "Disp" column contains one of "keep", "del", the disposition of
+In the *Disp* column values are  "keep", or "del", the disposition of
 the breakpoint after it gets hit.
 
-The "enb" column indicates whether the breakpoint is enabled.
+The *enb* column indicates whether the breakpoint is enabled.
 
-The "Where" column indicates where the breakpoint is located.
+The *Where* column indicates where the breakpoint is located.
 EOH
     MIN_ABBREV   = 'br'.size
     SHORT_HELP   = 'Status of user-settable breakpoints'
@@ -79,7 +79,7 @@ EOH
   def run(args)
     verbose = false
     unless args.empty?
-      if 'verbose' == args[-1]
+      if '--verbose' == args[-1]
         verbose = true
         args.pop
       end

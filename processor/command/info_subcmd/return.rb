@@ -5,20 +5,32 @@ require_relative '../base/subcmd'
 class Trepan::Subcommand::InfoReturn < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = 'Show the value about to be returned'
+    HELP         = <<-EOH
+**#{CMD}**
+
+Show the value about to be returned.
+
+You have to be at some sort of return event for this command to work.
+
+See also:
+---------
+
+`set return`, `info frame`, `info program`
+
+EOH
     MIN_ABBREV   = 'ret'.size # Note we have "info registers"
     NEED_STACK   = true
   end
 
   def run(args)
       event = @proc.event
-
+      frame = @proc.frame
       if %w(return b_return).member?(event.to_s)
-          ret_val = @proc.frame.sp(1)
+          ret_val = frame.sp(1)
           msg('Return class: %s' % ret_val.class)
           msg('Return value: %s' % ret_val.inspect)
       elsif %w(c_return).member?(event.to_s)
-          ret_val = @proc.frame.sp(3)
+          ret_val = frame.sp(frame.argc + 3)
           msg('Return class: %s' % ret_val.class)
           msg('Return value: %s' % ret_val.inspect)
       else

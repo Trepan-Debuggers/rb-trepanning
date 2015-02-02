@@ -43,18 +43,22 @@ EOH
           errmsg "Too few arguments - the 'return' command requires a return value"
           return
       end
+      frame = @proc.frame
       if %w(return b_return).member?(event)
           index = 1
+          opname = frame.iseq.op_at(frame.pc_offset)
+          if opname != 'leave'
+              msg("Need to be at a 'leave' instruction; at %s instruction" %
+                  opname)
+              return
+          end
       else
-          index = 3
-      end
-      frame = @proc.frame
-      iseq = frame.iseq
-      unless iseq
-          msg "Can't set return for C functions yet"
+          # FIXME: Probably not quite right. Doesn't handle receiver methods
+          # would like to do via end of stack-1.
+          index = frame.argc + 3
+          msg("C functions not handled yet")
           return
       end
-      opname = iseq.op_at(frame.pc_offset)
       @proc.commands['set'].run(["set", "sp", index.to_s, *args[2..-1]])
   end
 end
@@ -66,7 +70,7 @@ if __FILE__ == $0
     name = File.basename(__FILE__, '.rb')
 
     # FIXME: DRY the below code
-    dbgr, cmd = MockTrepan::setup('set')
+    dbgr, cmd = MockDebugger::setup('set')
     subcommand = Trepan::Subcommand::SetReturn.new(cmd)
     testcmdMgr = Trepan::Subcmd.new(subcommand)
 

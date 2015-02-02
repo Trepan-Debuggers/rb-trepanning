@@ -10,20 +10,30 @@ class Trepan::Subcommand::SetEvents < Trepan::Subcommand
     unless defined?(HELP)
         TRACE_POINT_EVENTS = TracePoint.new{}.event_mask.map{|e| e.to_s}
         Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-        HELP         = "set events {event-name[,] ...}
+        HELP         = <<-EOH
+**#{PREFIX.join(' ')}** {*event-name*[,] ...}
 
 Set trace events that the debugger will stop on.
 
 Event names are:
-#{Columnize::columnize(TRACE_POINT_EVENTS, 80, ' ' * 4, true, true, ' ' * 2)}
+
+#{Columnize::columnize(TRACE_POINT_EVENTS, 80, ' ' * 4,
+                       true, true, ' ' * 4)}
 
 Separate event names with space and an optional comma is also
 allowable after an event name.
 
 Examples:
-   set events call return
-   set ev call, c_call, return, c_return, c_return
-"
+---------
+    set events call return
+    set ev call, c_call, return, c_return, c_return
+
+See also:
+---------
+
+`show events`
+
+EOH
     MIN_ABBREV   = 'ev'.size
     SHORT_HELP   = 'Set trace events we may stop on.'
   end
