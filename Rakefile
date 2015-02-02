@@ -3,6 +3,7 @@
 require 'rubygems'
 
 ROOT_DIR = File.dirname(__FILE__)
+GEM_PROG = ENV['GEM_PROG'] || 'gem'
 Gemspec_filename='trepanning.gemspec'
 require_relative './app/options'
 
@@ -24,7 +25,7 @@ end
 desc 'Install the gem locally'
 task :install => :gem do
   Dir.chdir(ROOT_DIR) do
-    sh %{gem install --local pkg/#{gemspec.file_name}}
+    sh %{#{GEM_PROG} install --local pkg/#{gemspec.file_name}}
   end
 end
 
