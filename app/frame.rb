@@ -52,12 +52,14 @@ class Trepan
                 elsif frame
                     1.upto(argc).map do
                     |i|
-                    safe_repr(frame.sp(argc-i+3).inspect, 10)
+                    # FIXME: figure out why
+                    # Trepan::Frame:Module throws an error
+                    safe_repr(frame.sp(argc-i+3).inspect, 10) rescue ''
                     end.join(', ')
                 else
                     '??'
                 end
-            safe_repr(args, maxstring)
+            safe_repr(args, maxstring) rescue ''
         rescue NotImplementedError
             '??'
         end

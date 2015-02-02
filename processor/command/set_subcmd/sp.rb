@@ -1,16 +1,22 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2012, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetSp < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = 'set sp INTEGER-EXPRESSION
+    HELP         = <<-EOH
+**#{PREFIX.join(' ')}** *integer-expression*
 
-Set VM stack-pointer register (SP) to INTEGER-EXPRESSION.
+Set VM stack-pointer register (SP) to *integer-expression*
 
 Warning: this is potentially dangerous.
-'
+
+See also:
+---------
+
+`info register sp`, `set return`
+EOH
     SHORT_HELP   = 'Set a stack pointer register'
     IN_LIST      = true
     MIN_ABBREV   = 'sp'.size
@@ -35,7 +41,7 @@ Warning: this is potentially dangerous.
       return
     end
     msg("Old value was: %s" % @proc.frame.sp(index).inspect)
-    @proc.frame.sp_set(index, new_val).inspect
+    @proc.frame.sp_set(index, new_val)
     msg("New value is: %s" % new_val.inspect)
   end
 

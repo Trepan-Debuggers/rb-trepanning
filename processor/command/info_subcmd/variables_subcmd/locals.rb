@@ -59,16 +59,23 @@ EOH
         0.upto(iseq.local_size-2).map { |i| iseq.local_name(i) }
     end
 
-    def run_for_locals(args, klass=nil)
+    def run_for_locals(args)
         suffix = klass ? " for #{klass.to_s}" : '' rescue ''
-        c_frame = 'CFUNC' == @proc.frame.type
+        frame = @proc.frame
+        suffix =
+            if frame.klass
+                " for #{Trepan::Frame::format_stack_call(frame,{})}"
+            else
+                ''
+            end
+        iseq = frame.iseq
+        c_frame = 'CFUNC' == frame.type
         if args.size == 2
             last_arg = args[-1]
             argc =
                 if c_frame
-                    @proc.frame.argc
+                    frame.argc
                 else
-                    iseq = @proc.frame.iseq
                     iseq.local_size - 2
                 end
             if 0 == '--names'.index(last_arg)
@@ -88,53 +95,63 @@ EOH
                 end
             else
                 if c_frame
-                    val = @proc.get_an_int(last_arg,
+                    num = @proc.get_an_int(last_arg,
                                            :max_value => argc,
                                            :min_value => 0,
                                            )
-                    return unless val
-                    msg "#{val}: #{@proc.frame.sp(argc-val+3).inspect}"
+                    return unless num
+                    val = frame.getlocal(num)
+                    msg("%d: %s (%s)" % [num, val.inspect, val.class],
+                         :code => true)
+                    return
                 elsif names.member?(last_arg)
-                    var_value =
-                        @proc.safe_rep(@proc.debug_eval_no_errmsg(last_arg).inspect)
-                    var_class =
-                        @proc.safe_rep(@proc.debug_eval_no_errmsg(last_arg).class)
+                    val =
+                        @proc.safe_rep(@proc.debug_eval_no_errmsg(last_arg))
                     msg("%s = %s (%s)" %
-                        [last_arg, var_value, var_class], :code => true)
+                        [last_arg, val.inspect, val.class], :code => true)
+                    return
                 else
-                    val = @proc.get_an_int(last_arg,
-                                           :max_value => argc,
+                    num = @proc.get_an_int(last_arg,
+                                           :max_value => iseq.local_size,
                                            :min_value => 0,
                                            )
-                    return unless val
-                    var_name = @proc.frame.iseq.local_name(val)
-                    var_class =
-                        @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).class)
-                    var_value =
-                        @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
-                    msg("#{var_name} = #{var_value} (#{var_class})",
-                        :code => true)
+                    return unless num
+                    val = frame.getlocal(num)
+                    if num >= 2
+                        var_name = iseq.local_name(iseq.local_size-num)
+                        mess = "%d: %s = %s (%s)" % [num, var_name,
+                                                     val.inspect, val.class]
+                    else
+                        mess = "%d: %s (%s)" % [num, val.inspect, val.class]
+                    end
+
+                    msg(mess, :code => true)
+                    return
                 end
             end
         elsif args.size == 1
             if c_frame
-                argc = @proc.frame.argc
+                argc = frame.argc
                 if argc > 0
                     1.upto(argc).each do |i|
                         msg "#{i}: #{@proc.frame.sp(argc-i+3).inspect}"
                     end
                 else
-                    msg("No parameters in C call; showing other C locals is not supported.")
+                    msg("No parameters in C call")
                 end
+                return
             else
                 if names.empty?
                     msg "No local variables defined#{suffix}."
                 else
                     section "Local variables#{suffix}:"
-                    names.each do |var_name|
-                        var_value =
-                            @proc.safe_rep(@proc.debug_eval_no_errmsg(var_name).inspect)
-                        msg("#{var_name} = #{var_value}", :code => true)
+                    last = iseq.local_size
+                    2.upto(iseq.local_size) do |i|
+                        name = iseq.local_name(last-i)
+                        val = frame.getlocal(i)
+                        msg("%d: %s = %s (%s)" %
+                            [i, name, val.inspect, val.class],
+                            :code => true)
                     end
                 end
             end
@@ -144,7 +161,7 @@ EOH
     end
 
     def run(args)
-        run_for_locals(args, @proc.debug_eval('self'))
+        run_for_locals(args)
     end
 end
 

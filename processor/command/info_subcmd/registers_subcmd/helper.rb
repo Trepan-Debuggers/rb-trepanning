@@ -29,8 +29,7 @@ module Registers
             end
 
         val = @proc.frame.send(name, lookup_pos).inspect
-        klass = @proc.frame.send(name, lookup_pos).class
-        msg("VM %s(%d) = %s (%s)" % [name, position, val, klass])
+        msg("VM %s(%d) = %s (%s)" % [name, position, val, val.class])
         return position
     end
 

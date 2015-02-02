@@ -6,7 +6,22 @@ require_relative '../../../app/frame'
 class Trepan::Subcommand::SetReturn < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = 'Set the value that will be returned in the current method'
+    HELP         = <<-EOH
+**#{PREFIX.join(' ')}** *expression*
+
+Set return value to *expression*
+
+There are currently a number of restrictions here. First, you have to
+be at some sort of return event. Second, the opcode you are stopped at
+has to be a `leave` instruction.
+
+Warning: this is potentially dangerous.
+
+See also:
+---------
+
+`set register sp`, `info register sp`
+EOH
     IN_LIST      = true
     MIN_ABBREV   = 'ret'.size
   end
@@ -33,8 +48,13 @@ class Trepan::Subcommand::SetReturn < Trepan::Subcommand
       else
           index = 3
       end
-      msg("Not implemented yet")
-      return
+      frame = @proc.frame
+      iseq = frame.iseq
+      unless iseq
+          msg "Can't set return for C functions yet"
+          return
+      end
+      opname = iseq.op_at(frame.pc_offset)
       @proc.commands['set'].run(["set", "sp", index.to_s, *args[2..-1]])
   end
 end

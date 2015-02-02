@@ -37,9 +37,8 @@ EOH
     def run(args)
         if args.size == 0
             1.upto(@proc.frame.sp_size) do |i|
-                val = @proc.frame.sp(i).inspect
-                klass = @proc.frame.sp(i).class
-                msg "%s%d: %s (%s)" % [' ' * 2, i, val, klass]
+                val = @proc.frame.sp(i)
+                msg "%s%d: %s (%s)" % [' ' * 2, i, val.inspect, val.class]
             end if @proc.frame.sp_size
         elsif args.size == 1 and 'size' == args[0]
             msg "Number of stack items in frame is #{@proc.frame.sp_size}."
