@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 require_relative '../../app/breakpoint'
 
@@ -13,7 +12,7 @@ class TestBreak < Test::Unit::TestCase
 
     # See that we can next with parameter which is the same as 'next 1'
     cmds = ['set basename on',
-            'break ' + (__LINE__ + 7).to_s, 
+            'break ' + (__LINE__ + 7).to_s,
             'condition 1 x < 5',
             'continue']
     d = strarray_setup(cmds)
@@ -33,7 +32,7 @@ class TestBreak < Test::Unit::TestCase
 
     # Try a condition that fails
     cmds = ['set basename on',
-            'break ' + (__LINE__ + 7).to_s, 
+            'break ' + (__LINE__ + 7).to_s,
             'condition 1 x > 5',
             'continue']
     d = strarray_setup(cmds)
@@ -53,6 +52,5 @@ class TestBreak < Test::Unit::TestCase
            "y = 7"]
     compare_output(out, d, cmds)
   end
-    
-end
 
+end

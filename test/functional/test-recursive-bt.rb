@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 
 class TestRecursiveBt < Test::Unit::TestCase
@@ -42,7 +41,7 @@ class TestRecursiveBt < Test::Unit::TestCase
     z = factorial(5)
     ##############################
     d.stop
-    out = 
+    out =
       ["-- ",
        "def factorial(n)",
        "Trace events we may stop on:",

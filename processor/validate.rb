@@ -194,47 +194,50 @@ class Trepan
     #   - the condition (by default 'true') to use for this breakpoint
     #   - true condition should be negated. Used in *condition* if/unless
     def breakpoint_position(position_str, allow_condition)
-      break_cmd_parse = if allow_condition
-                          parse_breakpoint(position_str)
-                        else
-                          parse_breakpoint_no_condition(position_str)
-                        end
-      return [nil] * 5 unless break_cmd_parse
-      tail = [break_cmd_parse.condition, break_cmd_parse.negate]
-      meth_or_frame, file, position, offset_type =
-        parse_position(break_cmd_parse.position)
-      if meth_or_frame
-        if iseq = meth_or_frame.iseq
-          iseq, line_no, vm_offset =
-            position_to_line_and_offset(iseq, file, position, offset_type)
-          if vm_offset && line_no
-            return [iseq, line_no, vm_offset] + tail
-          end
-        else
-          errmsg("Unable to set breakpoint in #{meth_or_frame}")
-        end
-      elsif file && position
-        if :line == offset_type
-          iseq = find_iseqs_with_lineno(file, position)
-          if iseq
-            junk, line_no, vm_offset =
-              position_to_line_and_offset(iseq, file, position, offset_type)
+        break_cmd_parse = if allow_condition
+                              parse_breakpoint(position_str)
+                          else
+                              parse_breakpoint_no_condition(position_str)
+                          end
+        return [nil] * 5 unless break_cmd_parse
+        tail = [break_cmd_parse.condition, break_cmd_parse.negate]
+        meth_or_frame, file, position, offset_type =
+            parse_position(break_cmd_parse.position)
+        if meth_or_frame
+            if iseq = meth_or_frame.iseq
+                iseq, line_no, vm_offset =
+                    position_to_line_and_offset(iseq, file, position,
+                                                offset_type)
+                if vm_offset && line_no
+                    return [iseq, line_no, vm_offset] + tail
+                end
+            else
+                errmsg("Unable to set breakpoint in #{meth_or_frame}")
+            end
+        elsif file && position
+            if :line == offset_type
+                iseq = find_iseqs_with_lineno(file, position)
+                if iseq
+                    junk, line_no, vm_offset =
+                        position_to_line_and_offset(iseq, file, position,
+                                                    offset_type)
+                    return [@frame.iseq, line_no, vm_offset] + tail
+                else
+                    errmsg("Unable to find instruction sequence for" +
+                           " position #{position} in #{file}")
+                end
+            else
+                errmsg "Come back later..."
+            end
+        elsif @frame.respond_to?(:file) and @frame.file == file
+            puts "parsing line and offset #{position}, #{offset_type}"
+            line_no, vm_offset = position_to_line_and_offset(@frame.iseq, position,
+                                                             offset_type)
             return [@frame.iseq, line_no, vm_offset] + tail
-          else
-            errmsg("Unable to find instruction sequence for" +
-                   " position #{position} in #{file}")
-          end
         else
-          errmsg "Come back later..."
+            errmsg("Unable to parse breakpoint position #{position_str}")
         end
-      elsif @frame.respond_to?(:file) and @frame.file == file
-        line_no, vm_offset = position_to_line_and_offset(@frame.iseq, position,
-                                                         offset_type)
-        return [@frame.iseq, line_no, vm_offset] + tail
-      else
-        errmsg("Unable to parse breakpoint position #{position_str}")
-      end
-      return [nil] * 5
+        return [nil] * 5
     end
 
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.

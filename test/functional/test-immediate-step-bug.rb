@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 
 class TestStep < Test::Unit::TestCase
@@ -19,14 +18,14 @@ class TestStep < Test::Unit::TestCase
     d.core.step_events = TEST_STEP_EVENT_MASK
 
     ########### immediate bug1 ###############
-    2.times do 
+    2.times do
       x = 1
       d.debugger(:immediate => true)
       y = 2
     end
     ##############################
     d.stop
-    out = [':o ', 'd.debugger(:immediate => true)', 
+    out = [':o ', 'd.debugger(:immediate => true)',
            '-- ', 'y = 2',
            '-- ', 'x = 1',
            ':o ', 'd.debugger(:immediate => true)']

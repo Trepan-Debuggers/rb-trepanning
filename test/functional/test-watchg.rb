@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 
 # See that we hande "set trace var" properly
@@ -11,9 +10,9 @@ class TestWatchG < Test::Unit::TestCase
 
   def test_basic
 
-    cmds = ['watchg $my_var', 
+    cmds = ['watchg $my_var',
             'watchg $my_var',
-            'continue', 'continue', 
+            'continue', 'continue',
             'watchg $my_var off',
             'watchg $my_var off',
             'continue']

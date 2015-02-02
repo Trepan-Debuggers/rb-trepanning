@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 require_relative '../../app/breakpoint'
 
@@ -16,7 +15,7 @@ class TestBreakLong < Test::Unit::TestCase
 
     # See that we can stop at a breakpoint
     cmds = ['set basename on',
-            'break ' + (__LINE__ + 7).to_s, 
+            'break ' + (__LINE__ + 7).to_s,
             'continue']
     d = strarray_setup(cmds)
     d.start
@@ -37,8 +36,8 @@ class TestBreakLong < Test::Unit::TestCase
 
     # Try a disabling the breakpoint
     cmds = ['set basename on',
-            'break ' + (__LINE__ + 8).to_s, 
-            'break ' + (__LINE__ + 8).to_s, 
+            'break ' + (__LINE__ + 8).to_s,
+            'break ' + (__LINE__ + 8).to_s,
             'disable 1',
             'continue']
     d = strarray_setup(cmds)
@@ -63,7 +62,7 @@ class TestBreakLong < Test::Unit::TestCase
 
     # Stepping after a breakpoint should not stay at same location.
     cmds = ['set basename on',
-            'continue ' + (__LINE__ + 8).to_s, 
+            'continue ' + (__LINE__ + 8).to_s,
             'continue']
     dbg = strarray_setup(cmds)
     dbg.start
@@ -82,6 +81,5 @@ class TestBreakLong < Test::Unit::TestCase
            'd = 4' ]
     compare_output(out, dbg, cmds)
   end
-    
-end
 
+end

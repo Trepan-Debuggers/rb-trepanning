@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 
 class TestRaise < Test::Unit::TestCase
@@ -79,7 +78,7 @@ class TestRaise < Test::Unit::TestCase
            'different is off.',
            "Trace events we may stop on:",
            "\tbrkpt, c_call, c_return",
-           "CFUNC File#basename(\"/a/b.c\")", 
+           "CFUNC File#basename(\"/a/b.c\")",
            "C> ",
            "result = File.basename('/a/b.c')",
            "1: \"/a/b.c\"",
@@ -96,5 +95,5 @@ class TestRaise < Test::Unit::TestCase
            '"abc"']
     compare_output(out, d, cmds)
   end
-  
+
 end

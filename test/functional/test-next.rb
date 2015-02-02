@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 
 class TestNext < Test::Unit::TestCase
@@ -18,7 +17,7 @@ class TestNext < Test::Unit::TestCase
     d.stop
     out = ['-- ', 'x = 5', '-- ', 'y = 6']
     compare_output(out, d, cmds)
-    
+
     # See that we can next with a computed count value
     cmds = ['next 5-3', 'continue']
     d = strarray_setup(cmds)
@@ -32,9 +31,9 @@ class TestNext < Test::Unit::TestCase
     out = ['-- ', 'x = 5', '-- ', 'z = 7']
     compare_output(out, d, cmds)
   end
-    
+
   def test_next_between_fn
-    
+
     # Next over functions
     cmds = ['next 2', 'continue']
     d = strarray_setup(cmds)
@@ -51,7 +50,7 @@ class TestNext < Test::Unit::TestCase
     out = ['-- ', 'def fact(x)', '-- ', 'y = 5']
     compare_output(out, d, cmds)
   end
-  
+
   def test_next_in_exception
     cmds = %w(next! continue)
     d = strarray_setup(cmds)
@@ -69,9 +68,3 @@ class TestNext < Test::Unit::TestCase
     compare_output(out, d, cmds)
   end
 end
-
-
-
-
-
-

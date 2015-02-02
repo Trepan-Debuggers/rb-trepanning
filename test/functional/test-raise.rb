@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'rbconfig'
-require 'trace'
 require_relative 'fn_helper'
 
 class TestRaise < Test::Unit::TestCase
@@ -10,8 +9,8 @@ class TestRaise < Test::Unit::TestCase
 
   def test_raise
 
-    skip "FIXME on mingw" if 
-      RbConfig::CONFIG['target_os'].start_with?('mingw') 
+    skip "FIXME on mingw" if
+      RbConfig::CONFIG['target_os'].start_with?('mingw')
     cmds = [
             'step',
             'step',
@@ -72,5 +71,5 @@ class TestRaise < Test::Unit::TestCase
            '-- ', 'd.stop']
     compare_output(out, d, cmds)
   end
-  
+
 end

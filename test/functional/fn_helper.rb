@@ -1,14 +1,7 @@
 require 'thread_frame'
-require 'trace'
-require_relative '../../lib/trepanning'
 require_relative '../../io/string_array'
 
 module FnTestHelper
-  include Trace
-
-  # Synchronous events without C frames or instructions
-  TEST_STEP_EVENT_MASK = LINE_EVENT_MASK | CLASS_EVENT_MASK | CALL_EVENT_MASK |
-    RETURN_EVENT_MASK  
 
   # Common setup to create a debugger with String Array I/O attached
   def strarray_setup(debugger_cmds, insn_stepping=false)
@@ -16,8 +9,8 @@ module FnTestHelper
     stringout              = Trepan::StringArrayOutput.open
     d_opts                 = {:input  => stringin, :output => stringout,
                               :nx     => true}
-    d_opts[:core_opts]     = {:step_events => TEST_STEP_EVENT_MASK}
-    d_opts[:core_opts][:step_events] ||= INSN_EVENT_MASK if insn_stepping
+    d_opts[:core_opts]     = {}
+    # d_opts[:core_opts][:step_events] ||= INSN_EVENT_MASK if insn_stepping
     d                      = Trepan.new(d_opts)
 
     # Remove vm and switch from unmaskable events to increase predictability
@@ -37,7 +30,7 @@ module FnTestHelper
 
   # Return the caller's line number
   def get_lineno
-    RubyVM::Frame.current.prev.source_location[0]
+    RubyVM::Frame.get(1).source_location[0]
   end
 
   def compare_output(right, d, debugger_cmds)
@@ -73,27 +66,27 @@ module FnTestHelper
      s =~ TREPAN_PROMPT ? nil : s
     end.compact unless show_prompt
 
-    # Remove debugger location lines. 
-    # For example: 
+    # Remove debugger location lines.
+    # For example:
     #   -- (/src/external-vcs/trepan/tmp/gcd.rb:4)
     # becomes:
-    #   -- 
+    #   --
     a2 = a.map do |s|
       s =~ TREPAN_LOC ? s.gsub(/\(.+:\d+( @\d+)?\)\n/, '').chomp : s.chomp
     end
 
-    # Canonicalize breakpoint messages. 
-    # For example: 
+    # Canonicalize breakpoint messages.
+    # For example:
     #   Breakpoint 1 set at VM offset 10
     # becomes :
     #  Breakpoint 1 set at VM offset 55
     a3 = a2.map do |s|
-      s.gsub(/^Breakpoint (\d+) set at VM offset (\d+)/, 
+      s.gsub(/^Breakpoint (\d+) set at VM offset (\d+)/,
              'Breakpoint \1 set at VM offset 55')
     end
 
     #	line 14 in file test/functional/test-break.rb.
-    # becomes 
+    # becomes
     #   line 55 of file foo.rb
     a4 = a3.map do |s|
       s.gsub(/line (\d+) in file .+/, 'line 55 in file foo.rb')

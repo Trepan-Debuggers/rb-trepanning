@@ -2,7 +2,7 @@
 # The main "driver" class for a command processor. Other parts of the
 # command class and debugger command objects are pulled in from here.
 
-%w(default breakpoint complete display eventbuf eval load_cmds location
+%w(default breakpoint complete display eval load_cmds location
     frame hook msg running validate).each do
   |mod_str|
   require_relative "processor/#{mod_str}"
@@ -93,7 +93,7 @@ class Trepan
 
       # Run initialization routines for each of the "submodule"s.
       # load_cmds has to come first.
-      %w(load_cmds breakpoint display eventbuf frame running validate
+      %w(load_cmds breakpoint display frame running validate
          ).each do |submod|
         self.send("#{submod}_initialize")
       end

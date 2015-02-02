@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 
 class TestRemap < Test::Unit::TestCase
@@ -46,5 +45,5 @@ class TestRemap < Test::Unit::TestCase
     compare_output(out, d, cmds)
 
   end
-  
+
 end

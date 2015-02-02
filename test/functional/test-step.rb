@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 
 class TestStep < Test::Unit::TestCase
@@ -36,7 +35,7 @@ class TestStep < Test::Unit::TestCase
     d.stop # ({:remove => true})
     out = ['-- ', 'x = 5', '-- ', 'z = 7']
     compare_output(out, d, cmds)
-    
+
     # Test step>
     cmds = ['step>', 'continue']
     d = strarray_setup(cmds)
@@ -51,7 +50,7 @@ class TestStep < Test::Unit::TestCase
     d.stop  # {:remove => true})
     out = ['-- ', 'x = 5', 'METHOD TestStep#foo()', '-> ', 'def foo()']
     compare_output(out, d, cmds)
-    
+
     # Test step!
     cmds = ['step!', 'continue']
     d = strarray_setup(cmds)
@@ -65,11 +64,11 @@ class TestStep < Test::Unit::TestCase
     end
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- ', 'x = 5', 
-           '#<ZeroDivisionError: divided by 0>', 
+    out = ['-- ', 'x = 5',
+           '#<ZeroDivisionError: divided by 0>',
            '!! ', 'z = 1/0']
     compare_output(out, d, cmds)
-    
+
     # Test "step" with sets of events. Part 1
     cmds = ['set events call raise',
             'step', 's!']
@@ -100,7 +99,7 @@ class TestStep < Test::Unit::TestCase
     got = filter_line_cmd(d.intf[-1].output.output)
     out.pop if got.size+1 == out.size
     compare_output(out, d, cmds)
-    
+
     # Test "step" will sets of events. Part 2
     cmds = ['step> 1+0',
             'step! 1', 'continue']
@@ -127,7 +126,7 @@ class TestStep < Test::Unit::TestCase
            'TestStep',
            '!! ',
            'raise Exception']
-    
+
   end
 
   def test_step_between_fn
@@ -190,7 +189,7 @@ class TestStep < Test::Unit::TestCase
     end
     cmds = %w(step! continue)
     d = strarray_setup(cmds)
-    begin 
+    begin
       d.start()
       x = bad(0)
       assert_equal(false, true, 'should have raised an exception')
@@ -199,8 +198,8 @@ class TestStep < Test::Unit::TestCase
     ensure
       d.stop({:remove => true})
     end
-    
-    out = ['-- ', 
+
+    out = ['-- ',
            'x = bad(0)', # line event
            '#<ZeroDivisionError: divided by 0>',
            '!! ',        # exception event
@@ -216,7 +215,7 @@ class TestStep < Test::Unit::TestCase
       x = x * fact(x-1)
       return x
     end
-    cmds = ['step<', '1 == x', 'continue'] 
+    cmds = ['step<', '1 == x', 'continue']
     d = strarray_setup(cmds)
     d.start
     ########### t9 ###############
@@ -224,11 +223,11 @@ class TestStep < Test::Unit::TestCase
     y = 5
     ##############################
     d.stop # ({:remove => true})
-    out = ['-- ', 
-           'x = fact(4)', 
-           '<- ', 
-           'R=> 1', 
-           'return 1 if x <= 1', 
+    out = ['-- ',
+           'x = fact(4)',
+           '<- ',
+           'R=> 1',
+           'return 1 if x <= 1',
            'D=> true']
     compare_output(out, d, cmds)
   end
@@ -240,7 +239,7 @@ class TestStep < Test::Unit::TestCase
     # So a subsequent 'step' when 'set different' in effect was to stay
     # at the same place at the function call.
     cmds = ['set different', 'set events call, class, line, return',
-            'step', 'step', 'step', 'step', 'continue'] 
+            'step', 'step', 'step', 'step', 'continue']
     d = strarray_setup(cmds)
     d.start
     ########### t10 ###############

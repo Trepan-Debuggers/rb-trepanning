@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 require_relative '../../app/breakpoint'
 
@@ -12,8 +11,8 @@ class TestDelete < Test::Unit::TestCase
 
     # See that when we can delete a breakpoint.
     cmds = ['set basename on',
-            'break ' + (__LINE__ + 9).to_s, 
-            'delete 1', 
+            'break ' + (__LINE__ + 9).to_s,
+            'delete 1',
             'continue',
            ]
     d = strarray_setup(cmds)
@@ -37,9 +36,9 @@ class TestDelete < Test::Unit::TestCase
     # See that when we can delete a breakpoint but get to the next one.
     cmds = ['set basename on',
             'set autoeval on',
-            'break ' + (__LINE__ + 11).to_s, 
-            'break ' + (__LINE__ + 12).to_s, 
-            'delete 1', 
+            'break ' + (__LINE__ + 11).to_s,
+            'break ' + (__LINE__ + 12).to_s,
+            'delete 1',
             'continue',
             'va',
             'continue',
@@ -69,6 +68,5 @@ class TestDelete < Test::Unit::TestCase
     compare_output(out, d, cmds)
 
   end
-    
-end
 
+end

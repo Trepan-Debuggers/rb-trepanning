@@ -17,7 +17,6 @@ Some of the core debugger concepts have been rethought.
 This version works only with a patched version of Ruby 2.1.
 EOF
   spec.add_dependency('rb-threadframe', '~> 0.39', '>= 0.39.9')
-  spec.add_dependency('rb-trace', '~> 0.5')
   spec.add_dependency('linecache-tf', '~> 1.0')
   spec.add_dependency('columnize', '~> 0.8')
   spec.add_dependency('redcarpet', '~> 3.2')
