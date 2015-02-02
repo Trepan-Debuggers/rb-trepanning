@@ -1,20 +1,23 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 class Trepan::Command::ExitCommand < Trepan::Command
 
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [exitcode] 
+**#{NAME}** [*exitcode*]
 
-hard exit of the debugged program.  
+hard exit of the debugged program.
 
-The program being debugged is exited via exit!() which does not run
-the Kernel at_exit finalizers. If a return code is given, that is the
-return code passed to exit() - presumably the return code that will be
-passed back to the OS. If no exit code is given, 0 is used.
+The program being debugged is exited via *exit!()* which does not run
+the Kernel *at_exit()* finalizers. If a return code is given, that is
+the return code passed to exit() - presumably the return code that
+will be passed back to the OS. If no exit code is given, 0 is used.
 
-See also the commands "quit" and "kill".
+See also:
+---------
+
+`quit` and `kill`.
     HELP
 
     CATEGORY     = 'support'
@@ -27,7 +30,7 @@ See also the commands "quit" and "kill".
 
   # This method runs the command
   def run(args)
-    unconditional = 
+    unconditional =
       if args.size > 1 && args[1] == 'unconditionally'
         args.shift
         true
