@@ -7,24 +7,27 @@ class Trepan::Command::BreakCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME}
-#{NAME} LOCATION [ {if|unless} CONDITION ]
+**#{NAME}**
+**#{NAME}** *location* [ {if|unless} *condition* ]
 
-Set a breakpoint. In the second form where CONDITIOn is given, the
+Set a breakpoint. In the second form where *condition* is given, the
 condition is evaluated in the context of the position. We stop only If
-CONDITION evalutes to non-false/nil and the "if" form used, or it is
+*condition* evalutes to non-false/nil and the "if" form used, or it is
 false and the "unless" form used.\
 
 Examples:
-   #{NAME}
-   #{NAME} 10               # set breakpoint on line 10
-   #{NAME} 10 if 1 == a     # like above but only if a is equal to 1
-   #{NAME} 10 unless 1 == a # like above but only if a is equal to 1
-   #{NAME} me.rb:10
-   #{NAME} @20   # set breakpoint VM Instruction Sequence offset 20
-   #{NAME} Kernel.pp # Set a breakpoint at the beginning of Kernel.pp
+---------
+    #{NAME}
+    #{NAME} 10               # set breakpoint on line 10
+    #{NAME} 10 if 1 == a     # like above but only if a is equal to 1
+    #{NAME} 10 unless 1 == a # like above but only if a is equal to 1
+    #{NAME} me.rb:10
+    #{NAME} @20   # set breakpoint VM Instruction Sequence offset 20
+    #{NAME} Kernel.pp # Set a breakpoint at the beginning of Kernel.pp
 
-See also condition, continue and "help location".
+See also:
+---------
+`condition`, `continue`, `help syntax location`, and `tbreak`
     HELP
 
       ALIASES      = %w(b)

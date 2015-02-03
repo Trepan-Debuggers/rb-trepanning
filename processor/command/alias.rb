@@ -24,7 +24,7 @@ Examples:
     alias s   step   # "s" is now an alias for "step".
                      # The above example is done by default.
 
-See Also:
+See also:
 ---------
 
 `unalias` and `show #{NAME}`.

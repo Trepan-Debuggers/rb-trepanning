@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/complete'
 
@@ -8,29 +8,33 @@ class Trepan::Command::WatchgCommand < Trepan::Command
     NAME      = File.basename(__FILE__, '.rb')
     CATEGORY  = 'breakpoints'
     HELP         = <<-EOH
-#{NAME} GLOBAL_VARIABLE [on]
-#{NAME} GLOBAL_VARIABLE nostop
-#{NAME} GLOBAL_VARIABLE off
+**#{NAME}** *global-variable* [**on**]
+**#{NAME}** *global-variable** **nostop**
+**#{NAME}** *global-variable* **off**
 
-Use Kernel.trace_var to trace changes of global variable
-GLOBAL_VARIABLE.  If nostop is given, then we just print out the 
+Use *Kernel.trace_var* to trace changes of global variable
+*global-variable*.  If `nostop` is given, then we just print out the
 location and variable name but do not stop in the debugger.
 
-To remove a prior trace, add "off" to the end.
+To remove a prior trace, add `off` to the end.
 
 Note in contrast to other events, stopping for variable tracing occurs
 *after* the event, not before.
 
-NOTE: this command name will likely change in the future.
+*Note:* this command name will likely change in the future.
 
 Examples:
-#{NAME} $PROGRAM_NAME       # enter debugger if global $PROGRAM_NAME changes
-#{NAME} $PROGRAM_NAME on    # same as above
-#{NAME} $PROGRAN_NAME stop  # just print places the varaible is set
-                            # along with the location
-#{NAME} $PROGRAN_NAME off   # remove watching changes
+---------
 
-See also 'info breakpoints'
+    #{NAME} $PROGRAM_NAME       # enter debugger if global $PROGRAM_NAME changes
+    #{NAME} $PROGRAM_NAME on    # same as above
+    #{NAME} $PROGRAN_NAME stop  # just print places the varaible is set
+                                # along with the location
+    #{NAME} $PROGRAN_NAME off   # remove watching changes
+
+See also:
+---------
+`info breakpoints`
     EOH
 
     MAX_ARGS     = 3
@@ -54,8 +58,8 @@ See also 'info breakpoints'
           return
         end
       else
-        Kernel.trace_var(traced_sym, 
-                         lambda {|val| 
+        Kernel.trace_var(traced_sym,
+                         lambda {|val|
                            @proc.core.trace_var_processor(traced_var, val)})
       end
       @proc.traced_vars[traced_var] = action
@@ -111,4 +115,3 @@ if __FILE__ == $0
   $FOO=1
   cmd.run(%w(variable $FOO off))
 end
-
