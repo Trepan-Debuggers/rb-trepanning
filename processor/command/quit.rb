@@ -6,23 +6,26 @@ class Trepan::Command::QuitCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME}[!] [unconditionally] [exit code] 
+**#{NAME}**[!] [**unconditionally**] [*exit-code*]
 
-gentle termination
+Gentle termination.
 
-The program being debugged is exited via exit() which runs the Kernel
-at_exit finalizers. If a return code is given, that is the return code
-passed to exit() - presumably the return code that will be passed back
+The program being debugged is exited via *exit()* which runs the Kernel
+*at_exit* finalizers. If a return code is given, that is the return code
+passed to *exit()*; presumably the return code that will be passed back
 to the OS. If no exit code is given, 0 is used.
 
-Examples: 
-  #{NAME}                 # quit prompting if we are interactive
-  #{NAME} unconditionally # quit without prompting
-  #{NAME}!                # same as above
-  #{NAME} 0               # same as "quit"
-  #{NAME}! 1              # unconditional quit setting exit code 1
+Examples:
+---------
+    #{NAME}                 # quit prompting if we are interactive
+    #{NAME} unconditionally # quit without prompting
+    #{NAME}!                # same as above
+    #{NAME} 0               # same as "quit"
+    #{NAME}! 1              # unconditional quit setting exit code 1
 
-See also the commands "exit" and "kill".
+See also:
+---------
+`exit`, `kill`
     HELP
 
     ALIASES      = %W(#{NAME}! q q!)
@@ -39,7 +42,7 @@ See also the commands "exit" and "kill".
     if RbConfig::CONFIG['target_os'].start_with?('mingw')
         return @proc.commands['exit'].run(['exit', args])
     end
-    unconditional = 
+    unconditional =
       if args.size > 1 && args[-1] == 'unconditionally'
         args.shift
         true
@@ -52,7 +55,7 @@ See also the commands "exit" and "kill".
       msg('Quit not confirmed.')
       return
     end
-    
+
     if (args.size > 1)
       if  args[1] =~ /\d+/
         exitrc = args[1].to_i;
@@ -73,8 +76,8 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  Process.fork { cmd.run([cmd.name]) } if 
-    Process.respond_to?(:fork) 
+  Process.fork { cmd.run([cmd.name]) } if
+    Process.respond_to?(:fork)
   cmd.run([cmd.name, 'foo'])
   cmd.run([cmd.name, '5'])
 end

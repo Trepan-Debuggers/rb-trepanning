@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/util'
 
@@ -10,12 +10,17 @@ class Trepan::Command::UpCommand < Trepan::Command
   Trepan::Util.suppress_warnings {
     NAME        = File.basename(__FILE__, '.rb')
     HELP        = <<-HELP
-#{NAME} [count]
+**#{NAME}** [*count*]
 
 Move the current frame up in the stack trace (to an older frame). 0 is
 the most-recent frame. If no count is given, move up 1.
 
-See also 'down' and 'frame'.
+A negative number moves in the opposite direction.
+
+See also:
+---------
+
+`down`, `frame`.
   HELP
 
     CATEGORY      = 'stack'
