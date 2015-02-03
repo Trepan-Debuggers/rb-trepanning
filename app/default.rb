@@ -39,7 +39,7 @@ class Trepan
 
   DEFAULT_DEBUG_STR_SETTINGS = {
     :core_opts => {
-      :cmdproc_opts => {:different => false}},
+      :cmdproc_opts => {:different => true, :highlight => true}},
     :hide_stack => true,
   } unless defined?(DEFAULT_DEBUG_STR_SETTINGS)
 

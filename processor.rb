@@ -100,8 +100,6 @@ class Trepan
       hook_initialize(commands)
       unconditional_prehooks.insert_if_new(-1, *trace_hook) if
         @settings[:traceprint]
-
-      # FIXME: run start file and start commands.
     end
 
     def compute_prompt

@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'base/submgr'
 
 class Trepan::Command::ShowCommand < Trepan::SubcommandMgr
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-'Generic command for showing things about the debugger.  You can
-give unique prefix of the name of a subcommand to get information
-about just that subcommand.
+**#{NAME}** [*show-subcommand*]
 
-Type "#{NAME}" for a list of "#{NAME}" subcommands and what they do.
-Type "help #{NAME} *" for just a list of "#{NAME}" subcommands.
+Generic command for showing things about the debugger.  You can
+give unique prefix of the name of a subcommand to get
+information about just that subcommand.
+
+Type `#{NAME}` for a list of *#{NAME}* subcommands and what they do.
+Type `help #{NAME} *` for just the list of `#{NAME}` subcommands.
     HELP
 
     CATEGORY      = 'status'
@@ -20,7 +22,7 @@ Type "help #{NAME} *" for just a list of "#{NAME}" subcommands.
   end
 
   def run(args)
-    if args.size > 1 
+    if args.size > 1
       first = args[1].downcase
       alen = 'auto'.size
       args[1..1] = ['auto', first[alen..-1]] if

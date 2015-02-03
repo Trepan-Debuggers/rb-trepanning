@@ -28,6 +28,7 @@ class Trepan
   end
 
   def self.setup_options(options, stdout=$stdout, stderr=$stderr)
+    options[:highlight] = :term
     OptionParser.new do |opts|
       opts.banner = <<EOB
 #{show_version}

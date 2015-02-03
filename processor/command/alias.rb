@@ -8,7 +8,7 @@ class Trepan::Command::AliasCommand < Trepan::Command
     HELP = <<-HELP
 #{NAME} ALIAS COMMAND
 
-Add alias ALIAS for a debugger command COMMAND.  
+Add alias ALIAS for a debugger command COMMAND.
 
 Add an alias when you want to use a command abbreviation for a command
 that would otherwise be ambigous. For example, by default we make 's'
@@ -21,7 +21,14 @@ alias cat list   # "cat rubyfile.rb" is the same as "list rubyfile.rb"
 alias s   step   # "s" is now an alias for "step".
                  # The above example is done by default.
 
-See also 'unalias' and 'show #{NAME}'.
+    alias cat list   # "cat rubyfile.rb" is the same as "list rubyfile.rb"
+    alias s   step   # "s" is now an alias for "step".
+                     # The above example is done by default.
+
+See also:
+---------
+
+`unalias` and `show #{NAME}`.
     HELP
 
     CATEGORY      = 'support'
@@ -29,8 +36,8 @@ See also 'unalias' and 'show #{NAME}'.
     NEED_STACK    = true
     SHORT_HELP    = 'Add an alias for a debugger command'
   end
-  
-  # Run command. 
+
+  # Run command.
   def run(args)
     if args.size == 1
       @proc.commands['show'].run(%W(show #{NAME}))
@@ -42,7 +49,7 @@ See also 'unalias' and 'show #{NAME}'.
       if @proc.commands.member?(command)
         @proc.aliases[al] = command
         if old_command
-          msg("Alias '#{al}' for command '#{command}' replaced old " + 
+          msg("Alias '#{al}' for command '#{command}' replaced old " +
               "alias for '#{old_command}'.")
         else
           msg "New alias '#{al}' for command '#{command}' created."
