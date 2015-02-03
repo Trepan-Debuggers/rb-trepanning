@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require 'optparse'
 require_relative '../command'
 require_relative '../../app/default'
@@ -15,37 +15,38 @@ class Trepan::Command::ServerCommand < Trepan::Command
     MAX_ARGS     = 4  # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [{--port|-p} NUM] [{--host|-h} HOST-OR-IP]
+**#{NAME}** [{**--port**|**-p**} *num*] [{**--host**|**-h**} *host-or-IP*]
 
 Put session into server mode which allows an out-of-process or remote
-connection to the debugged program. --port and --host can be supplied
+connection to the debugged program. `--port` and `--host` can be supplied
 to specify the port number to use and the host name for TCP
-connections. If neither is given, the default host (#{Trepan::DEFAULT_SETTINGS[:host]}) 
+connections. If neither is given, the default host (#{Trepan::DEFAULT_SETTINGS[:host]})
 and the default port (#{Trepan::DEFAULT_SETTINGS[:port]}) are used.
 
 Examples:
-   #{NAME} # Accept remote connections using defaults
-   #{NAME} --port 123 # Accept remote connections on port 123
-   #{NAME} --host my.host.net --port 2048
-   #{NAME} -h my.host.net -p 2048 # same as above
+---------
+    #{NAME} # Accept remote connections using defaults
+    #{NAME} --port 123 # Accept remote connections on port 123
+    #{NAME} --host my.host.net --port 2048
+    #{NAME} -h my.host.net -p 2048 # same as above
       HELP
 
     SHORT_HELP  = 'Go into out-of-process debugging (server) mode'
 
   end
-    
+
   def parse_options(options, args) # nodoc
     parser = OptionParser.new do |opts|
-      opts.on("-h", "--host NAME", String, 
-              "Host or IP used in TCP connections for --server or --client. " + 
-              "Default is #{DEFAULT_SETTINGS[:host].inspect}.") do 
-        |name_or_ip| 
+      opts.on("-h", "--host NAME", String,
+              "Host or IP used in TCP connections for --server or --client. " +
+              "Default is #{DEFAULT_SETTINGS[:host].inspect}.") do
+        |name_or_ip|
         options[:host] = name_or_ip
       end
-      opts.on("-p", "--port NUMBER", Integer, 
-              "Port number used in TCP connections for --server or --client. " + 
-              "Default is #{DEFAULT_SETTINGS[:port]}.") do 
-        |num| 
+      opts.on("-p", "--port NUMBER", Integer,
+              "Port number used in TCP connections for --server or --client. " +
+              "Default is #{DEFAULT_SETTINGS[:port]}.") do
+        |num|
         options[:port] = num
       end
     end

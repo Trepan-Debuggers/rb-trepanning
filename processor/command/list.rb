@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 # -*- coding: utf-8 -*-
 require 'linecache'
 require_relative '../command'
@@ -8,79 +8,86 @@ class Trepan::Command::ListCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME}[>] [MODULE] [FIRST [NUM]]
-#{NAME}[>] LOCATION [NUM]
+**#{NAME}[>]** [*module*] [*first* [*num*]]
+**#{NAME}[>]** *location [*num*]
 
-#{NAME} source code. 
+List source code.
 
-Without arguments, prints lines centered around the current
-line. If this is the first #{NAME} command issued since the debugger
-command loop was entered, then the current line is the current
-frame. If a subsequent #{NAME} command was issued with no intervening
-frame changing, then that is start the line after we last one
-previously shown.
+Without arguments, prints lines centered around the current line. If
+this is the first #{NAME} command issued since the debugger command
+loop was entered, then the current line is the current frame. If a
+subsequent #{NAME} command was issued with no intervening frame
+changing, then that is start the line after we last one previously
+shown.
 
-If the command has a '>' suffix, then line centering is disabled and
+If the command has a ">" suffix, then line centering is disabled and
 listing begins at the specificed location.
 
 The number of lines to show is controlled by the debugger "listsize"
 setting. Use 'set max list' or 'show max list' to see or set the
 value.
 
-\"#{NAME} -\" shows lines before a previous listing. 
+\"#{NAME} -\" shows lines before a previous listing.
 
-A LOCATION is a either 
-  - number, e.g. 5, 
-  - a function, e.g. join or os.path.join
-  - a module, e.g. os or os.path
-  - a filename, colon, and a number, e.g. foo.rb:5,  
-  - or a module name and a number, e.g,. os.path:5.  
-  - a '.' for the current line number
-  - a '-' for the lines before the current line number
+A *location* is a either:
+
+* number, e.g. 5,
+* a function, e.g. *join* or *os.path.join*
+* a module, e.g. *os* or *os.path*
+* a filename, colon, and a number, e.g. *foo.rb:5*,
+* or a module name and a number, e.g,. *os.path:5*.
+* a "." for the current line number
+* a "-" for the lines before the current line number
 
 If the location form is used with a subsequent parameter, the
 parameter is the starting line number.  When there two numbers are
 given, the last number value is treated as a stopping line unless it
 is positive and less than the start line. In this case, it is taken to
-mean the number of lines to list instead. If last is negative, we start
-that many lines back from first and list to first.
+mean the number of lines to list instead. If last is negative, we
+start that many lines back from first and list to first.
 
-Wherever a number is expected, it does not need to be a constant --
+Wherever a number is expected, it does not need to be a constant,
 just something that evaluates to a positive integer.
 
-Some examples:
+Examples:
+---------
 
-#{NAME} 5            # List centered around line 5
-#{NAME} @5           # List lines centered around bytecode offset 5.
-#{NAME} 5>           # List starting at line 5
-#{NAME} foo.rb:5     # List centered around line 5 of foo.rb
-#{NAME} foo.rb 5     # Same as above.
-#{NAME}> foo.rb:5    # List starting around line 5 of foo.rb
-#{NAME} foo.rb  5 6  # list lines 5 and 6 of foo.rb
-#{NAME} foo.rb  5 2  # Same as above, since 2 < 5.
-#{NAME} foo.rb:5 2   # Same as above
-#{NAME} foo.rb 15 -5 # List lines 10..15 of foo
-#{NAME} FileUtils.cp # List lines around the FileUtils.cp function.
-#{NAME} .            # List lines centered from where we currently are stopped
-#{NAME} . 3          # List 3 lines starting from where we currently are stopped
-                     # if . > 3. Otherwise we list from . to 3.
-#{NAME} -            # List lines previous to those just shown
+    #{NAME} 5            # List centered around line 5
+    #{NAME} @5           # List lines centered around bytecode offset 5.
+    #{NAME} 5>           # List starting at line 5
+    #{NAME} foo.rb:5     # List centered around line 5 of foo.rb
+    #{NAME} foo.rb 5     # Same as above.
+    #{NAME}> foo.rb:5    # List starting around line 5 of foo.rb
+    #{NAME} foo.rb  5 6  # list lines 5 and 6 of foo.rb
+    #{NAME} foo.rb  5 2  # Same as above, since 2 < 5.
+    #{NAME} foo.rb:5 2   # Same as above
+    #{NAME} foo.rb 15 -5 # List lines 10..15 of foo
+    #{NAME} FileUtils.cp # List lines around the FileUtils.cp function.
+    #{NAME} .            # List lines centered from where we currently are stopped
+    #{NAME} . 3          # List 3 lines starting from where we currently are stopped
+                         # if . > 3. Otherwise we list from . to 3.
+    #{NAME} -            # List lines previous to those just shown
 
 The output of the #{NAME} command gives a line number, and some status
-information about the line and the text of the line. Here is some 
+information about the line and the text of the line. Here is some
 hypothetical #{NAME} output modeled roughly around line 251 of one
 version of this code:
 
-  251    	  cmd.proc.frame_setup(tf)
-  252  ->	  brkpt_cmd.run(['break'])
-  253 B01   	  line = __LINE__
-  254 b02   	  cmd.run(['list', __LINE__.to_s])
-  255 t03   	  puts '--' * 10
+    251    	  cmd.proc.frame_setup(tf)
+    252  ->	  brkpt_cmd.run(['break'])
+    253 B01   	  line = __LINE__
+    254 b02   	  cmd.run(['list', __LINE__.to_s])
+    255 t03   	  puts '--' * 10
 
 Line 251 has nothing special about it. Line 252 is where we are
 currently stopped. On line 253 there is a breakpoint 1 which is
 enabled, while at line 255 there is an breakpoint 2 which is
 disabled.
+
+See also:
+---------
+
+`set max list`, `show max list`, `disassemble`, `help syntax location`
     HELP
 
     ALIASES       = %W(l #{NAME}> l> cat)
@@ -95,14 +102,14 @@ disabled.
       return
     end
     listsize = settings[:maxlist]
-    center_correction = 
+    center_correction =
       if args[0][-1..-1] == '>'
         0
       else
         (listsize-1) / 2
       end
 
-    iseq, filename, first, last = 
+    iseq, filename, first, last =
       @proc.parse_list_cmd(@proc.cmd_argstr, listsize, center_correction)
     return unless filename
     container = iseq ? iseq.source_container : ['file', filename]
@@ -110,7 +117,7 @@ disabled.
 
     # We now have range information. Do the listing.
     max_line = LineCache::size(filename)
-    unless max_line 
+    unless max_line
       errmsg('File "%s" not found.' % filename)
       return
     end
@@ -140,14 +147,14 @@ disabled.
         end
         line.chomp!
         s = '%3d' % lineno
-        s = s + ' ' if s.size < 4 
+        s = s + ' ' if s.size < 4
         s += if breaklist.member?(lineno)
                bp = breaklist[lineno]
                a_pad = '%02d' % bp.id
                bp.icon_char
-             else 
+             else
                a_pad = '  '
-               ' ' 
+               ' '
              end
         s += (frame && lineno == @proc.frame_line &&
               filename == frame.source_container[1]) ? '->' : a_pad
@@ -164,7 +171,7 @@ if __FILE__ == $0
   if !(ARGV.size == 1 && ARGV[0] == 'noload')
     ARGV[0..-1]    = ['noload']
     load(__FILE__)
-  else    
+  else
     require_relative '../location'
     require_relative '../mock'
     require_relative '../frame'
@@ -185,7 +192,7 @@ if __FILE__ == $0
       puts "%s %s %s" % [seps, args.join(' '), seps]
       run_cmd(cmd,args)
     end
-      
+
 
     load 'tmpdir.rb'
     run_cmd2(cmd, %w(list tmpdir.rb 10))
@@ -204,7 +211,7 @@ if __FILE__ == $0
     run_cmd2(cmd, %w(list 3000))
     run_cmd2(cmd, %w(list run_cmd2))
 
-    p = Proc.new do 
+    p = Proc.new do
       |x,y| x + y
     end
     require 'thread_frame'
@@ -221,7 +228,7 @@ if __FILE__ == $0
     # Start line and count, since 3 < 30
     run_cmd2(cmd, %W(#{cmd.name} Columnize.columnize 30 3))
 
-    # Start line finish line 
+    # Start line finish line
     run_cmd2(cmd, %W(#{cmd.name} Columnize.columnize 40 50))
 
     # puts '--' * 10

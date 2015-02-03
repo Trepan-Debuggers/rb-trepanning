@@ -6,20 +6,20 @@ class Trepan::Command::HelpCommand < Trepan::Command
     unless defined?(HELP)
         NAME = File.basename(__FILE__, '.rb')
         HELP = <<-HELP
-#{NAME} [command [subcommand]|expression]
+**#{NAME}** [*command* [*subcommand*]|*regexp*]
 
 Without argument, print the list of available debugger commands.
 
 When an argument is given, it is first checked to see if it is command
-name. For example, 'help up' gives help on the 'up' debugger command.
+name. For example, `help up` gives help on the `up` debugger command.
 
-If the environment variable $PAGER is defined, the file is
+If the environment variable *$PAGER* is defined, the file is
 piped through that command.  You'll notice this only for long help
 output.
 
-Some commands like 'info', 'set', and 'show' can accept an
+Some commands like `info`, `set`, and `show` can accept an
 additional subcommand to give help just about that particular
-subcommand. For example 'help info line' give help about the
+subcommand. For example `help info line` give help about the
 info line command.
     HELP
 
@@ -127,7 +127,8 @@ Type "help" followed by a command name for full documentation.
                     end
                     if cmd_obj.class.constants.member?(:ALIASES) and
                             args.size == 2
-                        msg "Aliases: #{cmd_obj.class.const_get(:ALIASES).join(', ')}"
+                        markdown("**Aliases:** " +
+                                 "#{cmd_obj.class.const_get(:ALIASES).join(', ')}")
                     end
                 end
             elsif @proc.macros.member?(cmd_name)
