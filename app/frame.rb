@@ -115,37 +115,49 @@ class Trepan
     end
 
     def format_stack_entry(frame, opts={})
-      return 'invalid frame' unless frame.valid?
-      s  = format_stack_call(frame, opts)
-      s += " in #{frame.source_container[0]} "
-      s +=
-        if (eval_str = eval_string(frame))
-          safe_repr(eval_str.inspect, 15)
-        else
-          if 'file' == frame.source_container[0] &&
-              opts[:basename]
-            File.basename(frame.source_container[1])
-          else
-            frame.source_container[1]
-          end
-        end
-      if frame.source_location
+        return 'invalid frame' unless frame.valid?
+        container_type = frame.source_container[0]
+        s  = format_stack_call(frame, opts)
+        s += " in #{container_type}"
+        sep = if opts[:maxwidth] && s.size > opts[:maxwidth]
+                  "\n\t"
+              else
+                  ' '
+              end
         s +=
-          if opts[:maxwidth] && s.size > opts[:maxwidth]
-            "\n\t"
-          else
-            ' '
-          end
-        if frame.source_location.size == 1
-          s += "at line #{frame.source_location[0]}" if
-            frame.source_location[0] != 0
-        else
-          s += " at lines #{frame.source_location}"
-        end
+            if (eval_str = eval_string(frame))
+                sep + safe_repr(eval_str.inspect, 15)
+            else
+                if 'file' == container_type && opts[:basename]
+                    sep + File.basename(frame.source_container[1])
+                elsif 'binary' == container_type
+                    ''
+                else
+                    sep + frame.source_container[1]
+                end
+            end
+      if frame.source_location
+          loc = ''
+          loc +=
+              if container_type == 'binary'
+                  "at address 0x%x" % frame.source_location[0]
+              elsif frame.source_location.size == 1
+                  frame.source_location[0] != 0 ?
+                  "at line #{frame.source_location[0]}" : ''
+              else
+                  "at lines #{frame.source_location}"
+              end
+          s +=
+              if opts[:maxwidth] && s.size + loc.size > opts[:maxwidth]
+                  "\n\t"
+              else
+                  ' '
+              end
+          s += loc
       end
-      s += ", pc: #{frame.pc_offset}" if
-        frame.pc_offset > 0 && opts[:show_pc]
-      return s
+        s += ", pc: #{frame.pc_offset}" if
+            frame.pc_offset > 0 && opts[:show_pc]
+        return s
     end
 
     # Return true if frame1 and frame2 are at the same place.
@@ -230,36 +242,38 @@ end
 
 if __FILE__ == $0
     # Demo it.
-    require 'thread_frame'
     include Trepan::Frame
     def msg(msg)
         puts msg
     end
-    print_stack_trace(RubyVM::Frame.get, :basename => true)
-    def foo
-        puts '=' * 10
-        print_stack_trace(RubyVM::Frame.get, :show_pc => true)
-    end
-    foo
-
-    def bar(a, b, c)
+    width = (ENV['COLUMNS'] || `tput cols &2>/dev/null`).to_i rescue 80
+    opts = {:maxwidth => width}
+    print_stack_trace(RubyVM::Frame.get,
+                      :basename => true, :maxwidth => width)
+    def foo(width)
         puts '=' * 10
         print_stack_trace(RubyVM::Frame.get,
-                          )
+                          :show_pc => true, :maxwidth => width)
     end
-    bar(1, 2, 3)
+    foo(width)
 
-    def baz(a, b, c=5)
+    def bar(a, b, opts)
         puts '=' * 10
-        print_stack_trace(RubyVM::Frame.get)
+        print_stack_trace(RubyVM::Frame.get, opts)
     end
-    baz(1, 2)
+    bar(1, 2, opts)
 
-    def bat(a, b, &block)
+    def baz(a, opts, c=5)
         puts '=' * 10
-        print_stack_trace(RubyVM::Frame.get)
+        print_stack_trace(RubyVM::Frame.get, opts)
     end
-  bat(1, 2)
+    baz(1, opts)
+
+    def bat(a, opts, &block)
+        puts '=' * 10
+        print_stack_trace(RubyVM::Frame.get, opts)
+    end
+  bat(1, opts)
 
     def babe(a, b, *rest)
         puts '=' * 10
@@ -268,24 +282,24 @@ if __FILE__ == $0
     babe(1, 2)
 
     puts '=' * 10
-    x  = lambda { |a,b|  print_stack_trace(RubyVM::Frame::get) }
+    x  = lambda { |a,b|  print_stack_trace(RubyVM::Frame::get, opts) }
     x.call(1,2)
     puts '=' * 10
     x  = Proc.new do |a|
-        print_stack_trace(RubyVM::Frame::get)
+        print_stack_trace(RubyVM::Frame::get, opts)
     end
     x.call(1,2)
     class C # :nodoc
-        def initialize(a)
-            print_stack_trace(RubyVM::Frame::get)
+        def initialize(opts)
+            print_stack_trace(RubyVM::Frame::get, opts)
         end
     end
     puts '=' * 30
-    C.new('Hi')
+    C.new(opts)
     puts '=' * 30
-    eval("print_stack_trace(RubyVM::Frame.get)")
+    eval("print_stack_trace(RubyVM::Frame.get, opts)")
     puts '=' * 30
-    eval("eval('print_stack_trace(RubyVM::Frame.get)')")
+    eval("eval('print_stack_trace(RubyVM::Frame.get, opts)')")
     puts '=' * 30
     eval("eval('print_stack_trace(RubyVM::Frame.get, :maxstack => 2)')")
     puts '=' * 30

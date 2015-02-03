@@ -171,23 +171,26 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       unless found_line
           # Can't find source line, so give assembly as consolation.
           # This great idea comes from the Rubinius reference debugger.
-          run_command('disassemble')
+          run_command('disassemble') unless source_container[0] == 'binary'
       end
   end
 
   def source_location_info(source_container, line_no, frame)
-    filename  = source_container[1]
-    ## FIXME: condition is too long.
-    canonic_filename =
-      if 'string' == source_container[0] && frame.iseq &&
-          frame.iseq.eval_source
-        eval_str = frame.iseq.eval_source
-        'eval "' + safe_repr(eval_str.gsub(/\n/,';'), 15) + '"'
-      else
-        canonic_file(filename, false)
+      filename  = source_container[1]
+      ## FIXME: condition is too long.
+      if 'binary' == source_container[0]
+          return "address 0x%x" % line_no
       end
-    loc = "#{canonic_filename}:#{line_no}"
-    return loc
+      canonic_filename =
+          if 'string' == source_container[0] && frame.iseq &&
+                  frame.iseq.eval_source
+              eval_str = frame.iseq.eval_source
+              'eval "' + safe_repr(eval_str.gsub(/\n/,';'), 15) + '"'
+          else
+              canonic_file(filename, false)
+          end
+      loc = "#{canonic_filename}:#{line_no}"
+      return loc
   end # source_location_info
 end
 
