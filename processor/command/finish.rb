@@ -40,6 +40,7 @@ down while `break` will have less overhead.
         # Need at most this many.
         MAX_ARGS     = 1
         NEED_STACK   = true
+        NEED_RUNNING = true
         SHORT_HELP   = 'Step to end of current method (step out)'
     end
 

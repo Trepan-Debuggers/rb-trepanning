@@ -103,16 +103,18 @@ class Trepan
     end
 
     def compute_prompt
-      thread_str =
-        if 1 == Thread.list.size
-          ''
-        elsif Thread.current == Thread.main
-          '@main'
-        else
-          "@#{Thread.current.object_id}"
-        end
-      "%s#{settings[:prompt]}%s%s: " %
-        ['(' * @debug_nest, thread_str, ')' * @debug_nest]
+        thread_str =
+            if @event == 'post-mortem'
+                ':pm'
+            elsif 1 == Thread.list.size
+                ''
+            elsif Thread.current == Thread.main
+                '@main'
+            else
+                "@#{Thread.current.object_id}"
+            end
+        "%s#{settings[:prompt]}%s%s: " %
+            ['(' * @debug_nest, thread_str, ')' * @debug_nest]
 
     end
 
@@ -193,7 +195,8 @@ class Trepan
     # This is the main entry point.
     def process_commands(frame, top_skip=0)
 
-      @event = @core.event
+      @event = frame ? @core.event : 'post-mortem'
+
       frame_setup(frame, top_skip)
 
       @unconditional_prehooks.run
@@ -230,7 +233,7 @@ class Trepan
 
       @leave_cmd_loop = false
 
-      print_location unless @settings[:traceprint]
+      print_location unless @settings[:traceprint] || @event == 'post-mortem'
 
       @cmdloop_prehooks.run
       while not @leave_cmd_loop do

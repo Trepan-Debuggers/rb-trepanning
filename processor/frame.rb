@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require 'linecache'
 require_relative '../app/complete'
 require_relative '../app/frame'
@@ -107,6 +107,12 @@ class Trepan
     # @frame_index, @current_thread, and @threads2frames
     def frame_setup(frame_thread, top_skip=0)
         @frame_index        = 0
+        unless frame_thread
+            @stack_size = 0
+            @current_thread = nil
+            @top_frame = @frame = nil
+            return
+        end
 
         @frame = @top_frame = frame_thread.prev(top_skip)
         @current_thread     = @frame.thread

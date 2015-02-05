@@ -314,17 +314,28 @@ class Trepan
       when :file
         filename = canonic_file(info.container)
         # ?? Try to look up method here?
-        container = frame_container(@frame, false)
-        try_filename  = container[1]
-        frame = (canonic_file(try_filename) == filename) ? @frame : nil
+        frame =
+              if @frame
+                  container = frame_container(@frame, false)
+                  try_filename  = container[1]
+                  frame = (canonic_file(try_filename) == filename) ? @frame : nil
+              else
+                  nil
+              end
         # else
         #   LineCache.compiled_method(filename)
         # end
         return frame, filename,  info.position, info.position_type
       when nil
         if [:line, :offset].member?(info.position_type)
-          container = frame_container(@frame, false)
-          filename  = container[1]
+          if @frame
+              container = frame_container(@frame, false)
+              filename  = container[1]
+          else
+              errmsg "No stack"
+              return [nil] * 4
+          end
+
           return @frame, canonic_file(filename), info.position, info.position_type
         elsif !info.position_type
           errmsg "Can't parse #{arg} as a position"

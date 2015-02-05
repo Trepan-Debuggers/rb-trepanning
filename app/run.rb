@@ -3,7 +3,30 @@
 require 'rbconfig'
 module Trepanning
 
-  module_function # All functions below are easily publically accessible
+    class Termination < RuntimeError
+    end
+
+    module_function # All functions below are easily publically accessible
+
+    def run_program(dbgr, program_to_debug)
+        RubyVM::Frame::get.trace_off1 = true
+        RubyVM::Frame::get.trace_off =  false
+        dbgr.core.processor.hidelevels[Thread.current] =
+            RubyVM::Frame.stack_size
+        dbgr.trace_point.enable
+
+        # FIXME: the magic skip count 4 below is to skip over
+        # the following calls triggered by Kernel::load
+        #   c_call   - IO#set_encoding(1)
+        #   c_return - IO#set_encoding -> *debugged program*
+        #   call     - IO#set_encoding(1)
+        #   c_return - IO#set_encoding -> *debugged program*
+        # This is  not very robust. Figure out how to
+        # address this.
+        dbgr.core.step_count = 4
+        Kernel::load program_to_debug
+    end
+
 
   # Given a Ruby interpreter and program we are to debug, debug it.
   # The caller must ensure that ARGV is set up to remove any debugger
@@ -36,24 +59,18 @@ module Trepanning
       trace_var(:$0, dollar_0_tracker)
 
       begin
-          dbgr.start
-          RubyVM::Frame::get.trace_off1 = true
-          dbgr.core.processor.hidelevels[Thread.current] =
-              RubyVM::Frame.stack_size
-          dbgr.trace_point.enable
-
-          # FIXME: the magic skip count 4 below is to skip over
-          # the following calls triggered by Kernel::load
-          #   c_call   - IO#set_encoding(1)
-          #   c_return - IO#set_encoding -> *debugged program*
-          #   call     - IO#set_encoding(1)
-          #   c_return - IO#set_encoding -> *debugged program*
-          # This is  not very robust. Figure out how to
-          # address this.
-          dbgr.core.step_count = 4
-
-          Kernel::load program_to_debug
+          dbgr.start(false)
+          frame = RubyVM::Frame.get
+          while frame do
+              frame.trace_off = true
+              frame = frame.prev
+          end
+          run_program(dbgr, program_to_debug)
+          raise Termination
+      rescue Termination
           dbgr.stop
+          puts "Program terminated, type q to quit"
+          dbgr.core.processor.process_commands(nil, 0)
       rescue Interrupt
       end
 

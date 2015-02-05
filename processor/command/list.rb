@@ -97,7 +97,7 @@ See also:
   end
 
   def run(args)
-    if args.empty? and not frame
+    if args.size == 1 and not @proc.frame
       errmsg("No Ruby program loaded.")
       return
     end

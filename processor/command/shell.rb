@@ -87,7 +87,8 @@ Here then is a loop to query VM stack values:
 
     # And just when you thought, we'd never get around to
     # actually running irb...
-    cont = IRB.start_session(@proc.frame.binding, @proc, conf)
+    bind = @proc.frame ? @proc.frame.binding : binding
+    cont = IRB.start_session(bind, @proc, conf)
     trap('SIGINT', save_trap) # Restore our old interrupt function.
 
     # Restore the debuggers' Readline history and the Readline completion
@@ -117,7 +118,7 @@ Here then is a loop to query VM stack values:
     when :step
       @proc.step # (1, {})
     else
-      @proc.print_location
+      @proc.print_location if @proc.frame
     end
   ensure
     $trepan_in_irb = false

@@ -24,6 +24,7 @@ class Trepan
         end
 
         def breakpoint?
+            return nil unless @frame && @frame.iseq
             @brkpt = @brkpts.find(@frame.iseq, @frame.pc_offset, @frame.binding)
             @brkpts.delete_by_brkpt(@brkpt) if @brkpt && @brkpt.temp?
             return !!@brkpt
