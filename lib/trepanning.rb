@@ -73,6 +73,7 @@ class Trepan
 
         # FIXME: The below option settings is a big crock.
         @settings[:core_opts][:cmdproc_opts] ||= {}
+        @settings[:core_opts][:cmdproc_opts][:basename] = settings[:basename]
         @settings[:core_opts][:cmdproc_opts][:highlight] ||= settings[:highlight]
         @settings[:core_opts][:cmdproc_opts][:traceprint] = settings[:traceprint]
 
@@ -216,7 +217,7 @@ class Trepan
             @trace_point.respond_to?(:disable)
     end
 
-    def add_command_file(cmdfile, stderr=$stderr)
+    def add_command_file(cmdfile, opts={}, stderr=$stderr)
         unless File.readable?(cmdfile)
             if File.exists?(cmdfile)
                 stderr.puts "Command file '#{cmdfile}' is not readable."
@@ -226,7 +227,7 @@ class Trepan
                 return
             end
         end
-        @intf << Trepan::ScriptInterface.new(cmdfile)
+        @intf << Trepan::ScriptInterface.new(cmdfile, opts[:out])
     end
 
     def add_startup_files()
@@ -246,7 +247,7 @@ class Trepan
                 if item.kind_of?(Array)
                     item
                 else
-                    [item, {}]
+                    [item, {:out => @output}]
                 end
             add_command_file(cmdfile, opts)
         end if settings.member?(:cmdfiles)
