@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetReload < Trepan::SetBoolSubcommand
-  unless defined?(HELP)
-    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    SHORT_HELP = "Set whether to reread source text when it changes."
-    IN_LIST    = true
-    MIN_ABBREV = 're'.size
-    HELP         = <<-EOH
-#{CMD} {on|off}
+    unless defined?(HELP)
+        Trepanning::Subcommand.set_name_prefix(__FILE__, self)
+        SHORT_HELP = "Set whether to reread source text when it changes."
+        IN_LIST    = true
+        MIN_ABBREV = 'rel'.size
+        HELP         = <<-EOH
+**#{CMD}** {**on**|**off**}
 
 Source text is cached on the first read. This ensures that if you
 change the source text after the debugged program is runnning you will
@@ -23,10 +23,12 @@ will reload the source code. So here the debugger will be out of sync.
 Set this to true, and the debugger will notice such changes and reread
 the source text when it discovers it has changed.
 
-See also "info source" and "info files" and note the SHA1
+See also:
+--------
+`info source` and `info files` and note the SHA1
 and file modification time.
     EOH
-  end
+    end
 end
 
 if __FILE__ == $0

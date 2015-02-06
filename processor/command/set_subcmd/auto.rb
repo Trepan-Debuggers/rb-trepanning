@@ -9,7 +9,7 @@ class Trepan::SubSubcommand::SetAuto < Trepan::SubSubcommandMgr
     HELP   = <<-EOH
 Set controls for things with some sort of "automatic" default behavior.
 
-See "#{PREFIX.join(' ')} *" for a list of subcommands or "#{PREFIX.join(' ')} <name>" 
+See "#{PREFIX.join(' ')} *" for a list of subcommands or "#{PREFIX.join(' ')} <name>"
 for help on a particular trace subcommand.
     EOH
     SHORT_HELP = 'Set controls for some "automatic" default behaviors'
@@ -21,9 +21,9 @@ if __FILE__ == $0
   dbgr, cmd = MockDebugger::setup('set')
   cmds = dbgr.core.processor.commands
   set_cmd = cmds['set']
-  command = Trepan::SubSubcommand::SetAuto.new(dbgr.core.processor, 
+  command = Trepan::SubSubcommand::SetAuto.new(dbgr.core.processor,
                                                set_cmd)
-  cmd_args = ['set', name]
+  cmd_args = Trepan::SubSubcommand::SetAuto::PREFIX
   set_cmd.instance_variable_set('@last_args', cmd_args)
   # require_relative '../../../lib/trepanning'
   # Trepan.debug

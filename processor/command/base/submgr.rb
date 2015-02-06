@@ -13,7 +13,7 @@ class Trepan::SubcommandMgr < Trepan::Command
     CATEGORY      = 'status'
     MIN_ARGS      = 0
     MAX_ARGS      = nil
-    NAME          = '?' # FIXME: Need to define this, but should 
+    NAME          = '?' # FIXME: Need to define this, but should
                         # pick this up from class/file name.
     NEED_STACK    = false
   end
@@ -48,7 +48,7 @@ class Trepan::SubcommandMgr < Trepan::Command
     cmd_dir = File.dirname(__FILE__)
     subcmd_dir = File.join(cmd_dir, '..', name + '_subcmd')
     files = Dir.glob(File.join(subcmd_dir, '*.rb'))
-    files.each do |rb| 
+    files.each do |rb|
       basename = File.basename(rb, '.rb')
       if File.directory?(File.join(File.dirname(rb), basename + '_subcmd'))
         subcmd_names << name.capitalize + basename.capitalize
@@ -92,7 +92,7 @@ class Trepan::SubcommandMgr < Trepan::Command
   #        help cmd subcmd
   #        help cmd commands
   #
-  #  Our shtick is to give help for the overall command only if 
+  #  Our shtick is to give help for the overall command only if
   #  subcommand or 'commands' is not given. If a subcommand is given and
   #  found, then specific help for that is given. If 'commands' is given
   #  we will list the all the subcommands.
@@ -103,8 +103,8 @@ class Trepan::SubcommandMgr < Trepan::Command
       if doc
        return doc
       else
-        errmsg('Sorry - author mess up. ' + 
-               'No help registered for command' + 
+        errmsg('Sorry - author mess up. ' +
+               'No help registered for command' +
                @name)
         return nil
       end
@@ -128,9 +128,9 @@ class Trepan::SubcommandMgr < Trepan::Command
         if doc
           return doc
         else
-          errmsg('Sorry - author mess up. ' + 
-                 'No help registered for subcommand: ' + 
-                 subcmd_name + ', of command: ' + 
+          errmsg('Sorry - author mess up. ' +
+                 'No help registered for subcommand: ' +
+                 subcmd_name + ', of command: ' +
                  @name)
           return nil
         end
@@ -153,7 +153,7 @@ class Trepan::SubcommandMgr < Trepan::Command
 
   # Return an Array of subcommands that can start with +arg+. If none
   # found we just return +arg+.
-  # FIXME: Not used any more? 
+  # FIXME: Not used any more?
   def complete(prefix)
     Trepan::Complete.complete_token(@subcmds.subcmds.keys, prefix)
   end
