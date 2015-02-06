@@ -36,8 +36,8 @@ class TestDelete < Test::Unit::TestCase
         # See that when we can delete a breakpoint but get to the next one.
         cmds = ['set basename on',
                 'set autoeval on',
-                'break ' + (__LINE__ + 11).to_s,
                 'break ' + (__LINE__ + 12).to_s,
+                'break ' + (__LINE__ + 13).to_s,
                 'delete 1',
                 'continue',
                 'va',

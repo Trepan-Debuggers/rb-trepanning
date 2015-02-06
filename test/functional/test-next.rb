@@ -65,7 +65,7 @@ class TestNext < Test::Unit::TestCase
         ##############################
         d.stop # ({:remove => true})
         out = ['line ',
-               'got_boom = false',
+               'begin',
                'raise ',
                'ZeroDivisionError: divided by 0',
                'x = 4/0']
