@@ -146,6 +146,11 @@ task :'check:functional' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test functional)))
 end
 
+desc 'Run integration tests in standalone mode.'
+task :'check:functional' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test ingtegration)))
+end
+
 desc 'Run command parser grammar.'
 task :'check:cmd_parse' do
   sh "kpeg --test --debug #{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))}"
