@@ -15,7 +15,8 @@ Show local variables including parameters of the current stack frame.
 Normally for each which show both the name and value. If you just
 want a list of names add parameter `--names`.
 
-If you just want the name and value for a particular number give that number.
+If you just want the name and value for a particular local number give
+that number.  This is basically running the VM command "getlocal *num*".
 
 Examples:
 ---------

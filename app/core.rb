@@ -90,7 +90,9 @@ class Trepan
         def event_processor_tp(tp)
             ## FIXME: tracepoint has an arg param. Figure out how to use it.
             @trace_point = tp
+            # RubyVM::Frame.get.frame.trace_off = true
             # p @trace_point
+            # p @trace_point.event, @trace_point.frame.source_location
             retval = event_processor(tp.frame, tp.event)
             @trace_point = nil
             return retval
