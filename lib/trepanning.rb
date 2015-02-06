@@ -77,6 +77,10 @@ class Trepan
         @settings[:core_opts][:cmdproc_opts][:highlight] ||= settings[:highlight]
         @settings[:core_opts][:cmdproc_opts][:traceprint] = settings[:traceprint]
 
+        if settings[:traceprint]
+            @settings[:cmdloop_on_exit] = false
+        end
+
         @core = Core.new(self, @settings[:core_opts])
 
         if @settings[:initial_dir]

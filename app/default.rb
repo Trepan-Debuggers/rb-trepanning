@@ -12,6 +12,7 @@ class Trepan
         :delete_restore  => true,  # Delete restore profile after reading?
         :initial_dir     => nil,   # If --cd option was given, we save it here.
         :nx              => false, # Don't run user startup file (e.g. .trepanrc)
+        :cmdloop_on_exit => true,  # Stay in debugger after program finishes
 
         # Default values used only when 'server' or 'client'
         # (out-of-process debugging)

@@ -138,25 +138,26 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   end
 
   def print_location
-      if 'raise' == @event
-          msg @core.hook_arg.inspect if @core.hook_arg # Exception object
-      end
-
       text      = nil
-      source_container = frame_container(@frame, false)
+
       ev        = if @event.nil? || 0 != @frame_index
                       '  '
                   else
                       (EVENT2ICON[@event] || @event)
                   end
-      @line_no  = frame_line
+      if @frame
+          source_container = frame_container(@frame, false)
+          @line_no  = frame_line
 
-      loc = source_location_info(source_container, @line_no, @frame)
-      loc, @line_no, text, found_line =
-          loc_and_text(loc, @frame, @line_no, source_container)
+          loc = source_location_info(source_container, @line_no, @frame)
+          loc, @line_no, text, found_line =
+              loc_and_text(loc, @frame, @line_no, source_container)
 
-      ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
-      msg "#{ev} (#{loc}#{ip_str})"
+          ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
+          msg "#{ev} (#{loc}#{ip_str})"
+      else
+          msg "#{ev}"
+      end
 
       if @core.trace_point
           if %w(return c_return b_return).member?(@event.to_s)
@@ -173,9 +174,11 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
           @line_no -= 1
       end
       unless found_line
-          # Can't find source line, so give assembly as consolation.
-          # This great idea comes from the Rubinius reference debugger.
-          run_command('disassemble') unless source_container[0] == 'binary'
+          if @frame
+              # Can't find source line, so give assembly as consolation.
+              # This great idea comes from the Rubinius reference debugger.
+              run_command('disassemble') unless source_container[0] == 'binary'
+          end
       end
   end
 

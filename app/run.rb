@@ -68,9 +68,11 @@ module Trepanning
           run_program(dbgr, program_to_debug)
           raise Termination
       rescue Termination
-          dbgr.stop
-          puts "Program terminated, type q to quit"
-          dbgr.core.processor.process_commands(nil, 0)
+          if dbgr.settings[:cmdloop_on_exit]
+              dbgr.stop
+              puts "Program terminated, type q to quit"
+              dbgr.core.processor.process_commands(nil, 0)
+          end
       rescue Interrupt
       end
 

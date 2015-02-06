@@ -19,8 +19,7 @@ class TestTrace < Test::Unit::TestCase
         end
         opts[:filter] = Proc.new{|got_lines, correct_lines|
             got_lines.each do |line|
-                line.gsub!(/\((?:.*\/)?(.+:\d+) @/, '(\1 @') if
-                    line =~ TREPAN_LOC
+                line.gsub!(/\(address 0x[0-9a-f]+ /, '(address 0xdeadbeef ')
             end
         }
         assert_equal(true, run_debugger(@@NAME, 'gcd.rb', opts))
