@@ -16,7 +16,7 @@ desc "Build the gem"
 task :package=>:gem
 task :gem=>:gemspec do
   Dir.chdir(ROOT_DIR) do
-    sh "gem build #{Gemspec_filename}"
+    sh "#{GEM_PROG} build #{Gemspec_filename}"
     FileUtils.mkdir_p 'pkg'
     FileUtils.mv gemspec.file_name, 'pkg'
   end
