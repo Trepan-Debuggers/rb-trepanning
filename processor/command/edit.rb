@@ -39,12 +39,22 @@ Examples:
   def run(args)
     case args.size
     when 1
-      file = @proc.frame.source_container[1]
-      line = @proc.frame.source_location[0]
+        if @proc.frame
+            file = @proc.frame.source_container[1]
+            line = @proc.frame.source_location[0]
+        else
+            errmsg("No Ruby program loaded.")
+            return
+        end
     when 2
-      line = Integer(args[1]) rescue nil
-      if line
-        file = @proc.frame.source_container[1]
+        line = Integer(args[1]) rescue nil
+        if line
+            if @proc.frame
+                file = @proc.frame.source_container[1]
+            else
+                errmsg("No Ruby program loaded.")
+                return
+            end
       else
         file = args[1]
         line = 1

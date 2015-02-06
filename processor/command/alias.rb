@@ -32,7 +32,7 @@ See also:
 
     CATEGORY      = 'support'
     MAX_ARGS      = 2  # Need at most this many
-    NEED_STACK    = true
+    NEED_STACK    = false
     SHORT_HELP    = 'Add an alias for a debugger command'
   end
 

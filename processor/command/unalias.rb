@@ -19,7 +19,7 @@ HELP
     MIN_ARGS      = 1
     # MAX_ARGS      = 1  # Need at most this many
     NAME          = File.basename(__FILE__, '.rb')
-    NEED_STACK    = true
+    NEED_STACK    = false
     SHORT_HELP    = 'Remove an alias'
   end
 

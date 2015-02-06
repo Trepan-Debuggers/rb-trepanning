@@ -12,11 +12,13 @@ class Trepan::Subcommand::InfoVariablesLocals < Trepan::SubSubcommand
 **#{CMD}** [ **--names** | *local-number* ]
 
 Show local variables including parameters of the current stack frame.
-Normally for each which show both the name and value. If you just
-want a list of names add parameter `--names`.
+Normally for each we show both the name and value. If you just
+want a list of names add parameter `--names`. C functions don't
+store parameter names, just the parameter positions starting from 0.
 
-If you just want the name and value for a particular local number give
-that number.  This is basically running the VM command "getlocal *num*".
+If you just want the value for a particular local number (and its name
+if not in a C function), give that number.  This is basically running
+the VM command "getlocal *num*".
 
 Examples:
 ---------

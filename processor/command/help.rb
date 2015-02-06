@@ -39,9 +39,21 @@ info line command.
         MARKDOWN_EXTENSION='.md'
     end
 
+    def command_names(proc)
+        if proc.frame
+            proc.commands.keys
+        else
+            proc.commands.select {
+                |key, cmd|
+                !cmd.class.const_get(:NEED_STACK)
+                    }.keys
+        end.sort
+    end
+
+
     def complete(prefix)
         matches = Trepan::Complete.complete_token(CATEGORIES.keys + %w(* all) +
-                                                  @proc.commands.keys, prefix)
+                                                  command_names(@proc), prefix)
         aliases = Trepan::Complete.complete_token_filtered(@proc.aliases, prefix,
                                                            matches)
         (matches + aliases).sort
@@ -84,8 +96,8 @@ Type "help" followed by a command name for full documentation.
         if args.size > 1
             cmd_name = args[1]
             if cmd_name == '*'
-                section 'All command names:'
-                msg columnize_commands(@proc.commands.keys.sort)
+                section 'Currently-available command names:'
+                msg columnize_commands(command_names(@proc))
                 show_aliases  unless @proc.aliases.empty?
                 show_macros unless @proc.macros.empty?
             elsif cmd_name =~ /^aliases$/i
