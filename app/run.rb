@@ -9,8 +9,8 @@ module Trepanning
     module_function # All functions below are easily publically accessible
 
     def run_program(dbgr, program_to_debug)
-        RubyVM::Frame::get.trace_off1 = true
         RubyVM::Frame::get.trace_off =  false
+        RubyVM::Frame::get.trace_off1 = true
         dbgr.core.processor.hidelevels[Thread.current] =
             RubyVM::Frame.stack_size
         dbgr.trace_point.enable
