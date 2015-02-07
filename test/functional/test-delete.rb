@@ -63,7 +63,7 @@ class TestDelete < Test::Unit::TestCase
 \tline 55 in file foo.rb",
                "Deleted breakpoint 1.",
            "brkpt ",
-               "vd = 4",
+               "ve = 5",
                "D=> 3"]
         compare_output(out, d, cmds)
 

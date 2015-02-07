@@ -32,7 +32,7 @@ class TestBreakLong < Test::Unit::TestCase
  "Breakpoint 1 set at VM offset 55 of instruction sequence \"test_break_same_level\",
 \tline 55 in file foo.rb",
            'brkpt ',
-           'y = 6']
+           'z = 7']
     compare_output(out, d, cmds)
 
     # Try a disabling the breakpoint
@@ -58,7 +58,7 @@ class TestBreakLong < Test::Unit::TestCase
 \tline 55 in file foo.rb",
            "Breakpoint 1 disabled.",
            'brkpt ',
-           'y = 8']
+           'z = 8+1']
     compare_output(out, d, cmds)
 
     # Stepping after a breakpoint should not stay at same location.
@@ -79,7 +79,7 @@ class TestBreakLong < Test::Unit::TestCase
            'a = 1',
            'basename is on.',
            'brkpt ',
-           'c = 3' ]
+           'd = 4' ]
     compare_output(out, dbg, cmds)
   end
 
