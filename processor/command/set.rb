@@ -6,17 +6,19 @@ class Trepan::Command::SetCommand < Trepan::SubcommandMgr
   unless defined?(HELP)
     NAME          = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
+**#{NAME}** [*set-subcommand*]
+
 Modifies parts of the debugger environment.
 
 You can give unique prefix of the name of a subcommand to get
 information about just that subcommand.
 
-Type "#{NAME}" for a list of "#{NAME}" subcommands and what they do.
-Type "help #{NAME} *" for just the list of "#{NAME}" subcommands.
+Type `#{NAME}` for a list of *#{NAME}* subcommands and what they do.
+Type `help #{NAME} *` for just the list of `#{NAME}` subcommands.
 
-For compatability with older ruby-debug "#{NAME} auto..." is the
-same as "#{NAME} auto ...". For example "#{NAME} autolist" is the same 
-as "#{NAME} auto list".
+For compatability with older ruby-debug `#{NAME} auto...` is the
+same as `#{NAME} auto ...`. For example `#{NAME} autolist` is the same
+as `#{NAME} auto list`.
     HELP
 
     CATEGORY      = 'support'
@@ -25,7 +27,7 @@ as "#{NAME} auto list".
   end
 
   def run(args)
-    if args.size > 1 
+    if args.size > 1
       first = args[1].downcase
       alen = 'auto'.size
       args[1..1] = ['auto', first[alen..-1]] if

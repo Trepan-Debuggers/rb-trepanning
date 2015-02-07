@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Trepan command input validation routines.  A String type is
 # usually passed in as the argument to validation routines.
@@ -152,10 +152,9 @@ class Trepan
       case offset_type
       when :line
         if ary = iseq.lineoffsets[position]
-          # Normally the first offset is a trace instruction and doesn't
-          # register as the given line, so we need to take the next instruction
-          # after the first one, when available.
-          vm_offset = ary.size > 1 ? ary[1] : ary[0]
+          # Also, there may be multiple offsets for a given line.
+          # we pick the *first* one for the line.
+          vm_offset = ary[0]
           line_no   = position
         elsif found_iseq = find_iseqs_with_lineno(filename, position)
           return position_to_line_and_offset(found_iseq, filename, position,
@@ -165,14 +164,15 @@ class Trepan
                                              offset_type)
         else
           errmsg("Unable to find offset for line #{position}\n\t" +
-                 "in #{iseq.name} of file #{filename}")
+                 "in #{iseq.label} of file #{filename}")
           return [nil, nil]
         end
       when :offset
         position = position.position unless position.kind_of?(Fixnum)
-        if ary=iseq.offset2lines(position)
+        start_insn = iseq.start_insn(position)
+        if ary=iseq.offset2lines(start_insn)
           line_no   = ary.first
-          vm_offset = position
+          vm_offset = start_insn
         else
           errmsg "Unable to find line for offset #{position} in #{iseq}"
           return [nil, nil]
@@ -194,47 +194,50 @@ class Trepan
     #   - the condition (by default 'true') to use for this breakpoint
     #   - true condition should be negated. Used in *condition* if/unless
     def breakpoint_position(position_str, allow_condition)
-      break_cmd_parse = if allow_condition
-                          parse_breakpoint(position_str)
-                        else
-                          parse_breakpoint_no_condition(position_str)
-                        end
-      return [nil] * 5 unless break_cmd_parse
-      tail = [break_cmd_parse.condition, break_cmd_parse.negate]
-      meth_or_frame, file, position, offset_type =
-        parse_position(break_cmd_parse.position)
-      if meth_or_frame
-        if iseq = meth_or_frame.iseq
-          iseq, line_no, vm_offset =
-            position_to_line_and_offset(iseq, file, position, offset_type)
-          if vm_offset && line_no
-            return [iseq, line_no, vm_offset] + tail
-          end
-        else
-          errmsg("Unable to set breakpoint in #{meth_or_frame}")
-        end
-      elsif file && position
-        if :line == offset_type
-          iseq = find_iseqs_with_lineno(file, position)
-          if iseq
-            junk, line_no, vm_offset =
-              position_to_line_and_offset(iseq, file, position, offset_type)
+        break_cmd_parse = if allow_condition
+                              parse_breakpoint(position_str)
+                          else
+                              parse_breakpoint_no_condition(position_str)
+                          end
+        return [nil] * 5 unless break_cmd_parse
+        tail = [break_cmd_parse.condition, break_cmd_parse.negate]
+        meth_or_frame, file, position, offset_type =
+            parse_position(break_cmd_parse.position)
+        if meth_or_frame
+            if iseq = meth_or_frame.iseq
+                iseq, line_no, vm_offset =
+                    position_to_line_and_offset(iseq, file, position,
+                                                offset_type)
+                if vm_offset && line_no
+                    return [iseq, line_no, vm_offset] + tail
+                end
+            else
+                errmsg("Unable to set breakpoint in #{meth_or_frame}")
+            end
+        elsif file && position
+            if :line == offset_type
+                iseq = find_iseqs_with_lineno(file, position)
+                if iseq
+                    junk, line_no, vm_offset =
+                        position_to_line_and_offset(iseq, file, position,
+                                                    offset_type)
+                    return [@frame.iseq, line_no, vm_offset] + tail
+                else
+                    errmsg("Unable to find instruction sequence for" +
+                           " position #{position} in #{file}")
+                end
+            else
+                errmsg "Come back later..."
+            end
+        elsif @frame.respond_to?(:file) and @frame.file == file
+            puts "parsing line and offset #{position}, #{offset_type}"
+            line_no, vm_offset = position_to_line_and_offset(@frame.iseq, position,
+                                                             offset_type)
             return [@frame.iseq, line_no, vm_offset] + tail
-          else
-            errmsg("Unable to find instruction sequence for" +
-                   " position #{position} in #{file}")
-          end
         else
-          errmsg "Come back later..."
+            errmsg("Unable to parse breakpoint position #{position_str}")
         end
-      elsif @frame.respond_to?(:file) and @frame.file == file
-        line_no, vm_offset = position_to_line_and_offset(@frame.iseq, position,
-                                                         offset_type)
-        return [@frame.iseq, line_no, vm_offset] + tail
-      else
-        errmsg("Unable to parse breakpoint position #{position_str}")
-      end
-      return [nil] * 5
+        return [nil] * 5
     end
 
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.
@@ -243,7 +246,7 @@ class Trepan
       unless arg
         if !default
           if print_error
-            errmsg("Expecting 'on', 1, 'off', or 0. Got nothing.")
+            errmsg("Expecting 'on', or 'off'. Got nothing.")
           end
           raise TypeError
         end
@@ -253,7 +256,7 @@ class Trepan
       return true  if arg == '1' || darg == 'on'
       return false if arg == '0' || darg =='off'
 
-      errmsg("Expecting 'on', 1, 'off', or 0. Got: %s." % arg.to_s) if
+      errmsg("Expecting 'on', or 'off'. Got: %s." % arg.to_s) if
         print_error
       raise TypeError
     end
@@ -311,17 +314,28 @@ class Trepan
       when :file
         filename = canonic_file(info.container)
         # ?? Try to look up method here?
-        container = frame_container(@frame, false)
-        try_filename  = container[1]
-        frame = (canonic_file(try_filename) == filename) ? @frame : nil
+        frame =
+              if @frame
+                  container = frame_container(@frame, false)
+                  try_filename  = container[1]
+                  frame = (canonic_file(try_filename) == filename) ? @frame : nil
+              else
+                  nil
+              end
         # else
         #   LineCache.compiled_method(filename)
         # end
         return frame, filename,  info.position, info.position_type
       when nil
         if [:line, :offset].member?(info.position_type)
-          container = frame_container(@frame, false)
-          filename  = container[1]
+          if @frame
+              container = frame_container(@frame, false)
+              filename  = container[1]
+          else
+              errmsg "No stack"
+              return [nil] * 4
+          end
+
           return @frame, canonic_file(filename), info.position, info.position_type
         elsif !info.position_type
           errmsg "Can't parse #{arg} as a position"
@@ -375,7 +389,7 @@ if __FILE__ == $0
     cmdproc.frame_initialize
     cmdproc.instance_variable_set('@settings',
                                Trepan::CmdProcessor::DEFAULT_SETTINGS)
-    cmdproc.frame_setup(RubyVM::Frame.current)
+    cmdproc.frame_setup(RubyVM::Frame.get)
     onoff = %w(1 0 on off)
     onoff.each { |val| puts "onoff(#{val}) = #{cmdproc.get_onoff(val)}" }
     %w(1 1E bad 1+1 -5).each do |val|

@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Things related to file/module status
-require 'thread_frame'
 require_relative 'iseq'
 
-SCRIPT_ISEQS__ = {} unless 
+SCRIPT_ISEQS__ = {} unless
   defined?(SCRIPT_ISEQS__) && SCRIPT_ISEQS__.is_a?(Hash)
-ISEQS__        = {} unless 
+ISEQS__        = {} unless
   defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
 module Trepanning
   def file_match_pat(filename)
-    prefix = 
+    prefix =
       if filename[0..0] == File::SEPARATOR
         # An absolute filename has to match at the beginning and
         # the end.
@@ -30,7 +29,7 @@ module Trepanning
     match_block = Proc.new{|filename, iseq| filename =~ /^#{dirname}/}
     scripts = SCRIPT_ISEQS__.select(&match_block)
     SCRIPT_ISEQS__.delete_if(&match_block)
-    match_block = Proc.new{|iseq| 
+    match_block = Proc.new{|iseq|
       iseq.source_container[1] =~ /^#{dirname}/
     }
     rejected = {}
@@ -55,7 +54,7 @@ module Trepanning
       filename_pat = file_match_pat(filename)
       iseqs.select{|iseq| iseq.source_container[1] =~ /#{filename_pat}/}
     else
-      return iseqs 
+      return iseqs
     end
   end
 
@@ -85,7 +84,7 @@ if __FILE__ == $0
     SCRIPT_LINES__ = {}
     ARGV[0..-1]    = ['noload']
     load(__FILE__)
-  else    
+  else
     load 'tmpdir.rb'
     tmpdir_dir = File.dirname(find_scripts('tmpdir.rb')[0])
     p tmpdir_dir

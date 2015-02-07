@@ -14,6 +14,11 @@ class TestCommandHelp < Test::Unit::TestCase
   def check_help(should_not_have, *args)
     @cmdproc.instance_variable_set('@msgs', [])
     @cmdproc.instance_variable_set('@errmsgs', [])
+    @cmdproc.instance_variable_set('@settings', {
+                                       :highlight => false,
+                                       :maxwidth  => 85,
+                                       } )
+    @cmdproc.instance_variable_set('@highlight', 80)
     arg_str = args.join(' ')
     @my_cmd.run([@name] + args)
     shoulda = should_not_have ? ['no ', ''] : ['', 'no ']
@@ -26,16 +31,16 @@ class TestCommandHelp < Test::Unit::TestCase
                  "Expecting %serror for %s.\n Got %s" %
                  [shoulda[1], arg_str, msgs])
   end
-  
+
   def test_help_command
 
     # Test we can run 'help *cmd* for each command
-    @cmds.keys.each do |cmd_name| 
-      check_help(false, cmd_name) 
+    @cmds.keys.each do |cmd_name|
+      check_help(false, cmd_name)
     end
 
     # Test we can run 'help *alias* for each alias
-    @cmdproc.aliases.keys.each do |alias_name| 
+    @cmdproc.aliases.keys.each do |alias_name|
       check_help(false, alias_name)
     end
 
@@ -88,7 +93,7 @@ class TestCommandHelp < Test::Unit::TestCase
 
   def test_help_subcommand
     # Get list of commands with subcmds
-    cmd_names = @cmds.values.map do |c| 
+    cmd_names = @cmds.values.map do |c|
       c.instance_variable_defined?(:@subcmds) ? c.name : nil
     end.compact
     cmd_names.each do |cmd_name|

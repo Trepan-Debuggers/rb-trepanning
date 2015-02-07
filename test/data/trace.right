@@ -1,39 +1,58 @@
--- (gcd.rb:4 @2)
+line (gcd.rb:4 @2)
 def gcd(a, b)
--- (gcd.rb:18 @2)
+c_return (address 0xdeadbeef via gcd.rb:4)
+R=> nil
+def gcd(a, b)
+c_call (address 0xdeadbeef via gcd.rb:18)
 a, b = ARGV[0..1].map {|arg| arg.to_i}
--- (gcd.rb:18 @2)
+c_call (address 0xdeadbeef via gcd.rb:18)
 a, b = ARGV[0..1].map {|arg| arg.to_i}
-<= (gcd.rb:18 @11)
+line (gcd.rb:18 @4)
 a, b = ARGV[0..1].map {|arg| arg.to_i}
--- (gcd.rb:19 @45)
+c_return (address 0xdeadbeef via gcd.rb:18)
+R=> 3
+a, b = ARGV[0..1].map {|arg| arg.to_i}
+b_call (gcd.rb:18 @2)
+a, b = ARGV[0..1].map {|arg| arg.to_i}
+c_call (address 0xdeadbeef via gcd.rb:18)
+a, b = ARGV[0..1].map {|arg| arg.to_i}
+b_return (gcd.rb:18 @10)
+R=> 5
+a, b = ARGV[0..1].map {|arg| arg.to_i}
+line (gcd.rb:19 @37)
 puts "The GCD of %d and %d is %d" % [a, b, gcd(a, b)]
--- (gcd.rb:6 @4)
+line (gcd.rb:6 @4)
 if a > b
--- (gcd.rb:12 @40)
+line (gcd.rb:12 @39)
 if a == 1 or b-a == 0
-METHOD Object#gcd(a, b)
--> (gcd.rb:4 @2)
-def gcd(a, b)
--- (gcd.rb:10 @24)
+call (gcd.rb:6 @2)
+if a > b
+line (gcd.rb:10 @24)
 return nil if a <= 0
--- (gcd.rb:15 @71)
+line (gcd.rb:15 @68)
 return gcd(b-a, a)
--- (gcd.rb:6 @4)
+line (gcd.rb:6 @4)
 if a > b
--- (gcd.rb:12 @40)
+line (gcd.rb:12 @39)
 if a == 1 or b-a == 0
-<- (gcd.rb:13 @68)
+return (gcd.rb:13 @65)
 R=> 1
 return a
-<- (gcd.rb:16 @88)
+return (gcd.rb:16 @81)
 R=> 1
 end
-<- (gcd.rb:16 @88)
+c_return (address 0xdeadbeef via gcd.rb:19)
+R=> "The GCD of 3 and 5 is 1"
+puts "The GCD of %d and %d is %d" % [a, b, gcd(a, b)]
+c_call (address 0xdeadbeef via gcd.rb:19)
+puts "The GCD of %d and %d is %d" % [a, b, gcd(a, b)]
+The GCD of 3 and 5 is 1c_return (address 0xdeadbeef via gcd.rb:19)
+R=> 23
+puts "The GCD of %d and %d is %d" % [a, b, gcd(a, b)]
+
+c_return (address 0xdeadbeef via gcd.rb:19)
 R=> 1
-end
-<= (gcd.rb:16 @88)
-end
-The GCD of 3 and 5 is 1
-<= (gcd.rb:19 @73)
+puts "The GCD of %d and %d is %d" % [a, b, gcd(a, b)]
+c_return (address 0xdeadbeef via gcd.rb:19)
+R=> nil
 puts "The GCD of %d and %d is %d" % [a, b, gcd(a, b)]

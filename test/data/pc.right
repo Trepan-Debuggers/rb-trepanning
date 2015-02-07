@@ -1,0 +1,10 @@
+-> (null.rb:1 @0)
+va = 1
+VM pc = 2
+Old value was: 2
+New value is: 13
+line (assign.rb:5 @19)
+vd = 4
+VM pc = 19
+D=> 3
+trepan: That's all, folks...

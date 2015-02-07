@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'
 require 'linecache'
 require 'pathname'  # For cleanpath
@@ -13,8 +13,8 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     EVENT2ICON = {
       'brkpt'          => 'xx',
       'tbrkpt'         => 'x1',
-      'c-call'         => 'C>',
-      'c-return'       => '<C',
+      'c_call'         => 'C>',
+      'c_return'       => '<C',
       'call'           => '->',
       'send'           => '=>',
       'leave'          => '<=',
@@ -138,62 +138,66 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   end
 
   def print_location
-    if %w(c-call call).member?(@event)
-      # FIXME: Fix Ruby so we don't need this workaround?
-      # See also where.rb
-      opts = {}
-      opts[:class] = @core.hook_arg if
-        'CFUNC' == @frame.type && @core.hook_arg && 0 == @frame_index
-      msg format_stack_call(@frame, opts)
-    elsif 'raise' == @event
-      msg @core.hook_arg.inspect if @core.hook_arg # Exception object
-    end
+      text      = nil
 
-    text      = nil
-    source_container = frame_container(@frame, false)
-    ev        = if @event.nil? || 0 != @frame_index
-                  '  '
-                else
-                  (EVENT2ICON[@event] || @event)
-                end
-    @line_no  = frame_line
+      ev        = if @event.nil? || 0 != @frame_index
+                      '  '
+                  else
+                      (EVENT2ICON[@event] || @event)
+                  end
+      if @frame
+          source_container = frame_container(@frame, false)
+          @line_no  = frame_line
 
-    loc = source_location_info(source_container, @line_no, @frame)
-    loc, @line_no, text, found_line =
-      loc_and_text(loc, @frame, @line_no, source_container)
+          loc = source_location_info(source_container, @line_no, @frame)
+          loc, @line_no, text, found_line =
+              loc_and_text(loc, @frame, @line_no, source_container)
 
-    ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
-    msg "#{ev} (#{loc}#{ip_str})"
+          ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
+          msg "#{ev} (#{loc}#{ip_str})"
+      else
+          msg "#{ev}"
+      end
 
-    if %w(return c-return).member?(@event)
-      retval = Trepan::Frame.value_returned(@frame, @event)
-      msg 'R=> %s' % retval.inspect
-    end
+      if @core.trace_point
+          if %w(return c_return b_return).member?(@event.to_s)
+              retval = @core.trace_point.return_value
+              msg 'R=> %s' % retval.inspect
+          elsif @event == :raise
+              exc = @core.trace_point.raised_exception
+              msg "#{exc.class}: #{exc}"
+           end
+      end
 
-    if text && !text.strip.empty?
-      msg text
-      @line_no -= 1
-    end
-    unless found_line
-      # Can't find source line, so give assembly as consolation.
-      # This great idea comes from the Rubinius reference debugger.
-      run_command('disassemble')
-    end
+      if text && !text.strip.empty?
+          msg text
+          @line_no -= 1
+      end
+      unless found_line
+          if @frame
+              # Can't find source line, so give assembly as consolation.
+              # This great idea comes from the Rubinius reference debugger.
+              run_command('disassemble') unless source_container[0] == 'binary'
+          end
+      end
   end
 
   def source_location_info(source_container, line_no, frame)
-    filename  = source_container[1]
-    ## FIXME: condition is too long.
-    canonic_filename =
-      if 'string' == source_container[0] && frame.iseq &&
-          frame.iseq.eval_source
-        eval_str = frame.iseq.eval_source
-        'eval "' + safe_repr(eval_str.gsub(/\n/,';'), 15) + '"'
-      else
-        canonic_file(filename, false)
+      filename  = source_container[1]
+      ## FIXME: condition is too long.
+      if 'binary' == source_container[0]
+          return "address 0x%x" % line_no
       end
-    loc = "#{canonic_filename}:#{line_no}"
-    return loc
+      canonic_filename =
+          if 'string' == source_container[0] && frame.iseq &&
+                  frame.iseq.eval_source
+              eval_str = frame.iseq.eval_source
+              'eval "' + safe_repr(eval_str.gsub(/\n/,';'), 15) + '"'
+          else
+              canonic_file(filename, false)
+          end
+      loc = "#{canonic_filename}:#{line_no}"
+      return loc
   end # source_location_info
 end
 

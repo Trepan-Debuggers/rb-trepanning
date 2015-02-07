@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 
 class Trepan::Command::DisplayCommand < Trepan::Command
-  
+
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{name} [format] EXP
- 
-Print value of expression EXP each time the program stops.  FMT may be
-used before EXP and may be one of 'c' for char, 'x' for hex, 'o' for
-octal, 'f' for float or 's' for string.
+**#{name}** [*format*] *expression*
+
+Print value of expression *expression* each time the program stops;
+*format* may be used to specify how to pring and may be one of 'c' for
+char, 'x' for hex, 'o' for octal, 'f' for float or 's' for string.
 
 For now, display expressions are only evaluated when in the same
 instruction sequence as the frame that was in effect when the display
@@ -20,12 +20,15 @@ more flexibility in the future to specify whether this should be the
 case or not.
 
 With no argument, evaluate and display all currently requested
-auto-display expressions.  Use "undisplay" to cancel display
+auto-display expressions.  Use `undisplay` to cancel display
 requests previously made.
 
-See also "undisplay", "enable", and "disable".
+See also:
+---------
+
+`undisplay`, `enable`, and `disable`.
     HELP
-    
+
   CATEGORY      = 'data'
   NEED_STACK    = false
   SHORT_HELP    = 'Display expressions when entering debugger'
@@ -37,7 +40,7 @@ end
 #end
 
 def run(args)
-  
+
   if args.size == 1
     # Display anything active
     @proc.run_eval_display
@@ -53,7 +56,7 @@ def run(args)
       format = nil
       expr = args[1..-1].join(' ')
     end
-    
+
     dp = @proc.displays.add(@proc.frame, expr, format)
     unless dp
       errmsg('Error evaluating "%s" in the current frame' % expr)

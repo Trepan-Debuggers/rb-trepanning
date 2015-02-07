@@ -3,6 +3,7 @@
 require 'rubygems'
 
 ROOT_DIR = File.dirname(__FILE__)
+GEM_PROG = ENV['GEM_PROG'] || 'gem'
 Gemspec_filename='trepanning.gemspec'
 require_relative './app/options'
 
@@ -15,7 +16,7 @@ desc "Build the gem"
 task :package=>:gem
 task :gem=>:gemspec do
   Dir.chdir(ROOT_DIR) do
-    sh "gem build #{Gemspec_filename}"
+    sh "#{GEM_PROG} build #{Gemspec_filename}"
     FileUtils.mkdir_p 'pkg'
     FileUtils.mv gemspec.file_name, 'pkg'
   end
@@ -24,7 +25,7 @@ end
 desc 'Install the gem locally'
 task :install => :gem do
   Dir.chdir(ROOT_DIR) do
-    sh %{gem install --local pkg/#{gemspec.file_name}}
+    sh %{#{GEM_PROG} install --local pkg/#{gemspec.file_name}}
   end
 end
 
@@ -96,7 +97,7 @@ task :test do
       e
     end
   end.compact
-  
+
   exceptions.each {|e| puts e;puts e.backtrace }
   raise 'Test failures' unless exceptions.empty?
 end
@@ -145,6 +146,11 @@ task :'check:functional' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test functional)))
 end
 
+desc 'Run integration tests in standalone mode.'
+task :'check:functional' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test ingtegration)))
+end
+
 desc 'Run command parser grammar.'
 task :'check:cmd_parse' do
   sh "kpeg --test --debug #{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))}"
@@ -153,12 +159,12 @@ end
 desc 'Generate command parser.'
 task :'cmd_parse' do
   require 'tmpdir'
-  temp_file = 
-    File.join(Dir.tmpdir, 
+  temp_file =
+    File.join(Dir.tmpdir,
               Dir::Tmpname.make_tmpname(['cmd_parser_', '.rb'], nil))
 
-  sh("kpeg --name CmdParse --verbose --stand-alone  " + 
-     "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))} " + 
+  sh("kpeg --name CmdParse --verbose --stand-alone  " +
+     "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))} " +
      "--output #{temp_file}")
 end
 
@@ -188,7 +194,7 @@ Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
   rdoc.title    = "Trepanning #{Trepan::VERSION} Documentation"
 
-  rdoc.rdoc_files.include(%w(lib/*.rb 
+  rdoc.rdoc_files.include(%w(lib/*.rb
                           app/*.rb intf/*.rb io/*.rb
                           bin/trepan
                          ))
@@ -216,5 +222,5 @@ task :rm_tilde_backups do
 end
 
 desc 'Remove built files'
-task :clean => [:clobber_package, :clobber_rdoc, :rm_patch_residue, 
+task :clean => [:clobber_package, :clobber_rdoc, :rm_patch_residue,
                 :rm_tilde_backups]

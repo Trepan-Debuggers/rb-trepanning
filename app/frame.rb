@@ -1,8 +1,8 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'util'
 
 class Trepan
-  
+
   # Call-Stack frame methods
   module Frame
 
@@ -22,48 +22,50 @@ class Trepan
       return '' unless iseq
       params = param_names(iseq, 0, iseq.argc-1, '')
       if iseq.arg_opts > 0
-        opt_params = param_names(iseq, iseq.argc, 
+        opt_params = param_names(iseq, iseq.argc,
                                  iseq.argc + iseq.arg_opts-2, '')
         opt_params[0] = "optional: #{opt_params[0]}" if delineate
         params += opt_params
       end
-      params += param_names(iseq, iseq.arg_rest, iseq.arg_rest, '*') if 
+      params += param_names(iseq, iseq.arg_rest, iseq.arg_rest, '*') if
         iseq.arg_rest != -1
       if iseq.arg_post_len > 0
         # Manditory arguments after optional ones - new in Ruby 1.9
-        post_params = param_names(iseq, iseq.arg_post_start, 
+        post_params = param_names(iseq, iseq.arg_post_start,
                                   iseq.post_start + iseq.arg_post_len, '')
         post_params[0] = "post: #{post_params[0]}" if delineate
         params += post_params
       end
-      params += param_names(iseq, iseq.arg_block, iseq.arg_block, '&') if 
+      params += param_names(iseq, iseq.arg_block, iseq.arg_block, '&') if
         iseq.arg_block != -1
 
       return params
     end
 
     def c_params(frame, maxstring=20)
-      argc = frame.argc
-      # FIXME should figure out why exception is raised.
-      begin
-        args = 
-          if 0 == argc
-            ''
-          elsif frame 
-            1.upto(argc).map do 
-            |i| 
-            safe_repr(frame.sp(argc-i+3).inspect, 10)
-          end.join(', ')
-          else
+        argc = frame.argc
+        # FIXME should figure out why exception is raised.
+        begin
+            args =
+                if 0 == argc
+                    ''
+                elsif frame
+                    1.upto(argc).map do
+                    |i|
+                    # FIXME: figure out why
+                    # Trepan::Frame:Module throws an error
+                    safe_repr(frame.sp(argc-i+3).inspect, 10) rescue ''
+                    end.join(', ')
+                else
+                    '??'
+                end
+            safe_repr(args, maxstring) rescue ''
+        rescue NotImplementedError
             '??'
-          end
-        safe_repr(args, maxstring)
-      rescue NotImplementedError
-        '??'
-      end
+        end
     end
 
-    # Return the eval string. We get this as the 
+    # Return the eval string. We get this as the
     # parameter to the eval C call. A bit of checking is done
     # to make sure everything is okay:
     #  - we have to be in an EVAL type frame which has an iseq
@@ -73,7 +75,7 @@ class Trepan
       return nil unless 'EVAL' == frame.type && frame.iseq
       prev = frame.prev
       return nil unless prev && 'CFUNC' == prev.type && 'eval' == prev.method
-      retval = prev.sp 3 
+      retval = prev.sp 3
       retval = $1 if retval =~ /^\(eval "(.+)"\)/
       retval
     end
@@ -83,84 +85,86 @@ class Trepan
     end
 
     def format_stack_call(frame, opts)
-      # FIXME: prettify 
-      s = "#{frame.type}"
-      s += if opts[:class]
-             " #{opts[:class]}#"
-           else
-             begin 
-               obj = eval('self', frame.binding)
-             rescue
-               ''
+        # FIXME: prettify
+        s = "#{frame.type}"
+        # FIXME: Figure why frame.class can throw a NoMethodError
+        # on to_s.
+        s += if opts[:class]
+                 " #{opts[:class]}#"
              else
-               if obj
-                 " #{obj.class}#" 
-               else
-                 ''
-               end
+                 " #{frame.klass}#" rescue ''
              end
-           end
-      meth = frame.method
-      if meth and frame.type != 'IFUNC'
-        iseq = frame.iseq
-        args = if 'CFUNC' == frame.type
-                 c_params(frame)
-               elsif iseq
-                 all_param_names(iseq).join(', ')
-               end
-        s += meth
-        if %w(CFUNC METHOD).member?(frame.type)
-          s += "(#{args})"
-        elsif %w(BLOCK LAMBDA TOP EVAL).member?(frame.type)
-          s += " |#{args}|" unless args.nil? || args.empty?
-        else
-          s += "(#{all_param_names(iseq)})" 
+        meth = frame.method
+        if meth and frame.type != 'IFUNC'
+            iseq = frame.iseq
+            args = if 'CFUNC' == frame.type
+                       c_params(frame)
+                   elsif iseq
+                       all_param_names(iseq).join(', ')
+                   end
+            s += meth
+            if %w(CFUNC METHOD).member?(frame.type)
+                s += "(#{args})"
+            elsif %w(BLOCK LAMBDA TOP EVAL).member?(frame.type)
+                s += " |#{args}|" unless args.nil? || args.empty?
+            else
+                s += "(#{all_param_names(iseq)})"
+            end
         end
-      end
-      s
-    rescue ThreadFrameError
-      'invalid frame'
+        s
     end
 
     def format_stack_entry(frame, opts={})
-      return 'invalid frame' if frame.invalid?
-      s  = format_stack_call(frame, opts)
-      s += " in #{frame.source_container[0]} "
-      s += 
-        if (eval_str = eval_string(frame))
-          safe_repr(eval_str.inspect, 15)
-        else
-          if 'file' == frame.source_container[0] &&
-              opts[:basename]
-            File.basename(frame.source_container[1])
-          else
-            frame.source_container[1]
-          end
-        end
+        return 'invalid frame' unless frame.valid?
+        container_type = frame.source_container[0]
+        s  = format_stack_call(frame, opts)
+        s += " in #{container_type}"
+        sep = if opts[:maxwidth] && s.size > opts[:maxwidth]
+                  "\n\t"
+              else
+                  ' '
+              end
+        s +=
+            if (eval_str = eval_string(frame))
+                sep + safe_repr(eval_str.inspect, 15)
+            else
+                if 'file' == container_type && opts[:basename]
+                    sep + File.basename(frame.source_container[1])
+                elsif 'binary' == container_type
+                    ''
+                else
+                    sep + frame.source_container[1]
+                end
+            end
       if frame.source_location
-        s += 
-          if opts[:maxwidth] && s.size > opts[:maxwidth]
-            "\n\t"
-          else
-            ' '
-          end
-        if frame.source_location.size == 1
-          s += "at line #{frame.source_location[0]}" if 
-            frame.source_location[0] != 0
-        else
-          s += " at lines #{frame.source_location}"
-        end
+          loc = ''
+          loc +=
+              if container_type == 'binary'
+                  "at address 0x%x" % frame.source_location[0]
+              elsif frame.source_location.size == 1
+                  frame.source_location[0] != 0 ?
+                  "at line #{frame.source_location[0]}" : ''
+              else
+                  "at lines #{frame.source_location}"
+              end
+          s +=
+              if opts[:maxwidth] && s.size + loc.size > opts[:maxwidth]
+                  "\n\t"
+              else
+                  ' '
+              end
+          s += loc
       end
-      s += ", pc: #{frame.pc_offset}" if 
-        frame.pc_offset > 0 && opts[:show_pc]
-      return s
+        s += ", pc: #{frame.pc_offset}" if
+            frame.pc_offset > 0 && opts[:show_pc]
+        return s
     end
 
     # Return true if frame1 and frame2 are at the same place.
     # We use this for example in detecting tail recursion.
     def location_equal(frame1, frame2)
       frame1 && frame2 && frame1.source_location == frame2.source_location &&
-        frame1.pc_offset == frame2.pc_offset && 
+        frame1.pc_offset == frame2.pc_offset &&
         frame1.source_container == frame2.source_container
     end
 
@@ -172,7 +176,7 @@ class Trepan
     end
 
     def param_names(iseq, start, stop, prefix='')
-      start.upto(stop).map do |i| 
+      start.upto(stop).map do |i|
         begin
           prefix + iseq.local_name(i)
         rescue
@@ -187,40 +191,41 @@ class Trepan
     end
 
     def print_stack_trace_from_to(from, to, frame, opts)
-      last_frame = nil
-      # TODO: handle indirect recursion.
-      direct_recursion_count = 0
-      from.upto(to) do |i|
-        if location_equal(last_frame, frame)
-          direct_recursion_count += 1
-        else
-          if direct_recursion_count > 0
-            msg("... above line repeated #{direct_recursion_count} times")
-            direct_recursion_count = 0
-          end
-          prefix = (i == opts[:current_pos]) ? '-->' : '   '
-          prefix += ' #%d ' % [i]
-          print_stack_entry(frame, i, prefix, opts)
+        last_frame = nil
+        # TODO: handle indirect recursion.
+        direct_recursion_count = 0
+        from.upto(to) do |i|
+            if location_equal(last_frame, frame)
+                direct_recursion_count += 1
+            else
+                if direct_recursion_count > 0
+                    msg("... above line repeated #{direct_recursion_count} times")
+                    direct_recursion_count = 0
+                end
+                prefix = (i == opts[:current_pos]) ? '-->' : '   '
+                prefix += ' #%d ' % [i]
+                print_stack_entry(frame, i, prefix, opts)
+            end
+            last_frame = frame
+            frame = frame.prev
         end
-        last_frame = frame
-        frame = frame.prev
-      end
+        return last_frame
     end
 
     # Print `count' frame entries
     def print_stack_trace(frame, opts={})
-      opts    = DEFAULT_STACK_TRACE_SETTINGS.merge(opts)
-      halfstack = (opts[:maxstack]+1) / 2
-      n       = frame.stack_size
-      n       = [n, opts[:count]].min if opts[:count]
-      if n > (halfstack * 2)
-        print_stack_trace_from_to(0, halfstack-1, frame, opts)
-        msg "... %d levels ..." % (n - halfstack*2)
-        print_stack_trace_from_to(n - halfstack, n-1, frame, opts)
-      else
-        print_stack_trace_from_to(0, n-1, frame, opts)
-      end
-      msg "(More stack frames follow...)" if n < frame.stack_size
+        opts    = DEFAULT_STACK_TRACE_SETTINGS.merge(opts)
+        halfstack = (opts[:maxstack]+1) / 2
+        n       = frame.stack_size
+        n       = [n, opts[:count]].min if opts[:count]
+        if n > (halfstack * 2)
+            print_stack_trace_from_to(0, halfstack-1, frame, opts)
+            msg "... %d levels ..." % (n - halfstack*2)
+            last_frame = print_stack_trace_from_to(n - halfstack, n-1, frame, opts)
+        else
+            last_frame = print_stack_trace_from_to(0, n-1, frame, opts)
+        end
+        msg "(More stack frames follow...)" if last_frame.type != 'TOP'
     end
 
     def set_return_value(frame, event, value)
@@ -236,67 +241,69 @@ class Trepan
 end
 
 if __FILE__ == $0
-  # Demo it.
-  require 'thread_frame'
-  include Trepan::Frame
-  def msg(msg)
-    puts msg
-  end
-  print_stack_trace(RubyVM::Frame.current, :basename => true)
-  def foo
-    puts '=' * 10
-    print_stack_trace(RubyVM::Frame.current, :show_pc => true)
-  end
-  foo
-
-  def bar(a, b, c)
-    puts '=' * 10
-    print_stack_trace(RubyVM::Frame.current,
-                      )
-  end
-  bar(1, 2, 3)
-
-  def baz(a, b, c=5)
-    puts '=' * 10
-    print_stack_trace(RubyVM::Frame.current)
-  end
-  baz(1, 2)
-
-  def bat(a, b, &block)
-    puts '=' * 10
-    print_stack_trace(RubyVM::Frame.current)
-  end
-  bat(1, 2)
-
-  def babe(a, b, *rest)
-    puts '=' * 10
-    print_stack_trace(RubyVM::Frame.current)
-  end
-  babe(1, 2)
-
-  puts '=' * 10
-  x  = lambda { |a,b|  print_stack_trace(RubyVM::Frame::current) }
-  x.call(1,2)
-  puts '=' * 10
-  x  = Proc.new do |a| 
-    print_stack_trace(RubyVM::Frame::current)
-  end
-  x.call(1,2)
-  class C # :nodoc
-    def initialize(a)
-      print_stack_trace(RubyVM::Frame::current)
+    # Demo it.
+    include Trepan::Frame
+    def msg(msg)
+        puts msg
     end
-  end
-  puts '=' * 30
-  C.new('Hi')
-  puts '=' * 30
-  eval("print_stack_trace(RubyVM::Frame.current)")
-  puts '=' * 30
-  eval("eval('print_stack_trace(RubyVM::Frame.current)')")
-  puts '=' * 30
-  eval("eval('print_stack_trace(RubyVM::Frame.current, :maxstack => 2)')")
-  puts '=' * 30
-  1.times do |a; b|
-    print_stack_trace(RubyVM::Frame::current)
-  end
+    width = (ENV['COLUMNS'] || `tput cols &2>/dev/null`).to_i rescue 80
+    opts = {:maxwidth => width}
+    print_stack_trace(RubyVM::Frame.get,
+                      :basename => true, :maxwidth => width)
+    def foo(width)
+        puts '=' * 10
+        print_stack_trace(RubyVM::Frame.get,
+                          :show_pc => true, :maxwidth => width)
+    end
+    foo(width)
+
+    def bar(a, b, opts)
+        puts '=' * 10
+        print_stack_trace(RubyVM::Frame.get, opts)
+    end
+    bar(1, 2, opts)
+
+    def baz(a, opts, c=5)
+        puts '=' * 10
+        print_stack_trace(RubyVM::Frame.get, opts)
+    end
+    baz(1, opts)
+
+    def bat(a, opts, &block)
+        puts '=' * 10
+        print_stack_trace(RubyVM::Frame.get, opts)
+    end
+  bat(1, opts)
+
+    def babe(a, b, *rest)
+        puts '=' * 10
+        print_stack_trace(RubyVM::Frame.get)
+    end
+    babe(1, 2)
+
+    puts '=' * 10
+    x  = lambda { |a,b|  print_stack_trace(RubyVM::Frame::get, opts) }
+    x.call(1,2)
+    puts '=' * 10
+    x  = Proc.new do |a|
+        print_stack_trace(RubyVM::Frame::get, opts)
+    end
+    x.call(1,2)
+    class C # :nodoc
+        def initialize(opts)
+            print_stack_trace(RubyVM::Frame::get, opts)
+        end
+    end
+    puts '=' * 30
+    C.new(opts)
+    puts '=' * 30
+    eval("print_stack_trace(RubyVM::Frame.get, opts)")
+    puts '=' * 30
+    eval("eval('print_stack_trace(RubyVM::Frame.get, opts)')")
+    puts '=' * 30
+    eval("eval('print_stack_trace(RubyVM::Frame.get, :maxstack => 2)')")
+    puts '=' * 30
+    1.upto(1) do |a; b|
+        print_stack_trace(RubyVM::Frame::get)
+    end
 end

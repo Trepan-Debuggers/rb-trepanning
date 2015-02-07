@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 class Trepan::Command::SaveCommand < Trepan::Command
 
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [--[no-]erase] [--output|-o FILENAME]
+**#{NAME}** [{**--erase**|**--no-eraese**}] [**--output**|**-o** *filename*]
 
-Save settings to file FILENAME. If FILENAME not given one will be made
+Save settings to file *filename*. If *filename* not given one will be made
 selected.
     HELP
 
@@ -18,16 +18,16 @@ selected.
 
     DEFAULT_OPTIONS = { :erase => true, }
   end
-    
+
   def parse_options(options, args) # :nodoc
     parser = OptionParser.new do |opts|
-      opts.on("-e", "--[no-]erase", 
+      opts.on("-e", "--[no-]erase",
               "Add line to erase after reading") do
-        |v| 
+        |v|
         options[:erase] = v
       end
-      opts.on("-o", "--output FILE", String, 
-              "Save file to FILE. ") do 
+      opts.on("-o", "--output FILE", String,
+              "Save file to FILE. ") do
         |filename|
         options[:filename] = filename
       end
@@ -50,7 +50,7 @@ if __FILE__ == $0
   dbgr, cmd = MockDebugger::setup
   cmd.run([cmd.name])
   # require_relative '../../lib/trepanning'; debugger
-  cmd.run([cmd.name, '--erase', 
+  cmd.run([cmd.name, '--erase',
            '--output', File.join(Dir.tmpdir, 'save_file.txt')])
   # A good test would be to see we can read in those files without error.
 end

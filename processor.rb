@@ -1,8 +1,8 @@
-# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 # The main "driver" class for a command processor. Other parts of the
 # command class and debugger command objects are pulled in from here.
 
-%w(default breakpoint complete display eventbuf eval load_cmds location
+%w(default breakpoint complete display eval load_cmds location
     frame hook msg running validate).each do
   |mod_str|
   require_relative "processor/#{mod_str}"
@@ -93,28 +93,28 @@ class Trepan
 
       # Run initialization routines for each of the "submodule"s.
       # load_cmds has to come first.
-      %w(load_cmds breakpoint display eventbuf frame running validate
+      %w(load_cmds breakpoint display frame running validate
          ).each do |submod|
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
       unconditional_prehooks.insert_if_new(-1, *trace_hook) if
         @settings[:traceprint]
-
-      # FIXME: run start file and start commands.
     end
 
     def compute_prompt
-      thread_str =
-        if 1 == Thread.list.size
-          ''
-        elsif Thread.current == Thread.main
-          '@main'
-        else
-          "@#{Thread.current.object_id}"
-        end
-      "%s#{settings[:prompt]}%s%s: " %
-        ['(' * @debug_nest, thread_str, ')' * @debug_nest]
+        thread_str =
+            if @event == 'post-mortem'
+                ':pm'
+            elsif 1 == Thread.list.size
+                ''
+            elsif Thread.current == Thread.main
+                '@main'
+            else
+                "@#{Thread.current.object_id}"
+            end
+        "%s#{settings[:prompt]}%s%s: " %
+            ['(' * @debug_nest, thread_str, ')' * @debug_nest]
 
     end
 
@@ -193,10 +193,11 @@ class Trepan
     end
 
     # This is the main entry point.
-    def process_commands(frame)
+    def process_commands(frame, top_skip=0)
 
-      @event = @core.event
-      frame_setup(frame)
+      @event = frame ? @core.event : 'post-mortem'
+
+      frame_setup(frame, top_skip)
 
       @unconditional_prehooks.run
 
@@ -232,8 +233,7 @@ class Trepan
 
       @leave_cmd_loop = false
 
-      print_location unless @settings[:traceprint]
-      @eventbuf.add_mark if @settings[:tracebuffer]
+      print_location unless @settings[:traceprint] || @event == 'post-mortem'
 
       @cmdloop_prehooks.run
       while not @leave_cmd_loop do

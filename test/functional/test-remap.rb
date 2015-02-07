@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'test/unit'
-require 'trace'
 require_relative 'fn_helper'
 
 class TestRemap < Test::Unit::TestCase
@@ -14,13 +13,13 @@ class TestRemap < Test::Unit::TestCase
             'list',
             ]
     d = strarray_setup(cmds)
-    d.start
+    d.start(true)
     ##############################
     require 'date'
     ##############################
     d.stop
     out = [
-           '-- ',
+           'line ',
            "require 'date'",
            'METHOD TestRemap#require(path)',
            '-> ',
@@ -35,16 +34,16 @@ class TestRemap < Test::Unit::TestCase
            ' 27    	',
            ' 28  ->	  def require(path) # :doc:',
            ' 29    	    gem_original_require path',
-           '-- ',
+           'line ',
            'gem_original_require path',
            '<- ',
            'R=> false',
            'end',
-           '-- ',
+           'line ',
            'd.stop'
           ]
     compare_output(out, d, cmds)
 
   end
-  
+
 end

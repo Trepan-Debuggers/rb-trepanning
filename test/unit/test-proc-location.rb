@@ -18,11 +18,11 @@ class TestCmdProcessorLocation < Test::Unit::TestCase
     assert_equal File.basename(__FILE__), @cmdproc.canonic_file(__FILE__)
   end
 
-  def test_eval_current_source_text
+  def test_eval_get_source_text
     assert_equal File.basename(__FILE__), @cmdproc.canonic_file(__FILE__)
     eval <<-EOE
       @cmdproc.frame_initialize
-      @cmdproc.frame_setup(RubyVM::Frame.current)
+      @cmdproc.frame_setup(RubyVM::Frame.get)
       assert @cmdproc.current_source_text
     EOE
   end

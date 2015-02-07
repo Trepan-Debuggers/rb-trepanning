@@ -1,28 +1,26 @@
 # -*- Ruby -*-
 # -*- encoding: utf-8 -*-
 require 'rake'
-require 'rubygems' unless 
+require 'rubygems' unless
   Object.const_defined?(:Gem)
-require File.dirname(__FILE__) + "/app/options" unless 
+require File.dirname(__FILE__) + "/app/options" unless
   Object.const_defined?(:'Trepan')
 
 Gem::Specification.new do |spec|
   spec.authors      = ['R. Bernstein']
   spec.date         = Time.now
   spec.description = <<-EOF
-A modular, testable, Ruby debugger using some of the best ideas from ruby-debug, other debuggers, and Ruby Rails. 
+A modular, testable, Ruby debugger using some of the best ideas from ruby-debug, other debuggers, and Ruby Rails.
 
-Some of the core debugger concepts have been rethought. As a result, some of this may be experimental.
+Some of the core debugger concepts have been rethought.
 
-This version works only with a patched version of Ruby 1.9.2 or Ruby 1.9.3 and rb-threadframe.
-
-See also rbx-trepanning for a version that works with Rubinius.
+This version works only with a patched version of Ruby 2.1.
 EOF
-  spec.add_dependency('rb-threadframe', '>= 0.39.9')
-  spec.add_dependency('rb-trace', '>= 0.5.9')
-  spec.add_dependency('linecache-tf', '>= 1.0')
-  spec.add_dependency('columnize')
-  spec.add_development_dependency('diff-lcs') # For testing only
+  spec.add_dependency('rb-threadframe', '~> 0.39', '>= 0.39.9')
+  spec.add_dependency('linecache-tf', '~> 1.0')
+  spec.add_dependency('columnize', '~> 0.8')
+  spec.add_dependency('redcarpet', '~> 3.2')
+  spec.add_development_dependency('diff-lcs', '~> 0') # For testing only
   spec.author       = 'R. Bernstein'
   spec.bindir       = 'bin'
   spec.email        = 'rockyb@rubyforge.net'
@@ -34,8 +32,7 @@ EOF
   spec.license      = 'MIT'
   spec.platform     = Gem::Platform::RUBY
   spec.require_path = 'lib'
-  # spec.required_ruby_version = '~> 1.9.2frame'
-  spec.summary      = 'Modular Ruby 1.9.3 or 1.9.2 Debugger'
+  spec.summary      = 'Modular Ruby 2.1 Debugger'
   spec.version      = Trepan::VERSION
 
   # Make the readme file the start page for the generated html

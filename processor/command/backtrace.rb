@@ -1,26 +1,34 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 class Trepan::Command::BacktraceCommand < Trepan::Command
 
   unless defined?(HELP)
     NAME          = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [count]
+**#{NAME}** [*count*]
 
 Print a stack trace, with the most recent frame at the top.  With a
 positive number, print at most many entries.  With a negative number
 print the top entries minus that number.
 
-An arrow indicates the 'current frame'. The current frame determines
-the context used for many debugger commands such as expression
-evaluation or source-line listing.
+In the listing produced, an arrow `-->` indicates the 'current
+frame'. The current frame determines the context used for many
+debugger commands such as in expression evaluation, `eval`, or in
+source-line listing, `list`, or the `edit` command.
 
 Examples:
-   #{NAME}    # Print a full stack trace
-   #{NAME} 2  # Print only the top two entries
-   #{NAME} -1 # Print a stack trace except the initial (least recent) call."
-      HELP
+---------
+
+    #{NAME}    # Print a full stack trace
+    #{NAME} 2  # Print only the top two entries
+    #{NAME} -1 # Print a stack trace except the initial (least recent) call."
+
+See also:
+---------
+
+`up`, `down`, `frame`.
+HELP
 
     ALIASES       = %w(bt where)
     CATEGORY      = 'stack'
@@ -35,17 +43,17 @@ Examples:
   def complete(prefix)
     @proc.frame_complete(prefix, nil)
   end
-  
+
   # This method runs the command
   def run(args)
     unless @proc.frame
       errmsg 'No frame.'
       return false
     end
-    hide_level  = 
-      if (!settings[:hidelevel] || settings[:hidelevel] < 0) && 
-          @proc.hidelevels[Thread.current] 
-        @proc.hidelevels[Thread.current] 
+    hide_level  =
+      if (!settings[:hidelevel] || settings[:hidelevel] < 0) &&
+          @proc.hidelevels[Thread.current]
+        @proc.hidelevels[Thread.current]
       else settings[:hidelevel]
       end
     stack_size = @proc.top_frame.stack_size - hide_level
@@ -56,19 +64,19 @@ Examples:
       :maxwidth    => settings[:maxwidth],
       :show_pc     => settings[:show_pc]
     }
-    opts[:count] = 
+    opts[:count] =
       if args.size > 1
-        opts[:maxstack] = @proc.get_int(args[1], 
+        opts[:maxstack] = @proc.get_int(args[1],
                                        :cmdname   => self.name,
                                        :max_value => stack_size)
       else
         stack_size
       end
     return false unless opts[:count]
-    # FIXME: Fix Ruby so we don't need this workaround? 
+    # FIXME: Fix Ruby so we don't need this workaround?
     # See also location.rb
-    opts[:class] = @proc.core.hook_arg  if 
-      'CFUNC' == @proc.frame.type && 
+    opts[:class] = @proc.core.hook_arg  if
+      'CFUNC' == @proc.frame.type &&
       @proc.core.hook_arg && @proc.event != 'raise'
     print_stack_trace(@proc.top_frame, opts)
   end

@@ -1,6 +1,8 @@
--- debugger-stop.rb:14 @1955)
+line debugger-stop.rb:14 @1955)
+require_relative '../../lib/trepanning'
+line debugger-stop.rb:10 @1954
 Foo::five
 (trepan): Program stop event: line; PC offset 100 <top debugger-stop.rb>
--- debugger-stop.rb:10 @1954)
-5
-trepan: That's all, folks...
+Program terminated, type q to quit
+:/
+(trepan:pm): trepan: That's all, folks...

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'up'
 
 # Debugger "down" command. Is the same as the "up" command with the
@@ -10,12 +10,17 @@ class Trepan::Command::DownCommand < Trepan::Command::UpCommand
     old_verbose = $VERBOSE
     $VERBOSE    = nil
     HELP = <<-HELP
-#{NAME} [count]
+**#{NAME}** [*count*]
 
 Move the current frame down in the stack trace (to a newer frame). 0
 is the most-recent frame. If no count is given, move down 1.
 
-See also 'up' and 'frame'.
+A negative number moves in the opposite direction.
+
+See also:
+---------
+
+`up` and `frame`.
   HELP
 
     NAME          = File.basename(__FILE__, '.rb')

@@ -8,17 +8,17 @@ class TestCommandBreak < Test::Unit::TestCase
     common_setup
     @name   = File.basename(__FILE__, '.rb').split(/-/)[2]
     @my_cmd = @cmds[@name]
-    @brkpt_set_pat = /^Breakpoint \d+ set at VM offset \d+ of instruction sequence .*,\n\tline \d+ in file .*$/ 
+    @brkpt_set_pat = /^Breakpoint \d+ set at VM offset \d+ of instruction sequence .*,\n\tline \d+ in file .*$/
   end
 
-  def run_cmd(cmd, args) 
+  def run_cmd(cmd, args)
     cmd.proc.instance_variable_set('@cmd_argstr', args[1..-1].join(' '))
     cmd.run(args)
   end
 
   # require_relative '../../lib/trepanning'
   def test_basic
-    tf = RubyVM::Frame.current
+    tf = RubyVM::Frame.get
     @cmdproc.frame_setup(tf)
     [
      [@name,  __LINE__.to_s],
@@ -40,7 +40,7 @@ class TestCommandBreak < Test::Unit::TestCase
     end
 
     def foo
-      5 
+      5
     end
     [[@name, 'foo', (__LINE__-3).to_s]].each_with_index do |args, i|
       run_cmd(@my_cmd, args)
@@ -62,11 +62,11 @@ class TestCommandBreak < Test::Unit::TestCase
   # the parent instruction sequence, i.e. the line is not in the
   # current instruction sequence.
   def test_parent_breakpoint
-    # skip "Need to add ISEQ parent link to 1.9.2 and further check of old code" 
+    # skip "Need to add ISEQ parent link to 1.9.2 and further check of old code"
     # require_relative '../../lib/trepanning'
     line = __LINE__  # This is the line we set the breakpoint for.
     1.times do
-      tf = RubyVM::Frame.current  
+      tf = RubyVM::Frame.get
       @cmdproc.frame_setup(tf)
       run_cmd(@my_cmd, [@name, line.to_s])
       assert_equal(true, @cmdproc.errmsgs.empty?, @cmdproc.errmsgs)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
-require 'thread_frame'
+# Copyright (C) 2010-2011, 2013,2015 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Breakpoint objects
 class Trepan
@@ -64,8 +63,9 @@ class Trepan
         @id = @@next_id
         @@next_id += 1
       end
+
       raise RuntimeError,
-      "Unable to set breakpoint in #{iseq.name} at offset #{offset}" unless set
+      "Unable to set breakpoint in #{iseq.name} at offset #{@offset}" unless set
     end
 
     def condition?(bind)

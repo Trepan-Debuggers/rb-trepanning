@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 class Trepan::Command::DirectoryCommand < Trepan::Command
 
@@ -8,25 +8,27 @@ class Trepan::Command::DirectoryCommand < Trepan::Command
     MAX_ARGS     = 1  # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [DIR]
+**#{NAME}** [*dir*]
 
-Add directory DIR to beginning of search path for source files.
-DIR can also be $cwd for the current working directory, or $cdir for the
-directory in which the debugged file start.
-With no argument, reset the search path to $cdir:$cwd, the default.
+Add directory *dir* to beginning of search path for source files.
+*dir* can also be `$cwd` for the current working directory, or `$cdir`
+for the directory in which the debugged file start.  With no argument,
+reset the search path to `$cdir:$cwd`, the default.
 
-This command may be useful if for some reason the debugger can't find 
-source files because directories have been moved. 
+This command may be useful if for some reason the debugger can't find
+source files because directories have been moved.
 
 Examples:
-   #{NAME} ~/.rvm/src/ruby-head  # Adds an rvm-like directory to path
-   #{NAME} # reset to $cdir:$cwd
+---------
+
+    #{NAME} ~/.rvm/src/ruby-head  # Adds an rvm-like directory to path
+    #{NAME} # reset to $cdir:$cwd
       HELP
 
-    SHORT_HELP  = 
-      'Add directory DIR to beginning of search path for source files'
+    SHORT_HELP  =
+      'Add directory *dir* to beginning of search path for source files'
   end
-    
+
   # This method runs the command
   def run(args) # :nodoc
     if args.size > 1

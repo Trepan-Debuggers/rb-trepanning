@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../breakpoint'
 require_relative '../../app/breakpoint'
@@ -9,29 +9,32 @@ require_relative '../../app/util'
 # parameter to @proc.en_disable_breakpoint_by_number is different (set
 # as ENABLE_PARM below).
 #
-# NOTE: The enable command  subclasses this, so beware when changing! 
+# NOTE: The enable command  subclasses this, so beware when changing!
 class Trepan::Command::DisableCommand < Trepan::Command
 
   Trepan::Util.suppress_warnings {
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [display] NUM1 [NUM2 ...]
+**#{NAME}** [*display*] *num1* [*num2* ...]
 
 Disables the breakpoints or display given as a space separated list of
-numbers. 
+numbers.
 
-See also "enable" and "info break".
+See also:
+---------
+
+`enable` and `info break`.
   HELP
-    
+
     CATEGORY      = 'breakpoints'
     SHORT_HELP    = 'Disable some breakpoints or displays'
   }
 
   def initialize(proc)
     super
-    @enable_parm = false # true if enable 
+    @enable_parm = false # true if enable
   end
-  
+
   def run(args)
     if args.size == 1
       errmsg('No breakpoint or display number given.')
@@ -54,7 +57,7 @@ See also "enable" and "info break".
     end
   end
 end
-        
+
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup

@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/complete'
 class Trepan::Command::KillCommand < Trepan::Command
@@ -6,26 +6,32 @@ class Trepan::Command::KillCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [signal-number|signal-name]
+**#{NAME}** [signal-number|signal-name]
 
 Kill execution of program being debugged.
 
-Equivalent of Process.kill('KILL', Process.pid). This is an unmaskable
+Equivalent of `Process.kill('KILL', Process.pid)`. This is an unmaskable
 signal. When all else fails, e.g. in thread code, use this.
 
 If you are in interactive mode, you are prompted to confirm killing.
-However when this command is aliased from a command ending in !, no 
+However when this command is aliased from a command ending in "!", no
 questions are asked.
 
 Examples:
+---------
 
-  #{NAME}  
-  #{NAME} unconditionally
-  #{NAME} KILL # same as above
-  #{NAME} kill # same as above
-  #{NAME} -9   # same as above
-  #{NAME}  9   # same as above
-  #{NAME}! 9   # above, but unconditional
+    #{NAME}
+    #{NAME} unconditionally
+    #{NAME} KILL # same as above
+    #{NAME} kill # same as above
+    #{NAME} -9   # same as above
+    #{NAME}  9   # same as above
+    #{NAME}! 9   # above, but unconditional
+
+See also:
+---------
+
+`quit`, `exit`
     HELP
 
     ALIASES      = %w(kill!)
@@ -33,15 +39,15 @@ Examples:
     MAX_ARGS     = 1  # Need at most this many
     SHORT_HELP  = 'Send this process a POSIX signal (default "9" is "kill -9")'
   end
-  
+
   def complete(prefix)
     completions = Signal.list.keys + Signal.list.keys.map{|k| k.downcase} +
-      Signal.list.values.map{|i| i.to_s} + 
-      Signal.list.values.map{|i| (-i).to_s} + 
+      Signal.list.values.map{|i| i.to_s} +
+      Signal.list.values.map{|i| (-i).to_s} +
       ['unconditionally']
     Trepan::Complete.complete_token(completions, prefix)
   end
-    
+
   # This method runs the command
   def run(args) # :nodoc
     unconditional = ('!' == args[0][-1..-1])
@@ -54,7 +60,7 @@ Examples:
     else
       if unconditional || confirm('Really quit?', false)
         sig = 'KILL'
-      else 
+      else
         msg('Kill not confirmed.')
         return
       end
@@ -71,7 +77,7 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  %w(fooo 100 1 -1 HUP -9).each do |arg| 
+  %w(fooo 100 1 -1 HUP -9).each do |arg|
     puts "#{cmd.name} #{arg}"
     cmd.run([cmd.name, arg])
     puts '=' * 40

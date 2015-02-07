@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require 'linecache'
 require_relative '../app/complete'
 require_relative '../app/frame'
@@ -21,7 +21,7 @@ class Trepan
     # don't need to store this for all threads, just those we want to
     # hide frame on. A value of 1 means to hide just the oldest
     # level. The default or showing all levels is 0.
-    attr_accessor :hidelevels      
+    attr_accessor :hidelevels
 
     # Hash[container] -> file container. This gives us a way to map non-file
     # container objects to a file container for display.
@@ -29,20 +29,20 @@ class Trepan
 
     # Hash[iseq] -> file container. This gives as a way to map instruction
     # sequences to a file container for display.
-    attr_accessor :remap_iseq      
+    attr_accessor :remap_iseq
 
     # top frame of current thread. Since right now the ThreadFrame
     # method has "prev" but no way to move in the other direction.  So
     # we store the top frame.
-    attr_accessor :top_frame 
+    attr_accessor :top_frame
 
     # Hash[thread_id] -> top_frame
     attr_reader   :threads2frames
-    
+
 
     def adjust_frame(frame_num, absolute_pos)
       frame, frame_num = get_frame(frame_num, absolute_pos)
-      if frame 
+      if frame
         @frame = frame
         @frame_index = frame_num
         unless @settings[:traceprint]
@@ -52,7 +52,7 @@ class Trepan
             :maxwidth    => settings[:maxwidth],
           }
           print_stack_trace_from_to(frame_num, frame_num, frame, opts)
-          print_location 
+          print_location
         end
         @line_no = frame_line() - 1
         @frame
@@ -64,7 +64,7 @@ class Trepan
     def frame_low_high(direction)
       stack_size = @top_frame.stack_size - @hide_level
       if direction
-        low, high = [ @frame_index * -direction, 
+        low, high = [ @frame_index * -direction,
                       (stack_size - 1 - @frame_index) * direction ]
         low, high = [high, low] if direction < 0
         [low, high]
@@ -72,7 +72,7 @@ class Trepan
         [-stack_size, stack_size-1]
       end
     end
-    
+
     def frame_complete(prefix, direction)
       low, high = frame_low_high(direction)
       ary = (low..high).map{|i| i.to_s}
@@ -80,11 +80,11 @@ class Trepan
     end
 
     def frame_container(frame, canonicalize=true)
-      container = 
+      container =
         if @remap_container.member?(frame.source_container)
           @remap_container[frame.source_container]
-        elsif frame.iseq && @remap_iseq.member?(frame.iseq.sha1)
-          @remap_iseq[frame.iseq.sha1]
+        # elsif frame.iseq && @remap_iseq.member?(frame.iseq.sha1)
+        #   @remap_iseq[frame.iseq.sha1]
         else
           frame.source_container
         end
@@ -103,28 +103,35 @@ class Trepan
       end
     end
 
-    # Initializes the thread and frame variables: @frame, @top_frame, 
+    # Initializes the thread and frame variables: @frame, @top_frame,
     # @frame_index, @current_thread, and @threads2frames
-    def frame_setup(frame_thread)
-      @frame_index        = 0
-      @frame = @top_frame = frame_thread
-      @current_thread     = @frame.thread
-      @stack_size         = @frame.stack_size
-
-      @threads2frames   ||= {} 
-      @threads2frames[@current_thread] = @top_frame
-      @hide_level         = 
-        if @settings[:debugstack]
-          0
-        else
-          @hidelevels[@current_thread]
+    def frame_setup(frame_thread, top_skip=0)
+        @frame_index        = 0
+        unless frame_thread
+            @stack_size = 0
+            @current_thread = nil
+            @top_frame = @frame = nil
+            return
         end
-      
+
+        @frame = @top_frame = frame_thread.prev(top_skip)
+        @current_thread     = @frame.thread
+        @stack_size         = @frame.stack_size
+
+        @threads2frames   ||= {}
+        @threads2frames[@current_thread] = @top_frame
+        @hide_level         =
+            if @settings[:debugstack]
+                0
+            else
+                @hidelevels[@current_thread]
+            end
+
     end
 
     # Remove access to thread and frame variables
     def frame_teardown
-      @top_frame = @frame = @frame_index = @current_thread = nil 
+      @top_frame = @frame = @frame_index = @current_thread = nil
       @threads2frames = {}
     end
 
@@ -164,7 +171,7 @@ class Trepan
     def get_nonsync_frame(tf)
       if (tf.stack_size > 10)
         check_frames = (0..5).map{|i| tf.prev(i).method}
-        if check_frames == 
+        if check_frames ==
             %w(synchronize event_processor IFUNC call trace_hook IFUNC)
           return tf.prev(6)
         end
@@ -187,14 +194,14 @@ class Trepan
     #    `frame', which is in the thread with id `thread_id'. We may
     #    need to the hide initial debugger frames.
     def find_and_set_debugged_frame(th, position)
-      
+
       thread = threading._active[thread_id]
       thread_name = thread.getName()
       if (!@settings['dbg_pydbgr'] &&
           thread_name == Mthread.current_thread_name())
         # The frame we came in on ('current_thread_name') is
         # the same as the one we want to switch to. In this case
-        # we need to some debugger frames are in this stack so 
+        # we need to some debugger frames are in this stack so
         # we need to remove them.
         newframe = Mthread.find_debugged_frame(frame)
         frame = newframe unless newframe
@@ -202,12 +209,12 @@ class Trepan
       ## FIXME: else: we might be blocked on other threads which are
       # about to go into the debugger it not for the fact this one got there
       # first. Possibly in the future we want
-      # to hide the blocks into threading of that locking code as well. 
-      
+      # to hide the blocks into threading of that locking code as well.
+
       # Set stack to new frame
       @frame, @curindex = Mcmdproc.get_stack(frame, nil, self.proc)
       @proc.stack, @proc.curindex = self.stack, self.curindex
-      
+
       # @frame_thread_name = thread_name
     end
   end
@@ -229,7 +236,7 @@ if __FILE__ == $0
   end
 
   proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
-  proc.frame_setup(RubyVM::Frame.current)
+  proc.frame_setup(RubyVM::Frame.get)
   proc.frame_initialize
   puts "stack size: #{proc.top_frame.stack_size}"
   0.upto(proc.top_frame.stack_size) { |i| proc.adjust_frame(i, true) }
@@ -241,5 +248,5 @@ if __FILE__ == $0
   puts '*' * 10
   proc.adjust_frame(proc.top_frame.stack_size-1, true)
   proc.top_frame.stack_size.times { proc.adjust_frame(-1, false) }
-    
+
 end

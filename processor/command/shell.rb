@@ -9,31 +9,33 @@ class Trepan::Command::IRBCommand < Trepan::Command
     require_relative '../../app/irb'
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [-d]
+**#{NAME}** [**-d**]
 
 Start an Interactive Ruby (IRB) session.
 
-If -d is added you can get access to debugger frame the global variables
-$trepan_frame and $trepan_cmdproc. 
+If `-d` is added, you can get access to debugger frame the global
+variables `$trepan_frame` and `$trepan_cmdproc`.
 
-#{NAME} is extended with methods 'cont', 'ne', and, 'q', 'step' which 
-run the corresponding debugger commands 'continue', 'next', 'exit' and 'step'. 
+#{NAME} is extended with methods `cont`, `ne`, `q`, and `step` which
+run the corresponding debugger commands: `continue`, `next`, `exit`
+and `step`.
 
 To issue a debugger command, inside #{NAME} nested inside a debugger use
 'dbgr'. For example:
 
-  dbgr %w(info program)
-  dbgr('info', 'program') # Same as above
-  dbgr 'info program'     # Single quoted string also works
+    dbgr %w(info program)
+    dbgr('info', 'program') # Same as above
+    dbgr 'info program'     # Single quoted string also works
 
 But arguments have to be quoted because #{NAME} will evaluate them:
 
-  dbgr info program     # wrong!
-  dbgr info, program    # wrong!
-  dbgr(info, program)   # What I say 3 times is wrong!
+    dbgr info program     # wrong!
+    dbgr info, program    # wrong!
+    dbgr(info, program)   # What I say 3 times is wrong!
 
 Here then is a loop to query VM stack values:
-  (-1..1).each {|i| dbgr(\"info reg sp \#{i}\")}
+
+    (-1..1).each {|i| dbgr(\"info reg sp \#{i}\")}
      HELP
 
     ALIASES    = %w(irb)
@@ -44,7 +46,7 @@ Here then is a loop to query VM stack values:
 
   # This method runs the command
   def run(args)
-    add_debugging = 
+    add_debugging =
       if args.size > 1
         '-d' == args[1]
       else
@@ -60,7 +62,7 @@ Here then is a loop to query VM stack values:
       throw :IRB_EXIT, :cont if $trepan_in_irb
     end
 
-    $trepan = @proc.dbgr 
+    $trepan = @proc.dbgr
     $trepan_cmdproc  = @proc
     if add_debugging
       $trepan_frame    = @proc.frame
@@ -73,32 +75,33 @@ Here then is a loop to query VM stack values:
             :RC => true}
 
     # ?? Should we set GNU readline to what we have,
-    # or let IRB make its own determination? 
+    # or let IRB make its own determination?
 
-    # Save the Readline history and set the Readline completion function 
-    # to be IRB's function 
-    if Trepan::GNU_readline? 
+    # Save the Readline history and set the Readline completion function
+    # to be IRB's function
+    if Trepan::GNU_readline?
       @proc.intf.save_history if @proc.intf.respond_to?(:save_history)
       require 'irb/completion'
       Readline.completion_proc = IRB::InputCompletor::CompletionProc
     end
 
-    # And just when you thought, we'd never get around to 
+    # And just when you thought, we'd never get around to
     # actually running irb...
-    cont = IRB.start_session(@proc.frame.binding, @proc, conf)
+    bind = @proc.frame ? @proc.frame.binding : binding
+    cont = IRB.start_session(bind, @proc, conf)
     trap('SIGINT', save_trap) # Restore our old interrupt function.
 
-    # Restore the debuggers' Readline history and the Readline completion 
+    # Restore the debuggers' Readline history and the Readline completion
     # function
     if Trepan::GNU_readline? && @proc.dbgr.completion_proc
       @proc.intf.read_history if @proc.intf.respond_to?(:read_history)
-      Readline.completion_proc = @proc.dbgr.completion_proc 
+      Readline.completion_proc = @proc.dbgr.completion_proc
     end
 
     # Respect any backtrace limit set in irb.
     back_trace_limit = IRB.CurrentContext.back_trace_limit
     if settings[:maxstack] !=  back_trace_limit
-      msg("\nSetting debugger's BACK_TRACE_LIMIT (%d) to match irb's last setting (%d)" % 
+      msg("\nSetting debugger's BACK_TRACE_LIMIT (%d) to match irb's last setting (%d)" %
           [settings[:maxstack], back_trace_limit])
       settings[:maxstack]= IRB.CurrentContext.back_trace_limit
     end
@@ -107,7 +110,7 @@ Here then is a loop to query VM stack values:
     when :continue
       @proc.continue
     when :finish
-      @proc.finish 
+      @proc.finish
     when :next
       @proc.next # (1, {})
     when :quit
@@ -115,7 +118,7 @@ Here then is a loop to query VM stack values:
     when :step
       @proc.step # (1, {})
     else
-      @proc.print_location
+      @proc.print_location if @proc.frame
     end
   ensure
     $trepan_in_irb = false

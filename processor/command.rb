@@ -92,6 +92,10 @@ class Trepan
       @proc.section(message, opts)
     end
 
+    def markdown(message, opts={})
+      @proc.markdown(message, opts)
+    end
+
     def settings
       @proc.settings
     end

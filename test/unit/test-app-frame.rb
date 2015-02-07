@@ -1,26 +1,25 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require_relative '../../app/frame'
-require 'thread_frame'
 
 class TestAppFrame < Test::Unit::TestCase
 
   include Trepan::Frame
 
   def test_app_frame
-    frame = RubyVM::Frame.current
+    frame = RubyVM::Frame.get
     base_count = frame.stack_size
     s = format_stack_entry(frame)
     pat = /^METHOD .*#test_app_frame\(\) in file .*test-app-frame.rb at line \d+/
     assert(s =~ pat, "got #{s}, expected pat #{pat}")
-    1.times do 
-      assert_equal(base_count+2, RubyVM::Frame.current.stack_size)
+    1.times do
+      assert_equal(base_count+2, RubyVM::Frame.get.stack_size)
       s = format_stack_entry(frame)
       assert(s =~ pat, "got #{s}, expected pat #{pat}")
     end
 
     def inner_test(count)
-      frame = RubyVM::Frame.current
+      frame = RubyVM::Frame.get
       assert_equal(count, frame.stack_size)
 
       s = format_stack_entry(frame)

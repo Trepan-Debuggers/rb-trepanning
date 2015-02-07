@@ -1,23 +1,30 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../../base/subsubcmd'
 
 class Trepan::SubSubcommand::SetMaxList < Trepan::SubSubcommand
   unless defined?(HELP)
     NAME         = File.basename(__FILE__, '.rb')
-    HELP         = "Set max[imum] #{NAME} NUMBER
-
-Set number of source-code lines to list by default."
     IN_LIST      = true
     MIN_ABBREV   = 'lis'.size
     PREFIX       = %W(set max #{NAME})
     SHORT_HELP   = 'Set number of lines to list'
+    HELP         = <<-EOH
+**#{PREFIX.join(' ')}** *integer-expression*
+
+Set number of source-code lines to list by default in a debugger `list` command.
+
+See also:
+---------
+`list`, `show maximum list`
+EOH
+
   end
 
   def run(args)
     args.shift
     run_set_int(args.join(' '),
-                "The '#{PREFIX.join(' ')}' command requires a list size", 
+                "The '#{PREFIX.join(' ')}' command requires a list size",
                 0, nil)
   end
 

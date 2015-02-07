@@ -1,4 +1,4 @@
-The trepanning debugger gdb-like debugger. As such, it is both a high-level and low-level debugger. It is a also a rewrite of *ruby-debug*. But to provide all of the functionality that it has, it requires a patched version of MRI Ruby 1.9.3 or 1.9.2 found the [rb-threadframe project](https://rocky/rb-threadframe). The additional run-time support in the MRI is what gives this some debugger power that you won't find in other MRI 1.9 debuggers.
+The trepanning debugger gdb-like debugger. As such, it is both a high-level and low-level debugger. It is a also a rewrite of *ruby-debug*. But to provide all of the functionality that it has, it requires a patched version of MRI Ruby 2,1, 1.9.3 or 1.9.2 found the [ruby-debugger-runtime project](https://sourceforge.net/projects/ruby-debugger-runtime/). The additional run-time support in the MRI is what gives this powerful features that you won't find in other MRI 2.1 or 1.9 debuggers that don't use this runtime.
 
 See the [installation instructions](https://github.com/rocky/rb-trepanning/wiki/How-to-Install-rb-trepanning).
 
@@ -36,27 +36,10 @@ The return value from Trepan is the return value of the block, i.e. the final va
 You can run the same thing inside your Ruby program, but probably you don't want to give a block. Instead, you may want to have debugging start on the next statement in the code:
 
 ```ruby
- require 'trepan'
- Trepan.debug # Don't stop here...
- work # but stop here.
+require 'trepanning'
+...
+debugger # stop here
 ```
 
-The above is really shorthand for something like:
 
-```ruby
-  $trepan = Trepan.new
-  $trepan.debugger
-```
-
-The global variable *$trepan* set holds debugger settings, such as `autolist` or `autoeval` settings and breakpoint information.
-
-Due to the line-event orientation in ruby-debug, it occasionally was convenient to add a synchronous stop in your program. I don't think that will be necessary here, but if you do call to the debugger at the point of the call rather than the subsequent stopping point, set opts[:immediate] to true. Example:
-
-```ruby
-
- # ... work, work, work
- mydbg.debugger(:immediate=>true) # enter debugger here
- # ... work, work, work
-```
-
-There is extensive on-line help. Run `help` inside the debugger.
+There is extensive on-line help, much in markdown format that displays nicely in a terminal. Run `help` inside the debugger.
