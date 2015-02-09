@@ -35,14 +35,15 @@ class Trepan
     # Does whatever setup needs to be done to set to ignore stepping
     # to the finish of the current method.
     def finish(level_count=0, opts={})
-      step(0, opts)
-      @next_level        = @frame.stack_size - level_count
-      @next_thread       = Thread.current
-      @stop_events       = Set.new(%w(return leave yield))
+        step(0, opts)
+        # @next_level        = @frame.stack_size - level_count
+        # @next_thread       = Thread.current
+        # @stop_events       = Set.new(%w(return leave yield))
 
-      # Try high-speed (run-time-assisted) method
-      @frame.trace_off   = true  # No more tracing in this frame
-      @frame.return_stop = true  # don't need to
+        # Try high-speed (run-time-assisted) method
+        @frame.step_out
+        # @frame.trace_off   = true  # No more tracing in this frame
+        # @frame.return_stop = true  # don't need to
     end
 
     # Does whatever needs to be done to set to do "step over" or ignore
