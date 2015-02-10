@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative 'virtual'
 class Trepan
   class CmdProcessor < VirtualCmdProcessor
@@ -21,15 +21,19 @@ class Trepan
     # execution.
     # FIXME: turn line_number into a condition.
     def continue
-      @next_level      = 32000 # I'm guessing the stack size can't
-                               # ever reach this
-      @next_thread     = nil
-      if @settings[:traceprint]
-        @core.step_count = 1    # traceprint will avoid stopping
-      else
-        @core.step_count = -1    # No more event stepping
-      end
-      @leave_cmd_loop  = true  # Break out of the processor command loop.
+
+        # FIXME: with the ruby-supported stepping, we might not
+        # need the below any more.
+        # I'm guessing the stack size can't ever reach this
+        @next_level      = 32000
+
+        @next_thread     = nil
+        if @settings[:traceprint]
+            @core.step_count = 1    # traceprint will avoid stopping
+        else
+            @core.step_count = -1    # No more event stepping
+        end
+        @leave_cmd_loop  = true  # Break out of the processor command loop.
     end
 
     # Does whatever setup needs to be done to set to ignore stepping
@@ -41,9 +45,8 @@ class Trepan
         # @stop_events       = Set.new(%w(return leave yield))
 
         # Try high-speed (run-time-assisted) method
+        # FIXME: if frame is not the top frame, then we should to do more...
         @frame.step_out
-        # @frame.trace_off   = true  # No more tracing in this frame
-        # @frame.return_stop = true  # don't need to
     end
 
     # Does whatever needs to be done to set to do "step over" or ignore
@@ -52,22 +55,26 @@ class Trepan
     # stack frames and the current thread. Elsewhere in "skipping_step?"
     # we do the checking.
     def next(step_count=1, opts={})
-      step(step_count, opts)
-      @next_level      = @top_frame.stack_size
-      @next_thread     = Thread.current
+        step(step_count, opts)
+        # FIXME: if frame is not the top frame, then we should to do more...
+        # Try high-speed (run-time-assisted) method
+        @frame.step_over
+        # @next_level      = @top_frame.stack_size
+        # @next_thread     = Thread.current
     end
 
     # Does whatever needs to be done to set to step program
     # execution.
     def step(step_count=1, opts={}, condition=nil)
-      continue
-      @core.step_count = step_count
-      @different_pos   = opts[:different_pos] if
-        opts.keys.member?(:different_pos)
-      @stop_condition  = condition
-      @stop_events     = opts[:stop_events]   if
-        opts.keys.member?(:stop_events)
-      @to_method       = opts[:to_method]
+        @frame.step_in if @frame
+        continue
+        @core.step_count = step_count
+        @different_pos   = opts[:different_pos] if
+            opts.keys.member?(:different_pos)
+        @stop_condition  = condition
+        @stop_events     = opts[:stop_events]   if
+            opts.keys.member?(:stop_events)
+        @to_method       = opts[:to_method]
     end
 
     def quit(cmd='quit')
@@ -112,67 +119,69 @@ class Trepan
 
     def stepping_skip?
 
-      return true if @core.step_count < 0
+        return true if @core.step_count < 0
 
-      if @settings[:'debugskip']
-        msg "diff: #{@different_pos}, event : #{@event}, #{@stop_events.inspect}"
-        msg "step_count  : #{@core.step_count}"
-        msg "next_level  : #{@next_level},    ssize : #{@stack_size}"
-        msg "next_thread : #{@next_thread},   thread: #{Thread.current}"
-      end
+        if @settings[:'debugskip']
+            msg "diff: #{@different_pos}, event : #{@event}, #{@stop_events.inspect}"
+            msg "step_count  : #{@core.step_count}"
+            msg "next_level  : #{@next_level},    ssize : #{@stack_size}"
+            msg "next_thread : #{@next_thread},   thread: #{Thread.current}"
+        end
 
-      return true if
-        !frame || (@next_level < @frame.stack_size &&
+
+        # FIXME: with the ruby-supported stepping, we might not
+        # need @next_level an the below test.
+        return true if
+            !frame || (@next_level < @frame.stack_size &&
                    Thread.current == @next_thread && @event.to_s != 'raise')
 
-      new_pos = [@frame.source_container, frame_line,
-                 @stack_size, @current_thread, @event, @frame.pc_offset]
+        new_pos = [@frame.source_container, frame_line,
+                   @stack_size, @current_thread, @event, @frame.pc_offset]
 
-      skip_val = @stop_events && !@stop_events.member?(@event.to_s)
+        skip_val = @stop_events && !@stop_events.member?(@event.to_s)
 
-      # If the last stop was a breakpoint, don't stop again if we are at
-      # the same location with a line event.
-      skip_val ||= (@last_pos[4] == 'brkpt' &&
-                    @event.to_s == 'line' &&
-                    @frame.pc_offset == @last_pos[5])
+        # If the last stop was a breakpoint, don't stop again if we are at
+        # the same location with a line event.
+        skip_val ||= (@last_pos[4] == 'brkpt' &&
+                      @event.to_s == 'line' &&
+                      @frame.pc_offset == @last_pos[5])
 
-      if @settings[:'debugskip']
+        if @settings[:'debugskip']
         puts "skip: #{skip_val.inspect}, last: #{@last_pos}, new: #{new_pos}"
-      end
+        end
 
-      @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
-      unless skip_val
-        condition_met =
-          if @stop_condition
+        @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
+        unless skip_val
+            condition_met =
+                if @stop_condition
             puts 'stop_cond' if @settings[:'debugskip']
-            debug_eval_no_errmsg(@stop_condition)
-          elsif @to_method
-            puts "method #{@frame.method} #{@to_method}" if
-              @settings[:'debugskip']
-            @frame.method == @to_method
-          else
-            puts 'uncond' if @settings[:'debugskip']
-            true
-          end
+                    debug_eval_no_errmsg(@stop_condition)
+                elsif @to_method
+                    puts "method #{@frame.method} #{@to_method}" if
+                        @settings[:'debugskip']
+                    @frame.method == @to_method
+                else
+                    puts 'uncond' if @settings[:'debugskip']
+                    true
+                end
 
-        msg("condition_met: #{condition_met}, last: #{@last_pos}, " +
-             "new: #{new_pos}, different #{@different_pos.inspect}") if
-          @settings[:'debugskip']
-        skip_val = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
-                    !condition_met)
-      end
+            msg("condition_met: #{condition_met}, last: #{@last_pos}, " +
+                "new: #{new_pos}, different #{@different_pos.inspect}") if
+                @settings[:'debugskip']
+            skip_val = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
+                        !condition_met)
+        end
 
-      @last_pos = new_pos if !@stop_events || @stop_events.member?(@event)
+        @last_pos = new_pos if !@stop_events || @stop_events.member?(@event)
 
-      unless skip_val
-        # Set up the default values for the
-        # next time we consider skipping.
-        @different_pos = @settings[:different]
-        @stop_events   = nil
-      end
+        unless skip_val
+            # Set up the default values for the
+            # next time we consider skipping.
+            @different_pos = @settings[:different]
+            @stop_events   = nil
+        end
 
-      return skip_val
+        return skip_val
     end
-
   end
 end
