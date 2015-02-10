@@ -46,8 +46,8 @@ class TestNext < Test::Unit::TestCase
         x = fact(4)
         y = 5
         ##############################
-        d.stop # ({:remove => true})
-        out = ['line ', 'x = fact(4)', 'line ', 'y = 5']
+        d.stop
+        out = ['line ', 'x = fact(4)', 'line ', 'd.stop']
         compare_output(out, d, cmds)
     end
 

@@ -7,8 +7,6 @@ class TestFinish < Test::Unit::TestCase
   include FnTestHelper
 
   def test_finish_between_fn
-      skip("Fix up finish")
-
       # Finish over functions
       def fact(x)
           return 1 if x <= 1
@@ -27,8 +25,7 @@ class TestFinish < Test::Unit::TestCase
              'x = fact(4)',
              'call ',
              'return 1 if x <= 1',
-             'def fact(x)',
-             '<- ',
+             'return ',
              'R=> 24',
              'end',
              'D=> true']
