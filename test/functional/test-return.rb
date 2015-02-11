@@ -9,10 +9,12 @@ class TestRaise < Test::Unit::TestCase
   def test_return
 
     cmds = [
+            'set max width 30',
+            'set different off',
             'set events call, return',
-            'step',
+            'step-',
             'info args',
-            'step',
+            'step-',
             'info return',
             'set return 10',
             'set events line',
@@ -20,49 +22,53 @@ class TestRaise < Test::Unit::TestCase
             'pr foo_retval',
             ]
     d = strarray_setup(cmds)
-    d.start(true)
     ##############################
-    x = 1
     def foo(arg)
       5
     end
+    d.start(true)
+    x = 1
     foo_retval = foo('ho')
     z = 3
     ##############################
     d.stop
     out = ['line ',
            'x = 1',
-           'Trace events we may stop on:',
-           '----------------------------',
-           "\tbrkpt, call, return",
-           'METHOD TestRaise#foo(arg)',
-           '-> ',
-           'def foo(arg)',
+           'max width is 30.',
+           'different is off.',
+           "Trace events we may stop on:\n----------------------------",
+           '  call    return',
+           'call ',
+           '5',
            "arg = \"ho\"",
-           '<- ',
+           "Values may have change from the initial call values.",
+           'return ',
            'R=> 5',
            'end',
+           'Return class: Fixnum',
            'Return value: 5',
-           'Return value was: 5',
+           'Old value was: 5',
            'New value is: 10',
-           'Trace events we may stop on:',
-           "\tbrkpt, line",
+           "Trace events we may stop on:\n----------------------------",
+           '  line',
            'line ',
            'z = 3',
            '10',
            'line ',
-           'd.stop']
+           'd.stop',
+           "line ",
+           'RubyVM::Frame::get.trace_off = true'
+          ]
     compare_output(out, d, cmds)
 
-    # Try C function
+    # Try a C function
     cmds = [
+            'set max width 30',
             'set different off',
             'set events c_call, c_return',
             'step',
             'info args',
             'step',
-            'info return',
-            'set return "abc"',
             'set events line',
             'step',
             'pr result',
@@ -73,28 +79,27 @@ class TestRaise < Test::Unit::TestCase
     a = 1
     result = File.basename('/a/b.c')
     ##############################
-    d.stop # ({:remove => true})
+    d.stop
     out = ["line ",
            "a = 1",
+           'max width is 30.',
            'different is off.',
-           "Trace events we may stop on:",
-           '----------------------------',
-           "\tbrkpt, c_call, c_return",
-           "CFUNC File#basename(\"/a/b.c\")",
-           "C> ",
+           "Trace events we may stop on:\n----------------------------",
+           "  c_call    c_return",
+           "c_call ",
            "result = File.basename('/a/b.c')",
            "1: \"/a/b.c\"",
-           "<C ",
+           "c_return ",
            "R=> \"b.c\"",
            "result = File.basename('/a/b.c')",
-           "Return value: \"b.c\"",
-           "Return value was: \"b.c\"",
-           "New value is: \"abc\"",
-           "Trace events we may stop on:",
-           "\tbrkpt, line",
+           "Trace events we may stop on:\n----------------------------",
+           "  line",
            "line ",
-           "d.stop # ({:remove => true})",
-           '"abc"']
+           'd.stop',
+           "\"b.c\"",
+           "line ",
+           "RubyVM::Frame::get.trace_off = true",
+          ]
     compare_output(out, d, cmds)
   end
 
