@@ -1,6 +1,10 @@
 #!/usr/bin/env rake
 # -*- Ruby -*-
 require 'rubygems'
+require 'rbconfig'
+raise RuntimeError,
+'This package is for MRI Ruby 2.1.5 with debugger runtime support!' unless
+  defined? RubyVM::Frame and  RbConfig::CONFIG.member?('rb-threadframe')
 
 ROOT_DIR = File.dirname(__FILE__)
 GEM_PROG = ENV['GEM_PROG'] || 'gem'
