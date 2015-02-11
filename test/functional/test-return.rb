@@ -9,7 +9,7 @@ class TestRaise < Test::Unit::TestCase
   def test_return
 
     cmds = [
-            'set max width 30',
+            'set max width 80',
             'set different off',
             'set events call, return',
             'step-',
@@ -34,7 +34,7 @@ class TestRaise < Test::Unit::TestCase
     d.stop
     out = ['line ',
            'x = 1',
-           'max width is 30.',
+           'max width is 80.',
            'different is off.',
            "Trace events we may stop on:\n----------------------------",
            '  call    return',
@@ -63,7 +63,7 @@ class TestRaise < Test::Unit::TestCase
 
     # Try a C function
     cmds = [
-            'set max width 30',
+            'set max width 80',
             'set different off',
             'set events c_call, c_return',
             'step',
@@ -82,7 +82,7 @@ class TestRaise < Test::Unit::TestCase
     d.stop
     out = ["line ",
            "a = 1",
-           'max width is 30.',
+           'max width is 80.',
            'different is off.',
            "Trace events we may stop on:\n----------------------------",
            "  c_call    c_return",
