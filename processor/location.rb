@@ -143,7 +143,8 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       ev        = if @event.nil? || 0 != @frame_index
                       '  '
                   else
-                      (EVENT2ICON[@event] || @event)
+                      @event
+                      # (EVENT2ICON[@event] || @event)
                   end
       if @frame
           source_container = frame_container(@frame, false)

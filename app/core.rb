@@ -143,6 +143,11 @@ class Trepan
         # A trace-hook processor for 'trace var'
         def trace_var_processor(var_name, value)
             frame = RubyVM::Frame.get
+            frame.trace_off = true
+            frame.prev.trace_off = true
+            # We need to skip this frame and the lamdba that in trace_var()
+            # and a C call() in that lambda. See command/watchg.rb
+            frame = RubyVM::Frame.get(3)
 
             @step_count = 0  # Make event processor stop
             event_processor(frame,  'trace-var', [var_name, value])
