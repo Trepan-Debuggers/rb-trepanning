@@ -76,18 +76,6 @@ class Trepan
             @traced_vars     = {}
             @different_pos   = @settings[:different]
 
-            # FIXME: Rework using a general "set substitute file" command and
-            # a global default profile which gets read.
-            file = File.expand_path(File.join(File.dirname(__FILE__),
-                                              %w(data prelude.rb)))
-            LineCache::cache(file)
-            LineCache::remap_file('<internal:prelude>', file)
-            file = File.expand_path(File.join(File.dirname(__FILE__),
-                                              %w(data custom_require.rb)))
-            LineCache::cache(file)
-            LineCache::remap_file('<internal:lib/rubygems/custom_require>',
-                                  file)
-
             # Start with empty thread and frame info.
             frame_teardown
 

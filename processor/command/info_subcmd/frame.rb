@@ -8,7 +8,7 @@ class Trepan::Subcommand::InfoFrame < Trepan::Subcommand
     unless defined?(HELP)
         Trepanning::Subcommand.set_name_prefix(__FILE__, self)
         HELP = <<-EOH
-#{CMD}
+**#{CMD}**
 
 Show information about the selected frame. The fields we list are:
 
@@ -16,24 +16,28 @@ Show information about the selected frame. The fields we list are:
 * The actual number of arguments passed in
 * The 'arity' or permissible number of arguments passed it. -1 indicates
   variable number
-* The frame "type", e.g. TOP, METHOD, BLOCK, EVAL, CFUNC etc.
+* The frame "type", e.g. `TOP`, `METHOD`, `BLOCK`, `EVAL`, `CFUNC`, etc.
 * The return value if the frame is at a return point
 * The PC offset we are currently at; May be omitted of no instruction
   sequence
 
 A backtrace shows roughly the same information in a more compact form.
 
-Example form inside File.basename('foo')
+Example:
+---------
 
-Frame basename
-  file  : /tmp/c-func.rb # actually location of caller
-  line  : 2  # inherited from caller
-  argc  : 1  # One out argument supplied: 'foo'
-  arity : -1 # Variable number of args, can have up to 2 arguments.
-  type  : CFUNC  (A C function)
+from inside File.basename('foo'):
 
+    Frame basename
+    file  : /tmp/c-func.rb # actually location of caller
+    line  : 2  # inherited from caller
+    argc  : 1  # One out argument supplied: 'foo'
+    arity : -1 # Variable number of args, can have up to 2 arguments.
+    type  : CFUNC  (A C function)
 
-See also: backtrace
+See also:
+---------
+`backtrace`, `info files`, `info program`
 EOH
         MIN_ABBREV   = 'fr'.size # Note we have "info file"
         MIN_ARGS     = 0

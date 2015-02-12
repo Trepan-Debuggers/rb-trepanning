@@ -5,11 +5,20 @@ require_relative '../base/subcmd'
 class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
     unless defined?(HELP)
         Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-        HELP         = 'Information about debugged program and its environment'
+        SHORT_HELP   = 'Information about debugged program and its environment'
         MIN_ARGS     = 0
         MAX_ARGS     = 0
         MIN_ABBREV   = 'pr'.size
         NEED_STACK   = true
+        HELP = <<-EOH
+**#{CMD}**
+
+Show information about the debugged program and its environment.
+
+See also:
+---------
+`info frame`, `info file`
+EOH
     end
 
     def run(args)

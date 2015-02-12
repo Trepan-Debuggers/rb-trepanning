@@ -7,7 +7,7 @@ class TestRemap < Test::Unit::TestCase
   include FnTestHelper
 
   def test_remap
-    skip "Not sure what this one was supposed to test - Investigate."
+      skip 'needs to be reworked'
     cmds = [
             'step',
             'list',
