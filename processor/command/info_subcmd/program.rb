@@ -22,7 +22,7 @@ EOH
     end
 
     def run(args)
-        frame = @proc.frame
+        frame = @proc.top_frame
         m = 'Program stop event: %s' % @proc.event
         m +=
             if frame.iseq
@@ -32,11 +32,14 @@ EOH
                 '.'
             end
         msg m
-        if 'return' == @proc.event
-            msg 'R=> %s' % @proc.frame.sp(1).inspect
-        elsif 'raise' == @proc.event.to_s
+        if :return == @proc.event
+            msg 'R=> %s' % frame.sp(1).inspect
+        elsif :raise == @proc.event
             exc = @proc.core.trace_point.raised_exception
             msg "#{exc.class}: #{exc}"
+            if frame.iseq.catch_table_size == 0
+                msg "Warning: exception raised is non-local!"
+            end
         end
 
         if @proc.brkpt
@@ -48,11 +51,11 @@ EOH
 end
 
 if __FILE__ == $0
-  # Demo it.
-  require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
+    # Demo it.
+    require_relative '../../mock'
+    name = File.basename(__FILE__, '.rb')
 
-  # FIXME: DRY the below code
-  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoProgram, false)
-  cmd.run(cmd.prefix)
+    # FIXME: DRY the below code
+    cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoProgram, false)
+    cmd.run(cmd.prefix)
 end
