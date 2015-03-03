@@ -28,8 +28,9 @@ EOF
   spec.name         = 'trepanning'
   spec.license      = 'MIT'
   spec.platform     = Gem::Platform::RUBY
+  spec.required_ruby_version = '~> 2.1.5'
   spec.require_path = 'lib'
-  spec.summary      = 'Modular Ruby 2.1 Debugger'
+  spec.summary      = 'Ruby Debugger for enhanced Ruby runtime'
   spec.version      = Trepan::VERSION
 
   # Make the readme file the start page for the generated html

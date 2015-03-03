@@ -3,7 +3,8 @@
 require 'rubygems'
 require 'rbconfig'
 raise RuntimeError,
-'This package is for MRI Ruby 2.1.5 with debugger runtime support!' unless
+'This package is for MRI Ruby 2.1.5 with debugger runtime support!\nDownload from ' +
+'http://downloads.sourceforge.net/project/ruby-debugger-runtime/ruby-2.1/ruby-2.1.5-p273-debugger-1.0.tar.gz' unless
   defined? RubyVM::Frame and  RbConfig::CONFIG.member?('rb-threadframe')
 
 ROOT_DIR = File.dirname(__FILE__)

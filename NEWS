@@ -1,3 +1,6 @@
+(0.2.0) Mar 3, 2015
+
+- Make it work on Ruby 2.1.5
 (0.1.6) Nov 25, 2012
 - Make it work on Ruby 1.9.3 p327
 - Incompatible change: Remove aliases 'd' and 'u' for down and up
@@ -8,7 +11,7 @@
 - Internal RubyVM::ThreadFrame -> RubyVM::Frame
 
 Oct 27,  2011  (0.1.4)
-- Add debugger commands: 
+- Add debugger commands:
   * info iv         (is in ruby-debug)
   * info variables  (is in ruby-debug)
   * info locals as alternative to "info variables locals" (is in gdb)
@@ -48,7 +51,7 @@ June 12, 2011  (0.1.3) Fleetwood Release
 - Add options from ruby-debug:
   * --cd
   * --include
-  * --require 
+  * --require
   * --debug
 - fix bugs, and improve help
 
@@ -64,7 +67,7 @@ March 15, 2011  (0.1.1)
   * VM offsets are now specified via @ rather than o or O
   * Filenames can be quoted and blanks and characters inside escaped
 - Document command syntax by adding it as a new category with sub help
-- More controlled parsing of method names 
+- More controlled parsing of method names
 - Add eval (no args) and eval? to run current source line or source line
   eval? strips:
    * leading "if", "elsif", "while", "until" "return" or "case", or "unless"
@@ -72,17 +75,17 @@ March 15, 2011  (0.1.1)
 - Save and restore some debugger state across a restart
 - Redo command completion
 - "disassemble" command: allow disassembly of specified line numbers
-- GNU Readline: 
-  * Start GNU readline tab (command) completion. 
+- GNU Readline:
+  * Start GNU readline tab (command) completion.
   * Save and restore command history
   * add --readline and --no-readline options to trepanx
 - Macros can return more than one command now
-- help 
+- help
   * "help macros" shows all macro names
   * "help aliases" shows all alias names
   * "help *" lists macros and aliases now
 - start "info line"
-- "info file" has/shows File::stat()'s mtime and ctime 
+- "info file" has/shows File::stat()'s mtime and ctime
 - be able to pass --verbose to ruby to rake
 
 Feb 1, 2011 (0.1.0)
@@ -90,7 +93,7 @@ Feb 1, 2011 (0.1.0)
 * Add Syntax highlighting on Ruby and YARV listings and locations
 * Section highlighting on some commands; italics on error if term mode
 * Use ;; to allow multiple debugger commands. Document debugger command syntax
-* include data files for debugging custom-require 
+* include data files for debugging custom-require
 * Numerous bug fixes and code cleanups
 
 Dec 25, 2010 (0.0.9)
@@ -103,10 +106,10 @@ Dec 10, 2010 (0.0.8) Phel. Mad release
 * debugger { code here }  work better
 * source -q silences all prompt and debugger messages
 * Show instruction-sequence options on demand
-* Nuke debugger set_restart => true. We now have a more reliable way to 
+* Nuke debugger set_restart => true. We now have a more reliable way to
   do this. Rubinius showing the way here.
 * Improvements to the "list" command.
-* Get/show eval string using rb-threadframe patch 
+* Get/show eval string using rb-threadframe patch
 
 Oct 27, 2010 (0.0.6)
 
@@ -122,11 +125,11 @@ First release under the name trepanning
 
 * Add gdb-like "directory" command
 * Add "set max list" to set number of lines to list by default.
-* "break line" searches parent instruction sequences in the same file. This 
+* "break line" searches parent instruction sequences in the same file. This
   should allow more line numbers to be breakpointable.
 * remap file name in custom_requre.rb
 * Some small bug fixes
-  
+
 Sept 13, 2010
 
 First public (gemcutter) release.
