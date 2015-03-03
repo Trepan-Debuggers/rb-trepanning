@@ -16,7 +16,7 @@ class Trepan::ScriptInterface < Trepan::Interface
     :confirm_val    => false,
     :verbose        => false
   } unless defined?(DEFAULT_OPTS)
-  
+
   def initialize(script_name, out=nil, opts={})
 
     @opts = DEFAULT_OPTS.merge(opts)
@@ -24,7 +24,7 @@ class Trepan::ScriptInterface < Trepan::Interface
     at_exit { finalize }
     @script_name     = script_name
     @input_lineno    = 0
-    @input           = opts[:input] || 
+    @input           = opts[:input] ||
       Trepan::UserInput.open(script_name, :line_edit => false)
     @buffer_output   = []
     unless @opts[:verbose] or out
@@ -35,7 +35,7 @@ class Trepan::ScriptInterface < Trepan::Interface
 
   # Closes input only.
   def close
-    @input.close
+    # @input.close unless @input.closed?
   end
 
   # Called when a dangerous action is about to be done, to make
@@ -48,7 +48,7 @@ class Trepan::ScriptInterface < Trepan::Interface
   end
 
   # Common routine for reporting debugger error messages.
-  # 
+  #
   def errmsg(msg, prefix="*** ")
     #  self.verbose shows lines so we don't have to duplicate info
     #  here. Perhaps there should be a 'terse' mode to never show
@@ -67,8 +67,8 @@ class Trepan::ScriptInterface < Trepan::Interface
   end
 
   def interactive? ; false end
-    
-  # Script interface to read a command. `prompt' is a parameter for 
+
+  # Script interface to read a command. `prompt' is a parameter for
   # compatibilty and is ignored.
   def read_command(prompt='')
     @input_lineno += 1
@@ -81,12 +81,12 @@ class Trepan::ScriptInterface < Trepan::Interface
     return line
   end
 
-  # Script interface to read a line. `prompt' is a parameter for 
+  # Script interface to read a line. `prompt' is a parameter for
   # compatibilty and is ignored.
   #
   # Could decide make this look for interactive input?
   def readline(prompt='')
-    begin 
+    begin
       return input.readline().chomp
     rescue EOFError
       @eof = true

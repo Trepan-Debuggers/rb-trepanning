@@ -4,5 +4,5 @@ line debugger-stop.rb:10 @1954
 Foo::five
 (trepan): Program stop event: line; PC offset 100 <top debugger-stop.rb>
 Program terminated, type q to quit
-:/
+post-mortem
 (trepan:pm): trepan: That's all, folks...

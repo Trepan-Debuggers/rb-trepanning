@@ -26,7 +26,6 @@ EOH
   end
 
   def run(args)
-      p args
       # FIXME handle c-return
       # unless %w(return c-return).member?(@proc.event)
       if args.size < 3

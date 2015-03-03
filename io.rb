@@ -2,11 +2,11 @@
 # classes to support communication to and from the debugger.  This
 # communcation might be to/from another process or another computer.
 # And reading may be from a debugger command script.
-# 
+#
 # For example, we'd like to support Sockets, and serial lines and file
 # reading, as well a readline-type input. Encryption and Authentication
 # methods might decorate some of the communication channels.
-# 
+#
 # Some ideas originiated as part of Matt Fleming's 2006 Google Summer of
 # Code project.
 
@@ -14,7 +14,7 @@ class Trepan
 
   NotImplementedMessage = 'This method must be overriden in a subclass' unless
     defined?(NotImplementedMessage)
-  
+
   class InputBase
     attr_reader   :input
     attr_reader   :line_edit
@@ -30,10 +30,10 @@ class Trepan
     end
 
     def close
-      @input.close unless @input.closed?
+        @input.close unless @input.closed?
     end
 
-    def eof? 
+    def eof?
       begin
         @input.eof?
       rescue IOError
@@ -41,7 +41,7 @@ class Trepan
       end
     end
 
-    # Read a line of input. EOFError will be raised on EOF.  
+    # Read a line of input. EOFError will be raised on EOF.
     #
     #   Note that we don't support prompting first. Instead, arrange
     #  to call Trepan::Output.write() first with the prompt. If
@@ -69,7 +69,7 @@ class Trepan
       @eof = true
     end
 
-    def eof? 
+    def eof?
       @eof
     end
 
@@ -77,7 +77,7 @@ class Trepan
       @output.flush
     end
 
-    # Use this to set where to write to. output can be a 
+    # Use this to set where to write to. output can be a
     # file object or a string. This code raises IOError on error.
     def write(*args)
       @output.print(*args)
@@ -95,17 +95,17 @@ class Trepan
   # handled by the same channel, e.g. a socket or tty.
   #
   class InOutBase
-    
+
     def initialize(inout, opts={})
       @opts = DEFAULT_OPTS.merge(opts)
       @inout = inout
     end
-    
+
     def close
       @inout.close() if @inout
     end
-    
-    def eof? 
+
+    def eof?
       begin
         @input.eof?
       rescue IOError
@@ -116,9 +116,9 @@ class Trepan
     def flush
       @inout.flush
     end
-    
-    # Read a line of input. EOFError will be raised on EOF.  
-    # 
+
+    # Read a line of input. EOFError will be raised on EOF.
+    #
     # Note that we don't support prompting first. Instead, arrange to
     # call DebuggerOutput.write() first with the prompt. If `use_raw'
     # is set raw_input() will be used in that is supported by the
@@ -128,15 +128,15 @@ class Trepan
       @input.readline
     end
 
-    # Use this to set where to write to. output can be a 
+    # Use this to set where to write to. output can be a
     # file object or a string. This code raises IOError on error.
-    # 
-    # Use this to set where to write to. output can be a 
+    #
+    # Use this to set where to write to. output can be a
     # file object or a string. This code raises IOError on error.
     def write(*args)
       @inout.write(*args)
     end
-    
+
     # used to write to a debugger that is connected to this
     # server; `str' written will have a newline added to it
     def writeline( msg)
@@ -145,4 +145,3 @@ class Trepan
   end
 
 end
-

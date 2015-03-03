@@ -35,21 +35,21 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     }
   end
 
-  def canonic_container(container)
-    [container[0], canonic_file(container[1])]
-  end
-
-  def canonic_file(filename, resolve=true)
-    # For now we want resolved filenames
-    if @settings[:basename]
-      File.basename(filename)
-    elsif resolve
-      filename = LineCache::map_file(filename)
-      File.expand_path(Pathname.new(filename).cleanpath.to_s)
-    else
-      filename
+    def canonic_container(container)
+        [container[0], canonic_file(container[1])]
     end
-  end
+
+    def canonic_file(filename, resolve=true)
+        # For now we want resolved filenames
+        if @settings[:basename]
+            File.basename(filename)
+        elsif resolve
+            filename = LineCache::map_file(filename)
+            File.expand_path(Pathname.new(filename).cleanpath.to_s)
+        else
+            filename
+        end
+    end
 
   # Return the text to the current source line.
   # FIXME: loc_and_text should call this rather than the other
@@ -103,38 +103,41 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
 
   def loc_and_text(loc, frame, line_no, source_container,
                    opts = {
-                     :reload_on_change => @settings[:reload],
-                     :output => @settings[:highlight]
+                       :reload_on_change => @settings[:reload],
+                       :output => @settings[:highlight]
                    })
-    found_line = true
-    ## FIXME: condition is too long.
-    if source_container[0] == 'string' && frame.iseq && frame.iseq.eval_source
-      file = LineCache::map_iseq(frame.iseq)
-      text = LineCache::getline(frame.iseq, line_no, opts)
-      loc += " remapped #{canonic_file(file)}:#{line_no}"
-    elsif source_container[0] != 'file'
-      via = loc
-      while source_container[0] != 'file' && frame.prev do
-        frame            = frame.prev
-        source_container = frame_container(frame, false)
-      end
-      if source_container[0] == 'file'
-        line_no      = frame.source_location[0]
-        filename     = source_container[1]
-        loc         += " via #{canonic_file(filename)}:#{line_no}"
-        text         = line_at(filename, line_no, opts)
-        found_line   = false
-      end
-    else
-      container = source_container[1]
-      map_file, map_line = LineCache::map_file_line(container, line_no)
-      if [container, line_no] != [map_file, map_line]
-        loc += " remapped #{canonic_file(map_file)}:#{map_line}"
-      end
+      found_line = true
+      ## FIXME: condition is too long.
+      if source_container[0] == 'string' && frame.iseq && frame.iseq.eval_source
+          file = LineCache::map_iseq(frame.iseq)
+          text = LineCache::getline(frame.iseq, line_no, opts)
+          loc += " remapped #{canonic_file(file)}:#{line_no}"
+      elsif source_container[0] != 'file'
+          via = loc
+          # while not (source_container[0] == 'file' and text_file?(source_container[1])) and
+          while not (source_container[0] == 'file') and
+                  frame.prev do
+              frame            = frame.prev
+              source_container = frame_container(frame, false)
+          end
+          if source_container[0] == 'file'
+              sloc = frame.source_location
+              line_no = sloc && sloc.size > 0 ? sloc[0] : '?'
+              filename     = source_container[1]
+              loc         += " via #{canonic_file(filename)}:#{line_no}"
+              text         = line_at(filename, line_no, opts)
+              found_line   = false
+          end
+      else
+          container = source_container[1]
+          map_file, map_line = LineCache::map_file_line(container, line_no)
+          if [container, line_no] != [map_file, map_line]
+              loc += " remapped #{canonic_file(map_file)}:#{map_line}"
+          end
 
-      text  = line_at(container, line_no, opts)
-    end
-    [loc, line_no, text, found_line]
+          text  = line_at(container, line_no, opts)
+      end
+      [loc, line_no, text, found_line]
   end
 
   def print_location
@@ -143,7 +146,8 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       ev        = if @event.nil? || 0 != @frame_index
                       '  '
                   else
-                      (EVENT2ICON[@event] || @event)
+                      @event
+                      # (EVENT2ICON[@event] || @event)
                   end
       if @frame
           source_container = frame_container(@frame, false)
@@ -166,6 +170,9 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
           elsif @event == :raise
               exc = @core.trace_point.raised_exception
               msg "#{exc.class}: #{exc}"
+              if @frame.iseq.catch_table_size == 0
+                  msg "Warning: exception raised is non-local!"
+              end
            end
       end
 
@@ -218,7 +225,7 @@ if __FILE__ == $0 && caller.size == 0
   proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
   proc.instance_variable_set('@settings', {})
   proc.frame_initialize
-  proc.frame_setup(RubyVM::Frame.current)
+  proc.frame_setup(RubyVM::Frame.get)
   proc.frame_initialize
 
   puts proc.canonic_file(__FILE__)
@@ -227,7 +234,7 @@ if __FILE__ == $0 && caller.size == 0
   puts proc.current_source_text
   xx = eval <<-END
      proc.frame_initialize
-     proc.frame_setup(RubyVM::Frame.current)
+     proc.frame_setup(RubyVM::Frame.get)
      puts proc.current_source_text
   END
 end

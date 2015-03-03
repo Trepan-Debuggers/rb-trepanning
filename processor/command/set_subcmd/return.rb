@@ -59,7 +59,7 @@ EOH
           msg("C functions not handled yet")
           return
       end
-      @proc.commands['set'].run(["set", "sp", index.to_s, *args[2..-1]])
+      @proc.commands['set'].run(['set', 'register', 'sp', index.to_s, *args[2..-1]])
   end
 end
 
