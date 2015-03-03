@@ -17,6 +17,9 @@ Some of the core debugger concepts have been rethought.
 This version works only with a patched version of Ruby 2.1.
 EOF
   spec.add_dependency('redcarpet', '~> 3.2')
+  spec.add_dependency('columnize', '~> 0.9')
+  spec.add_dependency('rb-threadframe', '~> 0.50')
+  spec.add_dependency('linecache-tf', '~> 1.2')
   spec.add_development_dependency('diff-lcs', '~> 0') # For testing only
   spec.author       = 'R. Bernstein'
   spec.bindir       = 'bin'

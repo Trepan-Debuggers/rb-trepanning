@@ -39,7 +39,7 @@ class Trepan
             bytes = 4096 if bytes > 4096
             s = (File.read(file, bytes) || "")
             s = s.encode('US-ASCII', :undef => :replace).split(//)
-            return ((s.size - s.grep(" ".."~").size) / s.size.to_f) > 0.90
+            return (s.grep(" ".."~").size.to_f / s.size.to_f) > 0.85
         end
 
         # Check that arg is an Integer between opts[:min_value] and
