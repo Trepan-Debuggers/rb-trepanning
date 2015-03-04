@@ -1,0 +1,13 @@
+line (gcd.rb:4 @2)
+def gcd(a, b)
+line (gcd.rb:18 @15)
+a, b = ARGV[0..1].map {|arg| arg.to_i}
+ENTERING NESTED DEBUGGER
+------------------------
+call (gcd.rb:6 @2)
+if a > b
+Local variables for METHOD Object#gcd(a, b):
+--------------------------------------------
+2: b = 2 (Fixnum)
+3: a = 2 (Fixnum)
+trepan: That's all, folks...
