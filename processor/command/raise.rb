@@ -1,24 +1,24 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 class Trepan::Command::RaiseCommand < Trepan::Command
 
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [exception-name]
+**#{NAME}** [*exception-name*]
 
-Raise an EXCEPTION-NAME in the debugged program. If no exception name
-is given, raise RuntimeError.
+Raise an *execption-name* in the debugged program. If no exception name
+is given, raise `RuntimeError`.
     HELP
 
     CATEGORY     = 'running'
     MAX_ARGS     = 1  # Need at most this many
     SHORT_HELP  = 'Raise an exception in the debugged program'
   end
-    
+
   # This method runs the command
   def run(args)
-    exception = 
+    exception =
       if args.size > 1
         except_str = args[1..-1].join(' ')
         # Normally would need x.respond_to? && ..

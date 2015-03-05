@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/condition'
 class Trepan::Command::StepCommand < Trepan::Command
@@ -11,7 +11,7 @@ class Trepan::Command::StepCommand < Trepan::Command
 #{NAME} until EXPRESSION
 #{NAME} thread
 #{NAME} to METHOD-NAME
-#{NAME} over 
+#{NAME} over
 #{NAME} out
 
 Execute the current line, stopping at the next event.  Sometimes this
@@ -37,7 +37,8 @@ call. ('finish' will run run until the return for that call.)
 If no suffix is given, the debugger setting 'different' determines
 this behavior.
 
-Examples: 
+Examples:
+--------
   #{NAME}        # step 1 event, *any* event obeying 'set different' setting
   #{NAME} 1      # same as above
   #{NAME}+       # same but force stopping on a new line
@@ -49,7 +50,7 @@ Examples:
   #{NAME}>       # step call and c-call events
   #{NAME}<       # step only return and c-return events
   #{NAME} call line   # step line *and* call events
-  #{NAME}<>      # same as step call c-call return c-return 
+  #{NAME}<>      # same as step call c-call return c-return
   #{NAME} until a > b
   #{NAME} over   # same as 'next'
   #{NAME} out    # same as 'finish'
@@ -59,14 +60,16 @@ Examples:
 Related and similar is the 'next' (step over) and 'finish' (step out)
 commands.  All of these are slower than running to a breakpoint.
 
-See also the commands:
+See also:
+---------
 'skip', 'jump' (there's no 'hop' yet), 'continue', 'return' and
 'finish' for other ways to progress execution.
     HELP
 
-    ALIASES      = %w(s step+ step- step< step> step<> step! s> s< s+ s- 
+    ALIASES      = %w(s step+ step- step< step> step<> step! s> s< s+ s-
                       s<> s! s=)
     CATEGORY     = 'running'
+    NEED_STACK   = true
     NEED_RUNNING = true
     SHORT_HELP   = 'Step program (possibly entering called functions)'
 
@@ -116,15 +119,15 @@ See also the commands:
       else
         count_str = args[1]
         int_opts = {
-          :msg_on_error => 
-          "The 'step' command argument must eval to an integer. Got: %s" % 
+          :msg_on_error =>
+          "The 'step' command argument must eval to an integer. Got: %s" %
           count_str,
           :min_value => 1
         }.merge(opts)
         count = @proc.get_an_int(count_str, int_opts)
         return unless count
         # step 1 is core.step_count = 0 or "stop next event"
-        step_count = count - 1  
+        step_count = count - 1
       end
     end
     @proc.step(step_count, opts, condition)
