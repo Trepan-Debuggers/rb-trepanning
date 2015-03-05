@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 # The main "driver" class for a command processor. Other parts of the
 # command class and debugger command objects are pulled in from here.
 
@@ -10,9 +10,9 @@ end
 require_relative 'app/brkptmgr'
 
 class Trepan
-  class CmdProcessor < VirtualCmdProcessor
+    class CmdProcessor < VirtualCmdProcessor
 
-    # SEE ALSO attr's in require_relative's of loop above.
+        # SEE ALSO attr's in require_relative's of loop above.
 
     attr_reader   :cmd_argstr      # Current command args, a String.
                                    # This is current_command with the command

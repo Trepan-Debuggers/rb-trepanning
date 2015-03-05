@@ -19,9 +19,9 @@ require_relative '../interface/server'   # server interface (remote debugging)
 # generated. Each value is an array of instruction sequences that
 # share that name.
 SCRIPT_ISEQS__ = {} unless
-  defined?(SCRIPT_ISEQS__) && SCRIPT_ISEQS__.is_a?(Hash)
+    defined?(SCRIPT_ISEQS__) && SCRIPT_ISEQS__.is_a?(Hash)
 ISEQS__        = {} unless
-  defined?(ISEQS__) && ISEQS__.is_a?(Hash)
+    defined?(ISEQS__) && ISEQS__.is_a?(Hash)
 
 class Trepan
 

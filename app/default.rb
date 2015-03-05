@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 # A place for the default settings
 class Trepan
 
@@ -26,6 +26,7 @@ class Trepan
 
   # Default settings for Trepan run from the command line.
   DEFAULT_CMDLINE_SETTINGS = {
+    :basename => false,
     :cmdfiles => [],  # Initialization command files to run
     :client   => false, # Attach to out-of-process program?
     :nx       => false, # Don't run user startup file (e.g. .trepanrc)
