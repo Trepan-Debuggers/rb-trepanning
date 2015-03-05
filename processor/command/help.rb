@@ -1,6 +1,7 @@
 # Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/complete'
+
 class Trepan::Command::HelpCommand < Trepan::Command
     unless defined?(HELP)
         NAME = File.basename(__FILE__, '.rb')
@@ -11,10 +12,6 @@ Without argument, print the list of available debugger commands.
 
 When an argument is given, it is first checked to see if it is command
 name. For example, `help up` gives help on the `up` debugger command.
-
-If the environment variable *$PAGER* is defined, the file is
-piped through that command.  You'll notice this only for long help
-output.
 
 Some commands like `info`, `set`, and `show` can accept an
 additional subcommand to give help just about that particular
@@ -42,9 +39,21 @@ info line command.
         MARKDOWN_EXTENSION='.md'
     end
 
+    def command_names(proc)
+        if proc.frame
+            proc.commands.keys
+        else
+            proc.commands.select {
+                |key, cmd|
+                !cmd.class.const_get(:NEED_STACK)
+                    }.keys
+        end.sort
+    end
+
+
     def complete(prefix)
         matches = Trepan::Complete.complete_token(CATEGORIES.keys + %w(* all) +
-                                                  @proc.commands.keys, prefix)
+                                                  command_names(@proc), prefix)
         aliases = Trepan::Complete.complete_token_filtered(@proc.aliases, prefix,
                                                            matches)
         (matches + aliases).sort
@@ -87,8 +96,8 @@ Type "help" followed by a command name for full documentation.
         if args.size > 1
             cmd_name = args[1]
             if cmd_name == '*'
-                section 'All command names:'
-                msg columnize_commands(@proc.commands.keys.sort)
+                section 'Currently-available command names:'
+                msg columnize_commands(command_names(@proc))
                 show_aliases  unless @proc.aliases.empty?
                 show_macros unless @proc.macros.empty?
             elsif cmd_name =~ /^aliases$/i
@@ -116,7 +125,14 @@ Type "help" followed by a command name for full documentation.
                     cmd_obj.respond_to?(:help) ? cmd_obj.help(args) :
                     cmd_obj.class.const_get(:HELP)
                 if help_text
-                    msg(help_text)
+                    # FIXME: until we get the entire help cut over to markdown,
+                    # we'll determine whether to use it or not based on whether the first
+                    # character is '*'.
+                    if help_text[0..0] == '*'
+                        markdown help_text
+                    else
+                        msg(help_text)
+                    end
                     if cmd_obj.class.constants.member?(:ALIASES) and
                             args.size == 2
                         markdown("**Aliases:** " +

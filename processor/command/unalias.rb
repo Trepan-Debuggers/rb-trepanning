@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/complete'
 
@@ -6,26 +6,28 @@ class Trepan::Command::UnaliasCommand < Trepan::Command
 
   unless defined?(HELP)
     HELP = <<-HELP
-unalias ALIAS
+**unalias** *alias*
 
-Remove alias ALIAS
+Remove alias *alias*.
 
-See also 'alias'.
+See also:
+---------
+`alias` and `show alias`.
 HELP
 
     CATEGORY      = 'support'
     MIN_ARGS      = 1
     # MAX_ARGS      = 1  # Need at most this many
     NAME          = File.basename(__FILE__, '.rb')
-    NEED_STACK    = true
+    NEED_STACK    = false
     SHORT_HELP    = 'Remove an alias'
   end
-  
+
   def complete(prefix)
     Trepan::Complete.complete_token(@proc.aliases.keys, prefix)
   end
 
-  # Run command. 
+  # Run command.
   def run(args)
     args[1..-1].each do |arg|
       if @proc.aliases.member?(arg)
