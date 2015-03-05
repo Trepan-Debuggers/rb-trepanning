@@ -3,6 +3,7 @@
 require 'rubygems'
 
 ROOT_DIR = File.dirname(__FILE__)
+GEM_PROG = ENV['GEM_PROG'] || 'gem'
 Gemspec_filename='trepanning.gemspec'
 require_relative './app/options'
 
@@ -15,7 +16,7 @@ desc "Build the gem"
 task :package=>:gem
 task :gem=>:gemspec do
   Dir.chdir(ROOT_DIR) do
-    sh "gem build #{Gemspec_filename}"
+    sh "#{GEM_PROG} build #{Gemspec_filename}"
     FileUtils.mkdir_p 'pkg'
     FileUtils.mv gemspec.file_name, 'pkg'
   end
@@ -24,7 +25,7 @@ end
 desc 'Install the gem locally'
 task :install => :gem do
   Dir.chdir(ROOT_DIR) do
-    sh %{gem install --local pkg/#{gemspec.file_name}}
+    sh %{#{GEM_PROG} install --local pkg/#{gemspec.file_name}}
   end
 end
 
@@ -143,6 +144,11 @@ end
 desc 'Run functional tests in standalone mode.'
 task :'check:functional' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test functional)))
+end
+
+desc 'Run integration tests in standalone mode.'
+task :'check:functional' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test ingtegration)))
 end
 
 desc 'Run command parser grammar.'

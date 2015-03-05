@@ -10,13 +10,12 @@ Gem::Specification.new do |spec|
   spec.authors      = ['R. Bernstein']
   spec.date         = Time.now
   spec.description = <<-EOF
-A modular, testable, Ruby debugger using some of the best ideas from ruby-debug, other debuggers, and Ruby Rails.
+A Ruby debugger with both high and low-level debugging support.
 
-Some of the core debugger concepts have been rethought. As a result, some of this may be experimental.
+To provide the advanced features this version works only with a
+patched MRI Ruby 1.9.3 runtime.
 
-This version works only with a patched version of Ruby 1.9.2 or Ruby 1.9.3 and rb-threadframe.
-
-See also rbx-trepanning for a version that works with Rubinius.
+Versions also exist for Ruby 2.1.5 and 1.9.2.
 EOF
   spec.add_dependency('rb-threadframe', '~> 0.39', '>= 0.39.9')
   spec.add_dependency('rb-trace', '~> 0.5')
@@ -35,7 +34,7 @@ EOF
   spec.license      = 'GPL'
   spec.platform     = Gem::Platform::RUBY
   spec.require_path = 'lib'
-  spec.summary      = 'Modular Ruby 2.1 Debugger'
+  spec.summary      = 'Enhanced Ruby 1.9 Debugger'
   spec.version      = Trepan::VERSION
 
   # Make the readme file the start page for the generated html
