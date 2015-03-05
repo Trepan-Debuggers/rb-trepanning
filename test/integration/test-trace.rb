@@ -13,7 +13,7 @@ class TestTrace < Test::Unit::TestCase
     end
 
     def test_trepan_trace
-        opts = {:dbgr => '-x', :args => '3 5', :nocommand => true}
+        opts = {:dbgr => '-x --basename', :args => '3 5', :nocommand => true}
         if RbConfig::CONFIG['target_os'].start_with?('mingw')
             opts[:short_right] = 'trace-mingw'
         end

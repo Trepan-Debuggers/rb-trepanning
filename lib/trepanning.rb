@@ -79,6 +79,7 @@ class Trepan
     @settings[:core_opts][:cmdproc_opts] ||= {}
     @settings[:core_opts][:cmdproc_opts][:highlight] ||= settings[:highlight]
     @settings[:core_opts][:cmdproc_opts][:traceprint] = settings[:traceprint]
+    @settings[:core_opts][:cmdproc_opts][:basename] = settings[:basename]
 
     @core = Core.new(self, @settings[:core_opts])
 

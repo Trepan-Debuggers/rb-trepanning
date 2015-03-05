@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
-# Invoke debugger from the command line. 
+# Invoke debugger from the command line.
 require 'rbconfig' # For RbConfig.ruby
 require_relative '../app/run'
 require_relative '../app/options'
@@ -12,12 +12,12 @@ if File.basename(__FILE__) == File.basename($0)
   include Trepanning
 
   # One way to get local variables is to create a block which is run
-  # once.  
-  # 
+  # once.
+  #
   # Note however that since there are constants below, we can't
   # wrap all of this in a procedure as that would be defining
   # constants dynamically.
-  1.times do 
+  1.times do
     | ; trepan_path, program_to_debug |
     # options = DEFAULT_CMDLINE_SETTINGS.merge({}) seems to change up
     # DEFAULT_CMDLINE_SETTINGS when options[:key] is changed. The
@@ -32,7 +32,7 @@ if File.basename(__FILE__) == File.basename($0)
       trepan_path += '.cmd' unless trepan_path =~ /\.cmd$/i
     end
 
-    # FIXME: do we need to test defined? 
+    # FIXME: do we need to test defined?
     # FIXME: Should (some of) these be instance variables?
     Trepan::TREPAN_PATH  = trepan_path
 
@@ -49,12 +49,12 @@ if File.basename(__FILE__) == File.basename($0)
     end
 
     program_to_debug = (Trepan::PROG_UNRESOLVED_SCRIPT = ARGV.shift).dup
-    program_to_debug = whence_file(Trepan::PROG_UNRESOLVED_SCRIPT) unless 
+    program_to_debug = whence_file(Trepan::PROG_UNRESOLVED_SCRIPT) unless
       File.exist?(Trepan::PROG_UNRESOLVED_SCRIPT)
     Trepan::PROG_SCRIPT = program_to_debug
 
     opts = {}
-    %w(cmdfiles highlight initial_dir host nx port post_mortem
+    %w(basename cmdfiles highlight initial_dir host nx port post_mortem
        readline server traceprint
       ).each do |opt|
       opts[opt.to_sym] = options[opt.to_sym]

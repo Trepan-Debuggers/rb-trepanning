@@ -32,8 +32,6 @@ end
 <- (gcd.rb:16 @88)
 R=> 1
 end
-<= (gcd.rb:16 @88)
-end
 The GCD of 3 and 5 is 1
 <= (gcd.rb:19 @73)
 puts "The GCD of %d and %d is %d" % [a, b, gcd(a, b)]
