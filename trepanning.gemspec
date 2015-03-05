@@ -10,11 +10,12 @@ Gem::Specification.new do |spec|
   spec.authors      = ['R. Bernstein']
   spec.date         = Time.now
   spec.description = <<-EOF
-A modular, testable, Ruby debugger using some of the best ideas from ruby-debug, other debuggers, and Ruby Rails.
+A Ruby debugger with both high and low-level debugging support.
 
-Some of the core debugger concepts have been rethought.
+To provide the advanced features this version works only with a
+patched MRI Ruby 2.1.5 runtime.
 
-This version works only with a patched version of Ruby 2.1.
+This version works only with a patched version of Ruby 2.1.5
 EOF
   spec.add_dependency('redcarpet', '~> 3.2')
   spec.add_dependency('columnize', '~> 0.9')
@@ -33,7 +34,7 @@ EOF
   spec.platform     = Gem::Platform::RUBY
   spec.required_ruby_version = '~> 2.1.5'
   spec.require_path = 'lib'
-  spec.summary      = 'Ruby Debugger for enhanced Ruby runtime'
+  spec.summary      = 'Enhanced Ruby 2.1 Debugger'
   spec.version      = Trepan::VERSION
 
   # Make the readme file the start page for the generated html
