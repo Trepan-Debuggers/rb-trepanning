@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../breakpoint'
 require_relative '../../app/breakpoint'
@@ -10,18 +10,23 @@ class Trepan::Command::ConditionCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} BP_NUMBER CONDITION
+**#{NAME}** *bp-number* *condition*
 
-BP_NUMBER is a breakpoint number.  CONDITION is an expression which
-must evaluate to True before the breakpoint is honored.  If CONDITION
+*bp-number* is a breakpoint number.  *condition* is an expression which
+must evaluate true before the breakpoint is honored.  If *condition*
 is absent, any existing condition is removed; i.e., the breakpoint is
 made unconditional.
 
 Examples:
-   #{NAME} 5 x > 10  # Breakpoint 5 now has condition x > 10
-   #{NAME} 5         # Remove above condition
+---------
 
-See also "break", "enable" and "disable".
+    #{NAME} 5 x > 10  # Breakpoint 5 now has condition x > 10
+    #{NAME} 5         # Remove above condition
+
+See also:
+--------
+
+`break`, `enable` and `disable`.
     HELP
 
     ALIASES       = %w(cond)
@@ -37,7 +42,7 @@ See also "break", "enable" and "disable".
     bpnum = @proc.get_an_int(args[1])
     bp = @proc.breakpoint_find(bpnum)
     return unless bp
-    
+
     if args.size > 2
       condition = args[2..-1].join(' ')
       return unless valid_condition?(condition)
@@ -54,7 +59,7 @@ if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   cmd.proc.frame_setup(RubyVM::Frame::current)
-  
+
   cmd.run([cmd.name, '1'])
   cmdproc = dbgr.core.processor
   cmds = cmdproc.commands

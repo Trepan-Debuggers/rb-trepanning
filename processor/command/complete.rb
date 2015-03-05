@@ -1,4 +1,4 @@
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../load_cmds'
 class Trepan::Command::CompleteCommand < Trepan::Command
@@ -6,9 +6,12 @@ class Trepan::Command::CompleteCommand < Trepan::Command
   unless defined?(HELP)
     NAME          = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} COMMAND-PREFIX
+**#{NAME}** *command-prefix*
 
 List the completions for the rest of the line as a command.
+
+This is a gdb command. One use is an a front-end which supports
+completion. GNU Emacs for example has been known to use this.
     HELP
     CATEGORY      = 'support'
     NEED_STACK    = false
