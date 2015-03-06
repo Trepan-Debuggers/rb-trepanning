@@ -8,7 +8,7 @@ require 'optparse'
 class Trepan
   require_relative 'default'
 
-  VERSION = '0.2'
+  VERSION = '1.93.30'
   PROGRAM = 'trepan'
 
   def self.show_version

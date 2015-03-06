@@ -1,42 +1,44 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2012, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 
 class Trepan::Command::FinishCommand < Trepan::Command
 
-  unless defined?(HELP)
-    NAME = File.basename(__FILE__, '.rb')
-    HELP = <<-HELP
-#{NAME} [levels]
+    unless defined?(HELP)
+        NAME = File.basename(__FILE__, '.rb')
+        HELP = <<-HELP
+**#{NAME}** [*levels*]
 
 Continue execution until the program is about to:
 
-* leave the current function, or 
-* switch context via yielding back or finishing a block which was
-  yielded to. 
+* leave the current function, or
+* switch context via yielding back or finishing a block which was yielded to.
 
-Sometimes this is called 'step out'.
+Sometimes this is called "step out".
 
-When `levels' is specified, that many frame levels need to be
-popped. The default is 1.  Note that 'yield' and exceptions raised my
-reduce the number of stack frames. Also, if a thread is switched, we
-stop ignoring levels.
+When *levels* is specified, that many frame levels need to be
+popped. The default is 1.  Note that running a *yield* or raing an
+exception may reduce the number of stack frames. Also, if a thread is
+switched, we stop ignoring levels.
 
-'next>' is similar in that it stops at a return, but it doesn't
+`next>` is similar in that it stops at a return, but it doesn't
 guarantee the stack level is the same as or less than the current
-one. 
+one.
 
-See the break command if you want to stop at a particular point in a
-program. In general, '#{NAME}', 'step' and 'next' may slow a program down
-while 'break' will have less overhead.
+See also:
+--------
+
+The `break` command if you want to stop at a particular point in a
+program. In general, `#{NAME}`, `step` and `next` may slow a program
+down while `break` will have less overhead.
 
     HELP
     ALIASES      = %w(fin)
     CATEGORY     = 'running'
     # execution_set = ['Running']
 
-    # Need at most this many. 
-    MAX_ARGS     = 1   
+    # Need at most this many.
+    MAX_ARGS     = 1
     NEED_STACK   = true
     SHORT_HELP   = 'Step to end of current method (step out)'
   end
@@ -50,15 +52,15 @@ while 'break' will have less overhead.
     else
       count_str = args[1]
       opts = {
-        :msg_on_error => 
-        "The '#{NAME}' command argument must eval to an integer. Got: %s" % 
+        :msg_on_error =>
+        "The '#{NAME}' command argument must eval to an integer. Got: %s" %
         count_str,
         :min_value => 1
       }
       count = @proc.get_an_int(count_str, opts)
       return unless count
       # step 1 is core.level_count = 0 or "stop next event"
-      level_count = count - 1  
+      level_count = count - 1
     end
     if 0 == level_count and %w(return c-return yield leave).member?(@proc.event)
       errmsg "You are already at the requested return event."

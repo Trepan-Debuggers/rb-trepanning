@@ -15,12 +15,13 @@ A Ruby debugger with both high and low-level debugging support.
 To provide the advanced features this version works only with a
 patched MRI Ruby 1.9.3 runtime.
 
-Versions also exist for Ruby 2.1.5 and 1.9.2.
+For a version that works with Ruby 2.1.5, install a version
+starting with 2.15.
 EOF
   spec.add_dependency('rb-threadframe', '~> 0.39', '>= 0.39.9')
   spec.add_dependency('rb-trace', '~> 0.5')
   spec.add_dependency('linecache-tf', '~> 1.0')
-  spec.add_dependency('columnize', '~> 0.8')
+  spec.add_dependency('columnize', '~> 0.9')
   spec.add_dependency('redcarpet', '~> 3.2')
   spec.add_development_dependency('diff-lcs', '~> 0') # For testing only
   spec.author       = 'R. Bernstein'
@@ -31,10 +32,11 @@ EOF
   spec.has_rdoc     = true
   spec.homepage     = 'http://wiki.github.com/rocky/rb-trepanning'
   spec.name         = 'trepanning'
-  spec.license      = 'GPL'
+  spec.license      = 'MIT'
   spec.platform     = Gem::Platform::RUBY
+  spec.required_ruby_version = '~> 1.9.3'
   spec.require_path = 'lib'
-  spec.summary      = 'Enhanced Ruby 1.9 Debugger'
+  spec.summary      = 'Enhanced Ruby 1.9.3 Debugger'
   spec.version      = Trepan::VERSION
 
   # Make the readme file the start page for the generated html
