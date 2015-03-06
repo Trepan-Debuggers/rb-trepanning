@@ -28,44 +28,26 @@ Enter the debugger recursively on *ruby-code*.
 
     stack_diff = RubyVM::Frame.stack_size - frame.stack_size
 
-    # Ignore tracing in support routines:
-    # FIXME remvoe 1.9.3 hack
-    if '1.9.3' != RUBY_VERSION
-      tf = @proc.dbgr.trace_filter
-      [self.method(:run), @proc.method(:debug_eval),
-       @proc.method(:debug_eval_with_exception),
-       @proc.method(:get_binding_and_filename),
-       @proc.method(:fake_eval_filename)].each do |m|
-        tf << m unless tf.member?(m)
-      end
-    end
-
     @proc.hidelevels[th] += stack_diff + EXTRA_DEBUG_SETUP_CALLS
 
     # Values we need to save before munging them
-    old_tracing            = th.tracing
-    old_exec_event_tracing = th.exec_event_tracing?
     old_mutex              = @proc.core.mutex
     old_next_level         = @proc.next_level
     old_step_count         = @proc.core.step_count
 
-    section 'ENTERING NESTED DEBUGGER'
 
     # Things we need to do to allow entering the debugger again
     @proc.debug_nest      += 1
     @proc.core.mutex       = Mutex.new
-    th.tracing             = false
-    th.exec_event_tracing  = false
     @proc.next_level       = 32000
 
-    RubyVM::Frame.current.trace_off = false
     @proc.core.step_count  = 0
-    retval = @proc.debug_eval(arg_str, 15,
-                              RUBY_VERSION == '1.9.3') # FIXME
+    section 'ENTERING NESTED DEBUGGER'
+    old_trace_arg          = RubyVM::TraceArg.save
+    retval = @proc.debug_eval(arg_str, 15)
 
     # Restore munged values
-    th.exec_event_tracing  = old_exec_event_tracing
-    th.tracing             = old_tracing
+    RubyVM::TraceArg.restore(old_trace_arg)
     @proc.core.mutex       = old_mutex
     @proc.frame_setup(frame)
     @proc.hidelevels[th]   = hidelevels

@@ -12,7 +12,7 @@ class Trepan::Command::SourceCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-8*#{NAME}** [*options*] *file*
+**#{NAME}** [*options*] *file*
 
 options:
 

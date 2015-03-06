@@ -1,6 +1,20 @@
-(0.2.0) Mar 3, 2015
+(2.15.3) Mar 5, 2015
+- Make it work on a patched Ruby 2.1.5 with runtime debugger support
+  This means:
+    * high-speed breakpoints, "step over" (next), and "step out" (finish)
+    * when stopped in a C function, we can get parameter values
+    * the source location of C functions is memory address (gdb can
+      use this)
+    * VM inspection, including sp, pc, instruction sequences,
+      and local table
+    * can change return values in Ruby code, often
+    * can see/set the runtime event masks debugger triggers on
+    * can get the eval string when stopped in an eval()
+- Help text is rendered via redcloth/markdown
+- When we are in a raise event which is non-local, indicate that
+- Remove aliases 'd' and 'u' for "down" and "up"; gdb has different meanings for
+  these letters
 
-- Make it work on Ruby 2.1.5
 (0.1.6) Nov 25, 2012
 - Make it work on Ruby 1.9.3 p327
 - Incompatible change: Remove aliases 'd' and 'u' for down and up
