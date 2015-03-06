@@ -2,15 +2,31 @@
 # -*- Ruby -*-
 require 'rubygems'
 require 'rbconfig'
-raise RuntimeError,
-'This package is for MRI Ruby 2.1.5 with debugger runtime support!\nDownload from ' +
-'http://downloads.sourceforge.net/project/ruby-debugger-runtime/ruby-2.1/ruby-2.1.5-p273-debugger-1.0.tar.gz' unless
-  defined? RubyVM::Frame and  RbConfig::CONFIG.member?('rb-threadframe')
 
-ROOT_DIR = File.dirname(__FILE__)
 GEM_PROG = ENV['GEM_PROG'] || 'gem'
+ROOT_DIR = File.dirname(__FILE__)
 Gemspec_filename='trepanning.gemspec'
 require_relative './app/options'
+
+unless defined? RubyVM::Frame and RbConfig::CONFIG.member?('rb-threadframe')
+    raise RuntimeError,
+    'This package is for MRI Ruby 2.1.5 with debugger runtime support!\nDownload from ' +
+        'http://downloads.sourceforge.net/project/ruby-debugger-runtime/ruby-2.1/'
+end
+
+ruby_version = RbConfig::CONFIG['RUBY_PROGRAM_VERSION']
+if ruby_version == '1.9.3'
+    raise RuntimeError,
+    "This is version trepanning #{Trepan::VERSION}. " +
+    "Ruby #{ruby_version} you want version 1.93..."
+elsif ruby_version == '1.9.2'
+    raise RuntimeError,
+    "This is version trepanning #{Trepan::VERSION}. " +
+    "Ruby #{ruby_version} you want version 1.92..."
+elsif ruby_version != '2.1.5'
+    raise RuntimeError,
+    "This package only works on version Ruby version 2.1.5. You have #{ruby_version}."
+end
 
 def gemspec
   @gemspec ||= eval(File.read(Gemspec_filename), binding, Gemspec_filename)

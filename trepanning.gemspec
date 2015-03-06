@@ -16,6 +16,8 @@ To provide the advanced features this version works only with a
 patched MRI Ruby 2.1.5 runtime.
 
 This version works only with a patched version of Ruby 2.1.5
+For a version that works with Ruby 1.9.3 look install a version
+starting with 1.93.
 EOF
   spec.add_dependency('redcarpet', '~> 3.2')
   spec.add_dependency('columnize', '~> 0.9')
