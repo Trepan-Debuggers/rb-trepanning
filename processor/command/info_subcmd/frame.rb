@@ -82,14 +82,14 @@ See also:
         call_info = meth ? format_stack_call(frame, {}) : ''
 
         section "Frame %2d: %s" % [frame_num, call_info]
-        msg "  %-6s: %s" % frame.source_container
+        msg "  %-6s: %s" % frame.source_container if frame.source_container
         msg "  line  : %s" % @proc.frame_line
-        msg "  argc  : %d" % frame.argc
-        msg "  arity : %d" % frame.arity
+        msg "  argc  : %d" % frame.argc if frame.argc
+        msg "  arity : %d" % frame.arity if frame.arity
         msg "  type  : %s" % frame.type
         msg "  offset: %d" % frame.pc_offset if frame.iseq
         msg "  label:  %s" % frame.label if frame.label unless meth
-        if frame.argc > 0
+        if frame.argc and frame.argc > 0
             msg "  parameters:"
             if meth and frame.type != 'IFUNC'
                 iseq = frame.iseq
