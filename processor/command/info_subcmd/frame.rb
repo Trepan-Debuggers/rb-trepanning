@@ -23,29 +23,26 @@ Show information about the selected frame. The fields we list are:
 
 A backtrace shows roughly the same information in a more compact form.
 
-Example:
----------
-
-from inside File.basename('foo'):
+Example from inside File.basename('foo'):
+-----------------------------------------
 
     Frame basename
-    file  : /tmp/c-func.rb # actually location of caller
-    line  : 2  # inherited from caller
-    argc  : 1  # One out argument supplied: 'foo'
-    arity : -1 # Variable number of args, can have up to 2 arguments.
-    type  : CFUNC  (A C function)
+      file  : /tmp/c-func.rb # actually location of caller
+      line  : 2  # inherited from caller
+      argc  : 1  # One out argument supplied: 'foo'
+      arity : -1 # Variable number of args, can have up to 2 arguments.
+      type  : CFUNC  (A C function)
 
 See also:
 ---------
-`backtrace`, `info files`, `info program`
-EOH
+`backtrace`
+      EOH
         MIN_ABBREV   = 'fr'.size # Note we have "info file"
         MIN_ARGS     = 0
-        MAX_ARGS     = 1
+        MAX_ARGS     = 0
         NEED_STACK   = true
         SHORT_HELP   = 'Show information about the selected frame'
     end
-
 
     def print_frame_c_params(frame)
         argc = frame.argc

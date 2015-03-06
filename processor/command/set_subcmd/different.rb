@@ -31,7 +31,6 @@ into functions.
 
 See also:
 ---------
-
 The debugger command `step`, `next` have suffixes '+' and '-' which
 override this setting.
     EOH
