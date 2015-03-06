@@ -12,37 +12,41 @@ class Trepan::Subcommand::InfoFiles < Trepan::Subcommand
     DEFAULT_FILE_ARGS = %w(size mtime sha1)
 
     HELP = <<-EOH
-#{CMD} [{FILENAME|.|*} [all|ctime|brkpts|mtime|sha1|size|stat]]
+**#{CMD}** [{*filename*|.|\\*} *attributes*
+
+*attributes* can be any set of of:
+  **all**, **ctime**, **brkpts**, **mtime**, **sha1**, **size** or **stat**
 
 Show information about the current file. If no filename is given and
 the program is running, then the current file associated with the
-current stack entry is used. Giving . has the same effect. 
+current stack entry is used. Giving . has the same effect.
 
-Given * gives a list of all files we know about.
+A `*` gives a list of all files we know about.
 
 Sub options which can be shown about a file are:
 
-brkpts -- Line numbers where there are statement boundaries. 
-          These lines can be used in breakpoint commands.
-ctime  -- File creation time
-iseq   -- Instruction sequences from this file.
-mtime  -- File modification time
-sha1   -- A SHA1 hash of the source text. This may be useful in comparing
-          source code.
-size   -- The number of lines in the file.
-stat   -- File.stat information
+    brkpts -- Line numbers where there are statement boundaries.
+              These lines can be used in breakpoint commands.
+    ctime  -- File creation time
+    iseq   -- Instruction sequences from this file.
+    mtime  -- File modification time
+    sha1   -- A SHA1 hash of the source text. This may be useful in comparing
+              source code.
+    size   -- The number of lines in the file.
+    stat   -- File.stat information
 
-all    -- All of the above information.
+    all    -- All of the above information.
 
-If no sub-options are given, "#{DEFAULT_FILE_ARGS.join(' ')}" are assumed.
+If no sub-options are given, `#{DEFAULT_FILE_ARGS.join(' ')}` are assumed.
 
 Examples:
+---------
 
-#{CMD}    # Show #{DEFAULT_FILE_ARGS.join(' ')} information about current file
-#{CMD} .  # same as above
-#{CMD} brkpts      # show the number of lines in the current file
-#{CMD} brkpts size # same as above but also list breakpoint line numbers
-#{CMD} *  # Give a list of files we know about
+    #{CMD}    # Show #{DEFAULT_FILE_ARGS.join(' ')} information about current file
+    #{CMD} .  # same as above
+    #{CMD} brkpts      # show the number of lines in the current file
+    #{CMD} brkpts size # same as above but also list breakpoint line numbers
+    #{CMD} *  # Give a list of files we know about
 EOH
     MIN_ABBREV   = 'fi'.size  # Note we have "info frame"
     NEED_STACK   = false
@@ -53,7 +57,7 @@ EOH
   include Trepanning
 
   def file_list
-    (LineCache.cached_files + 
+    (LineCache.cached_files +
      LineCache.class_variable_get('@@file2file_remap').keys).uniq
   end
 
@@ -61,11 +65,11 @@ EOH
     completions = ['.'] + file_list
     Trepan::Complete.complete_token(completions, prefix)
   end
-  
+
   # Get file information
   def run(args)
     return if args.size < 2
-    args << '.' if 2 == args.size 
+    args << '.' if 2 == args.size
     if '*' == args[2]
       section 'Canonic Files names cached:'
       primary = LineCache.class_variable_get('@@file_cache')
@@ -78,7 +82,7 @@ EOH
       end
       return
     end
-    filename = 
+    filename =
       if '.' == args[2]
         if not @proc.frame
           errmsg("No frame - no default file.")
@@ -133,7 +137,7 @@ EOH
     args[3..-1].each do |arg|
       processed_arg = false
 
-      if %w(all size).member?(arg) 
+      if %w(all size).member?(arg)
         unless seen[:size]
           max_line = LineCache::size(canonic_name)
           msg "File has %d lines." % max_line if max_line
@@ -165,19 +169,19 @@ EOH
 
       if %w(all ctime).member?(arg)
         unless seen[:ctime]
-          msg("create time:\t%s." % 
+          msg("create time:\t%s." %
               LineCache::stat(canonic_name).ctime.to_s)
         end
         processed_arg = seen[:ctime] = true
       end
-      
-      if %w(all iseq).member?(arg) 
+
+      if %w(all iseq).member?(arg)
         unless seen[:iseq]
           if SCRIPT_ISEQS__.member?(canonic_name)
             msg("File contains instruction sequences:")
             SCRIPT_ISEQS__[canonic_name].each do |iseq|
               msg("\t %s %s" % [iseq, iseq.name.inspect])
-            end 
+            end
           else
             msg("Instruction sequences not recorded; there may be some, though.")
           end
@@ -187,12 +191,12 @@ EOH
 
       if %w(all mtime).member?(arg)
         unless seen[:mtime]
-          msg("modify time:\t%s." % 
+          msg("modify time:\t%s." %
               LineCache::stat(canonic_name).mtime.to_s)
         end
         processed_arg = seen[:mtime] = true
       end
-      
+
       if %w(all stat).member?(arg)
         unless seen[:stat]
           msg("Stat info:\n\t%s." % LineCache::stat(canonic_name).inspect)
@@ -213,7 +217,7 @@ if __FILE__ == $0
     SCRIPT_ISEQS__ = {}
     ARGV[0..-1]    = ['noload']
     load(__FILE__)
-  else    
+  else
     require_relative '../../mock'
     cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoFiles, false)
     [%w(info file nothere),
