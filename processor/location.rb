@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'
 require 'linecache'
 require 'pathname'  # For cleanpath
@@ -39,17 +39,17 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     [container[0], canonic_file(container[1])]
   end
 
-  def canonic_file(filename, resolve=true)
-    # For now we want resolved filenames
-    if @settings[:basename]
-      File.basename(filename)
-    elsif resolve
-      filename = LineCache::map_file(filename)
-      File.expand_path(Pathname.new(filename).cleanpath.to_s)
-    else
-      filename
+    def canonic_file(filename, resolve=true)
+        # For now we want resolved filenames
+        if @settings[:basename]
+            File.basename(filename)
+        elsif resolve
+            filename = LineCache::map_file(filename)
+            File.expand_path(Pathname.new(filename).cleanpath.to_s)
+        else
+            filename
+        end
     end
-  end
 
   # Return the text to the current source line.
   # FIXME: loc_and_text should call this rather than the other
@@ -103,82 +103,90 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
 
   def loc_and_text(loc, frame, line_no, source_container,
                    opts = {
-                     :reload_on_change => @settings[:reload],
-                     :output => @settings[:highlight]
+                       :reload_on_change => @settings[:reload],
+                       :output => @settings[:highlight]
                    })
-    found_line = true
-    ## FIXME: condition is too long.
-    if source_container[0] == 'string' && frame.iseq && frame.iseq.eval_source
-      file = LineCache::map_iseq(frame.iseq)
-      text = LineCache::getline(frame.iseq, line_no, opts)
-      loc += " remapped #{canonic_file(file)}:#{line_no}"
-    elsif source_container[0] != 'file'
-      via = loc
-      while source_container[0] != 'file' && frame.prev do
-        frame            = frame.prev
-        source_container = frame_container(frame, false)
-      end
-      if source_container[0] == 'file'
-        line_no      = frame.source_location[0]
-        filename     = source_container[1]
-        loc         += " via #{canonic_file(filename)}:#{line_no}"
-        text         = line_at(filename, line_no, opts)
-        found_line   = false
-      end
-    else
-      container = source_container[1]
-      map_file, map_line = LineCache::map_file_line(container, line_no)
-      if [container, line_no] != [map_file, map_line]
-        loc += " remapped #{canonic_file(map_file)}:#{map_line}"
-      end
+      found_line = true
+      ## FIXME: condition is too long.
+      if source_container[0] == 'string' && frame.iseq && frame.iseq.eval_source
+          file = LineCache::map_iseq(frame.iseq)
+          text = LineCache::getline(frame.iseq, line_no, opts)
+          loc += " remapped #{canonic_file(file)}:#{line_no}"
+      elsif source_container[0] != 'file'
+          via = loc
+          # while not (source_container[0] == 'file' and text_file?(source_container[1])) and
+          while not (source_container[0] == 'file') and
+                  frame.prev do
+              frame            = frame.prev
+              source_container = frame_container(frame, false)
+          end
+          if source_container[0] == 'file'
+              sloc = frame.source_location
+              line_no = sloc && sloc.size > 0 ? sloc[0] : '?'
+              filename     = source_container[1]
+              loc         += " via #{canonic_file(filename)}:#{line_no}"
+              text         = line_at(filename, line_no, opts)
+              found_line   = false
+          end
+      else
+          container = source_container[1]
+          map_file, map_line = LineCache::map_file_line(container, line_no)
+          if [container, line_no] != [map_file, map_line]
+              loc += " remapped #{canonic_file(map_file)}:#{map_line}"
+          end
 
-      text  = line_at(container, line_no, opts)
-    end
-    [loc, line_no, text, found_line]
+          text  = line_at(container, line_no, opts)
+      end
+      [loc, line_no, text, found_line]
   end
 
   def print_location
-    if %w(c-call call).member?(@event)
-      # FIXME: Fix Ruby so we don't need this workaround?
-      # See also where.rb
-      opts = {}
-      opts[:class] = @core.hook_arg if
-        'CFUNC' == @frame.type && @core.hook_arg && 0 == @frame_index
-      msg format_stack_call(@frame, opts)
-    elsif 'raise' == @event
-      msg @core.hook_arg.inspect if @core.hook_arg # Exception object
-    end
+      if %w(c-call call).member?(@event)
+          # FIXME: Fix Ruby so we don't need this workaround?
+          # See also where.rb
+          opts = {}
+          opts[:class] = @core.hook_arg if
+              'CFUNC' == @frame.type && @core.hook_arg && 0 == @frame_index
+          msg format_stack_call(@frame, opts)
+      elsif 'raise' == @event
+          msg @core.hook_arg.inspect if @core.hook_arg # Exception object
+      end
 
-    text      = nil
-    source_container = frame_container(@frame, false)
-    ev        = if @event.nil? || 0 != @frame_index
-                  '  '
-                else
-                  (EVENT2ICON[@event] || @event)
-                end
-    @line_no  = frame_line
+      text      = nil
+      source_container = frame_container(@frame, false)
+      ev        = if @event.nil? || 0 != @frame_index
+                      '  '
+                  else
+                      (EVENT2ICON[@event] || @event)
+                  end
+      @line_no  = frame_line
 
-    loc = source_location_info(source_container, @line_no, @frame)
-    loc, @line_no, text, found_line =
-      loc_and_text(loc, @frame, @line_no, source_container)
+      loc = source_location_info(source_container, @line_no, @frame)
+      loc, @line_no, text, found_line =
+          loc_and_text(loc, @frame, @line_no, source_container)
 
-    ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
-    msg "#{ev} (#{loc}#{ip_str})"
+      ip_str = @frame.iseq ? " @#{frame.pc_offset}" : ''
+      msg "#{ev} (#{loc}#{ip_str})"
 
-    if %w(return c-return).member?(@event)
-      retval = Trepan::Frame.value_returned(@frame, @event)
-      msg 'R=> %s' % retval.inspect
-    end
+      if %w(return c-return).member?(@event)
+          retval = Trepan::Frame.value_returned(@frame, @event)
+          msg 'R=> %s' % retval.inspect
+      elsif @event == 'raise'
+          # msg @proc.core.hook_arg.inspect if @proc.core.hook_arg
+          if @frame.iseq and @frame.iseq.catch_table_size == 0
+              msg "Warning: exception raised is non-local!"
+          end
+      end
 
-    if text && !text.strip.empty?
-      msg text
-      @line_no -= 1
-    end
-    unless found_line
-      # Can't find source line, so give assembly as consolation.
-      # This great idea comes from the Rubinius reference debugger.
-      run_command('disassemble')
-    end
+      if text && !text.strip.empty?
+          msg text
+          @line_no -= 1
+      end
+      unless found_line
+          # Can't find source line, so give assembly as consolation.
+          # This great idea comes from the Rubinius reference debugger.
+          run_command('disassemble')
+      end
   end
 
   def source_location_info(source_container, line_no, frame)
