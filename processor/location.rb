@@ -170,7 +170,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
           elsif @event == :raise
               exc = @core.trace_point.raised_exception
               msg "#{exc.class}: #{exc}"
-              if @frame.iseq.catch_table_size == 0
+              if @frame.iseq and @frame.iseq.catch_table_size == 0
                   msg "Warning: exception raised is non-local!"
               end
            end
