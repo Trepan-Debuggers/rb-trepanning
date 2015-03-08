@@ -1,7 +1,7 @@
 2015-03-08  rocky <rockyb@rubyforge.org>
 
-	* ChangeLog, NEWS, app/options.rb, trepanning.gemspec: Get ready for
-	release 2.15.31
+	* ChangeLog, NEWS, app/options.rb, processor/breakpoint.rb,
+	trepanning.gemspec: Get ready for release 2.15.32
 
 2015-03-08  rocky <rockyb@rubyforge.org>
 
