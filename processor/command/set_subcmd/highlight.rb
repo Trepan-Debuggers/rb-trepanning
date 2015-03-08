@@ -1,11 +1,22 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetHighlight < Trepan::SetBoolSubcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP       = 'Set whether we use terminal highlighting'
+    HELP = <<-EOH
+**#{PREFIX.join(' ')}** [**on**|**off**]
+
+Set whether we use terminal highlighting.
+
+See also:
+---------
+
+`show highlight`
+
+EOH
+    SHORT_HELP       = 'Set whether we use terminal highlighting'
     IN_LIST    = true
     MIN_ABBREV = 'hi'.size
   end
@@ -17,7 +28,7 @@ class Trepan::Subcommand::SetHighlight < Trepan::SetBoolSubcommand
   def run(args)
     if args.size == 3 && 'reset' == args[2]
       LineCache::clear_file_format_cache
-      @proc.settings[:highlight] = :term 
+      @proc.settings[:highlight] = :term
     else
       super
       @proc.settings[:highlight] = :term if @proc.settings[:highlight]

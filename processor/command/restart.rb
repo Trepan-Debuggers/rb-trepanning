@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 require_relative '../command'
 require_relative '../../app/run'
 class Trepan::Command::RestartCommand < Trepan::Command
@@ -8,17 +8,22 @@ class Trepan::Command::RestartCommand < Trepan::Command
     NAME         = File.basename(__FILE__, '.rb')
     ALIASES      = %w(R run)
     HELP = <<-HELP
-#{NAME} 
+**#{NAME}**
 
 Restart debugger and program via an exec call. All state is lost, and
 new copy of the debugger is used.
+
+See also:
+---------
+
+`set args`, `show args`
     HELP
-    
+
     CATEGORY     = 'running'
     MAX_ARGS     = 0  # Need at most this many
     SHORT_HELP  = '(Hard) restart of program via exec()'
   end
-    
+
   # This method runs the command
   def run(args)
 

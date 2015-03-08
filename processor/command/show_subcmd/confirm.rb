@@ -5,7 +5,18 @@ require_relative '../base/subcmd'
 class Trepan::Subcommand::ShowConfirm < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP       = "Show confirm potentially dangerous operations setting"
+    HELP = <<-EOH
+**#{PREFIX.join(' ')}**
+
+Show confirm potentially dangerous operations setting.
+
+See also:
+---------
+
+`set confirm`
+EOH
+
+    SHORT_HELP  = "Show confirm potentially dangerous operations setting"
     MIN_ABBREV = 'co'.size
   end
 end
