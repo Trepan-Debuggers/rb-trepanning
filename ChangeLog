@@ -1,7 +1,43 @@
+2015-03-08  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, NEWS, app/options.rb: Get ready for release 2.15.31
+
+2015-03-08  rocky <rockyb@rubyforge.org>
+
+	* processor/command/restart.rb,
+	processor/command/set_subcmd/confirm.rb,
+	processor/command/set_subcmd/highlight.rb,
+	processor/command/show_subcmd/confirm.rb,
+	processor/command/show_subcmd/highlight.rb: More markdown doc
+
+2015-03-08  rocky <rockyb@rubyforge.org>
+
+	* trepanning.gemspec: Drop threadframe dependency; add coderay and
+	term-ansicolor
+
+2015-03-07  rocky <rockyb@rubyforge.org>
+
+	* processor/location.rb: Guard against nil frame
+
+2015-03-06  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/frame.rb: Guard against invalid
+	frame in "info frame"
+
+2015-03-06  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb, processor/command/frame.rb,
+	processor/command/info_subcmd/frame.rb,
+	processor/command/info_subcmd/registers.rb,
+	processor/command/reload.rb,
+	processor/command/reload_subcmd/command.rb,
+	processor/command/set_subcmd/different.rb: More markdown doc. Bump
+	version Conflicts: 	app/options.rb 	processor/command/info_subcmd/breakpoints.rb 	processor/command/info_subcmd/files.rb 	processor/command/info_subcmd/frame.rb 	processor/command/set_subcmd/different.rb
+
 2015-03-05  rocky <rockyb@rubyforge.org>
 
-	* Rakefile, app/options.rb, trepanning.gemspec: Get ready for
-	release 2.15.3
+	* ChangeLog, NEWS, Rakefile, app/options.rb, trepanning.gemspec: Get
+	ready for release 2.15.3
 
 2015-03-05  rocky <rockyb@rubyforge.org>
 
