@@ -1,4 +1,4 @@
-require 'thread_frame'
+require 'rubyvm_frame'
 require_relative '../../lib/trepanning'
 require_relative '../../io/string_array'
 

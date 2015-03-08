@@ -1,5 +1,5 @@
 # Copyright (C) 2010-2011, 2015 Rocky Bernstein <rockyb@rubyforge.net>
-require 'threadframe'
+require 'rubyvm-frame'
 require_relative 'virtual'
 class Trepan
 
