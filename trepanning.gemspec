@@ -19,7 +19,6 @@ For a version that works with Ruby 2.1.5, install a version
 starting with 2.15.
 EOF
   spec.add_dependency('rb-trace', '~> 0.5')
-  spec.add_dependency('linecache-tf', '~> 1.0')
   spec.add_dependency('columnize', '~> 0.9')
   spec.add_dependency('redcarpet', '~> 3.2')
   spec.add_dependency('coderay', '~> 1.1')

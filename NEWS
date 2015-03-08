@@ -1,3 +1,6 @@
+(1.93.32) Mar 8, 2015
+- Remove reference to threadframe
+
 (1.93.31) Mar 8, 2015
 
 - Remove threadframe dependency - it's built into patched Ruby

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
-require 'thread_frame'
+# Copyright (C) 2010-2011, 2013, 2015 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Breakpoint objects
 class Trepan
