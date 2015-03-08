@@ -18,11 +18,12 @@ patched MRI Ruby 1.9.3 runtime.
 For a version that works with Ruby 2.1.5, install a version
 starting with 2.15.
 EOF
-  spec.add_dependency('rb-threadframe', '~> 0.39', '>= 0.39.9')
   spec.add_dependency('rb-trace', '~> 0.5')
   spec.add_dependency('linecache-tf', '~> 1.0')
   spec.add_dependency('columnize', '~> 0.9')
   spec.add_dependency('redcarpet', '~> 3.2')
+  spec.add_dependency('coderay', '>= 1.1')
+  spec.add_dependency('term-ansicolor', '>= 1.3')
   spec.add_development_dependency('diff-lcs', '~> 0') # For testing only
   spec.author       = 'R. Bernstein'
   spec.bindir       = 'bin'
