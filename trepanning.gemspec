@@ -22,8 +22,8 @@ EOF
   spec.add_dependency('linecache-tf', '~> 1.0')
   spec.add_dependency('columnize', '~> 0.9')
   spec.add_dependency('redcarpet', '~> 3.2')
-  spec.add_dependency('coderay', '>= 1.1')
-  spec.add_dependency('term-ansicolor', '>= 1.3')
+  spec.add_dependency('coderay', '~> 1.1')
+  spec.add_dependency('term-ansicolor', '~> 1.3')
   spec.add_development_dependency('diff-lcs', '~> 0') # For testing only
   spec.author       = 'R. Bernstein'
   spec.bindir       = 'bin'

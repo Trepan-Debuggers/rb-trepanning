@@ -1,4 +1,10 @@
-(2.15.3) Mar 5, 2015
+(1.93.31) Mar 8, 2015
+
+- Remove threadframe dependency - it's built into patched Ruby
+- add dependencies for coderay and ansi-termcolor
+- More subcommand help converted to markdown format.
+
+(1.93.30) Mar 5, 2015
 - Make it work on a patched Ruby 1.9.3 p551
 - include columnize and linecache-tf gems
 - Help text is rendered via redcloth/markdown
