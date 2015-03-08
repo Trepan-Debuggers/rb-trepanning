@@ -1,4 +1,10 @@
-(2.15.3) Mar 5, 2015
+(2.15.32) Mar 8, 2015
+
+- Remove threadframe dependency - it's built into patched Ruby
+- add dependencies for coderay and ansi-termcolor
+- More subcommand help converted to markdown format.
+
+(2.15.30) Mar 5, 2015
 - Make it work on a patched Ruby 2.1.5 with runtime debugger support
   This means:
     * high-speed breakpoints, "step over" (next), and "step out" (finish)
