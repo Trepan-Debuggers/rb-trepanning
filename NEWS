@@ -1,6 +1,7 @@
-(2.15.32) Mar 8, 2015
+(2.15.33) Mar 8, 2015
 
-- Remove threadframe dependency - it's built into patched Ruby
+- Remove threadframe dependency - it's built into patched Ruby, replace with
+  rubyvm-frame.rb
 - add dependencies for coderay and ansi-termcolor
 - More subcommand help converted to markdown format.
 
