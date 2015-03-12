@@ -153,41 +153,42 @@ class Trepan
 
     # Run one debugger command. True is returned if we want to quit.
     def process_command_and_quit?()
-      intf_size = @dbgr.intf.size
-      @intf  = @dbgr.intf[-1]
-      return true if @intf.input_eof? && intf_size == 1
-      while intf_size > 1 || !@intf.input_eof?
-        begin
-          @current_command =
-            if @cmd_queue.empty?
-              # Leave trailing blanks on for the "complete" command
-              read_command.chomp
-            else
-              @cmd_queue.shift
-            end
-          if @current_command.empty?
-            next unless @last_command && intf.interactive?;
-          end
-          next if @current_command[0..0] == '#' # Skip comment lines
-          break
-        rescue IOError, Errno::EPIPE => e
-          if intf_size > 1
-            @dbgr.intf.pop
-            intf_size = @dbgr.intf.size
-            @intf = @dbgr.intf[-1]
-            @last_command = nil
-            print_location
-          else
-            ## FIXME: think of something better.
+        intf_size = @dbgr.intf.size
+        @intf  = @dbgr.intf[-1]
+        return true if @intf.input_eof? && intf_size == 1
+        while intf_size > 1 || !@intf.input_eof?
+            begin
+                @current_command =
+                    if @cmd_queue.empty?
+                        # Leave trailing blanks on for the "complete" command
+                        read_command.chomp
+                    else
+                        @cmd_queue.shift
+                    end
+                if @current_command.empty?
+                    next unless @last_command && intf.interactive?
+                    @current_command = @last_command
+                end
+                next if @current_command[0..0] == '#' # Skip comment lines
+                break
+            rescue IOError, Errno::EPIPE => e
+                if intf_size > 1
+                    @dbgr.intf.pop
+                    intf_size = @dbgr.intf.size
+                    @intf = @dbgr.intf[-1]
+                    @last_command = nil
+                    print_location
+                else
+                    ## FIXME: think of something better.
             quit('quit!')
-            return true
-          end
+                    return true
+                end
+            end
         end
-      end
-      run_command(@current_command)
+        run_command(@current_command)
 
-      # Save it to the history.
-      @intf.history_io.puts @last_command if @last_command && @intf.history_io
+        # Save it to the history.
+        @intf.history_io.puts @last_command if @last_command && @intf.history_io
     end
 
     # This is the main entry point.
