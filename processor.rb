@@ -156,6 +156,7 @@ class Trepan
                         end
                     if @current_command.empty?
                         next unless @last_command && intf.interactive?;
+                        @current_command = @last_command
                     end
                     next if @current_command[0..0] == '#' # Skip comment lines
                     break
