@@ -17,10 +17,10 @@ A gdb-like Ruby debugger with both high and low-level debugging support.
 See https://github.com/rocky/rb-trepanning/wiki/Features for a list of features.
 
 To provide the advanced features this version works only with a
-[patched MRI Ruby 1.9.3. See http://ruby-debugger-runtime.sourceforge.net/
+patched MRI Ruby 1.9.3. See http://ruby-debugger-runtime.sourceforge.net/
 
-This version works only with a patched version of Ruby 1.9.3
-Ruby 2.1.5, look for a version that starts with 2.1.5
+This version works only with a patched version of Ruby 1.9.3.
+For Ruby 2.1.5, look for a version that starts with 2.15
 EOF
   spec.add_dependency('rb-trace', '~> 0.5')
   spec.add_dependency('rb-threadframe', '~> 0.41')
