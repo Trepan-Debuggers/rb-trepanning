@@ -1,6 +1,25 @@
+2015-03-12  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb, trepanning.gemspec: Get ready for release 2.15.35
+
+2015-03-12  rocky <rockyb@rubyforge.org>
+
+	* app/markdown.rb, processor/command/list.rb, processor/frame.rb,
+	processor/list.rb, test/unit/test-cmd-parse_list_cmd.rb: markdown:
+	remove stray space after `` list: subsequent list command continue
+	from where we last left off.
+
+2015-03-12  rocky <rockyb@rubyforge.org>
+
+	* processor.rb: empty string repeats last command.
+
+2015-03-12  rocky <rockyb@rubyforge.org>
+
+	* trepanning.gemspec: Use markdown in spec description.
+
 2015-03-08  rocky <rockyb@rubyforge.org>
 
-	* NEWS, app/options.rb: Get ready for release 2.15.33
+	* ChangeLog, NEWS, app/options.rb: Get ready for release 2.15.33
 
 2015-03-08  rocky <rockyb@rubyforge.org>
 
