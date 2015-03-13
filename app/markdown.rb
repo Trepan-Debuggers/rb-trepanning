@@ -58,7 +58,7 @@ module Redcarpet
 
             def codespan(text)
                 if ansi?
-                    Term::ANSIColor.underline + text + Term::ANSIColor.reset + "\n"
+                    Term::ANSIColor.underline + text + Term::ANSIColor.reset
                 else
                     "'" + text + "'"
                 end
@@ -161,6 +161,8 @@ if __FILE__ == $0
     string = <<EOF
 # HI
 This is a paragraph
+
+A `b`, `c`, d
 
 **This** is another *paragraph*.
 EOF

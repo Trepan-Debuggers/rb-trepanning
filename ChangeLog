@@ -1,7 +1,17 @@
+2015-03-12  rocky <rockyb@rubyforge.org>
+
+	* NEWS, app/markdown.rb, app/options.rb, processor/command/list.rb: 
+	Get ready for release 1.93.34
+
+2015-03-12  rocky <rockyb@rubyforge.org>
+
+	* processor.rb, trepanning.gemspec: Empty line runs "next command".
+	Add Markdown in description.
+
 2015-03-08  rocky <rockyb@rubyforge.org>
 
-	* NEWS, app/breakpoint.rb, app/options.rb, trepanning.gemspec: Get
-	ready for release 1.93.32
+	* ChangeLog, NEWS, app/breakpoint.rb, app/options.rb,
+	trepanning.gemspec: Get ready for release 1.93.32
 
 2015-03-08  rocky <rockyb@rubyforge.org>
 

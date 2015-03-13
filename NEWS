@@ -1,3 +1,9 @@
+(1.93.40) Mar 12, 2015
+- remove stray space after backtick in markdown
+- list command continues where it last left off
+- empty debugger command repeats last command
+- Use markdown in Gem description
+
 (1.93.32) Mar 8, 2015
 - Remove reference to threadframe
 
