@@ -14,34 +14,13 @@ Gem::Specification.new do |spec|
 
 A gdb-like Ruby debugger with both high and low-level debugging support.
 
-So what makes this debugger so special?
-
-* nested debugging
-* ability to skip over statements
-* ability to modify function return values (often)
-* ability to detect (sometimes) a non-local exception that is about to raised *before* it is raised so you have access to the full call stack.
-* display of the current VM PC and VM stack values
-* support for fast debugger breakpoints, "step over" and "step out"
-* More accurate location information
-* access to C parameters in a C call
-* memory addresses of C functions (useful in conjunction with gdb)
-* seeing and changing event filters dynamically
-* context sensitive debugger command completion
-* extensive online help formatted via markdown/redcloth so it
-* adjusts to your terminal width and has nice formatting syntax highlighting
-* stepping granularity control
-* smart eval
-* ability to go into irb from inside the debugger
-* compatibility with gdb commands.
-* out-of-process and out-of server debugger control
-* disassembly of VM instructions
+See https://github.com/rocky/rb-trepanning/wiki/Features for a list of features.
 
 To provide the advanced features this version works only with a
-[patched MRI Ruby 1.9.3
-runtime](http://ruby-debugger-runtime.sourceforge.net/).
+[patched MRI Ruby 1.9.3. See http://ruby-debugger-runtime.sourceforge.net/
 
 This version works only with a patched version of Ruby 1.9.3
-For a version that works with Ruby 2.1.5.3, [install a version](https://rubygems.org/gems/trepanning/versions/) that starts with 2.1.5
+Ruby 2.1.5, look for a version that starts with 2.1.5
 EOF
   spec.add_dependency('rb-trace', '~> 0.5')
   spec.add_dependency('rb-threadframe', '~> 0.41')

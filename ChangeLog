@@ -1,7 +1,11 @@
 2015-03-12  rocky <rockyb@rubyforge.org>
 
-	* NEWS, app/markdown.rb, app/options.rb, processor/command/list.rb: 
-	Get ready for release 1.93.34
+	* trepanning.gemspec: Get ready for release 1.93.34 (again)
+
+2015-03-12  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, NEWS, app/markdown.rb, app/options.rb,
+	processor/command/list.rb: Get ready for release 1.93.34
 
 2015-03-12  rocky <rockyb@rubyforge.org>
 
