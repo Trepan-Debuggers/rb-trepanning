@@ -15,7 +15,7 @@ class TestCommandParseListCmd < Test::Unit::TestCase
         listsize = 10
         line = __LINE__+5
         load 'tmpdir.rb'
-        [['', [short_file, line, line+listsize-1]],
+        [['.', [short_file, line+5, line+listsize-1+5]],
          ["#{__FILE__}:10", [short_file, 5, 14]],
          ["#{__FILE__} 10", [short_file, 5, 14]],
          ['tmpdir.rb', ['tmpdir.rb', 1, listsize]],

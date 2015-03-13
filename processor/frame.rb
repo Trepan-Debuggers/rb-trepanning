@@ -14,8 +14,9 @@ class Trepan
     # frame index in a "backtrace" command
     attr_accessor :frame_index
     attr_accessor :hide_level
+    attr_accessor :list_lineno
 
-    # Hash[thread_id] -> FixNum, the level of the last frame to
+    # Hash[thread_id] -> Fixnum, the level of the last frame to
     # show. If we called the debugger directly, then there is
     # generally a portion of a backtrace we don't want to show. We
     # don't need to store this for all threads, just those we want to
@@ -54,7 +55,7 @@ class Trepan
           print_stack_trace_from_to(frame_num, frame_num, frame, opts)
           print_location
         end
-        @line_no = frame_line() - 1
+        @list_lineno = @line_no = frame_line() - 1
         @frame
       else
         nil
@@ -126,6 +127,7 @@ class Trepan
             else
                 @hidelevels[@current_thread]
             end
+        @list_lineno = frame_line()
 
     end
 

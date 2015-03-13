@@ -9,8 +9,9 @@ class Trepan::Command::ListCommand < Trepan::Command
     unless defined?(HELP)
         NAME = File.basename(__FILE__, '.rb')
         HELP = <<-HELP
-**#{NAME}[>]** [*module*] [*first* [*num*]]
-**#{NAME}[>]** *location [*num*]
+**#{NAME}**[**>**] [*module*] [*first* [*num*]]
+
+**#{NAME}**[**>**] *location* [*num*]
 
 List source code.
 
@@ -22,13 +23,13 @@ changing, then that is start the line after we last one previously
 shown.
 
 If the command has a ">" suffix, then line centering is disabled and
-listing begins at the specificed location.
+listing begins at the specified location.
 
 The number of lines to show is controlled by the debugger "listsize"
 setting. Use 'set max list' or 'show max list' to see or set the
 value.
 
-\"#{NAME} -\" shows lines before a previous listing.
+`#{NAME} -` shows lines before a previous listing.
 
 A *location* is a either:
 
@@ -170,6 +171,8 @@ See also:
                 msg(s + "\t" + line, {:unlimited => true})
                 @proc.line_no = lineno
             end
+            @proc.list_lineno += listsize + center_correction + 1
+            @proc.list_lineno = max_line if @proc.list_lineno > max_line
         rescue => e
             errmsg e.to_s if settings[:debugexcept]
         end
