@@ -82,6 +82,7 @@ info line command.
 Type "help" followed by a class name for a list of help items in that class.
 Type "help aliases" for a list of current aliases.
 Type "help macros" for a list of current macros.
+Type "help syntax *item*" for help on syntax *item*
 Type "help *" for the list of all commands, macros and aliases.
 Type "help all" for a brief description of all commands.
 Type "help REGEXP" for the list of commands matching /^#{REGEXP}/.
