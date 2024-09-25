@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011, 2016 Rocky Bernstein <rockyb@rubyforge.net>
 
 class Trepan
   module Util
@@ -39,9 +39,9 @@ class Trepan
         text.gsub!(/^\s*case\s*/,'')
       elsif text =~ /^\s*def\s*.*\(.+\)/
         text.gsub!(/^\s*def\s*.*\((.*)\)/,'[\1]')
-      elsif text =~ /^\s*[A-Za-z_][A-Za-z0-9_\[\]]*\s*=[^=>]/
+      elsif text =~ /^\s*[$@A-Za-z_][A-Za-z0-9_\[\]]*\s*=[^=>]/
         # RHS of an assignment statement.
-        text.gsub!(/^\s*[A-Za-z_][A-Za-z0-9_\[\]]*\s*=/,'')
+        text.gsub!(/^\s*[$@A-Za-z_][A-Za-z0-9_\[\]]*\s*=/,'')
       end
       return text
     end
